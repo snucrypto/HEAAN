@@ -1,28 +1,55 @@
+#include <NTL/ZZ.h>
+#include <NTL/ZZX.h>
 #include <iostream>
+#include <string>
 
+#include "FPHECipher.h"
 #include "FPHEParams.h"
 #include "FPHEPubKey.h"
 #include "FPHEScheme.h"
 #include "FPHESecKey.h"
-#include "FPHECipher.h"
+#include "TimeUtils.h"
 
 using namespace std;
 
 int main() {
 
+	TimeUtils timeutils;
+
 	cout << "!!!HELLO FPHE!!!" << endl; // prints !!!Hello World!!!
 
 	long lambda = 10;
-	FPHEParams params(lambda, false);
-	FPHESecKey secretKey(params);
-	FPHEPubKey publicKey(params, secretKey);
-	FPHEScheme scheme(params, secretKey, publicKey);
 
 	cout << "------------------" << endl;
+
+	timeutils.start("GenParams");
+	FPHEParams params(lambda, false);
+	timeutils.stop("GenParams");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenSecKey");
+	FPHESecKey secretKey(params);
+	timeutils.stop("GenSecKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenPubKey");
+	FPHEPubKey publicKey(params, secretKey);
+	timeutils.stop("GenPubKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenScheme");
+	FPHEScheme scheme(params, secretKey, publicKey);
+	timeutils.stop("GenScheme");
+
+	cout << "------------------" << endl;
+
 	cout << "sk: " << secretKey.s << endl;
 	cout << params.toString() << endl;
-	cout << "------------------" << endl;
 
+	cout << "------------------" << endl;
 
 	ZZ m = ZZ(857465976520445);
 	ZZ mm = m + m;
@@ -33,27 +60,67 @@ int main() {
 	ZZ mss = ms2 / params.p;
 	ZZ mse = ms2;
 
-	cout << "------------------" << endl;
-	cout << "m:  " << m << endl;
-	cout << "mm: " << mm << endl;
-	cout << "m2: " << m2 << endl;
-	cout << "ms: " << ms << endl;
-	cout << "me: " << me << endl;
-	cout << "ms2: " << ms2 << endl;
-	cout << "mss: " << mss << endl;
-	cout << "mse: " << mse << endl;
+	cout << " ------------------" << endl;
+
+	cout << " m:  " << m << endl;
+	cout << " mm: " << mm << endl;
+	cout << " m2: " << m2 << endl;
+	cout << " ms: " << ms << endl;
+	cout << " me: " << me << endl;
+	cout << " ms2: " << ms2 << endl;
+	cout << " mss: " << mss << endl;
+	cout << " mse: " << mse << endl;
+
 	cout << "------------------" << endl;
 
+	timeutils.start("Encrypt c");
 	FPHECipher c = scheme.encrypt(m);
-	FPHECipher cc = scheme.add(c, c);
-	FPHECipher c2 = scheme.mul(c, c);
-	FPHECipher cs = scheme.modSwitch(c2, 2);
-	FPHECipher ce = scheme.modEmbed(c2, 2);
-	FPHECipher cs2 = scheme.mul(cs, cs);
-	FPHECipher css = scheme.modSwitch(cs2, 3);
-	FPHECipher cse = scheme.modEmbed(cs2, 3);
+	timeutils.stop("Encrypt c");
 
 	cout << "------------------" << endl;
+
+	timeutils.start("Add cc");
+	FPHECipher cc = scheme.add(c, c);
+	timeutils.stop("Add cc");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("Mul c2");
+	FPHECipher c2 = scheme.mul(c, c);
+	timeutils.stop("Mul c2");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("MS cs");
+	FPHECipher cs = scheme.modSwitch(c2, 2);
+	timeutils.stop("MS cs");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("ME ce");
+	FPHECipher ce = scheme.modEmbed(c2, 2);
+	timeutils.stop("ME ce");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("Mul cs2");
+	FPHECipher cs2 = scheme.mul(cs, cs);
+	timeutils.stop("Mul cs2");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("MS css");
+	FPHECipher css = scheme.modSwitch(cs2, 3);
+	timeutils.stop("MS css");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("ME cse");
+	FPHECipher cse = scheme.modEmbed(cs2, 3);
+	timeutils.stop("ME cse");
+
+	cout << "------------------" << endl;
+
 	cout << "c:  " << c.toString() << endl;
 	cout << "cc: " << cc.toString() << endl;
 	cout << "c2: " << c2.toString() << endl;
@@ -62,9 +129,15 @@ int main() {
 	cout << "cs2: " << cs2.toString() << endl;
 	cout << "css: " << css.toString() << endl;
 	cout << "cse: " << cse.toString() << endl;
+
 	cout << "------------------" << endl;
 
+	timeutils.start("Decrypt c");
 	ZZ d = scheme.decrypt(c);
+	timeutils.stop("Decrypt c");
+
+	cout << "------------------" << endl;
+
 	ZZ dd = scheme.decrypt(cc);
 	ZZ d2 = scheme.decrypt(c2);
 	ZZ ds = scheme.decrypt(cs);
@@ -74,6 +147,7 @@ int main() {
 	ZZ dse = scheme.decrypt(cse);
 
 	cout << "------------------" << endl;
+
 	cout << "qL: " << params.qL << endl;
 	cout << "p: " << params.p << endl;
 	cout << "d:  " << d << endl;
@@ -84,6 +158,7 @@ int main() {
 	cout << "ds2: " << ds2 << endl;
 	cout << "dss: " << dss << endl;
 	cout << "dse: " << dse << endl;
+
 	cout << "------------------" << endl;
 
 	ZZ e = m - d;
