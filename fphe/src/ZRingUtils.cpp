@@ -33,10 +33,19 @@ void ZRingUtils::subRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const 
 }
 
 void ZRingUtils::mulRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
-	ZZX prod = poly1 * poly2;
-	rem(res, prod, phi);
-	ZZ c;
 	long i;
+	ZZ c;
+	ZZX poly;
+	mul(poly, poly1, poly2);
+
+	for (i = 0; i < deg(poly); ++i) {
+		c = coeff(poly, i) % mod;
+		SetCoeff(poly, i, c);
+	}
+
+	PseudoRem(res, poly, phi);
+	//res = poly % phi;
+
 	for (i = 0; i < deg(phi); ++i) {
 		c = coeff(res, i) % mod;
 		SetCoeff(res, i, c);

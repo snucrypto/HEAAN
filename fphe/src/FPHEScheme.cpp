@@ -89,7 +89,6 @@ FPHECipher FPHEScheme::mul(FPHECipher& cipher1, FPHECipher& cipher2) {
 
 	ZZX mulC1;
 	ZZX mulC0;
-
 	ZRingUtils::mulRing(cc00, cipher1.c0, cipher2.c0, qi, params.phi);
 	ZRingUtils::mulRing(cc01, cipher1.c0, cipher2.c1, qi, params.phi);
 	ZRingUtils::mulRing(cc10, cipher1.c1, cipher2.c0, qi, params.phi);

@@ -1,8 +1,8 @@
 #ifndef ZRINGUTILS_H_
 #define ZRINGUTILS_H_
 
-#include <NTL/ZZ.h>
-#include <NTL/ZZX.h>
+#include "NTL/ZZ.h"
+#include "NTL/ZZX.h"
 
 using namespace NTL;
 

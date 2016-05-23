@@ -4,6 +4,8 @@
 #include "FPHEParams.h"
 #include "FPHESecKey.h"
 #include "FPHEPubKey.h"
+#include "TimeUtils.h"
+
 
 
 class FPHECipher;
@@ -16,6 +18,7 @@ class FPHEScheme {
 private:
 
 public:
+	TimeUtils timeutils;
 	FPHEParams& params;
 	FPHESecKey& secretKey;
 	FPHEPubKey& publicKey;
@@ -24,6 +27,7 @@ public:
 	ZZ& getPqModulo(long level);
 
 	FPHEScheme(FPHEParams& params, FPHESecKey& secretKey, FPHEPubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
+
 	virtual ~FPHEScheme() {};
 
 	FPHECipher encrypt(ZZ& m);

@@ -15,8 +15,8 @@
 FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	levels = 5;
 	tau = 10;
-	m = 1247;
-	phim = 1176;
+	m = 3133;
+	phim = 2880;
 	stdev = 3;
 
 	Pbits = 100;

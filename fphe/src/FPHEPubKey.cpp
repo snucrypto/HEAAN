@@ -33,8 +33,6 @@ FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
 
 	ZRingUtils::mulRing(s2, secretKey.s, secretKey.s, params.qL, params.phi);
 	ZRingUtils::leftShiftRing(Ps2, s2, params.Pbits, params.Pq, params.phi);
-	cout << "QQQ" << endl;
-
 	ZRingUtils::sampleUniform(aStar, params.Pq, params.phim);
 
 	if(params.isGauss) {
