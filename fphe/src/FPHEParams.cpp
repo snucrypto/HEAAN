@@ -13,26 +13,26 @@
 #include "ZRingUtils.h"
 
 FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
-	levels = 7;
+	levels = 5;
 	tau = 10;
 	m = 1247;
 	phim = 1176;
 	stdev = 3;
 
-	GenPrime(p, 50);
+	GenPrime(p, 20);
+	GenPrime(P, 100);
 	RandomBits(B, 5);
 
 	qi = vector<ZZ>();
-	logQi = vector<long>();
-
+	Pqi = vector<ZZ>();
 	for (int i = 1; i <= levels; ++i) {
 		ZZ q = power(p, i);
 		qi.push_back(q);
-		logQi.push_back(NumBits(q));
+		Pqi.push_back(P * q);
 	}
 
 	qL = qi[levels-1];
-	logQL = logQi[levels-1];
+	Pq = Pqi[levels-1];
 	phi = ZRingUtils::Cyclotomic(m);
 }
 

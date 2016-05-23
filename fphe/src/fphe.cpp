@@ -51,7 +51,7 @@ int main() {
 
 	cout << "------------------" << endl;
 
-	ZZ m = ZZ(857465976520445);
+	ZZ m = ZZ(779790);
 	ZZ mm = m + m;
 	ZZ m2 = m * m;
 	ZZ ms = m2 / params.p;
@@ -60,7 +60,7 @@ int main() {
 	ZZ mss = ms2 / params.p;
 	ZZ mse = ms2;
 
-	cout << " ------------------" << endl;
+	cout << "------------------" << endl;
 
 	cout << " m:  " << m << endl;
 	cout << " mm: " << mm << endl;

@@ -80,79 +80,65 @@ void FPHEScheme::subAndEqual(FPHECipher& cipher1, FPHECipher& cipher2) {
 FPHECipher FPHEScheme::mul(FPHECipher& cipher1, FPHECipher& cipher2) {
 	long i, j, idx;
 	ZZ qi = getModulo(cipher1.level);
+	ZZ Pqi = getPqModulo(cipher1.level);
 
-	ZZX multC0;
-	ZZX multC1;
-	ZZX temp;
-	ZZX bPoly;
-	ZZX cc[4];
-	ZRingUtils::mulRing(cc[0], cipher1.c0, cipher2.c0, qi, params.phi);
-	ZRingUtils::mulRing(cc[1], cipher1.c0, cipher2.c1, qi, params.phi);
-	ZRingUtils::mulRing(cc[2], cipher1.c1, cipher2.c0, qi, params.phi);
-	ZRingUtils::mulRing(cc[3], cipher1.c1, cipher2.c1, qi, params.phi);
+	ZZX cc00;
+	ZZX cc01;
+	ZZX cc10;
+	ZZX cc11;
 
-	long logQi = params.logQi[params.levels - cipher1.level];
+	ZZX mulC1;
+	ZZX mulC0;
 
-	idx = 0;
- 	for (j = 0; j < logQi; ++j) {
- 		for (i = 0; i < 4; ++i) {
-			ZRingUtils::bitPoly(bPoly, cc[i], j);
-			ZZX lwe0 = publicKey.AL0[idx];
-			ZZX lwe1 = publicKey.AL1[idx];
+	ZRingUtils::mulRing(cc00, cipher1.c0, cipher2.c0, qi, params.phi);
+	ZRingUtils::mulRing(cc01, cipher1.c0, cipher2.c1, qi, params.phi);
+	ZRingUtils::mulRing(cc10, cipher1.c1, cipher2.c0, qi, params.phi);
+	ZRingUtils::mulRing(cc11, cipher1.c1, cipher2.c1, qi, params.phi);
 
-			ZRingUtils::mulRing(temp, bPoly, lwe0, qi, params.phi);
-			ZRingUtils::addRing(multC0, multC0, temp, qi, params.phi);
+	ZRingUtils::mulRing(mulC1, publicKey.aStar, cc11, Pqi, params.phi);
+	ZRingUtils::mulRing(mulC0, publicKey.bStar, cc11, Pqi, params.phi);
 
-			ZRingUtils::mulRing(temp, bPoly, lwe1, qi, params.phi);
-			ZRingUtils::addRing(multC1, multC1, temp, qi, params.phi);
-			idx++;
-		}
-	}
+	ZRingUtils::divByConstantRing(mulC1, mulC1, params.P, qi, params.phi);
+	ZRingUtils::divByConstantRing(mulC0, mulC0, params.P, qi, params.phi);
 
-	FPHECipher cipher(multC0, multC1, cipher1.level);
+	ZRingUtils::addRing(mulC1, mulC1, cc10, qi, params.phi);
+	ZRingUtils::addRing(mulC1, mulC1, cc01, qi, params.phi);
+	ZRingUtils::addRing(mulC0, mulC0, cc00, qi, params.phi);
+
+	FPHECipher cipher(mulC0, mulC1, cipher1.level);
 	return cipher;
 }
 
 void FPHEScheme::mulAndEqual(FPHECipher& cipher1, FPHECipher& cipher2) {
 	long i, j, idx;
 	ZZ qi = getModulo(cipher1.level);
+	ZZ Pqi = getPqModulo(cipher1.level);
 
-	ZZX multC0;
-	ZZX multC1;
-	ZZX temp;
-	ZZX bPoly;
-	ZZX cc;
+	ZZX cc00;
+	ZZX cc01;
+	ZZX cc10;
+	ZZX cc11;
 
+	ZZX mulC1;
+	ZZX mulC0;
 
-	long logQi = params.logQi[params.levels - cipher1.level];
+	ZRingUtils::mulRing(cc00, cipher1.c0, cipher2.c0, qi, params.phi);
+	ZRingUtils::mulRing(cc01, cipher1.c0, cipher2.c1, qi, params.phi);
+	ZRingUtils::mulRing(cc10, cipher1.c1, cipher2.c0, qi, params.phi);
+	ZRingUtils::mulRing(cc11, cipher1.c1, cipher2.c1, qi, params.phi);
 
-	idx = 0;
-	for (i = 0; i < 4; ++i) {
-		if(i == 0) {
-			ZRingUtils::mulRing(cc, cipher1.c0, cipher2.c0, qi, params.phi);
-		} else if(i == 1) {
-			ZRingUtils::mulRing(cc, cipher1.c0, cipher2.c1, qi, params.phi);
-		} else if(i == 2) {
-			ZRingUtils::mulRing(cc, cipher1.c1, cipher2.c0, qi, params.phi);
-		} else {
-			ZRingUtils::mulRing(cc, cipher1.c1, cipher2.c1, qi, params.phi);
-		}
+	ZRingUtils::mulRing(mulC1, publicKey.aStar, cc11, Pqi, params.phi);
+	ZRingUtils::mulRing(mulC0, publicKey.bStar, cc11, Pqi, params.phi);
 
-		for (j = 0; j < logQi; ++j) {
-			ZRingUtils::bitPoly(bPoly, cc, j);
-			ZZX lwe0 = publicKey.AL0[idx];
-			ZZX lwe1 = publicKey.AL1[idx];
+	ZRingUtils::divByConstantRing(mulC1, mulC1, params.P, qi, params.phi);
+	ZRingUtils::divByConstantRing(mulC0, mulC0, params.P, qi, params.phi);
 
-			ZRingUtils::mulRing(temp, bPoly, lwe0, qi, params.phi);
-			ZRingUtils::addRing(multC0, multC0, temp, qi, params.phi);
+	ZRingUtils::addRing(mulC1, mulC1, cc10, qi, params.phi);
+	ZRingUtils::addRing(mulC1, mulC1, cc01, qi, params.phi);
+	ZRingUtils::addRing(mulC0, mulC0, cc00, qi, params.phi);
 
-			ZRingUtils::mulRing(temp, bPoly, lwe1, qi, params.phi);
-			ZRingUtils::addRing(multC1, multC1, temp, qi, params.phi);
-			idx++;
-		}
-	}
-	cipher1.c0 = multC0;
-	cipher1.c1 = multC1;
+	cipher1.c0 = mulC0;
+	cipher1.c1 = mulC1;
 }
 
 FPHECipher FPHEScheme::addConstant(FPHECipher& cipher, ZZ& cnst) {
@@ -260,4 +246,8 @@ void FPHEScheme::modEmbedAndEqual(FPHECipher& cipher, long newLevel) {
 
 ZZ& FPHEScheme::getModulo(long level) {
 	return params.qi[params.levels - level];
+}
+
+ZZ& FPHEScheme::getPqModulo(long level) {
+	return params.Pqi[params.levels - level];
 }

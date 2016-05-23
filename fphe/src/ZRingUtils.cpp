@@ -35,14 +35,16 @@ void ZRingUtils::subRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const 
 void ZRingUtils::mulRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
 	ZZX prod = poly1 * poly2;
 	rem(res, prod, phi);
+	ZZ c;
 	long i;
 	for (i = 0; i < deg(phi); ++i) {
-		SetCoeff(res, i, coeff(res, i) % mod);
+		c = coeff(res, i) % mod;
+		SetCoeff(res, i, c);
 	}
 	res.normalize();
 }
 
-void ZRingUtils::mulByConstantRing(ZZX& res, ZZX& poly, ZZ& cnst, const ZZ& mod, const ZZX& phi) {
+void ZRingUtils::mulByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZX mul;
 	ZZ c;
@@ -55,6 +57,20 @@ void ZRingUtils::mulByConstantRing(ZZX& res, ZZX& poly, ZZ& cnst, const ZZ& mod,
 	res = mul;
 }
 
+void ZRingUtils::divByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi) {
+	long i;
+	ZZX mul;
+	ZZ c;
+	mul.SetLength(deg(phi));
+	for (i = 0; i < deg(phi); ++i) {
+		c = (coeff(poly, i) / cnst) % mod;
+		SetCoeff(mul, i, c);
+	}
+	mul.normalize();
+	res = mul;
+}
+
+
 void ZRingUtils::bitPoly(ZZX& res, ZZX& poly, long i) {
 	ZZX bitPoly;
 	ZZ c;
@@ -66,6 +82,19 @@ void ZRingUtils::bitPoly(ZZX& res, ZZX& poly, long i) {
 	}
 	bitPoly.normalize();
 	res = bitPoly;
+}
+
+void ZRingUtils::wordPoly(ZZX& res, ZZX& poly, long i) {
+	ZZX wordPoly;
+	long c;
+	wordPoly.SetLength(deg(poly) + 1);
+	long j;
+	for (j = 0; j < deg(poly) + 1; ++j) {
+		c = bit(coeff(poly, j), i);
+		SetCoeff(wordPoly, j, c);
+	}
+	wordPoly.normalize();
+	res = wordPoly;
 }
 
 long ZRingUtils::mobius(long n) {
@@ -135,7 +164,6 @@ void ZRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
 		clear(res);
 		return;
 	}
-
 
 	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
 

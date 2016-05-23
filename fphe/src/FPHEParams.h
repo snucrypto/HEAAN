@@ -21,10 +21,12 @@ public:
 	ZZ B;
 
 	ZZ p;
-	vector<ZZ> qi;
-	vector<long> logQi;
+	ZZ P;
 	ZZ qL;
-	long logQL;
+	ZZ Pq;
+
+	vector<ZZ> qi;
+	vector<ZZ> Pqi;
 	ZZX phi;
 	FPHEParams(long lambda, bool isGauss = false);
 	virtual ~FPHEParams();

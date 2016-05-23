@@ -16,8 +16,8 @@ public:
 	vector<ZZX> A0;
 	vector<ZZX> A1;
 
-	vector<ZZX> AL0;
-	vector<ZZX> AL1;
+	ZZX aStar;
+	ZZX bStar;
 
 	FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey);
 	virtual ~FPHEPubKey();

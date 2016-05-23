@@ -21,6 +21,7 @@ public:
 	FPHEPubKey& publicKey;
 
 	ZZ& getModulo(long level);
+	ZZ& getPqModulo(long level);
 
 	FPHEScheme(FPHEParams& params, FPHESecKey& secretKey, FPHEPubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 	virtual ~FPHEScheme() {};
