@@ -19,8 +19,9 @@ FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 	phim = 1176;
 	stdev = 3;
 
+	Pbits = 100;
 	GenPrime(p, 20);
-	GenPrime(P, 100);
+
 	RandomBits(B, 5);
 
 	qi = vector<ZZ>();
@@ -28,7 +29,7 @@ FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 	for (int i = 1; i <= levels; ++i) {
 		ZZ q = power(p, i);
 		qi.push_back(q);
-		Pqi.push_back(P * q);
+		Pqi.push_back(q << Pbits);
 	}
 
 	qL = qi[levels-1];

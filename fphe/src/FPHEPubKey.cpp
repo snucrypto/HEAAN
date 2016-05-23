@@ -32,7 +32,7 @@ FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
 	ZZX s2, Ps2;
 
 	ZRingUtils::mulRing(s2, secretKey.s, secretKey.s, params.qL, params.phi);
-	ZRingUtils::mulByConstantRing(Ps2, s2, params.P, params.Pq, params.phi);
+	ZRingUtils::leftShiftRing(Ps2, s2, params.Pbits, params.Pq, params.phi);
 	cout << "QQQ" << endl;
 
 	ZRingUtils::sampleUniform(aStar, params.Pq, params.phim);

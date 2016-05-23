@@ -21,7 +21,7 @@ public:
 	ZZ B;
 
 	ZZ p;
-	ZZ P;
+	long Pbits;
 	ZZ qL;
 	ZZ Pq;
 

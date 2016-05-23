@@ -98,8 +98,8 @@ FPHECipher FPHEScheme::mul(FPHECipher& cipher1, FPHECipher& cipher2) {
 	ZRingUtils::mulRing(mulC1, publicKey.aStar, cc11, Pqi, params.phi);
 	ZRingUtils::mulRing(mulC0, publicKey.bStar, cc11, Pqi, params.phi);
 
-	ZRingUtils::divByConstantRing(mulC1, mulC1, params.P, qi, params.phi);
-	ZRingUtils::divByConstantRing(mulC0, mulC0, params.P, qi, params.phi);
+	ZRingUtils::rightShiftRing(mulC1, mulC1, params.Pbits, qi, params.phi);
+	ZRingUtils::rightShiftRing(mulC0, mulC0, params.Pbits, qi, params.phi);
 
 	ZRingUtils::addRing(mulC1, mulC1, cc10, qi, params.phi);
 	ZRingUtils::addRing(mulC1, mulC1, cc01, qi, params.phi);
@@ -130,8 +130,8 @@ void FPHEScheme::mulAndEqual(FPHECipher& cipher1, FPHECipher& cipher2) {
 	ZRingUtils::mulRing(mulC1, publicKey.aStar, cc11, Pqi, params.phi);
 	ZRingUtils::mulRing(mulC0, publicKey.bStar, cc11, Pqi, params.phi);
 
-	ZRingUtils::divByConstantRing(mulC1, mulC1, params.P, qi, params.phi);
-	ZRingUtils::divByConstantRing(mulC0, mulC0, params.P, qi, params.phi);
+	ZRingUtils::rightShiftRing(mulC1, mulC1, params.Pbits, qi, params.phi);
+	ZRingUtils::rightShiftRing(mulC0, mulC0, params.Pbits, qi, params.phi);
 
 	ZRingUtils::addRing(mulC1, mulC1, cc10, qi, params.phi);
 	ZRingUtils::addRing(mulC1, mulC1, cc01, qi, params.phi);

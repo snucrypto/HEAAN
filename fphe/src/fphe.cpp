@@ -46,8 +46,8 @@ int main() {
 
 	cout << "------------------" << endl;
 
-	cout << "sk: " << secretKey.s << endl;
-	cout << params.toString() << endl;
+//	cout << "sk: " << secretKey.s << endl;
+//	cout << params.toString() << endl;
 
 	cout << "------------------" << endl;
 
@@ -121,14 +121,14 @@ int main() {
 
 	cout << "------------------" << endl;
 
-	cout << "c:  " << c.toString() << endl;
-	cout << "cc: " << cc.toString() << endl;
-	cout << "c2: " << c2.toString() << endl;
-	cout << "cs: " << cs.toString() << endl;
-	cout << "ce: " << ce.toString() << endl;
-	cout << "cs2: " << cs2.toString() << endl;
-	cout << "css: " << css.toString() << endl;
-	cout << "cse: " << cse.toString() << endl;
+//	cout << "c:  " << c.toString() << endl;
+//	cout << "cc: " << cc.toString() << endl;
+//	cout << "c2: " << c2.toString() << endl;
+//	cout << "cs: " << cs.toString() << endl;
+//	cout << "ce: " << ce.toString() << endl;
+//	cout << "cs2: " << cs2.toString() << endl;
+//	cout << "css: " << css.toString() << endl;
+//	cout << "cse: " << cse.toString() << endl;
 
 	cout << "------------------" << endl;
 

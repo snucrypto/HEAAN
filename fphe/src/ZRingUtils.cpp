@@ -57,13 +57,26 @@ void ZRingUtils::mulByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ
 	res = mul;
 }
 
-void ZRingUtils::divByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi) {
+void ZRingUtils::rightShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZX mul;
 	ZZ c;
 	mul.SetLength(deg(phi));
 	for (i = 0; i < deg(phi); ++i) {
-		c = (coeff(poly, i) / cnst) % mod;
+		c = (coeff(poly, i) >> bits) % mod;
+		SetCoeff(mul, i, c);
+	}
+	mul.normalize();
+	res = mul;
+}
+
+void ZRingUtils::leftShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
+	long i;
+	ZZX mul;
+	ZZ c;
+	mul.SetLength(deg(phi));
+	for (i = 0; i < deg(phi); ++i) {
+		c = (coeff(poly, i) << bits) % mod;
 		SetCoeff(mul, i, c);
 	}
 	mul.normalize();

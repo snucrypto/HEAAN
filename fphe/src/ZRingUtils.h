@@ -12,7 +12,8 @@ class ZRingUtils {
 		static void subRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi);
 		static void mulRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi);
 		static void mulByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi);
-		static void divByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi);
+		static void leftShiftRing(ZZX& res, ZZX& poly, const long& cnst, const ZZ& mod, const ZZX& phi);
+		static void rightShiftRing(ZZX& res, ZZX& poly, const long& cnst, const ZZ& mod, const ZZX& phi);
 		static void bitPoly(ZZX& res, ZZX& poly, long i);
 		static void wordPoly(ZZX& res, ZZX& poly, long i);
 		static void sampleGaussian(ZZX& res, long deg, double stdev);
