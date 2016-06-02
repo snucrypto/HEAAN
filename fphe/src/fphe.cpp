@@ -52,7 +52,8 @@ void test1() {
 	cout << "------------------" << endl;
 
 	ZZ m;
-	RandomBits(m, 20);
+	RandomBits(m, 5);
+	m = params.p - m;
 	ZZ mm = m + m;
 	ZZ m2 = m * m;
 	ZZ ms = m2 / params.p;
@@ -258,7 +259,7 @@ void test2() {
 
 	cout << "------------------" << endl;
 	for (i = 0; i < 16; ++i) {
-		RandomBits(x[i], 15);
+		RandomBits(x[i], 5);
 		x[i] = params.p - x[i];
 		cout << " x["<< i << "]:  " << x[i] << endl;
 	}

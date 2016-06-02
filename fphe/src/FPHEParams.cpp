@@ -15,12 +15,11 @@
 FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	levels = 5;
 	tau = 10;
-	m = 3133;
-	phim = 2880;
+	m = 2048;
+	phim = 1024;
 	stdev = 3;
-
-	Pbits = 100;
-	GenPrime(p, 20);
+	p = 40961;
+	Pbits = NumBits(p) * levels * 2;
 
 	RandomBits(B, 5);
 

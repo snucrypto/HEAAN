@@ -42,12 +42,12 @@ void ZRingUtils::mulRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const 
 		c = coeff(poly, i) % mod;
 		SetCoeff(poly, i, c);
 	}
-
-	PseudoRem(res, poly, phi);
+	long int phim = deg(phi);
+//	PseudoRem(res, poly, phi);
 	//res = poly % phi;
 
-	for (i = 0; i < deg(phi); ++i) {
-		c = coeff(res, i) % mod;
+	for (i = 0; i < phim; ++i) {
+		c = (coeff(poly, i) - coeff(poly, i + deg(phi))) % mod;
 		SetCoeff(res, i, c);
 	}
 	res.normalize();
