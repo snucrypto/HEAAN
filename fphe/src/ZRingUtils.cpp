@@ -2,121 +2,142 @@
 
 #include <cassert>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 using namespace NTL;
 
-void ZRingUtils::addRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
-	long i;
-	ZZX add;
-	ZZ c;
-	add.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
-		c = (coeff(poly1, i) + coeff(poly2, i)) % mod;
-		SetCoeff(add, i, c);
+void toString(vector<ZZ> v) {
+	cout << "[";
+	for (long i = 0; i < v.size(); ++i) {
+		cout << v[i] << ", ";
 	}
-	add.normalize();
+	cout << "]" << endl;
+}
+
+void ZRingUtils::addRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+	long i;
+	vector<ZZ> add;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = (fft1[i] + fft2[i]) % mod;
+		add.push_back(c);
+	}
 	res = add;
 }
 
-void ZRingUtils::subRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void ZRingUtils::addConstantRing(vector<ZZ>& res, vector<ZZ>& fft1, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
-	ZZX sub;
-	ZZ c;
-	sub.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
-		c = (coeff(poly1, i) - coeff(poly2, i)) % mod;
-		SetCoeff(sub, i, c);
+	vector<ZZ> add;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = (fft1[i] + cnst) % mod;
+		add.push_back(c);
 	}
-	sub.normalize();
+	res = add;
+}
+
+void ZRingUtils::subRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+	long i;
+	vector<ZZ> sub;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = (fft1[i] - fft2[i]) % mod;
+		sub.push_back(c);
+	}
 	res = sub;
 }
 
-void ZRingUtils::mulRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void ZRingUtils::mulRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
 	long i;
-	ZZ c;
-	ZZX poly;
-	mul(poly, poly1, poly2);
-
-	for (i = 0; i < deg(poly); ++i) {
-		c = coeff(poly, i) % mod;
-		SetCoeff(poly, i, c);
+	vector<ZZ> mul;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = (fft1[i] * fft2[i]) % mod;
+		mul.push_back(c);
 	}
-
-	PseudoRem(res, poly, phi);
-	//res = poly % phi;
-
-	for (i = 0; i < deg(phi); ++i) {
-		c = coeff(res, i) % mod;
-		SetCoeff(res, i, c);
-	}
-	res.normalize();
-}
-
-void ZRingUtils::mulByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi) {
-	long i;
-	ZZX mul;
-	ZZ c;
-	mul.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
-		c = (coeff(poly, i) * cnst) % mod;
-		SetCoeff(mul, i, c);
-	}
-	mul.normalize();
 	res = mul;
 }
 
-void ZRingUtils::rightShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
+void ZRingUtils::mulByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
-	ZZX mul;
-	ZZ c;
-	mul.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
-		c = (coeff(poly, i) >> bits) % mod;
-		SetCoeff(mul, i, c);
+	vector<ZZ> mul;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = (fft[i] * cnst) % mod;
+		mul.push_back(c);
 	}
-	mul.normalize();
 	res = mul;
 }
 
-void ZRingUtils::leftShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
+void ZRingUtils::divByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
-	ZZX mul;
-	ZZ c;
-	mul.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
-		c = (coeff(poly, i) << bits) % mod;
-		SetCoeff(mul, i, c);
+	vector<ZZ> mul;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = fft[i] / cnst;
+		mul.push_back(c);
 	}
-	mul.normalize();
 	res = mul;
 }
 
-
-void ZRingUtils::bitPoly(ZZX& res, ZZX& poly, long i) {
-	ZZX bitPoly;
-	ZZ c;
-	bitPoly.SetLength(deg(poly) + 1);
-	long j;
-	for (j = 0; j < deg(poly) + 1; ++j) {
-		c = bit(coeff(poly, j), i);
-		SetCoeff(bitPoly, j, c);
+void ZRingUtils::rightShiftRing(vector<ZZ>& res, vector<ZZ>& fft, const long& bits, const ZZ& mod, const long& phim) {
+	long i;
+	vector<ZZ> mul;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = (fft[i] >> bits) % mod;
+		mul.push_back(c);
 	}
-	bitPoly.normalize();
-	res = bitPoly;
+	res = mul;
 }
 
-void ZRingUtils::wordPoly(ZZX& res, ZZX& poly, long i) {
-	ZZX wordPoly;
-	long c;
-	wordPoly.SetLength(deg(poly) + 1);
-	long j;
-	for (j = 0; j < deg(poly) + 1; ++j) {
-		c = bit(coeff(poly, j), i);
-		SetCoeff(wordPoly, j, c);
+void ZRingUtils::leftShiftRing(vector<ZZ>& res, vector<ZZ>& poly, const long& bits, const ZZ& mod, const long& phim) {
+	long i;
+	vector<ZZ> mul;
+	for (i = 0; i < phim; ++i) {
+		ZZ c = (poly[i] << bits) % mod;
+		mul.push_back(c);
 	}
-	wordPoly.normalize();
-	res = wordPoly;
+	res = mul;
+}
+
+void ZRingUtils::factorize(vector<long> &factors, const long &N) {
+	factors.resize(0);
+	if(N<2) return;
+	PrimeSeq s;
+	long n = N;
+	while (true) {
+		if(ProbPrime(n)) {
+			factors.push_back(n);
+			return;
+		}
+		long p = s.next();
+		if((n%p) == 0) {
+			factors.push_back(p);
+			do { n /= p; } while ((n%p)==0);
+		}
+		if (n == 1) return;
+	}
+}
+
+long ZRingUtils::primitiveRoot(const long& p) {
+	long i;
+
+	long phi = p-1;
+	vector<long> facts;
+	PrimeSeq s;
+
+	bool flag;
+	long g = 1;
+	factorize(facts, phi);
+
+	while(!flag) {
+		g++;
+		flag = true;
+		for (i = 0; i < facts.size(); i++) {
+			long f = facts[i];
+			long div = phi / f;
+			if(PowerMod(f, div, p) == 1) {
+				flag = false;
+				break;
+			}
+		}
+	}
+	return g;
 }
 
 long ZRingUtils::mobius(long n) {
@@ -150,53 +171,71 @@ ZZX ZRingUtils::Cyclotomic(long N) {
   return F;
 }
 
-void ZRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
-  static double const Pi=4.0*atan(1.0); // Pi=3.1415..
-  static long const bignum = 0xfffffff;
-  // THREADS: C++11 guarantees these are initialized only once
+void ZRingUtils::sampleGaussian(vector<ZZ> &res, long d, double stdev) {
+	static double const Pi=4.0*atan(1.0); // Pi=3.1415..
+	static long const bignum = 0xfffffff;
 
-  if (d<=0) d=deg(res)+1; if (d<=0) return;
-  res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
-  for (long i=0; i<d; i++) SetCoeff(res, i, ZZ::zero());
+	res.resize(0);
 
-  // Uses the Box-Muller method to get two Normal(0,stdev^2) variables
-  for (long i=0; i<d; i+=2) {
-    double r1 = (1+RandomBnd(bignum))/((double)bignum+1);
-    double r2 = (1+RandomBnd(bignum))/((double)bignum+1);
-    double theta=2*Pi*r1;
-    double rr= sqrt(-2.0*log(r2))*stdev;
+	for (long i=0; i<d; i+=2) {
+		double r1 = (1+RandomBnd(bignum))/((double)bignum+1);
+		double r2 = (1+RandomBnd(bignum))/((double)bignum+1);
+		double theta=2*Pi*r1;
+		double rr= sqrt(-2.0*log(r2))*stdev;
 
-    assert(rr < 8*stdev); // sanity-check, no more than 8 standard deviations
+		assert(rr < 8*stdev); // sanity-check, no more than 8 standard deviations
 
-    // Generate two Gaussians RV's, rounded to integers
-    long x = (long) floor(rr*cos(theta) +0.5);
-    SetCoeff(res, i, x);
-    if (i+1 < d) {
-      x = (long) floor(rr*sin(theta) +0.5);
-      SetCoeff(res, i+1, x);
-    }
-  }
-  res.normalize(); // need to call this after we work on the coeffs
+		// Generate two Gaussians RV's, rounded to integers
+		long x = (long) floor(rr*cos(theta) +0.5);
+		res.push_back(ZZ(x));
+		if (i+1 < d) {
+		  x = (long) floor(rr*sin(theta) +0.5);
+		  res.push_back(ZZ(x));
+		}
+	}
 }
 
-void ZRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
-
-	if (d<=0) d=deg(res)+1; if (d<=0) return;
-	if (B <= 0) {
-		clear(res);
-		return;
-	}
-
-	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
-
-	ZZ UB, tmp;
-
+void ZRingUtils::sampleUniform(vector<ZZ>& res, const ZZ& B, const long d) {
+	res.resize(0);
+	ZZ UB;
 	UB =  2*B + 1;
-
 	for (long i = 0; i < d; i++) {
+		ZZ tmp;
 		RandomBnd(tmp, UB);
 		tmp -= B;
-		SetCoeff(res, i, tmp);
+		res.push_back(tmp);
 	}
-	res.normalize();
 }
+
+void ZRingUtils::convertfft(vector<ZZ>& res, const vector<ZZ>& poly, const vector<  vector<ZZ>  >& fftMatrix, const ZZ& mod, const long& phim) {
+	res.resize(0);
+	long i, j;
+	for (i = 0; i < phim; ++i) {
+		ZZ f;
+		vector<ZZ> fftRowi = fftMatrix[i];
+		for (j = 0; j < phim; ++j) {
+			f += poly[j] * fftRowi[j];
+			f %= mod;
+		}
+		res.push_back(f);
+	}
+}
+
+void ZRingUtils::convertfftInv(vector<ZZ>& res, const vector<ZZ>& fft, const vector<  vector<ZZ>  >& fftInvMatrix, const ZZ& mod, const long& phim) {
+	res.resize(0);
+	long i, j;
+	for (i = 0; i < phim; ++i) {
+		ZZ f;
+		vector<ZZ> fftRowi = fftInvMatrix[i];
+		for (j = 0; j < phim; ++j) {
+			f += fft[j] * fftRowi[j];
+			f %= mod;
+		}
+		res.push_back(f);
+	}
+}
+
+
+
+
+

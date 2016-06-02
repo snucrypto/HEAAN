@@ -1,40 +1,82 @@
-/*
- * FPHEParams.cpp
- *
- *  Created on: May 15, 2016
- *      Author: kimandrik
- */
-
 #include "FPHEParams.h"
 
+#include <NTL/ZZ.h>
 #include <sstream>
 #include <string>
 
-#include "ZRingUtils.h"
 
 FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
-	levels = 5;
-	tau = 10;
-	m = 3133;
-	phim = 2880;
+	long i, j, pLong;
+
+	levels = 6;
+	tau = 7;
 	stdev = 3;
 
-	Pbits = 100;
-	GenPrime(p, 20);
+	m = 2048;
+	phim = 1024;
+	p = ZZ(40961);
+	conv(pLong, p);
+	pRoot = ZZ(2);
+	RandomBits(B, 3);
 
-	RandomBits(B, 5);
+	vector<long> coprime;
+	for (i = 0; i < m; ++i) {
+		if(GCD(i, m) == 1) coprime.push_back(i);
+	}
 
-	qi = vector<ZZ>();
-	Pqi = vector<ZZ>();
-	for (int i = 1; i <= levels; ++i) {
+	for (i = 1; i <= levels; ++i) {
 		ZZ q = power(p, i);
 		qi.push_back(q);
-		Pqi.push_back(q << Pbits);
+	}
+
+	for (i = 1; i <= levels; ++i) {
+		ZZ Pq = power(qi[i-1], 3);
+		Pqi.push_back(Pq);
 	}
 
 	qL = qi[levels-1];
-	Pq = Pqi[levels-1];
-	phi = ZRingUtils::Cyclotomic(m);
+	PqL = Pqi[levels-1];
+	P = qL * qL;
+
+	ZZ pp = PowerMod(pRoot, p-1, qi[1]);
+	if(IsOne(pp)) {
+		qRoot = pRoot + p;
+	} else {
+		qRoot = pRoot;
+	}
+	ZZ primDeg = qi[levels-2] * (p-1) / m;
+	ZZ alpha = PowerMod(qRoot, primDeg, qL);
+
+	for (i = 0; i < phim; ++i) {
+		long di = coprime[i];
+		ZZ beta = PowerMod(alpha, di, qL);
+		vector<ZZ> fftRow;
+		for (j = 0; j < phim; ++j) {
+			fftRow.push_back(PowerMod(beta, j, qL));
+		}
+		fft.push_back(fftRow);
+	}
+
+
+
+	ZZ phimZ = ZZ(phim);
+	ZZ phimInv;
+
+	InvMod(phimInv, phimZ, qL);
+
+	ZZ alphaInv;
+	InvMod(alphaInv, alpha, qL);
+
+	for (i = 0; i < phim; ++i) {
+		ZZ betaInv = PowerMod(alphaInv, i, qL);
+		vector<ZZ> fftInvRow;
+		for (j = 0; j < phim; ++j) {
+			long dj = coprime[j];
+			ZZ resInv = (PowerMod(betaInv, dj, qL) * phimInv) % qL;
+			fftInvRow.push_back(resInv);
+		}
+		fftInv.push_back(fftInvRow);
+	}
 }
 
 ZZ& FPHEParams::getModulo(long level) {
@@ -69,8 +111,6 @@ string FPHEParams::toString() {
 	ss << stdev;
 	ss << ", B=";
 	ss << B;
-	ss << ", phi=";
-	ss << phi;
 
 	return ss.str();
 }

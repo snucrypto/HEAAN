@@ -5,12 +5,14 @@
 
 #include "FPHEParams.h"
 
+using namespace std;
 using namespace NTL;
 
 class FPHESecKey {
 public:
 
-	ZZX s;
+	vector<ZZ> s;
+	vector<ZZ> sfft;
 
 	FPHESecKey(FPHEParams& params);
 	virtual ~FPHESecKey();

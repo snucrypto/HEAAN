@@ -19,15 +19,21 @@ public:
 	bool isGauss;
 	double stdev;
 	ZZ B;
-
 	ZZ p;
-	long Pbits;
 	ZZ qL;
-	ZZ Pq;
+	ZZ PqL;
+	ZZ P;
+
+	ZZ pRoot;
+	ZZ qRoot;
+
+	vector<  vector<ZZ>  > fft;
+	vector<  vector<ZZ>  > fftInv;
 
 	vector<ZZ> qi;
 	vector<ZZ> Pqi;
-	ZZX phi;
+//	ZZX phi;
+
 	FPHEParams(long lambda, bool isGauss = false);
 	virtual ~FPHEParams();
 

@@ -1,18 +1,20 @@
 #ifndef FPHECIPHER_H_
 #define FPHECIPHER_H_
 
-#include <NTL/ZZX.h>
+#include <NTL/ZZ.h>
+#include <string>
+#include <vector>
 
 using namespace std;
 using namespace NTL;
 
 class FPHECipher {
 public:
-	ZZX c0;
-	ZZX c1;
+	vector<ZZ> c0fft;
+	vector<ZZ> c1fft;
 	long level;
 
-	FPHECipher(ZZX c0, ZZX c1, long level) : c0(c0), c1(c1), level(level) {}
+	FPHECipher(vector<ZZ> c0fft, vector<ZZ> c1fft, long level) : c0fft(c0fft), c1fft(c1fft), level(level) {}
 	virtual ~FPHECipher() {}
 
 	string toString();

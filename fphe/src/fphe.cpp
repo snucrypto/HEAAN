@@ -47,12 +47,13 @@ void test1() {
 	cout << "------------------" << endl;
 
 //	cout << "sk: " << secretKey.s << endl;
-//	cout << params.toString() << endl;
+	cout << params.toString() << endl;
 
 	cout << "------------------" << endl;
 
 	ZZ m;
-	RandomBits(m, 20);
+	RandomBits(m, 5);
+	m = params.p - m;
 	ZZ mm = m + m;
 	ZZ m2 = m * m;
 	ZZ ms = m2 / params.p;
@@ -258,7 +259,7 @@ void test2() {
 
 	cout << "------------------" << endl;
 	for (i = 0; i < 16; ++i) {
-		RandomBits(x[i], 15);
+		RandomBits(x[i], 5);
 		x[i] = params.p - x[i];
 		cout << " x["<< i << "]:  " << x[i] << endl;
 	}
@@ -366,6 +367,7 @@ void test2() {
 	d16 = scheme.decrypt(c16);
 	e16 = x16 - d16;
 	cout << "------------------" << endl;
+	cout << c16.c0fft[0] << endl;
 	cout << " x16:  " << x16 << endl;
 	cout << " d16:  " << d16 << endl;
 	cout << " e16:  " << e16 << endl;
@@ -376,13 +378,50 @@ void test2() {
 	cout << "!!!BYE FPHE!!!" << endl; // prints !!!Hello World!!!
 }
 
+void test3() {
+	TimeUtils timeutils;
+
+	cout << "!!!HELLO FPHE!!!" << endl; // prints !!!Hello World!!!
+
+	long lambda = 10;
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenParams");
+	FPHEParams params(lambda, false);
+	timeutils.stop("GenParams");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenSecKey");
+	FPHESecKey secretKey(params);
+	timeutils.stop("GenSecKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenPubKey");
+	FPHEPubKey publicKey(params, secretKey);
+	timeutils.stop("GenPubKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenScheme");
+	FPHEScheme scheme(params, secretKey, publicKey);
+	timeutils.stop("GenScheme");
+
+	cout << "------------------" << endl;
+
+	vector<ZZ> y;
+	ZZ x(40900);
+	FPHECipher c = scheme.encrypt(x);
+	timeutils.start("convert");
+	ZRingUtils::convertfft(y, c.c0fft, params.fft, params.qL, params.phim);
+	timeutils.stop("convert");
+}
+
 int main() {
-	test2();
-	cout << "------------------" << endl;
-	cout << "------------------" << endl;
-	cout << "------------------" << endl;
-	cout << "------------------" << endl;
-	cout << "------------------" << endl;
+//	test2();
 	test1();
+//	test3();
 	return 0;
 }

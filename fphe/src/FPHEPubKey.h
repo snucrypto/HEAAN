@@ -13,11 +13,11 @@ using namespace NTL;
 
 class FPHEPubKey {
 public:
-	vector<ZZX> A0;
-	vector<ZZX> A1;
+	vector<  vector<ZZ>  > A0fft;
+	vector<  vector<ZZ>  > A1fft;
 
-	ZZX aStar;
-	ZZX bStar;
+	vector<ZZ> c1Starfft;
+	vector<ZZ> c0Starfft;
 
 	FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey);
 	virtual ~FPHEPubKey();
