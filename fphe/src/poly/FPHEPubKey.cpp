@@ -5,9 +5,11 @@
  *      Author: kimandrik
  */
 
-#include "FPHEPubKey.h"
+#include "poly/FPHEPubKey.h"
+
 #include <NTL/ZZ.h>
-#include "ZRingUtils.h"
+
+#include "poly/ZRingUtils.h"
 
 FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
 	long i, j;

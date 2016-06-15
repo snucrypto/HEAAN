@@ -1,11 +1,11 @@
-#ifndef FPHEPUBKEY_H_
-#define FPHEPUBKEY_H_
+#ifndef POLY_FPHEPUBKEY_H_
+#define POLY_FPHEPUBKEY_H_
 
 #include <NTL/ZZX.h>
 #include <vector>
 
-#include "FPHEParams.h"
-#include "FPHESecKey.h"
+#include "poly/FPHEParams.h"
+#include "poly/FPHESecKey.h"
 
 using namespace std;
 using namespace NTL;
@@ -23,4 +23,4 @@ public:
 	virtual ~FPHEPubKey();
 };
 
-#endif /* FPHEPUBKEY_H_ */
+#endif /* POLY_FPHEPUBKEY_H_ */

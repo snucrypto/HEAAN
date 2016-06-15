@@ -1,10 +1,10 @@
-#ifndef FPHESCHEME_H_
-#define FPHESCHEME_H_
+#ifndef POLY_FPHESCHEME_H_
+#define POLY_FPHESCHEME_H_
 
-#include "FPHEParams.h"
-#include "FPHESecKey.h"
-#include "FPHEPubKey.h"
-#include "TimeUtils.h"
+#include "poly/FPHEParams.h"
+#include "poly/FPHEPubKey.h"
+#include "poly/FPHESecKey.h"
+#include "poly/TimeUtils.h"
 
 
 
@@ -52,4 +52,4 @@ public:
 
 };
 
-#endif /* FPHESCHEME_H_ */
+#endif /* POLY_FPHESCHEME_H_ */

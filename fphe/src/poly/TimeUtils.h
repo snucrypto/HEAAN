@@ -5,8 +5,8 @@
  *      Author: kimandrik
  */
 
-#ifndef TIMEUTILS_H_
-#define TIMEUTILS_H_
+#ifndef POLY_TIMEUTILS_H_
+#define POLY_TIMEUTILS_H_
 
 #include <string>
 #include <vector>
@@ -27,4 +27,4 @@ public:
     void stop(string msg);
 };
 
-#endif /* TIMEUTILS_H_ */
+#endif /* POLY_TIMEUTILS_H_ */

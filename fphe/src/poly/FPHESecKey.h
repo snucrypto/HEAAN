@@ -1,9 +1,9 @@
-#ifndef FPHESECKEY_H_
-#define FPHESECKEY_H_
+#ifndef POLY_FPHESECKEY_H_
+#define POLY_FPHESECKEY_H_
 
 #include <NTL/ZZX.h>
 
-#include "FPHEParams.h"
+#include "poly/FPHEParams.h"
 
 using namespace NTL;
 
@@ -16,4 +16,4 @@ public:
 	virtual ~FPHESecKey();
 };
 
-#endif /* FPHESECKEY_H_ */
+#endif /* POLY_FPHESECKEY_H_ */

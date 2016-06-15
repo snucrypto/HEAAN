@@ -5,9 +5,9 @@
  *      Author: kimandrik
  */
 
-#include "FPHESecKey.h"
+#include "poly/FPHESecKey.h"
 
-#include "ZRingUtils.h"
+#include "poly/ZRingUtils.h"
 
 FPHESecKey::FPHESecKey(FPHEParams& params) {
 	if(params.isGauss) {

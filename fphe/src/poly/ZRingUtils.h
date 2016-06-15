@@ -1,5 +1,5 @@
-#ifndef ZRINGUTILS_H_
-#define ZRINGUTILS_H_
+#ifndef POLY_ZRINGUTILS_H_
+#define POLY_ZRINGUTILS_H_
 
 #include "NTL/ZZ.h"
 #include "NTL/ZZX.h"
@@ -22,4 +22,4 @@ class ZRingUtils {
 		static ZZX Cyclotomic(long N);
 };
 
-#endif /* ZRINGUTILS_H_ */
+#endif /* POLY_ZRINGUTILS_H_ */

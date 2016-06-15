@@ -5,12 +5,12 @@
  *      Author: kimandrik
  */
 
-#include "FPHEParams.h"
+#include "poly/FPHEParams.h"
 
 #include <sstream>
 #include <string>
 
-#include "ZRingUtils.h"
+#include "poly/ZRingUtils.h"
 
 FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	levels = 5;

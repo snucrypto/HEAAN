@@ -1,5 +1,5 @@
-#ifndef FPHEPARAMS_H_
-#define FPHEPARAMS_H_
+#ifndef POLY_FPHEPARAMS_H_
+#define POLY_FPHEPARAMS_H_
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
@@ -35,4 +35,4 @@ public:
 	string toString();
 };
 
-#endif /* FPHEPARAMS_H_ */
+#endif /* POLY_FPHEPARAMS_H_ */

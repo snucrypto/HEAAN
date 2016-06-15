@@ -1,5 +1,5 @@
-#ifndef FPHECIPHER_H_
-#define FPHECIPHER_H_
+#ifndef POLY_FPHECIPHER_H_
+#define POLY_FPHECIPHER_H_
 
 #include <NTL/ZZX.h>
 
@@ -18,4 +18,4 @@ public:
 	string toString();
 };
 
-#endif /* FPHECIPHER_H_ */
+#endif /* POLY_FPHECIPHER_H_ */

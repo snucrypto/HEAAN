@@ -1,11 +1,11 @@
-#include "FPHEScheme.h"
+#include "poly/FPHEScheme.h"
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 #include <iostream>
 
-#include "FPHECipher.h"
-#include "ZRingUtils.h"
+#include "poly/FPHECipher.h"
+#include "poly/ZRingUtils.h"
 
 using namespace std;
 using namespace NTL;

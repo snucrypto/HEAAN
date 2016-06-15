@@ -3,13 +3,13 @@
 #include <iostream>
 #include <vector>
 
-#include "FPHECipher.h"
-#include "FPHEParams.h"
-#include "FPHEPubKey.h"
-#include "FPHEScheme.h"
-#include "FPHESecKey.h"
-#include "TimeUtils.h"
-#include "ZRingUtils.h"
+#include "poly/FPHECipher.h"
+#include "poly/FPHEParams.h"
+#include "poly/FPHEPubKey.h"
+#include "poly/FPHEScheme.h"
+#include "poly/FPHESecKey.h"
+#include "poly/TimeUtils.h"
+#include "poly/ZRingUtils.h"
 
 using namespace std;
 
