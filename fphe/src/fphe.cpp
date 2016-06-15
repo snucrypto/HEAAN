@@ -9,7 +9,7 @@
 #include "FPHEFFTScheme.h"
 #include "FPHEFFTSecKey.h"
 #include "TimeUtils.h"
-#include "ZRingUtils.h"
+#include "ZRingUtilsFFT.h"
 
 using namespace std;
 
@@ -415,7 +415,7 @@ void test3() {
 	ZZ x(40900);
 	FPHEFFTCipher c = scheme.encrypt(x);
 	timeutils.start("convert");
-	ZRingUtils::convertfft(y, c.c0fft, params.fft, params.qL, params.phim);
+	ZRingUtilsFFT::convertfft(y, c.c0fft, params.fft, params.qL, params.phim);
 	timeutils.stop("convert");
 }
 

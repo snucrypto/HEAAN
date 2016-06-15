@@ -1,4 +1,4 @@
-#include "ZRingUtils.h"
+#include "ZRingUtilsFFT.h"
 
 #include <cassert>
 #include <cmath>
@@ -15,7 +15,7 @@ void toString(vector<ZZ> v) {
 	cout << "]" << endl;
 }
 
-void ZRingUtils::addFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::addFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> add;
 	for (i = 0; i < phim; ++i) {
@@ -25,7 +25,7 @@ void ZRingUtils::addFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2,
 	res = add;
 }
 
-void ZRingUtils::addFFTConstantRing(vector<ZZ>& res, vector<ZZ>& fft1, const ZZ& cnst, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::addFFTConstantRing(vector<ZZ>& res, vector<ZZ>& fft1, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> add;
 	for (i = 0; i < phim; ++i) {
@@ -35,7 +35,7 @@ void ZRingUtils::addFFTConstantRing(vector<ZZ>& res, vector<ZZ>& fft1, const ZZ&
 	res = add;
 }
 
-void ZRingUtils::subFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::subFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> sub;
 	for (i = 0; i < phim; ++i) {
@@ -45,7 +45,7 @@ void ZRingUtils::subFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2,
 	res = sub;
 }
 
-void ZRingUtils::mulFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::mulFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -55,7 +55,7 @@ void ZRingUtils::mulFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2,
 	res = mul;
 }
 
-void ZRingUtils::mulFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::mulFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -65,7 +65,7 @@ void ZRingUtils::mulFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ
 	res = mul;
 }
 
-void ZRingUtils::divFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::divFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -75,7 +75,7 @@ void ZRingUtils::divFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ
 	res = mul;
 }
 
-void ZRingUtils::rightShiftFFTRing(vector<ZZ>& res, vector<ZZ>& fft, const long& bits, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::rightShiftFFTRing(vector<ZZ>& res, vector<ZZ>& fft, const long& bits, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -85,7 +85,7 @@ void ZRingUtils::rightShiftFFTRing(vector<ZZ>& res, vector<ZZ>& fft, const long&
 	res = mul;
 }
 
-void ZRingUtils::leftShiftFFTRing(vector<ZZ>& res, vector<ZZ>& poly, const long& bits, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::leftShiftFFTRing(vector<ZZ>& res, vector<ZZ>& poly, const long& bits, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -95,7 +95,7 @@ void ZRingUtils::leftShiftFFTRing(vector<ZZ>& res, vector<ZZ>& poly, const long&
 	res = mul;
 }
 
-void ZRingUtils::factorize(vector<long> &factors, const long &N) {
+void ZRingUtilsFFT::factorize(vector<long> &factors, const long &N) {
 	factors.resize(0);
 	if(N<2) return;
 	PrimeSeq s;
@@ -114,7 +114,7 @@ void ZRingUtils::factorize(vector<long> &factors, const long &N) {
 	}
 }
 
-long ZRingUtils::primitiveRoot(const long& p) {
+long ZRingUtilsFFT::primitiveRoot(const long& p) {
 	long i;
 
 	long phi = p-1;
@@ -140,7 +140,7 @@ long ZRingUtils::primitiveRoot(const long& p) {
 	return g;
 }
 
-long ZRingUtils::mobius(long n) {
+long ZRingUtilsFFT::mobius(long n) {
   long p,e,arity=0;
   PrimeSeq s;
   while (n!=1)
@@ -154,7 +154,7 @@ long ZRingUtils::mobius(long n) {
   return -1;
 }
 
-ZZX ZRingUtils::Cyclotomic(long N) {
+ZZX ZRingUtilsFFT::Cyclotomic(long N) {
   ZZX Num,Den,G,F;
   set(Num); set(Den);
   long m,d;
@@ -162,7 +162,7 @@ ZZX ZRingUtils::Cyclotomic(long N) {
     { if ((N%d)==0)
          { clear(G);
            SetCoeff(G,N/d,1); SetCoeff(G,0,-1);
-           m=ZRingUtils::mobius(d);
+           m=ZRingUtilsFFT::mobius(d);
            if (m==1)       { Num*=G; }
            else if (m==-1) { Den*=G; }
          }
@@ -171,7 +171,7 @@ ZZX ZRingUtils::Cyclotomic(long N) {
   return F;
 }
 
-void ZRingUtils::sampleGaussian(vector<ZZ> &res, long d, double stdev) {
+void ZRingUtilsFFT::sampleGaussian(vector<ZZ> &res, long d, double stdev) {
 	static double const Pi=4.0*atan(1.0); // Pi=3.1415..
 	static long const bignum = 0xfffffff;
 
@@ -195,7 +195,7 @@ void ZRingUtils::sampleGaussian(vector<ZZ> &res, long d, double stdev) {
 	}
 }
 
-void ZRingUtils::sampleUniform(vector<ZZ>& res, const ZZ& B, const long d) {
+void ZRingUtilsFFT::sampleUniform(vector<ZZ>& res, const ZZ& B, const long d) {
 	res.resize(0);
 	ZZ UB;
 	UB =  2*B + 1;
@@ -207,7 +207,7 @@ void ZRingUtils::sampleUniform(vector<ZZ>& res, const ZZ& B, const long d) {
 	}
 }
 
-void ZRingUtils::convertfft(vector<ZZ>& res, const vector<ZZ>& poly, const vector<  vector<ZZ>  >& fftMatrix, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::convertfft(vector<ZZ>& res, const vector<ZZ>& poly, const vector<  vector<ZZ>  >& fftMatrix, const ZZ& mod, const long& phim) {
 	res.resize(0);
 	long i, j;
 	for (i = 0; i < phim; ++i) {
@@ -221,7 +221,7 @@ void ZRingUtils::convertfft(vector<ZZ>& res, const vector<ZZ>& poly, const vecto
 	}
 }
 
-void ZRingUtils::convertfftInv(vector<ZZ>& res, const vector<ZZ>& fft, const vector<  vector<ZZ>  >& fftInvMatrix, const ZZ& mod, const long& phim) {
+void ZRingUtilsFFT::convertfftInv(vector<ZZ>& res, const vector<ZZ>& fft, const vector<  vector<ZZ>  >& fftInvMatrix, const ZZ& mod, const long& phim) {
 	res.resize(0);
 	long i, j;
 	for (i = 0; i < phim; ++i) {

@@ -1,14 +1,14 @@
 #include "FPHEFFTSecKey.h"
 
-#include "ZRingUtils.h"
+#include "ZRingUtilsFFT.h"
 
 FPHEFFTSecKey::FPHEFFTSecKey(FPHEFFTParams& params) {
 	if(params.isGauss) {
-		ZRingUtils::sampleGaussian(s, params.phim, params.stdev);
+		ZRingUtilsFFT::sampleGaussian(s, params.phim, params.stdev);
 	} else {
-		ZRingUtils::sampleUniform(s, params.B, params.phim);
+		ZRingUtilsFFT::sampleUniform(s, params.B, params.phim);
 	}
-	ZRingUtils::convertfft(sfft, s, params.fft, params.qL, params.phim);
+	ZRingUtilsFFT::convertfft(sfft, s, params.fft, params.qL, params.phim);
 }
 
 FPHEFFTSecKey::~FPHEFFTSecKey() {

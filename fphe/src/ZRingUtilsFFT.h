@@ -1,5 +1,5 @@
-#ifndef ZRINGUTILS_H_
-#define ZRINGUTILS_H_
+#ifndef ZRINGUTILSFFT_H_
+#define ZRINGUTILSFFT_H_
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
@@ -8,7 +8,7 @@
 using namespace std;
 using namespace NTL;
 
-class ZRingUtils {
+class ZRingUtilsFFT {
 	public:
 		static void addFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
 		static void subFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
@@ -37,4 +37,4 @@ class ZRingUtils {
 
 void toString(vector<ZZ> v);
 
-#endif /* ZRINGUTILS_H_ */
+#endif /* ZRINGUTILSFFT_H_ */
