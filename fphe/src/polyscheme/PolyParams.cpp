@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-#include "../polyscheme/ZRingUtils.h"
+#include "../utils/PolyRingUtils.h"
 
 PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	levels = 5;
@@ -18,7 +18,8 @@ PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 	m = 16384;
 	phim = 8192;
 	stdev = 3;
-	p = 346943;
+	p = 114689;
+
 	Pbits = NumBits(p) * levels;
 
 	RandomBits(B, 5);
@@ -33,7 +34,7 @@ PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 
 	qL = qi[levels-1];
 	Pq = Pqi[levels-1];
-	phi = ZRingUtils::Cyclotomic(m);
+	phi = PolyRingUtils::Cyclotomic(m);
 }
 
 ZZ& PolyParams::getModulo(long level) {

@@ -1,11 +1,9 @@
 #ifndef POLYSCHEME_POLYSCHEME_H_
 #define POLYSCHEME_POLYSCHEME_H_
 
-#include "../polyscheme/FPHEParams.h"
-#include "../polyscheme/FPHEPubKey.h"
-#include "../polyscheme/FPHESecKey.h"
-#include "../polyscheme/TimeUtils.h"
-
+#include "PolyParams.h"
+#include "PolyPubKey.h"
+#include "PolySecKey.h"
 
 
 class PolyCipher;
@@ -18,7 +16,6 @@ class PolyScheme {
 private:
 
 public:
-	TimeUtils timeutils;
 	PolyParams& params;
 	PolySecKey& secretKey;
 	PolyPubKey& publicKey;

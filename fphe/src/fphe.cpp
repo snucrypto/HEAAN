@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 
-#include "../polyscheme/TimeUtils.h"
-#include "../polyscheme/ZRingUtils.h"
+#include "utils/TimeUtils.h"
+#include "utils/PolyRingUtils.h"
 #include "polyscheme/PolyCipher.h"
 #include "polyscheme/PolyParams.h"
 #include "polyscheme/PolyPubKey.h"
@@ -12,6 +12,8 @@
 #include "polyscheme/PolySecKey.h"
 
 using namespace std;
+
+
 
 void test1() {
 	TimeUtils timeutils;
@@ -378,12 +380,12 @@ void test2() {
 }
 
 int main() {
-	test2();
+//	test2();
 	cout << "------------------" << endl;
 	cout << "------------------" << endl;
 	cout << "------------------" << endl;
 	cout << "------------------" << endl;
 	cout << "------------------" << endl;
-//	test1();
+	test1();
 	return 0;
 }

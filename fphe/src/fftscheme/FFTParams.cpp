@@ -12,9 +12,10 @@ FFTParams::FFTParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGaus
 	tau = 7;
 	stdev = 3;
 
-	m = 2048;
-	phim = 1024;
-	p = ZZ(40961);
+	m = 16384;
+	phim = 8192;
+	p = ZZ(114689);
+
 	conv(pLong, p);
 	pRoot = ZZ(2);
 	RandomBits(B, 3);

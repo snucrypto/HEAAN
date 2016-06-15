@@ -3,7 +3,7 @@
 
 #include <NTL/ZZX.h>
 
-#include "../polyscheme/FPHEParams.h"
+#include "PolyParams.h"
 
 using namespace NTL;
 

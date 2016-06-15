@@ -7,13 +7,13 @@
 
 #include "PolySecKey.h"
 
-#include "../polyscheme/ZRingUtils.h"
+#include "../utils/PolyRingUtils.h"
 
 PolySecKey::PolySecKey(PolyParams& params) {
 	if(params.isGauss) {
-		ZRingUtils::sampleGaussian(s, params.phim, params.stdev);
+		PolyRingUtils::sampleGaussian(s, params.phim, params.stdev);
 	} else {
-		ZRingUtils::sampleUniform(s, params.B, params.phim);
+		PolyRingUtils::sampleUniform(s, params.B, params.phim);
 	}
 }
 

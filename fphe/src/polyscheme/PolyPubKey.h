@@ -4,7 +4,7 @@
 #include <NTL/ZZX.h>
 #include <vector>
 
-#include "../polyscheme/FPHESecKey.h"
+#include "PolySecKey.h"
 #include "PolyParams.h"
 
 using namespace std;

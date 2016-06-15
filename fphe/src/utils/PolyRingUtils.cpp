@@ -1,4 +1,4 @@
-#include "../polyscheme/ZRingUtils.h"
+#include "PolyRingUtils.h"
 
 #include <cassert>
 #include <cmath>
@@ -6,7 +6,7 @@
 using namespace std;
 using namespace NTL;
 
-void ZRingUtils::addRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZX add;
 	ZZ c;
@@ -19,7 +19,7 @@ void ZRingUtils::addRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const 
 	res = add;
 }
 
-void ZRingUtils::subRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZX sub;
 	ZZ c;
@@ -32,7 +32,7 @@ void ZRingUtils::subRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const 
 	res = sub;
 }
 
-void ZRingUtils::mulRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZ c;
 	ZZX poly;
@@ -53,7 +53,7 @@ void ZRingUtils::mulRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const 
 	res.normalize();
 }
 
-void ZRingUtils::mulByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZX mul;
 	ZZ c;
@@ -66,7 +66,7 @@ void ZRingUtils::mulByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ
 	res = mul;
 }
 
-void ZRingUtils::rightShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZX mul;
 	ZZ c;
@@ -79,7 +79,7 @@ void ZRingUtils::rightShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ&
 	res = mul;
 }
 
-void ZRingUtils::leftShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
 	long i;
 	ZZX mul;
 	ZZ c;
@@ -93,33 +93,7 @@ void ZRingUtils::leftShiftRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& 
 }
 
 
-void ZRingUtils::bitPoly(ZZX& res, ZZX& poly, long i) {
-	ZZX bitPoly;
-	ZZ c;
-	bitPoly.SetLength(deg(poly) + 1);
-	long j;
-	for (j = 0; j < deg(poly) + 1; ++j) {
-		c = bit(coeff(poly, j), i);
-		SetCoeff(bitPoly, j, c);
-	}
-	bitPoly.normalize();
-	res = bitPoly;
-}
-
-void ZRingUtils::wordPoly(ZZX& res, ZZX& poly, long i) {
-	ZZX wordPoly;
-	long c;
-	wordPoly.SetLength(deg(poly) + 1);
-	long j;
-	for (j = 0; j < deg(poly) + 1; ++j) {
-		c = bit(coeff(poly, j), i);
-		SetCoeff(wordPoly, j, c);
-	}
-	wordPoly.normalize();
-	res = wordPoly;
-}
-
-long ZRingUtils::mobius(long n) {
+long PolyRingUtils::mobius(long n) {
   long p,e,arity=0;
   PrimeSeq s;
   while (n!=1)
@@ -133,7 +107,7 @@ long ZRingUtils::mobius(long n) {
   return -1;
 }
 
-ZZX ZRingUtils::Cyclotomic(long N) {
+ZZX PolyRingUtils::Cyclotomic(long N) {
   ZZX Num,Den,G,F;
   set(Num); set(Den);
   long m,d;
@@ -141,7 +115,7 @@ ZZX ZRingUtils::Cyclotomic(long N) {
     { if ((N%d)==0)
          { clear(G);
            SetCoeff(G,N/d,1); SetCoeff(G,0,-1);
-           m=ZRingUtils::mobius(d);
+           m=PolyRingUtils::mobius(d);
            if (m==1)       { Num*=G; }
            else if (m==-1) { Den*=G; }
          }
@@ -150,7 +124,7 @@ ZZX ZRingUtils::Cyclotomic(long N) {
   return F;
 }
 
-void ZRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
+void PolyRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
   static double const Pi=4.0*atan(1.0); // Pi=3.1415..
   static long const bignum = 0xfffffff;
   // THREADS: C++11 guarantees these are initialized only once
@@ -179,7 +153,7 @@ void ZRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
   res.normalize(); // need to call this after we work on the coeffs
 }
 
-void ZRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
+void PolyRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
 
 	if (d<=0) d=deg(res)+1; if (d<=0) return;
 	if (B <= 0) {

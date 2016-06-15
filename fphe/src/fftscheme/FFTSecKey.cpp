@@ -1,14 +1,14 @@
 #include "FFTSecKey.h"
 
-#include "ZRingUtilsFFT.h"
+#include "../utils/FFTRingUtils.h"
 
 FFTSecKey::FFTSecKey(FFTParams& params) {
 	if(params.isGauss) {
-		ZRingUtilsFFT::sampleGaussian(s, params.phim, params.stdev);
+		FFTRingUtils::sampleGaussian(s, params.phim, params.stdev);
 	} else {
-		ZRingUtilsFFT::sampleUniform(s, params.B, params.phim);
+		FFTRingUtils::sampleUniform(s, params.B, params.phim);
 	}
-	ZRingUtilsFFT::convertfft(sfft, s, params.fft, params.qL, params.phim);
+	FFTRingUtils::convertfft(sfft, s, params.fft, params.qL, params.phim);
 }
 
 FFTSecKey::~FFTSecKey() {

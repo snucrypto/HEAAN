@@ -5,7 +5,7 @@
  *      Author: kimandrik
  */
 
-#include "../polyscheme/TimeUtils.h"
+#include "TimeUtils.h"
 
 #include <sys/time.h>
 #include <iostream>

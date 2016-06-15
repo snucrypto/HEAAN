@@ -4,8 +4,6 @@
 #include "FFTParams.h"
 #include "FFTPubKey.h"
 #include "FFTSecKey.h"
-#include "TimeUtils.h"
-
 
 
 class FFTCipher;
@@ -18,7 +16,6 @@ class FFTScheme {
 private:
 
 public:
-	TimeUtils timeutils;
 	FFTParams& params;
 	FFTSecKey& secretKey;
 	FFTPubKey& publicKey;
