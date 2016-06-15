@@ -10,16 +10,16 @@ using namespace NTL;
 
 class ZRingUtils {
 	public:
-		static void addRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
-		static void subRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
-		static void mulRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
+		static void addFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
+		static void subFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
+		static void mulFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim);
 
-		static void addConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim);
-		static void mulByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim);
-		static void divByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim);
+		static void addFFTConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim);
+		static void mulFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim);
+		static void divFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim);
 
-		static void leftShiftRing(vector<ZZ>& res, vector<ZZ>& fft, const long& cnst, const ZZ& mod, const long& phim);
-		static void rightShiftRing(vector<ZZ>& res, vector<ZZ>& fft, const long& cnst, const ZZ& mod, const long& phim);
+		static void leftShiftFFTRing(vector<ZZ>& res, vector<ZZ>& fft, const long& cnst, const ZZ& mod, const long& phim);
+		static void rightShiftFFTRing(vector<ZZ>& res, vector<ZZ>& fft, const long& cnst, const ZZ& mod, const long& phim);
 
 		static void sampleGaussian(vector<ZZ>& res, const long deg, double stdev);
 		static void sampleUniform(vector<ZZ>& res, const ZZ& B, const long deg);

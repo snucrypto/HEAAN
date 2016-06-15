@@ -5,13 +5,13 @@
  *      Author: kimandrik
  */
 
-#include "FPHEPubKey.h"
+#include "FPHEFFTPubKey.h"
 
 #include <NTL/ZZ.h>
 
 #include "ZRingUtils.h"
 
-FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
+FPHEFFTPubKey::FPHEFFTPubKey(FPHEFFTParams& params, FPHEFFTSecKey& secretKey) {
 	long i;
 	vector<ZZ> e;
 	vector<ZZ> efft;
@@ -30,8 +30,8 @@ FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
 		ZRingUtils::convertfft(lwe1fft, lwe1, params.fft, params.qL, params.phim);
 		ZRingUtils::convertfft(efft, e, params.fft, params.qL, params.phim);
 
-		ZRingUtils::mulRing(lwe0fft, secretKey.sfft, lwe1fft, params.qL, params.phim);
-		ZRingUtils::subRing(lwe0fft, efft, lwe0fft, params.qL, params.phim);
+		ZRingUtils::mulFFTRing(lwe0fft, secretKey.sfft, lwe1fft, params.qL, params.phim);
+		ZRingUtils::subFFTRing(lwe0fft, efft, lwe0fft, params.qL, params.phim);
 
 		A0fft.push_back(lwe0fft);
 		A1fft.push_back(lwe1fft);
@@ -40,9 +40,9 @@ FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
 	vector<ZZ> s2fft;
 	vector<ZZ> Ps2fft;
 
-	ZRingUtils::mulRing(s2fft, secretKey.sfft, secretKey.sfft, params.PqL, params.phim);
+	ZRingUtils::mulFFTRing(s2fft, secretKey.sfft, secretKey.sfft, params.PqL, params.phim);
 
-	ZRingUtils::mulByConstantRing(Ps2fft, s2fft, params.P, params.PqL, params.phim);
+	ZRingUtils::mulFFTByConstantRing(Ps2fft, s2fft, params.P, params.PqL, params.phim);
 
 	vector<ZZ> c1Star;
 	ZRingUtils::sampleUniform(c1Star, params.PqL, params.phim);
@@ -55,12 +55,12 @@ FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
 	ZRingUtils::convertfft(efft, e, params.fft, params.PqL, params.phim);
 	ZRingUtils::convertfft(c1Starfft, c1Star, params.fft, params.PqL, params.phim);
 
-	ZRingUtils::addRing(efft, efft, Ps2fft, params.PqL, params.phim);
-	ZRingUtils::mulRing(c0Starfft, secretKey.sfft, c1Starfft, params.PqL, params.phim);
-	ZRingUtils::subRing(c0Starfft, efft, c0Starfft, params.PqL, params.phim);
+	ZRingUtils::addFFTRing(efft, efft, Ps2fft, params.PqL, params.phim);
+	ZRingUtils::mulFFTRing(c0Starfft, secretKey.sfft, c1Starfft, params.PqL, params.phim);
+	ZRingUtils::subFFTRing(c0Starfft, efft, c0Starfft, params.PqL, params.phim);
 }
 
-FPHEPubKey::~FPHEPubKey() {
+FPHEFFTPubKey::~FPHEFFTPubKey() {
 	// TODO Auto-generated destructor stub
 }
 

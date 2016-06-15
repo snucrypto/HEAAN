@@ -15,7 +15,7 @@ void toString(vector<ZZ> v) {
 	cout << "]" << endl;
 }
 
-void ZRingUtils::addRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+void ZRingUtils::addFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> add;
 	for (i = 0; i < phim; ++i) {
@@ -25,7 +25,7 @@ void ZRingUtils::addRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, co
 	res = add;
 }
 
-void ZRingUtils::addConstantRing(vector<ZZ>& res, vector<ZZ>& fft1, const ZZ& cnst, const ZZ& mod, const long& phim) {
+void ZRingUtils::addFFTConstantRing(vector<ZZ>& res, vector<ZZ>& fft1, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> add;
 	for (i = 0; i < phim; ++i) {
@@ -35,7 +35,7 @@ void ZRingUtils::addConstantRing(vector<ZZ>& res, vector<ZZ>& fft1, const ZZ& cn
 	res = add;
 }
 
-void ZRingUtils::subRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+void ZRingUtils::subFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> sub;
 	for (i = 0; i < phim; ++i) {
@@ -45,7 +45,7 @@ void ZRingUtils::subRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, co
 	res = sub;
 }
 
-void ZRingUtils::mulRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
+void ZRingUtils::mulFFTRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -55,7 +55,7 @@ void ZRingUtils::mulRing(vector<ZZ>& res, vector<ZZ>& fft1, vector<ZZ>& fft2, co
 	res = mul;
 }
 
-void ZRingUtils::mulByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
+void ZRingUtils::mulFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -65,7 +65,7 @@ void ZRingUtils::mulByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& c
 	res = mul;
 }
 
-void ZRingUtils::divByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
+void ZRingUtils::divFFTByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -75,7 +75,7 @@ void ZRingUtils::divByConstantRing(vector<ZZ>& res, vector<ZZ>& fft, const ZZ& c
 	res = mul;
 }
 
-void ZRingUtils::rightShiftRing(vector<ZZ>& res, vector<ZZ>& fft, const long& bits, const ZZ& mod, const long& phim) {
+void ZRingUtils::rightShiftFFTRing(vector<ZZ>& res, vector<ZZ>& fft, const long& bits, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {
@@ -85,7 +85,7 @@ void ZRingUtils::rightShiftRing(vector<ZZ>& res, vector<ZZ>& fft, const long& bi
 	res = mul;
 }
 
-void ZRingUtils::leftShiftRing(vector<ZZ>& res, vector<ZZ>& poly, const long& bits, const ZZ& mod, const long& phim) {
+void ZRingUtils::leftShiftFFTRing(vector<ZZ>& res, vector<ZZ>& poly, const long& bits, const ZZ& mod, const long& phim) {
 	long i;
 	vector<ZZ> mul;
 	for (i = 0; i < phim; ++i) {

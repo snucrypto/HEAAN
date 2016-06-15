@@ -1,7 +1,8 @@
-#include "FPHESecKey.h"
+#include "FPHEFFTSecKey.h"
+
 #include "ZRingUtils.h"
 
-FPHESecKey::FPHESecKey(FPHEParams& params) {
+FPHEFFTSecKey::FPHEFFTSecKey(FPHEFFTParams& params) {
 	if(params.isGauss) {
 		ZRingUtils::sampleGaussian(s, params.phim, params.stdev);
 	} else {
@@ -10,7 +11,7 @@ FPHESecKey::FPHESecKey(FPHEParams& params) {
 	ZRingUtils::convertfft(sfft, s, params.fft, params.qL, params.phim);
 }
 
-FPHESecKey::~FPHESecKey() {
+FPHEFFTSecKey::~FPHEFFTSecKey() {
 	// TODO Auto-generated destructor stub
 }
 

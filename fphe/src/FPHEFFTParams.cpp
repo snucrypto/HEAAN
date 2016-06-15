@@ -1,11 +1,11 @@
-#include "FPHEParams.h"
+#include "FPHEFFTParams.h"
 
 #include <NTL/ZZ.h>
 #include <sstream>
 #include <string>
 
 
-FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
+FPHEFFTParams::FPHEFFTParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	long i, j, pLong;
 
 	levels = 6;
@@ -79,15 +79,15 @@ FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 	}
 }
 
-ZZ& FPHEParams::getModulo(long level) {
+ZZ& FPHEFFTParams::getModulo(long level) {
 	return qi[levels - level];
 }
 
-FPHEParams::~FPHEParams() {
+FPHEFFTParams::~FPHEFFTParams() {
 	// TODO Auto-generated destructor stub
 }
 
-string FPHEParams::toString() {
+string FPHEFFTParams::toString() {
 	stringstream ss;
 
 	ss << "Params: ";
