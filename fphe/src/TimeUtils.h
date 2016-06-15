@@ -5,8 +5,8 @@
  *      Author: kimandrik
  */
 
-#ifndef POLY_TIMEUTILS_H_
-#define POLY_TIMEUTILS_H_
+#ifndef POLYSCHEME_TIMEUTILS_H_
+#define POLYSCHEME_TIMEUTILS_H_
 
 #include <string>
 #include <vector>
@@ -27,4 +27,4 @@ public:
     void stop(string msg);
 };
 
-#endif /* POLY_TIMEUTILS_H_ */
+#endif /* POLYSCHEME_TIMEUTILS_H_ */

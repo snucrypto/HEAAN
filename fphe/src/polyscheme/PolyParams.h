@@ -1,5 +1,5 @@
-#ifndef FPHEFFTPARAMS_H_
-#define FPHEFFTPARAMS_H_
+#ifndef POLYSCHEME_POLYPARAMS_H_
+#define POLYSCHEME_POLYPARAMS_H_
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
@@ -8,7 +8,7 @@
 using namespace std;
 using namespace NTL;
 
-class FPHEFFTParams {
+class PolyParams {
 public:
 	long lambda;
 	long levels;
@@ -19,26 +19,20 @@ public:
 	bool isGauss;
 	double stdev;
 	ZZ B;
+
 	ZZ p;
+	long Pbits;
 	ZZ qL;
-	ZZ PqL;
-	ZZ P;
-
-	ZZ pRoot;
-	ZZ qRoot;
-
-	vector<  vector<ZZ>  > fft;
-	vector<  vector<ZZ>  > fftInv;
+	ZZ Pq;
 
 	vector<ZZ> qi;
 	vector<ZZ> Pqi;
-//	ZZX phi;
-
-	FPHEFFTParams(long lambda, bool isGauss = false);
-	virtual ~FPHEFFTParams();
+	ZZX phi;
+	PolyParams(long lambda, bool isGauss = false);
+	virtual ~PolyParams();
 
 	ZZ& getModulo(long level);
 	string toString();
 };
 
-#endif /* FPHEFFTPARAMS_H_ */
+#endif /* POLYSCHEME_POLYPARAMS_H_ */

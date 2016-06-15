@@ -1,5 +1,5 @@
-#ifndef POLY_FPHEPARAMS_H_
-#define POLY_FPHEPARAMS_H_
+#ifndef FPHEFFTPARAMS_H_
+#define FPHEFFTPARAMS_H_
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
@@ -8,7 +8,7 @@
 using namespace std;
 using namespace NTL;
 
-class FPHEParams {
+class FFTParams {
 public:
 	long lambda;
 	long levels;
@@ -19,20 +19,26 @@ public:
 	bool isGauss;
 	double stdev;
 	ZZ B;
-
 	ZZ p;
-	long Pbits;
 	ZZ qL;
-	ZZ Pq;
+	ZZ PqL;
+	ZZ P;
+
+	ZZ pRoot;
+	ZZ qRoot;
+
+	vector<  vector<ZZ>  > fft;
+	vector<  vector<ZZ>  > fftInv;
 
 	vector<ZZ> qi;
 	vector<ZZ> Pqi;
-	ZZX phi;
-	FPHEParams(long lambda, bool isGauss = false);
-	virtual ~FPHEParams();
+//	ZZX phi;
+
+	FFTParams(long lambda, bool isGauss = false);
+	virtual ~FFTParams();
 
 	ZZ& getModulo(long level);
 	string toString();
 };
 
-#endif /* POLY_FPHEPARAMS_H_ */
+#endif /* FPHEFFTPARAMS_H_ */

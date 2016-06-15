@@ -1,11 +1,11 @@
-#include "FPHEFFTParams.h"
+#include "FFTParams.h"
 
 #include <NTL/ZZ.h>
 #include <sstream>
 #include <string>
 
 
-FPHEFFTParams::FPHEFFTParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
+FFTParams::FFTParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	long i, j, pLong;
 
 	levels = 6;
@@ -79,15 +79,15 @@ FPHEFFTParams::FPHEFFTParams(long lambda, bool isGauss) : lambda(lambda), isGaus
 	}
 }
 
-ZZ& FPHEFFTParams::getModulo(long level) {
+ZZ& FFTParams::getModulo(long level) {
 	return qi[levels - level];
 }
 
-FPHEFFTParams::~FPHEFFTParams() {
+FFTParams::~FFTParams() {
 	// TODO Auto-generated destructor stub
 }
 
-string FPHEFFTParams::toString() {
+string FFTParams::toString() {
 	stringstream ss;
 
 	ss << "Params: ";

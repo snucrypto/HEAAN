@@ -1,11 +1,11 @@
-#include "poly/FPHECipher.h"
+#include "PolyCipher.h"
 
 #include <iostream>
 #include <sstream>
 #include <string>
 
 
-string FPHECipher::toString() {
+string PolyCipher::toString() {
 	stringstream ss;
 
 	ss << "Cipher: c0 = ";

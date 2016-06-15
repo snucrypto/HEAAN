@@ -1,11 +1,11 @@
-#include "FPHEFFTCipher.h"
+#include "FFTCipher.h"
 
 #include <iostream>
 #include <sstream>
 #include <string>
 
 
-string FPHEFFTCipher::toString() {
+string FFTCipher::toString() {
 	stringstream ss;
 
 	ss << "Cipher: c0 = ";

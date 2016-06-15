@@ -1,16 +1,16 @@
-#include "poly/FPHEScheme.h"
+#include "PolyScheme.h"
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 #include <iostream>
 
-#include "poly/FPHECipher.h"
-#include "poly/ZRingUtils.h"
+#include "../polyscheme/ZRingUtils.h"
+#include "PolyCipher.h"
 
 using namespace std;
 using namespace NTL;
 
-FPHECipher FPHEScheme::encrypt(ZZ& m) {
+PolyCipher PolyScheme::encrypt(ZZ& m) {
 	ZZ bits;
 	RandomBits(bits, params.tau);
 	ZZX c0;
@@ -28,11 +28,11 @@ FPHECipher FPHEScheme::encrypt(ZZ& m) {
 	}
 	SetCoeff(c0, 0, (coeff(c0, 0) + m) % params.qL);
 	c0.normalize();
-	FPHECipher cipher(c0, c1, 1);
+	PolyCipher cipher(c0, c1, 1);
 	return cipher;
 }
 
-ZZ FPHEScheme::decrypt(FPHECipher& cipher) {
+ZZ PolyScheme::decrypt(PolyCipher& cipher) {
 
 	ZZ& qi = getModulo(cipher.level);
 
@@ -45,39 +45,39 @@ ZZ FPHEScheme::decrypt(FPHECipher& cipher) {
 	return c;
 }
 
-FPHECipher FPHEScheme::add(FPHECipher& cipher1, FPHECipher& cipher2) {
+PolyCipher PolyScheme::add(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ& qi = getModulo(cipher1.level);
 	ZZX c0;
 	ZZX c1;
 	ZRingUtils::addRing(c0, cipher1.c0, cipher2.c0, qi, params.phi);
 	ZRingUtils::addRing(c1, cipher1.c1, cipher2.c1, qi, params.phi);
-	FPHECipher res(c0, c1, cipher1.level);
+	PolyCipher res(c0, c1, cipher1.level);
 	return res;
 }
 
-void FPHEScheme::addAndEqual(FPHECipher& cipher1, FPHECipher& cipher2) {
+void PolyScheme::addAndEqual(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ qi = getModulo(cipher1.level);
 	ZRingUtils::addRing(cipher1.c0, cipher1.c0, cipher2.c0, qi, params.phi);
 	ZRingUtils::addRing(cipher1.c1, cipher1.c1, cipher2.c1, qi, params.phi);
 }
 
-FPHECipher FPHEScheme::sub(FPHECipher& cipher1, FPHECipher& cipher2) {
+PolyCipher PolyScheme::sub(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ& qi = getModulo(cipher1.level);
 	ZZX c0;
 	ZZX c1;
 	ZRingUtils::subRing(c0, cipher1.c0, cipher2.c0, qi, params.phi);
 	ZRingUtils::subRing(c1, cipher1.c1, cipher2.c1, qi, params.phi);
-	FPHECipher res(c0, c1, cipher1.level);
+	PolyCipher res(c0, c1, cipher1.level);
 	return res;
 }
 
-void FPHEScheme::subAndEqual(FPHECipher& cipher1, FPHECipher& cipher2) {
+void PolyScheme::subAndEqual(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ qi = getModulo(cipher1.level);
 	ZRingUtils::subRing(cipher1.c0, cipher1.c0, cipher2.c0, qi, params.phi);
 	ZRingUtils::subRing(cipher1.c1, cipher1.c1, cipher2.c1, qi, params.phi);
 }
 
-FPHECipher FPHEScheme::mul(FPHECipher& cipher1, FPHECipher& cipher2) {
+PolyCipher PolyScheme::mul(PolyCipher& cipher1, PolyCipher& cipher2) {
 	long i, j, idx;
 	ZZ qi = getModulo(cipher1.level);
 	ZZ Pqi = getPqModulo(cipher1.level);
@@ -104,11 +104,11 @@ FPHECipher FPHEScheme::mul(FPHECipher& cipher1, FPHECipher& cipher2) {
 	ZRingUtils::addRing(mulC1, mulC1, cc01, qi, params.phi);
 	ZRingUtils::addRing(mulC0, mulC0, cc00, qi, params.phi);
 
-	FPHECipher cipher(mulC0, mulC1, cipher1.level);
+	PolyCipher cipher(mulC0, mulC1, cipher1.level);
 	return cipher;
 }
 
-void FPHEScheme::mulAndEqual(FPHECipher& cipher1, FPHECipher& cipher2) {
+void PolyScheme::mulAndEqual(PolyCipher& cipher1, PolyCipher& cipher2) {
 	long i, j, idx;
 	ZZ qi = getModulo(cipher1.level);
 	ZZ Pqi = getPqModulo(cipher1.level);
@@ -140,18 +140,18 @@ void FPHEScheme::mulAndEqual(FPHECipher& cipher1, FPHECipher& cipher2) {
 	cipher1.c1 = mulC1;
 }
 
-FPHECipher FPHEScheme::addConstant(FPHECipher& cipher, ZZ& cnst) {
+PolyCipher PolyScheme::addConstant(PolyCipher& cipher, ZZ& cnst) {
 	ZZ& qi = getModulo(cipher.level);
 
 	ZZX c0 = cipher.c0;
 	ZZX c1 = cipher.c1;
 	SetCoeff(c1, 0, (coeff(cipher.c1,0) + cnst) % qi);
 	c0.normalize();
-	FPHECipher newCipher(c0, c1, cipher.level);
+	PolyCipher newCipher(c0, c1, cipher.level);
 	return newCipher;
 }
 
-FPHECipher FPHEScheme::mulByConstant(FPHECipher& cipher, ZZ& cnst) {
+PolyCipher PolyScheme::mulByConstant(PolyCipher& cipher, ZZ& cnst) {
 	ZZ& qi = getModulo(cipher.level);
 
 	ZZX c0;
@@ -163,18 +163,18 @@ FPHECipher FPHEScheme::mulByConstant(FPHECipher& cipher, ZZ& cnst) {
 	}
 	c0.normalize();
 	c1.normalize();
-	FPHECipher newCipher(c0, c1, cipher.level);
+	PolyCipher newCipher(c0, c1, cipher.level);
 	return newCipher;
 }
 
-void FPHEScheme::addConstantAndEqual(FPHECipher& cipher, ZZ& cnst) {
+void PolyScheme::addConstantAndEqual(PolyCipher& cipher, ZZ& cnst) {
 	ZZ& qi = getModulo(cipher.level);
 	long i;
 	SetCoeff(cipher.c0, 0, (coeff(cipher.c0, 0) * cnst) % qi);
 	cipher.c0.normalize();
 }
 
-void FPHEScheme::mulByConstantAndEqual(FPHECipher& cipher, ZZ& cnst) {
+void PolyScheme::mulByConstantAndEqual(PolyCipher& cipher, ZZ& cnst) {
 	ZZ& qi = getModulo(cipher.level);
 
 	long i;
@@ -186,7 +186,7 @@ void FPHEScheme::mulByConstantAndEqual(FPHECipher& cipher, ZZ& cnst) {
 	cipher.c1.normalize();
 }
 
-FPHECipher FPHEScheme::modSwitch(FPHECipher& cipher, long newLevel) {
+PolyCipher PolyScheme::modSwitch(PolyCipher& cipher, long newLevel) {
 	ZZ& divFactor = params.qi[newLevel-cipher.level-1];
 
 	ZZX c0;
@@ -198,11 +198,11 @@ FPHECipher FPHEScheme::modSwitch(FPHECipher& cipher, long newLevel) {
 	}
 	c0.normalize();
 	c1.normalize();
-	FPHECipher newCipher(c0, c1, newLevel);
+	PolyCipher newCipher(c0, c1, newLevel);
 	return newCipher;
 }
 
-void FPHEScheme::modSwitchAndEqual(FPHECipher& cipher, long newLevel) {
+void PolyScheme::modSwitchAndEqual(PolyCipher& cipher, long newLevel) {
 	ZZ& divFactor = params.qi[newLevel-cipher.level-1];
 
 	long i;
@@ -215,7 +215,7 @@ void FPHEScheme::modSwitchAndEqual(FPHECipher& cipher, long newLevel) {
 	cipher.level = newLevel;
 }
 
-FPHECipher FPHEScheme::modEmbed(FPHECipher& cipher, long newLevel) {
+PolyCipher PolyScheme::modEmbed(PolyCipher& cipher, long newLevel) {
 	ZZ& newQi = getModulo(newLevel);
 
 	ZZX c0;
@@ -227,11 +227,11 @@ FPHECipher FPHEScheme::modEmbed(FPHECipher& cipher, long newLevel) {
 	}
 	c0.normalize();
 	c1.normalize();
-	FPHECipher newCipher(c0, c1, newLevel);
+	PolyCipher newCipher(c0, c1, newLevel);
 	return newCipher;
 }
 
-void FPHEScheme::modEmbedAndEqual(FPHECipher& cipher, long newLevel) {
+void PolyScheme::modEmbedAndEqual(PolyCipher& cipher, long newLevel) {
 	ZZ& newQi = getModulo(newLevel);
 	long i;
 	for (i = 0; i < params.phim; ++i) {
@@ -243,10 +243,10 @@ void FPHEScheme::modEmbedAndEqual(FPHECipher& cipher, long newLevel) {
 	cipher.level = newLevel;
 }
 
-ZZ& FPHEScheme::getModulo(long level) {
+ZZ& PolyScheme::getModulo(long level) {
 	return params.qi[params.levels - level];
 }
 
-ZZ& FPHEScheme::getPqModulo(long level) {
+ZZ& PolyScheme::getPqModulo(long level) {
 	return params.Pqi[params.levels - level];
 }

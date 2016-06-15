@@ -3,19 +3,19 @@
 
 #include <NTL/ZZX.h>
 
-#include "FPHEFFTParams.h"
+#include "FFTParams.h"
 
 using namespace std;
 using namespace NTL;
 
-class FPHEFFTSecKey {
+class FFTSecKey {
 public:
 
 	vector<ZZ> s;
 	vector<ZZ> sfft;
 
-	FPHEFFTSecKey(FPHEFFTParams& params);
-	virtual ~FPHEFFTSecKey();
+	FFTSecKey(FFTParams& params);
+	virtual ~FFTSecKey();
 };
 
 #endif /* FPHEFFTSECKEY_H_ */

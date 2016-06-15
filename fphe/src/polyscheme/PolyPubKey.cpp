@@ -5,13 +5,13 @@
  *      Author: kimandrik
  */
 
-#include "poly/FPHEPubKey.h"
+#include "PolyPubKey.h"
 
 #include <NTL/ZZ.h>
 
-#include "poly/ZRingUtils.h"
+#include "../polyscheme/ZRingUtils.h"
 
-FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
+PolyPubKey::PolyPubKey(PolyParams& params, PolySecKey& secretKey) {
 	long i, j;
 	ZZX e;
 
@@ -48,7 +48,7 @@ FPHEPubKey::FPHEPubKey(FPHEParams& params, FPHESecKey& secretKey) {
 	ZRingUtils::subRing(bStar, e, bStar, params.Pq, params.phi);
 }
 
-FPHEPubKey::~FPHEPubKey() {
+PolyPubKey::~PolyPubKey() {
 	// TODO Auto-generated destructor stub
 }
 

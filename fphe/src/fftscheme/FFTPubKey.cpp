@@ -5,13 +5,13 @@
  *      Author: kimandrik
  */
 
-#include "FPHEFFTPubKey.h"
+#include "FFTPubKey.h"
 
 #include <NTL/ZZ.h>
 
 #include "ZRingUtilsFFT.h"
 
-FPHEFFTPubKey::FPHEFFTPubKey(FPHEFFTParams& params, FPHEFFTSecKey& secretKey) {
+FFTPubKey::FFTPubKey(FFTParams& params, FFTSecKey& secretKey) {
 	long i;
 	vector<ZZ> e;
 	vector<ZZ> efft;
@@ -60,7 +60,7 @@ FPHEFFTPubKey::FPHEFFTPubKey(FPHEFFTParams& params, FPHEFFTSecKey& secretKey) {
 	ZRingUtilsFFT::subFFTRing(c0Starfft, efft, c0Starfft, params.PqL, params.phim);
 }
 
-FPHEFFTPubKey::~FPHEFFTPubKey() {
+FFTPubKey::~FFTPubKey() {
 	// TODO Auto-generated destructor stub
 }
 

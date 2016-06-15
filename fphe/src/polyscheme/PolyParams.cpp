@@ -5,14 +5,14 @@
  *      Author: kimandrik
  */
 
-#include "poly/FPHEParams.h"
+#include "PolyParams.h"
 
 #include <sstream>
 #include <string>
 
-#include "poly/ZRingUtils.h"
+#include "../polyscheme/ZRingUtils.h"
 
-FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
+PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	levels = 5;
 	tau = 10;
 	m = 16384;
@@ -36,15 +36,15 @@ FPHEParams::FPHEParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 	phi = ZRingUtils::Cyclotomic(m);
 }
 
-ZZ& FPHEParams::getModulo(long level) {
+ZZ& PolyParams::getModulo(long level) {
 	return qi[levels - level];
 }
 
-FPHEParams::~FPHEParams() {
+PolyParams::~PolyParams() {
 	// TODO Auto-generated destructor stub
 }
 
-string FPHEParams::toString() {
+string PolyParams::toString() {
 	stringstream ss;
 
 	ss << "Params: ";

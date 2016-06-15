@@ -3,13 +3,13 @@
 #include <iostream>
 #include <vector>
 
-#include "poly/FPHECipher.h"
-#include "poly/FPHEParams.h"
-#include "poly/FPHEPubKey.h"
-#include "poly/FPHEScheme.h"
-#include "poly/FPHESecKey.h"
-#include "poly/TimeUtils.h"
-#include "poly/ZRingUtils.h"
+#include "../polyscheme/TimeUtils.h"
+#include "../polyscheme/ZRingUtils.h"
+#include "polyscheme/PolyCipher.h"
+#include "polyscheme/PolyParams.h"
+#include "polyscheme/PolyPubKey.h"
+#include "polyscheme/PolyScheme.h"
+#include "polyscheme/PolySecKey.h"
 
 using namespace std;
 
@@ -23,25 +23,25 @@ void test1() {
 	cout << "------------------" << endl;
 
 	timeutils.start("GenParams");
-	FPHEParams params(lambda, false);
+	PolyParams params(lambda, false);
 	timeutils.stop("GenParams");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenSecKey");
-	FPHESecKey secretKey(params);
+	PolySecKey secretKey(params);
 	timeutils.stop("GenSecKey");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenPubKey");
-	FPHEPubKey publicKey(params, secretKey);
+	PolyPubKey publicKey(params, secretKey);
 	timeutils.stop("GenPubKey");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenScheme");
-	FPHEScheme scheme(params, secretKey, publicKey);
+	PolyScheme scheme(params, secretKey, publicKey);
 	timeutils.stop("GenScheme");
 
 	cout << "------------------" << endl;
@@ -76,37 +76,37 @@ void test1() {
 	cout << "------------------" << endl;
 
 	timeutils.start("Encrypt c");
-	FPHECipher c = scheme.encrypt(m);
+	PolyCipher c = scheme.encrypt(m);
 	timeutils.stop("Encrypt c");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("Add cc");
-	FPHECipher cc = scheme.add(c, c);
+	PolyCipher cc = scheme.add(c, c);
 	timeutils.stop("Add cc");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("Mul c2");
-	FPHECipher c2 = scheme.mul(c, c);
+	PolyCipher c2 = scheme.mul(c, c);
 	timeutils.stop("Mul c2");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("MS cs");
-	FPHECipher cs = scheme.modSwitch(c2, 2);
+	PolyCipher cs = scheme.modSwitch(c2, 2);
 	timeutils.stop("MS cs");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("ME ce");
-	FPHECipher ce = scheme.modEmbed(c2, 2);
+	PolyCipher ce = scheme.modEmbed(c2, 2);
 	timeutils.stop("ME ce");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("Mul cs2");
-	FPHECipher cs2 = scheme.mul(cs, cs);
+	PolyCipher cs2 = scheme.mul(cs, cs);
 	timeutils.stop("Mul cs2");
 
 	cout << "------------------" << endl;
@@ -116,13 +116,13 @@ void test1() {
 	cout << "------------------" << endl;
 
 	timeutils.start("MS css");
-	FPHECipher css = scheme.modSwitch(cs2, 3);
+	PolyCipher css = scheme.modSwitch(cs2, 3);
 	timeutils.stop("MS css");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("ME cse");
-	FPHECipher cse = scheme.modEmbed(cs2, 3);
+	PolyCipher cse = scheme.modEmbed(cs2, 3);
 	timeutils.stop("ME cse");
 
 	cout << "------------------" << endl;
@@ -214,25 +214,25 @@ void test2() {
 	cout << "------------------" << endl;
 
 	timeutils.start("GenParams");
-	FPHEParams params(lambda, false);
+	PolyParams params(lambda, false);
 	timeutils.stop("GenParams");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenSecKey");
-	FPHESecKey secretKey(params);
+	PolySecKey secretKey(params);
 	timeutils.stop("GenSecKey");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenPubKey");
-	FPHEPubKey publicKey(params, secretKey);
+	PolyPubKey publicKey(params, secretKey);
 	timeutils.stop("GenPubKey");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenScheme");
-	FPHEScheme scheme(params, secretKey, publicKey);
+	PolyScheme scheme(params, secretKey, publicKey);
 	timeutils.stop("GenScheme");
 
 	cout << "------------------" << endl;
@@ -283,10 +283,10 @@ void test2() {
 	cout << " x16:  " << x16 << endl;
 	cout << "------------------" << endl;
 
-	vector<FPHECipher> c;
-	vector<FPHECipher> c2;
-	vector<FPHECipher> c4;
-	vector<FPHECipher> c8;
+	vector<PolyCipher> c;
+	vector<PolyCipher> c2;
+	vector<PolyCipher> c4;
+	vector<PolyCipher> c8;
 
 	cout << "------------------" << endl;
 	timeutils.start("level1");
@@ -307,7 +307,7 @@ void test2() {
 	cout << "------------------" << endl;
 	timeutils.start("level2");
 	for (i = 0; i < 8; ++i) {
-		FPHECipher temp = scheme.mul(c[i], c[i + 8]);
+		PolyCipher temp = scheme.mul(c[i], c[i + 8]);
 		scheme.modSwitchAndEqual(temp, 2);
 		c2.push_back(temp);
 	}
@@ -325,7 +325,7 @@ void test2() {
 	cout << "------------------" << endl;
 	timeutils.start("level3");
 	for (i = 0; i < 4; ++i) {
-		FPHECipher temp = scheme.mul(c2[i], c2[i + 4]);
+		PolyCipher temp = scheme.mul(c2[i], c2[i + 4]);
 		scheme.modSwitchAndEqual(temp, 3);
 		c4.push_back(temp);
 	}
@@ -343,7 +343,7 @@ void test2() {
 	cout << "------------------" << endl;
 	timeutils.start("level4");
 	for (i = 0; i < 2; ++i) {
-		FPHECipher temp = scheme.mul(c4[i], c4[i + 2]);
+		PolyCipher temp = scheme.mul(c4[i], c4[i + 2]);
 		scheme.modSwitchAndEqual(temp, 4);
 		c8.push_back(temp);
 	}
@@ -360,7 +360,7 @@ void test2() {
 	}
 	cout << "------------------" << endl;
 	timeutils.start("level5");
-	FPHECipher c16 = scheme.mul(c8[0], c8[1]);
+	PolyCipher c16 = scheme.mul(c8[0], c8[1]);
 	scheme.modSwitchAndEqual(c16, 5);
 	timeutils.stop("level5");
 	cout << "------------------" << endl;

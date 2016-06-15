@@ -1,4 +1,4 @@
-#include "poly/ZRingUtils.h"
+#include "../polyscheme/ZRingUtils.h"
 
 #include <cassert>
 #include <cmath>

@@ -5,11 +5,11 @@
  *      Author: kimandrik
  */
 
-#include "poly/FPHESecKey.h"
+#include "PolySecKey.h"
 
-#include "poly/ZRingUtils.h"
+#include "../polyscheme/ZRingUtils.h"
 
-FPHESecKey::FPHESecKey(FPHEParams& params) {
+PolySecKey::PolySecKey(PolyParams& params) {
 	if(params.isGauss) {
 		ZRingUtils::sampleGaussian(s, params.phim, params.stdev);
 	} else {
@@ -17,7 +17,7 @@ FPHESecKey::FPHESecKey(FPHEParams& params) {
 	}
 }
 
-FPHESecKey::~FPHESecKey() {
+PolySecKey::~PolySecKey() {
 	// TODO Auto-generated destructor stub
 }
 
