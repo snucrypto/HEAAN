@@ -6,12 +6,12 @@
 using namespace std;
 using namespace NTL;
 
-void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& phim) {
 	long i;
 	ZZX add;
 	ZZ c;
-	add.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
+	add.SetLength(phim);
+	for (i = 0; i < phim; ++i) {
 		c = (coeff(poly1, i) + coeff(poly2, i)) % mod;
 		SetCoeff(add, i, c);
 	}
@@ -19,12 +19,12 @@ void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	res = add;
 }
 
-void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& phim) {
 	long i;
 	ZZX sub;
 	ZZ c;
-	sub.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
+	sub.SetLength(phim);
+	for (i = 0; i < phim; ++i) {
 		c = (coeff(poly1, i) - coeff(poly2, i)) % mod;
 		SetCoeff(sub, i, c);
 	}
@@ -32,7 +32,7 @@ void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	res = sub;
 }
 
-void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& phim) {
 	long i;
 	ZZ c;
 	ZZX poly;
@@ -42,23 +42,20 @@ void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 		c = coeff(poly, i) % mod;
 		SetCoeff(poly, i, c);
 	}
-	long int phim = deg(phi);
-//	PseudoRem(res, poly, phi);
-	//res = poly % phi;
 
 	for (i = 0; i < phim; ++i) {
-		c = (coeff(poly, i) - coeff(poly, i + deg(phi))) % mod;
+		c = (coeff(poly, i) - coeff(poly, i + phim)) % mod;
 		SetCoeff(res, i, c);
 	}
 	res.normalize();
 }
 
-void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const long& phim) {
 	long i;
 	ZZX mul;
 	ZZ c;
-	mul.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
+	mul.SetLength(phim);
+	for (i = 0; i < phim; ++i) {
 		c = (coeff(poly, i) * cnst) % mod;
 		SetCoeff(mul, i, c);
 	}
@@ -66,12 +63,12 @@ void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, c
 	res = mul;
 }
 
-void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& phim) {
 	long i;
 	ZZX mul;
 	ZZ c;
-	mul.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
+	mul.SetLength(phim);
+	for (i = 0; i < phim; ++i) {
 		c = (coeff(poly, i) >> bits) % mod;
 		SetCoeff(mul, i, c);
 	}
@@ -79,12 +76,12 @@ void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, co
 	res = mul;
 }
 
-void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const ZZX& phi) {
+void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& phim) {
 	long i;
 	ZZX mul;
 	ZZ c;
-	mul.SetLength(deg(phi));
-	for (i = 0; i < deg(phi); ++i) {
+	mul.SetLength(phim);
+	for (i = 0; i < phim; ++i) {
 		c = (coeff(poly, i) << bits) % mod;
 		SetCoeff(mul, i, c);
 	}

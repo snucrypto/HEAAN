@@ -54,155 +54,113 @@ void test1() {
 	cout << "------------------" << endl;
 
 	ZZ m;
-	RandomBits(m, 5);
+	RandomBits(m, 3);
 	m = params.p - m;
-	ZZ mm = m + m;
-	ZZ m2 = m * m;
-	ZZ ms = m2 / params.p;
-	ZZ me = m2;
-	ZZ ms2 = ms * ms;
-	ZZ mss = ms2 / params.p;
-	ZZ mse = ms2;
 
-	cout << "------------------" << endl;
+	vector<ZZ> m2k;
+	vector<ZZ> m2ks;
+	vector<ZZ> m2ke;
 
-	cout << " m:  " << m << endl;
-	cout << " mm: " << mm << endl;
-	cout << " m2: " << m2 << endl;
-	cout << " ms: " << ms << endl;
-	cout << " me: " << me << endl;
-	cout << " ms2: " << ms2 << endl;
-	cout << " mss: " << mss << endl;
-	cout << " mse: " << mse << endl;
+	long i;
+	long deg = 5;
 
-	cout << "------------------" << endl;
+	m2k.push_back(m);
+	m2ks.push_back(m);
+	m2ke.push_back(m);
+
+	for (i = 1; i < deg; ++i) {
+		m2k.push_back(m2ks[i-1] * m2ks[i-1]);
+		m2ks.push_back(m2k[i] / params.p);
+		m2ke.push_back(m2k[i]);
+	}
+
+	vector<PolyCipher> c2k;
+	vector<PolyCipher> c2ks;
+	vector<PolyCipher> c2ke;
 
 	timeutils.start("Encrypt c");
 	PolyCipher c = scheme.encrypt(m);
 	timeutils.stop("Encrypt c");
 
-	cout << "------------------" << endl;
+	c2k.push_back(c);
+	c2ks.push_back(c);
+	c2ke.push_back(c);
 
-	timeutils.start("Add cc");
-	PolyCipher cc = scheme.add(c, c);
-	timeutils.stop("Add cc");
+	for (i = 1; i < deg; ++i) {
+		cout << "---------" << i << "---------" << endl;
 
-	cout << "------------------" << endl;
+		timeutils.start("Mul ");
+		PolyCipher c2 = scheme.mul(c2ks[i - 1], c2ks[i - 1]);
+		timeutils.stop("Mul ");
+		c2k.push_back(c2);
 
-	timeutils.start("Mul c2");
-	PolyCipher c2 = scheme.mul(c, c);
-	timeutils.stop("Mul c2");
+		cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
+		timeutils.start("MS ");
+		PolyCipher cs = scheme.modSwitch(c2, i + 1);
+		timeutils.stop("MS ");
+		c2ks.push_back(cs);
 
-	timeutils.start("MS cs");
-	PolyCipher cs = scheme.modSwitch(c2, 2);
-	timeutils.stop("MS cs");
+		cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
+		timeutils.start("ME ");
+		PolyCipher ce = scheme.modEmbed(c2, i + 1);
+		timeutils.stop("ME ");
+		c2ke.push_back(ce);
 
-	timeutils.start("ME ce");
-	PolyCipher ce = scheme.modEmbed(c2, 2);
-	timeutils.stop("ME ce");
-
-	cout << "------------------" << endl;
-
-	timeutils.start("Mul cs2");
-	PolyCipher cs2 = scheme.mul(cs, cs);
-	timeutils.stop("Mul cs2");
-
-	cout << "------------------" << endl;
+		cout << "------------------" << endl;
+	}
 
 
-
-	cout << "------------------" << endl;
-
-	timeutils.start("MS css");
-	PolyCipher css = scheme.modSwitch(cs2, 3);
-	timeutils.stop("MS css");
-
-	cout << "------------------" << endl;
-
-	timeutils.start("ME cse");
-	PolyCipher cse = scheme.modEmbed(cs2, 3);
-	timeutils.stop("ME cse");
-
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
+	vector<ZZ> d2k;
+	vector<ZZ> d2ks;
+	vector<ZZ> d2ke;
 
 	timeutils.start("Decrypt c");
 	ZZ d = scheme.decrypt(c);
 	timeutils.stop("Decrypt c");
 
-	cout << "------------------" << endl;
+	d2k.push_back(d);
+	d2ks.push_back(d);
+	d2ke.push_back(d);
 
-	ZZ dd = scheme.decrypt(cc);
-	ZZ d2 = scheme.decrypt(c2);
-	ZZ ds = scheme.decrypt(cs);
-	ZZ de = scheme.decrypt(ce);
-	ZZ ds2 = scheme.decrypt(cs2);
-	ZZ dss = scheme.decrypt(css);
-	ZZ dse = scheme.decrypt(cse);
+	for (i = 1; i < deg; ++i) {
+		ZZ d2 = scheme.decrypt(c2k[i]);
+		d2k.push_back(d2);
 
-	cout << "------------------" << endl;
+		ZZ ds = scheme.decrypt(c2ks[i]);
+		d2ks.push_back(ds);
 
-	cout << "qL: " << params.qL << endl;
-	cout << "p: " << params.p << endl;
-	cout << "d:  " << d << endl;
-	cout << "dd: " << dd << endl;
-	cout << "d2: " << d2 << endl;
-	cout << "ds: " << ds << endl;
-	cout << "de: " << de << endl;
-	cout << "ds2: " << ds2 << endl;
-	cout << "dss: " << dss << endl;
-	cout << "dse: " << dse << endl;
+		ZZ de = scheme.decrypt(c2ke[i]);
+		d2ke.push_back(de);
+	}
 
-	cout << "------------------" << endl;
+	vector<ZZ> e2k;
+	vector<ZZ> e2ks;
+	vector<ZZ> e2ke;
 
-	ZZ e = m - d;
-	ZZ ee = mm - dd;
-	ZZ e2 = m2 - d2;
-	ZZ es = ms - ds;
-	ZZ eE = me - de;
-	ZZ es2 = ms2 - ds2;
-	ZZ ess = mss - dss;
-	ZZ ese = mse - dse;
+	for (i = 0; i < deg; ++i) {
+		cout << "---------" << i << "---------" << endl;
 
-	cout << "------------------" << endl;
-	cout << "m:  " << m << endl;
-	cout << "d:  " << d << endl;
-	cout << "e:  " << e << endl;
-	cout << "------------------" << endl;
-	cout << "mm: " << mm << endl;
-	cout << "dd: " << dd << endl;
-	cout << "ee: " << ee << endl;
-	cout << "------------------" << endl;
-	cout << "m2: " << m2 << endl;
-	cout << "d2: " << d2 << endl;
-	cout << "e2: " << e2 << endl;
-	cout << "------------------" << endl;
-	cout << "ms: " << ms << endl;
-	cout << "ds: " << ds << endl;
-	cout << "es: " << es << endl;
-	cout << "------------------" << endl;
-	cout << "me: " << me << endl;
-	cout << "de: " << de << endl;
-	cout << "eE: " << eE << endl;
-	cout << "------------------" << endl;
-	cout << "ms2: " << ms2 << endl;
-	cout << "ds2: " << ds2 << endl;
-	cout << "es2: " << es2 << endl;
-	cout << "------------------" << endl;
-	cout << "mss: " << mss << endl;
-	cout << "dss: " << dss << endl;
-	cout << "ess: " << ess << endl;
-	cout << "------------------" << endl;
-	cout << "mse: " << mse << endl;
-	cout << "dse: " << dse << endl;
-	cout << "ese: " << ese << endl;
-	cout << "------------------" << endl;
+		e2k.push_back(m2k[i] - d2k[i]);
+		e2ks.push_back(m2ks[i] - d2ks[i]);
+		e2ke.push_back(m2ke[i] - d2ke[i]);
 
+		cout << "------------------" << endl;
+		cout << "m: " << i << " " << m2k[i] << endl;
+		cout << "d: " << i << " " << d2k[i] << endl;
+		cout << "e: " << i << " " << e2k[i] << endl;
+		cout << "------------------" << endl;
+		cout << "ms: " << i << " " << m2ks[i] << endl;
+		cout << "ds: " << i << " " << d2ks[i] << endl;
+		cout << "es: " << i << " " << e2ks[i] << endl;
+		cout << "------------------" << endl;
+		cout << "me: " << i << " " << m2ke[i] << endl;
+		cout << "de: " << i << " " << d2ke[i] << endl;
+		cout << "ee: " << i << " " << e2ke[i] << endl;
+		cout << "------------------" << endl;
+
+	}
 	cout << "!!!BYE FPHE!!!" << endl; // prints !!!Hello World!!!
 }
 

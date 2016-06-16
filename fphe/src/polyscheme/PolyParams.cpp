@@ -14,15 +14,14 @@
 
 PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	levels = 5;
+	stdev = 3;
 	tau = 10;
 	m = 16384;
 	phim = 8192;
-	stdev = 3;
 	p = 114689;
-
 	Pbits = NumBits(p) * levels;
 
-	RandomBits(B, 5);
+	RandomBits(B, 3);
 
 	qi = vector<ZZ>();
 	Pqi = vector<ZZ>();
@@ -34,7 +33,6 @@ PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 
 	qL = qi[levels-1];
 	Pq = Pqi[levels-1];
-	phi = PolyRingUtils::Cyclotomic(m);
 }
 
 ZZ& PolyParams::getModulo(long level) {
@@ -53,6 +51,8 @@ string PolyParams::toString() {
 	ss << lambda;
 	ss << ", p=";
 	ss << p;
+	ss << ", Pbits=";
+	ss << Pbits;
 	ss << ", qL=";
 	ss << qL;
 	ss << ", levels=";
@@ -69,8 +69,5 @@ string PolyParams::toString() {
 	ss << stdev;
 	ss << ", B=";
 	ss << B;
-	ss << ", phi=";
-	ss << phi;
-
 	return ss.str();
 }

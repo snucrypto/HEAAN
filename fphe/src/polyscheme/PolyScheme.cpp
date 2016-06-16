@@ -22,8 +22,8 @@ PolyCipher PolyScheme::encrypt(ZZ& m) {
 			ZZX lwe0 = publicKey.A0[i];
 			ZZX lwe1 = publicKey.A1[i];
 
-			PolyRingUtils::addPolyRing(c0, c0, lwe0, params.qL, params.phi);
-			PolyRingUtils::addPolyRing(c1, c1, lwe1, params.qL, params.phi);
+			PolyRingUtils::addPolyRing(c0, c0, lwe0, params.qL, params.phim);
+			PolyRingUtils::addPolyRing(c1, c1, lwe1, params.qL, params.phim);
 		}
 	}
 	SetCoeff(c0, 0, (coeff(c0, 0) + m) % params.qL);
@@ -37,8 +37,8 @@ ZZ PolyScheme::decrypt(PolyCipher& cipher) {
 	ZZ& qi = getModulo(cipher.level);
 
 	ZZX m;
-	PolyRingUtils::mulPolyRing(m, secretKey.s, cipher.c1, qi, params.phi);
-	PolyRingUtils::addPolyRing(m, m, cipher.c0, qi, params.phi);
+	PolyRingUtils::mulPolyRing(m, secretKey.s, cipher.c1, qi, params.phim);
+	PolyRingUtils::addPolyRing(m, m, cipher.c0, qi, params.phim);
 	ZZ c;
 	GetCoeff(c, m, 0);
 	if(c < 0) {c += qi;}
@@ -49,32 +49,32 @@ PolyCipher PolyScheme::add(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ& qi = getModulo(cipher1.level);
 	ZZX c0;
 	ZZX c1;
-	PolyRingUtils::addPolyRing(c0, cipher1.c0, cipher2.c0, qi, params.phi);
-	PolyRingUtils::addPolyRing(c1, cipher1.c1, cipher2.c1, qi, params.phi);
+	PolyRingUtils::addPolyRing(c0, cipher1.c0, cipher2.c0, qi, params.phim);
+	PolyRingUtils::addPolyRing(c1, cipher1.c1, cipher2.c1, qi, params.phim);
 	PolyCipher res(c0, c1, cipher1.level);
 	return res;
 }
 
 void PolyScheme::addAndEqual(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ qi = getModulo(cipher1.level);
-	PolyRingUtils::addPolyRing(cipher1.c0, cipher1.c0, cipher2.c0, qi, params.phi);
-	PolyRingUtils::addPolyRing(cipher1.c1, cipher1.c1, cipher2.c1, qi, params.phi);
+	PolyRingUtils::addPolyRing(cipher1.c0, cipher1.c0, cipher2.c0, qi, params.phim);
+	PolyRingUtils::addPolyRing(cipher1.c1, cipher1.c1, cipher2.c1, qi, params.phim);
 }
 
 PolyCipher PolyScheme::sub(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ& qi = getModulo(cipher1.level);
 	ZZX c0;
 	ZZX c1;
-	PolyRingUtils::subPolyRing(c0, cipher1.c0, cipher2.c0, qi, params.phi);
-	PolyRingUtils::subPolyRing(c1, cipher1.c1, cipher2.c1, qi, params.phi);
+	PolyRingUtils::subPolyRing(c0, cipher1.c0, cipher2.c0, qi, params.phim);
+	PolyRingUtils::subPolyRing(c1, cipher1.c1, cipher2.c1, qi, params.phim);
 	PolyCipher res(c0, c1, cipher1.level);
 	return res;
 }
 
 void PolyScheme::subAndEqual(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZ qi = getModulo(cipher1.level);
-	PolyRingUtils::subPolyRing(cipher1.c0, cipher1.c0, cipher2.c0, qi, params.phi);
-	PolyRingUtils::subPolyRing(cipher1.c1, cipher1.c1, cipher2.c1, qi, params.phi);
+	PolyRingUtils::subPolyRing(cipher1.c0, cipher1.c0, cipher2.c0, qi, params.phim);
+	PolyRingUtils::subPolyRing(cipher1.c1, cipher1.c1, cipher2.c1, qi, params.phim);
 }
 
 PolyCipher PolyScheme::mul(PolyCipher& cipher1, PolyCipher& cipher2) {
@@ -89,20 +89,20 @@ PolyCipher PolyScheme::mul(PolyCipher& cipher1, PolyCipher& cipher2) {
 
 	ZZX mulC1;
 	ZZX mulC0;
-	PolyRingUtils::mulPolyRing(cc00, cipher1.c0, cipher2.c0, qi, params.phi);
-	PolyRingUtils::mulPolyRing(cc01, cipher1.c0, cipher2.c1, qi, params.phi);
-	PolyRingUtils::mulPolyRing(cc10, cipher1.c1, cipher2.c0, qi, params.phi);
-	PolyRingUtils::mulPolyRing(cc11, cipher1.c1, cipher2.c1, qi, params.phi);
+	PolyRingUtils::mulPolyRing(cc00, cipher1.c0, cipher2.c0, qi, params.phim);
+	PolyRingUtils::mulPolyRing(cc01, cipher1.c0, cipher2.c1, qi, params.phim);
+	PolyRingUtils::mulPolyRing(cc10, cipher1.c1, cipher2.c0, qi, params.phim);
+	PolyRingUtils::mulPolyRing(cc11, cipher1.c1, cipher2.c1, qi, params.phim);
 
-	PolyRingUtils::mulPolyRing(mulC1, publicKey.aStar, cc11, Pqi, params.phi);
-	PolyRingUtils::mulPolyRing(mulC0, publicKey.bStar, cc11, Pqi, params.phi);
+	PolyRingUtils::mulPolyRing(mulC1, publicKey.aStar, cc11, Pqi, params.phim);
+	PolyRingUtils::mulPolyRing(mulC0, publicKey.bStar, cc11, Pqi, params.phim);
 
-	PolyRingUtils::rightShiftPolyRing(mulC1, mulC1, params.Pbits, qi, params.phi);
-	PolyRingUtils::rightShiftPolyRing(mulC0, mulC0, params.Pbits, qi, params.phi);
+	PolyRingUtils::rightShiftPolyRing(mulC1, mulC1, params.Pbits, qi, params.phim);
+	PolyRingUtils::rightShiftPolyRing(mulC0, mulC0, params.Pbits, qi, params.phim);
 
-	PolyRingUtils::addPolyRing(mulC1, mulC1, cc10, qi, params.phi);
-	PolyRingUtils::addPolyRing(mulC1, mulC1, cc01, qi, params.phi);
-	PolyRingUtils::addPolyRing(mulC0, mulC0, cc00, qi, params.phi);
+	PolyRingUtils::addPolyRing(mulC1, mulC1, cc10, qi, params.phim);
+	PolyRingUtils::addPolyRing(mulC1, mulC1, cc01, qi, params.phim);
+	PolyRingUtils::addPolyRing(mulC0, mulC0, cc00, qi, params.phim);
 
 	PolyCipher cipher(mulC0, mulC1, cipher1.level);
 	return cipher;
@@ -121,20 +121,20 @@ void PolyScheme::mulAndEqual(PolyCipher& cipher1, PolyCipher& cipher2) {
 	ZZX mulC1;
 	ZZX mulC0;
 
-	PolyRingUtils::mulPolyRing(cc00, cipher1.c0, cipher2.c0, qi, params.phi);
-	PolyRingUtils::mulPolyRing(cc01, cipher1.c0, cipher2.c1, qi, params.phi);
-	PolyRingUtils::mulPolyRing(cc10, cipher1.c1, cipher2.c0, qi, params.phi);
-	PolyRingUtils::mulPolyRing(cc11, cipher1.c1, cipher2.c1, qi, params.phi);
+	PolyRingUtils::mulPolyRing(cc00, cipher1.c0, cipher2.c0, qi, params.phim);
+	PolyRingUtils::mulPolyRing(cc01, cipher1.c0, cipher2.c1, qi, params.phim);
+	PolyRingUtils::mulPolyRing(cc10, cipher1.c1, cipher2.c0, qi, params.phim);
+	PolyRingUtils::mulPolyRing(cc11, cipher1.c1, cipher2.c1, qi, params.phim);
 
-	PolyRingUtils::mulPolyRing(mulC1, publicKey.aStar, cc11, Pqi, params.phi);
-	PolyRingUtils::mulPolyRing(mulC0, publicKey.bStar, cc11, Pqi, params.phi);
+	PolyRingUtils::mulPolyRing(mulC1, publicKey.aStar, cc11, Pqi, params.phim);
+	PolyRingUtils::mulPolyRing(mulC0, publicKey.bStar, cc11, Pqi, params.phim);
 
-	PolyRingUtils::rightShiftPolyRing(mulC1, mulC1, params.Pbits, qi, params.phi);
-	PolyRingUtils::rightShiftPolyRing(mulC0, mulC0, params.Pbits, qi, params.phi);
+	PolyRingUtils::rightShiftPolyRing(mulC1, mulC1, params.Pbits, qi, params.phim);
+	PolyRingUtils::rightShiftPolyRing(mulC0, mulC0, params.Pbits, qi, params.phim);
 
-	PolyRingUtils::addPolyRing(mulC1, mulC1, cc10, qi, params.phi);
-	PolyRingUtils::addPolyRing(mulC1, mulC1, cc01, qi, params.phi);
-	PolyRingUtils::addPolyRing(mulC0, mulC0, cc00, qi, params.phi);
+	PolyRingUtils::addPolyRing(mulC1, mulC1, cc10, qi, params.phim);
+	PolyRingUtils::addPolyRing(mulC1, mulC1, cc01, qi, params.phim);
+	PolyRingUtils::addPolyRing(mulC0, mulC0, cc00, qi, params.phim);
 
 	cipher1.c0 = mulC0;
 	cipher1.c1 = mulC1;

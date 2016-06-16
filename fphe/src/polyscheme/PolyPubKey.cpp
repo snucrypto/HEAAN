@@ -24,8 +24,8 @@ PolyPubKey::PolyPubKey(PolyParams& params, PolySecKey& secretKey) {
 		} else {
 			PolyRingUtils::sampleUniform(e, params.B, params.phim);
 		}
-		PolyRingUtils::mulPolyRing(lwe0, secretKey.s, lwe1, params.qL, params.phi);
-		PolyRingUtils::subPolyRing(lwe0, e, lwe0, params.qL, params.phi);
+		PolyRingUtils::mulPolyRing(lwe0, secretKey.s, lwe1, params.qL, params.phim);
+		PolyRingUtils::subPolyRing(lwe0, e, lwe0, params.qL, params.phim);
 
 		A0.push_back(lwe0);
 		A1.push_back(lwe1);
@@ -33,8 +33,8 @@ PolyPubKey::PolyPubKey(PolyParams& params, PolySecKey& secretKey) {
 
 	ZZX s2, Ps2;
 
-	PolyRingUtils::mulPolyRing(s2, secretKey.s, secretKey.s, params.qL, params.phi);
-	PolyRingUtils::leftShiftPolyRing(Ps2, s2, params.Pbits, params.Pq, params.phi);
+	PolyRingUtils::mulPolyRing(s2, secretKey.s, secretKey.s, params.qL, params.phim);
+	PolyRingUtils::leftShiftPolyRing(Ps2, s2, params.Pbits, params.Pq, params.phim);
 	PolyRingUtils::sampleUniform(aStar, params.Pq, params.phim);
 
 	if(params.isGauss) {
@@ -43,9 +43,9 @@ PolyPubKey::PolyPubKey(PolyParams& params, PolySecKey& secretKey) {
 		PolyRingUtils::sampleUniform(e, params.B, params.phim);
 	}
 
-	PolyRingUtils::addPolyRing(e, e, Ps2, params.Pq, params.phi);
-	PolyRingUtils::mulPolyRing(bStar, secretKey.s, aStar, params.Pq, params.phi);
-	PolyRingUtils::subPolyRing(bStar, e, bStar, params.Pq, params.phi);
+	PolyRingUtils::addPolyRing(e, e, Ps2, params.Pq, params.phim);
+	PolyRingUtils::mulPolyRing(bStar, secretKey.s, aStar, params.Pq, params.phim);
+	PolyRingUtils::subPolyRing(bStar, e, bStar, params.Pq, params.phim);
 }
 
 PolyPubKey::~PolyPubKey() {

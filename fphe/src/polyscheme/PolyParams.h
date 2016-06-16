@@ -27,7 +27,6 @@ public:
 
 	vector<ZZ> qi;
 	vector<ZZ> Pqi;
-	ZZX phi;
 	PolyParams(long lambda, bool isGauss = false);
 	virtual ~PolyParams();
 
