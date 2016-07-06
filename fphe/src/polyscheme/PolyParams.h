@@ -13,25 +13,21 @@ public:
 	long lambda;
 	long levels;
 	long tau;
-	long m;
-	long phim;
 
 	bool isGauss;
 	double stdev;
+
+	long logP;
+	long m;
+	long phim;
+	long logT;
+	long logQ;
+	long logTQ;
+
 	ZZ B;
 
-	ZZ p;
-	long Pbits;
-	ZZ qL;
-	ZZ Pq;
-
-	vector<ZZ> qi;
-	vector<ZZ> Pqi;
 	PolyParams(long lambda, bool isGauss = false);
 	virtual ~PolyParams();
-
-	ZZ& getModulo(long level);
-	string toString();
 };
 
 #endif /* POLYSCHEME_POLYPARAMS_H_ */

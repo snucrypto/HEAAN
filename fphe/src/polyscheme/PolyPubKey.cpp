@@ -18,14 +18,14 @@ PolyPubKey::PolyPubKey(PolyParams& params, PolySecKey& secretKey) {
 	for (i = 0; i < params.tau; ++i) {
 		ZZX lwe0;
 		ZZX lwe1;
-		PolyRingUtils::sampleUniform(lwe1, params.qL, params.phim);
+		PolyRingUtils::sampleUniform2(lwe1, params.logQ, params.phim);
 		if(params.isGauss) {
 			PolyRingUtils::sampleGaussian(e, params.phim, params.stdev);
 		} else {
 			PolyRingUtils::sampleUniform(e, params.B, params.phim);
 		}
-		PolyRingUtils::mulPolyRing(lwe0, secretKey.s, lwe1, params.qL, params.phim);
-		PolyRingUtils::subPolyRing(lwe0, e, lwe0, params.qL, params.phim);
+		PolyRingUtils::mulPolyRing2(lwe0, secretKey.s, lwe1, params.logQ, params.phim);
+		PolyRingUtils::subPolyRing2(lwe0, e, lwe0, params.logQ, params.phim);
 
 		A0.push_back(lwe0);
 		A1.push_back(lwe1);
@@ -33,9 +33,9 @@ PolyPubKey::PolyPubKey(PolyParams& params, PolySecKey& secretKey) {
 
 	ZZX s2, Ps2;
 
-	PolyRingUtils::mulPolyRing(s2, secretKey.s, secretKey.s, params.qL, params.phim);
-	PolyRingUtils::leftShiftPolyRing(Ps2, s2, params.Pbits, params.Pq, params.phim);
-	PolyRingUtils::sampleUniform(aStar, params.Pq, params.phim);
+	PolyRingUtils::mulPolyRing2(s2, secretKey.s, secretKey.s, params.logQ, params.phim);
+	PolyRingUtils::leftShiftPolyRing2(Ps2, s2, params.logT, params.logTQ, params.phim);
+	PolyRingUtils::sampleUniform2(aStar, params.logTQ, params.phim);
 
 	if(params.isGauss) {
 		PolyRingUtils::sampleGaussian(e, params.phim, params.stdev);
@@ -43,9 +43,9 @@ PolyPubKey::PolyPubKey(PolyParams& params, PolySecKey& secretKey) {
 		PolyRingUtils::sampleUniform(e, params.B, params.phim);
 	}
 
-	PolyRingUtils::addPolyRing(e, e, Ps2, params.Pq, params.phim);
-	PolyRingUtils::mulPolyRing(bStar, secretKey.s, aStar, params.Pq, params.phim);
-	PolyRingUtils::subPolyRing(bStar, e, bStar, params.Pq, params.phim);
+	PolyRingUtils::addPolyRing2(e, e, Ps2, params.logTQ, params.phim);
+	PolyRingUtils::mulPolyRing2(bStar, secretKey.s, aStar, params.logTQ, params.phim);
+	PolyRingUtils::subPolyRing2(bStar, e, bStar, params.logTQ, params.phim);
 }
 
 PolyPubKey::~PolyPubKey() {

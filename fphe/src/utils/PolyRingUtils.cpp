@@ -6,12 +6,16 @@
 using namespace std;
 using namespace NTL;
 
-void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& phim) {
+void PolyRingUtils::truncate(ZZ& c, const long& logMod) {
+	c = sign(c) * trunc_ZZ(c, logMod);
+}
+
+void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& deg) {
 	long i;
 	ZZX add;
 	ZZ c;
-	add.SetLength(phim);
-	for (i = 0; i < phim; ++i) {
+	add.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly1, i) + coeff(poly2, i)) % mod;
 		SetCoeff(add, i, c);
 	}
@@ -19,12 +23,26 @@ void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	res = add;
 }
 
-void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& phim) {
+void PolyRingUtils::addPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& logMod, const long& deg) {
+	long i;
+	ZZX add;
+	ZZ c;
+	add.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
+		c = coeff(poly1, i) + coeff(poly2, i);
+		truncate(c, logMod);
+		SetCoeff(add, i, c);
+	}
+	add.normalize();
+	res = add;
+}
+
+void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& deg) {
 	long i;
 	ZZX sub;
 	ZZ c;
-	sub.SetLength(phim);
-	for (i = 0; i < phim; ++i) {
+	sub.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly1, i) - coeff(poly2, i)) % mod;
 		SetCoeff(sub, i, c);
 	}
@@ -32,30 +50,66 @@ void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	res = sub;
 }
 
-void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& phim) {
+void PolyRingUtils::subPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& logMod, const long& deg) {
 	long i;
+	ZZX add;
 	ZZ c;
+	add.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
+		c = coeff(poly1, i) - coeff(poly2, i);
+		truncate(c, logMod);
+		SetCoeff(add, i, c);
+	}
+	add.normalize();
+	res = add;
+}
+
+void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& d) {
+	long i;
+	ZZ tmp;
 	ZZX poly;
 	mul(poly, poly1, poly2);
 
 	for (i = 0; i < deg(poly); ++i) {
-		c = coeff(poly, i) % mod;
-		SetCoeff(poly, i, c);
+		tmp = coeff(poly, i) % mod;
+		SetCoeff(poly, i, tmp);
 	}
 
-	for (i = 0; i < phim; ++i) {
-		c = (coeff(poly, i) - coeff(poly, i + phim)) % mod;
-		SetCoeff(res, i, c);
+	for (i = 0; i < d; ++i) {
+		tmp = (coeff(poly, i) - coeff(poly, i + d)) % mod;
+		SetCoeff(res, i, tmp);
 	}
 	res.normalize();
 }
 
-void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const long& phim) {
+void PolyRingUtils::mulPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& logMod, const long& d) {
+	long i;
+	ZZ tmp;
+	ZZX poly;
+	mul(poly, poly1, poly2);
+
+	for (i = 0; i < deg(poly); ++i) {
+		tmp = coeff(poly, i);
+		truncate(tmp, logMod);
+		SetCoeff(poly, i, tmp);
+	}
+
+	poly.normalize();
+
+	for (i = 0; i < d; ++i) {
+		tmp = coeff(poly, i) - coeff(poly, i + d);
+		truncate(tmp, logMod);
+		SetCoeff(res, i, tmp);
+	}
+	res.normalize();
+}
+
+void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const long& deg) {
 	long i;
 	ZZX mul;
 	ZZ c;
-	mul.SetLength(phim);
-	for (i = 0; i < phim; ++i) {
+	mul.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly, i) * cnst) % mod;
 		SetCoeff(mul, i, c);
 	}
@@ -63,12 +117,26 @@ void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, c
 	res = mul;
 }
 
-void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& phim) {
+void PolyRingUtils::mulPolyByConstantRing2(ZZX& res, ZZX& poly, const ZZ& cnst, const long& logMod, const long& deg) {
 	long i;
 	ZZX mul;
 	ZZ c;
-	mul.SetLength(phim);
-	for (i = 0; i < phim; ++i) {
+	mul.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
+		c = coeff(poly, i) * cnst;
+		truncate(c, logMod);
+		SetCoeff(mul, i, c);
+	}
+	mul.normalize();
+	res = mul;
+}
+
+void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& deg) {
+	long i;
+	ZZX mul;
+	ZZ c;
+	mul.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly, i) >> bits) % mod;
 		SetCoeff(mul, i, c);
 	}
@@ -76,12 +144,26 @@ void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, co
 	res = mul;
 }
 
-void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& phim) {
+void PolyRingUtils::rightShiftPolyRing2(ZZX& res, ZZX& poly, const long& bits, const long& logMod, const long& deg) {
 	long i;
 	ZZX mul;
 	ZZ c;
-	mul.SetLength(phim);
-	for (i = 0; i < phim; ++i) {
+	mul.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
+		c = coeff(poly, i) >> bits;
+		truncate(c, logMod);
+		SetCoeff(mul, i, c);
+	}
+	mul.normalize();
+	res = mul;
+}
+
+void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& deg) {
+	long i;
+	ZZX mul;
+	ZZ c;
+	mul.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly, i) << bits) % mod;
 		SetCoeff(mul, i, c);
 	}
@@ -89,6 +171,19 @@ void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, con
 	res = mul;
 }
 
+void PolyRingUtils::leftShiftPolyRing2(ZZX& res, ZZX& poly, const long& bits, const long& logMod, const long& deg) {
+	long i;
+	ZZX mul;
+	ZZ c;
+	mul.SetLength(deg);
+	for (i = 0; i < deg; ++i) {
+		c = coeff(poly, i) << bits;
+		truncate(c, logMod);
+		SetCoeff(mul, i, c);
+	}
+	mul.normalize();
+	res = mul;
+}
 
 long PolyRingUtils::mobius(long n) {
   long p,e,arity=0;
@@ -167,6 +262,21 @@ void PolyRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
 	for (long i = 0; i < d; i++) {
 		RandomBnd(tmp, UB);
 		tmp -= B;
+		SetCoeff(res, i, tmp);
+	}
+	res.normalize();
+}
+
+void PolyRingUtils::sampleUniform2(ZZX& res, long& logB, long d) {
+
+	if (d<=0) d=deg(res)+1; if (d<=0) return;
+
+	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
+
+	ZZ tmp;
+
+	for (long i = 0; i < d; i++) {
+		RandomBits(tmp, logB);
 		SetCoeff(res, i, tmp);
 	}
 	res.normalize();

@@ -20,8 +20,8 @@ public:
 	PolySecKey& secretKey;
 	PolyPubKey& publicKey;
 
-	ZZ& getModulo(long level);
-	ZZ& getPqModulo(long level);
+	long getLogQi(long& level);
+	long getLogTQi(long& level);
 
 	PolyScheme(PolyParams& params, PolySecKey& secretKey, PolyPubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 
