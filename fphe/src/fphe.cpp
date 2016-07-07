@@ -62,7 +62,7 @@ void test1() {
 	vector<ZZ> m2ke;
 
 	long i;
-	long deg = 10;
+	long deg = 5;
 
 	m2k.push_back(m);
 	m2ks.push_back(m);
@@ -160,6 +160,8 @@ void test1() {
 		cout << "ee: " << i << " " << e2ke[i] << endl;
 		cout << "------------------" << endl;
 	}
+
+	cout << params.logQ << endl;
 
 	cout << "!!! END TEST 1 !!!" << endl; // prints !!!Hello World!!!
 }

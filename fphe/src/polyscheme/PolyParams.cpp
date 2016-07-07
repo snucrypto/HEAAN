@@ -13,16 +13,16 @@
 #include "../utils/PolyRingUtils.h"
 
 PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
-	levels = 10;
+	levels = 5;
 	stdev = 3;
 	tau = 3;
-	m = 14;
-	phim = 13;
-	logP = 25;
+	m = 2 << 14;
+	phim = 2 << 13;
+	logP = 20;
 	logQ = logP * levels;
 	logT = logP * levels;
 	logTQ = logQ + logT;
-	B = 100;
+	B = 4;
 }
 
 PolyParams::~PolyParams() {

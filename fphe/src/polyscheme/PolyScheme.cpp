@@ -42,9 +42,11 @@ ZZ PolyScheme::decrypt(PolyCipher& cipher) {
 	PolyRingUtils::addPolyRing2(m, m, cipher.c0, logQi, params.phim);
 	ZZ c, tmp;
 	GetCoeff(c, m, 0);
-	tmp = 1;
-	tmp <<= logQi;
-	while(c < 0) {c += tmp;}
+	while(c < 0) {
+		tmp = 1;
+		tmp <<= logQi;
+		c += tmp;
+	}
 	return c;
 }
 
@@ -232,7 +234,6 @@ void PolyScheme::modSwitchAndEqual(PolyCipher& cipher, long newLevel) {
 PolyCipher PolyScheme::modEmbed(PolyCipher& cipher, long newLevel) {
 	ZZ tmp;
 	long newQi = getLogQi(newLevel);
-
 	ZZX c0;
 	ZZX c1;
 	long i;
