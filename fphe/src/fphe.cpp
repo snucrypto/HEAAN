@@ -12,11 +12,12 @@
 #include "polyscheme/PolySecKey.h"
 
 using namespace std;
+using namespace NTL;
 
 void test1() {
-	TimeUtils timeutils;
-
 	cout << "!!! START TEST 1 !!!" << endl; // prints !!!Hello World!!!
+
+	TimeUtils timeutils;
 
 	long lambda = 10;
 

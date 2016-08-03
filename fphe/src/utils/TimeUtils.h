@@ -1,10 +1,3 @@
-/*
- * TimeUtils.h
- *
- *  Created on: May 17, 2016
- *      Author: kimandrik
- */
-
 #ifndef POLYSCHEME_TIMEUTILS_H_
 #define POLYSCHEME_TIMEUTILS_H_
 
