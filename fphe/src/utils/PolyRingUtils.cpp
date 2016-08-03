@@ -68,6 +68,7 @@ void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	long i;
 	ZZ tmp;
 	ZZX poly;
+	res.SetLength(d);
 	mul(poly, poly1, poly2);
 
 	for (i = 0; i < deg(poly); ++i) {
@@ -86,6 +87,7 @@ void PolyRingUtils::mulPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& l
 	long i;
 	ZZ tmp;
 	ZZX poly;
+	res.SetLength(d);
 	mul(poly, poly1, poly2);
 
 	for (i = 0; i < deg(poly); ++i) {

@@ -1,10 +1,3 @@
-/*
- * TimeUtils.cpp
- *
- *  Created on: May 17, 2016
- *      Author: kimandrik
- */
-
 #include "TimeUtils.h"
 
 #include <sys/time.h>
