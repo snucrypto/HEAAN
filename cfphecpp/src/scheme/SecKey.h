@@ -1,19 +1,15 @@
 #ifndef SCHEME_SECKEY_H_
 #define SCHEME_SECKEY_H_
 
-#include <NTL/ZZX.h>
-
+#include "../czz/CZZX.h"
 #include "Params.h"
 
-using namespace NTL;
-
-class PolySecKey {
+class SecKey {
 public:
 
-	ZZX s;
+	CZZX s;
 
-	PolySecKey(PolyParams& params);
-	virtual ~PolySecKey();
+	SecKey(Params& params);
 };
 
 #endif /* SCHEME_SECKEY_H_ */

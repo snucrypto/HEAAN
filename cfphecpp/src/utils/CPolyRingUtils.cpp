@@ -1,4 +1,4 @@
-#include "PolyRingUtils.h"
+#include "CPolyRingUtils.h"
 
 #include <cassert>
 #include <cmath>
@@ -6,11 +6,12 @@
 using namespace std;
 using namespace NTL;
 
-void PolyRingUtils::truncate(ZZ& c, const long& logMod) {
-	c = sign(c) * trunc_ZZ(c, logMod);
+void CPolyRingUtils::truncate(CZZ& c, const long& logMod) {
+	c.r = sign(c.r) * trunc_ZZ(c.r, logMod);
+	c.i = sign(c.i) * trunc_ZZ(c.i, logMod);
 }
 
-void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& deg) {
+void CPolyRingUtils::addPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& deg) {
 	long i;
 	ZZX add;
 	ZZ c;
@@ -23,10 +24,10 @@ void PolyRingUtils::addPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	res = add;
 }
 
-void PolyRingUtils::addPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& logMod, const long& deg) {
+void CPolyRingUtils::addPolyRing2(CZZX& res, CZZX& poly1, CZZX& poly2, const long& logMod, const long& deg) {
 	long i;
-	ZZX add;
-	ZZ c;
+	CZZX add;
+	CZZ c;
 	add.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = coeff(poly1, i) + coeff(poly2, i);
@@ -37,10 +38,10 @@ void PolyRingUtils::addPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& l
 	res = add;
 }
 
-void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& deg) {
+void CPolyRingUtils::subPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& deg) {
 	long i;
-	ZZX sub;
-	ZZ c;
+	CZZX sub;
+	CZZ c;
 	sub.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly1, i) - coeff(poly2, i)) % mod;
@@ -50,10 +51,10 @@ void PolyRingUtils::subPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	res = sub;
 }
 
-void PolyRingUtils::subPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& logMod, const long& deg) {
+void CPolyRingUtils::subPolyRing2(CZZX& res, CZZX& poly1, CZZX& poly2, const long& logMod, const long& deg) {
 	long i;
-	ZZX add;
-	ZZ c;
+	CZZX add;
+	CZZ c;
 	add.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = coeff(poly1, i) - coeff(poly2, i);
@@ -64,10 +65,10 @@ void PolyRingUtils::subPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& l
 	res = add;
 }
 
-void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod, const long& d) {
+void CPolyRingUtils::mulPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& d) {
 	long i;
-	ZZ tmp;
-	ZZX poly;
+	CZZ tmp;
+	CZZX poly;
 	res.SetLength(d);
 	mul(poly, poly1, poly2);
 
@@ -83,10 +84,10 @@ void PolyRingUtils::mulPolyRing(ZZX& res, ZZX& poly1, ZZX& poly2, const ZZ& mod,
 	res.normalize();
 }
 
-void PolyRingUtils::mulPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& logMod, const long& d) {
+void CPolyRingUtils::mulPolyRing2(CZZX& res, CZZX& poly1, CZZX& poly2, const long& logMod, const long& d) {
 	long i;
-	ZZ tmp;
-	ZZX poly;
+	CZZ tmp;
+	CZZX poly;
 	res.SetLength(d);
 	mul(poly, poly1, poly2);
 
@@ -106,10 +107,10 @@ void PolyRingUtils::mulPolyRing2(ZZX& res, ZZX& poly1, ZZX& poly2, const long& l
 	res.normalize();
 }
 
-void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, const ZZ& mod, const long& deg) {
+void CPolyRingUtils::mulPolyByConstantRing(CZZX& res, CZZX& poly, const CZZ& cnst, const ZZ& mod, const long& deg) {
 	long i;
-	ZZX mul;
-	ZZ c;
+	CZZX mul;
+	CZZ c;
 	mul.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly, i) * cnst) % mod;
@@ -119,10 +120,10 @@ void PolyRingUtils::mulPolyByConstantRing(ZZX& res, ZZX& poly, const ZZ& cnst, c
 	res = mul;
 }
 
-void PolyRingUtils::mulPolyByConstantRing2(ZZX& res, ZZX& poly, const ZZ& cnst, const long& logMod, const long& deg) {
+void CPolyRingUtils::mulPolyByConstantRing2(CZZX& res, CZZX& poly, const CZZ& cnst, const long& logMod, const long& deg) {
 	long i;
-	ZZX mul;
-	ZZ c;
+	CZZX mul;
+	CZZ c;
 	mul.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = coeff(poly, i) * cnst;
@@ -133,10 +134,10 @@ void PolyRingUtils::mulPolyByConstantRing2(ZZX& res, ZZX& poly, const ZZ& cnst, 
 	res = mul;
 }
 
-void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& deg) {
+void CPolyRingUtils::rightShiftPolyRing(CZZX& res, CZZX& poly, const long& bits, const ZZ& mod, const long& deg) {
 	long i;
-	ZZX mul;
-	ZZ c;
+	CZZX mul;
+	CZZ c;
 	mul.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly, i) >> bits) % mod;
@@ -146,10 +147,10 @@ void PolyRingUtils::rightShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, co
 	res = mul;
 }
 
-void PolyRingUtils::rightShiftPolyRing2(ZZX& res, ZZX& poly, const long& bits, const long& logMod, const long& deg) {
+void CPolyRingUtils::rightShiftPolyRing2(CZZX& res, CZZX& poly, const long& bits, const long& logMod, const long& deg) {
 	long i;
-	ZZX mul;
-	ZZ c;
+	CZZX mul;
+	CZZ c;
 	mul.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = coeff(poly, i) >> bits;
@@ -160,10 +161,10 @@ void PolyRingUtils::rightShiftPolyRing2(ZZX& res, ZZX& poly, const long& bits, c
 	res = mul;
 }
 
-void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, const ZZ& mod, const long& deg) {
+void CPolyRingUtils::leftShiftPolyRing(CZZX& res, CZZX& poly, const long& bits, const ZZ& mod, const long& deg) {
 	long i;
-	ZZX mul;
-	ZZ c;
+	CZZX mul;
+	CZZ c;
 	mul.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly, i) << bits) % mod;
@@ -173,10 +174,10 @@ void PolyRingUtils::leftShiftPolyRing(ZZX& res, ZZX& poly, const long& bits, con
 	res = mul;
 }
 
-void PolyRingUtils::leftShiftPolyRing2(ZZX& res, ZZX& poly, const long& bits, const long& logMod, const long& deg) {
+void CPolyRingUtils::leftShiftPolyRing2(CZZX& res, CZZX& poly, const long& bits, const long& logMod, const long& deg) {
 	long i;
-	ZZX mul;
-	ZZ c;
+	CZZX mul;
+	CZZ c;
 	mul.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = coeff(poly, i) << bits;
@@ -187,7 +188,7 @@ void PolyRingUtils::leftShiftPolyRing2(ZZX& res, ZZX& poly, const long& bits, co
 	res = mul;
 }
 
-long PolyRingUtils::mobius(long n) {
+long CPolyRingUtils::mobius(long n) {
   long p,e,arity=0;
   PrimeSeq s;
   while (n!=1)
@@ -201,7 +202,7 @@ long PolyRingUtils::mobius(long n) {
   return -1;
 }
 
-ZZX PolyRingUtils::Cyclotomic(long N) {
+ZZX CPolyRingUtils::Cyclotomic(long N) {
   ZZX Num,Den,G,F;
   set(Num); set(Den);
   long m,d;
@@ -209,7 +210,7 @@ ZZX PolyRingUtils::Cyclotomic(long N) {
     { if ((N%d)==0)
          { clear(G);
            SetCoeff(G,N/d,1); SetCoeff(G,0,-1);
-           m=PolyRingUtils::mobius(d);
+           m=CPolyRingUtils::mobius(d);
            if (m==1)       { Num*=G; }
            else if (m==-1) { Den*=G; }
          }
@@ -218,7 +219,7 @@ ZZX PolyRingUtils::Cyclotomic(long N) {
   return F;
 }
 
-void PolyRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
+void CPolyRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
   static double const Pi=4.0*atan(1.0); // Pi=3.1415..
   static long const bignum = 0xfffffff;
   // THREADS: C++11 guarantees these are initialized only once
@@ -247,7 +248,12 @@ void PolyRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
   res.normalize(); // need to call this after we work on the coeffs
 }
 
-void PolyRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
+void CPolyRingUtils::sampleGaussian(CZZX &res, long d, double stdev) {
+	sampleGaussian(res.rx, d, stdev);
+	sampleGaussian(res.ix, d, stdev);
+}
+
+void CPolyRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
 
 	if (d<=0) d=deg(res)+1; if (d<=0) return;
 	if (B <= 0) {
@@ -269,7 +275,12 @@ void PolyRingUtils::sampleUniform(ZZX& res, ZZ& B, long d) {
 	res.normalize();
 }
 
-void PolyRingUtils::sampleUniform2(ZZX& res, long& logB, long d) {
+void CPolyRingUtils::sampleUniform(CZZX& res, ZZ& B, long d) {
+	sampleUniform(res.rx, B, d);
+	sampleUniform(res.ix, B, d);
+}
+
+void CPolyRingUtils::sampleUniform2(ZZX& res, long& logB, long d) {
 
 	if (d<=0) d=deg(res)+1; if (d<=0) return;
 
@@ -282,4 +293,9 @@ void PolyRingUtils::sampleUniform2(ZZX& res, long& logB, long d) {
 		SetCoeff(res, i, tmp);
 	}
 	res.normalize();
+}
+
+void CPolyRingUtils::sampleUniform2(CZZX& res, long& logB, long d) {
+	sampleUniform2(res.rx, logB, d);
+	sampleUniform2(res.ix, logB, d);
 }

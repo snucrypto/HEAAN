@@ -8,8 +8,8 @@
 #include "scheme/PubKey.h"
 #include "scheme/Scheme.h"
 #include "scheme/SecKey.h"
+#include "utils/CPolyRingUtils.h"
 #include "utils/TimeUtils.h"
-#include "utils/PolyRingUtils.h"
 
 using namespace std;
 using namespace NTL;
@@ -24,25 +24,25 @@ void test1() {
 	cout << "------------------" << endl;
 
 	timeutils.start("GenParams");
-	PolyParams params(lambda, false);
+	Params params(lambda, false);
 	timeutils.stop("GenParams");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenSecKey");
-	PolySecKey secretKey(params);
+	SecKey secretKey(params);
 	timeutils.stop("GenSecKey");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenPubKey");
-	PolyPubKey publicKey(params, secretKey);
+	PubKey publicKey(params, secretKey);
 	timeutils.stop("GenPubKey");
 
 	cout << "------------------" << endl;
 
 	timeutils.start("GenScheme");
-	PolyScheme scheme(params, secretKey, publicKey);
+	Scheme scheme(params, secretKey, publicKey);
 	timeutils.stop("GenScheme");
 
 	cout << "------------------" << endl;
@@ -75,12 +75,12 @@ void test1() {
 		m2ke.push_back(m2k[i]);
 	}
 
-	vector<PolyCipher> c2k;
-	vector<PolyCipher> c2ks;
-	vector<PolyCipher> c2ke;
+	vector<Cipher> c2k;
+	vector<Cipher> c2ks;
+	vector<Cipher> c2ke;
 
 	timeutils.start("Encrypt c");
-	PolyCipher c = scheme.encrypt(m);
+	Cipher c = scheme.encrypt(m);
 	timeutils.stop("Encrypt c");
 
 	c2k.push_back(c);
@@ -91,21 +91,21 @@ void test1() {
 		cout << "---------" << i << "---------" << endl;
 
 		timeutils.start("Mul ");
-		PolyCipher c2 = scheme.mul(c2ks[i - 1], c2ks[i - 1]);
+		Cipher c2 = scheme.mul(c2ks[i - 1], c2ks[i - 1]);
 		timeutils.stop("Mul ");
 		c2k.push_back(c2);
 
 		cout << "------------------" << endl;
 
 		timeutils.start("MS ");
-		PolyCipher cs = scheme.modSwitch(c2, i + 1);
+		Cipher cs = scheme.modSwitch(c2, i + 1);
 		timeutils.stop("MS ");
 		c2ks.push_back(cs);
 
 		cout << "------------------" << endl;
 
 		timeutils.start("ME ");
-		PolyCipher ce = scheme.modEmbed(c2, i + 1);
+		Cipher ce = scheme.modEmbed(c2, i + 1);
 		timeutils.stop("ME ");
 		c2ke.push_back(ce);
 

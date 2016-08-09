@@ -11,16 +11,16 @@ using namespace std;
 using namespace NTL;
 
 
-class PolyPubKey {
+class PubKey {
 public:
-	vector<ZZX> A0;
-	vector<ZZX> A1;
+	vector<CZZX> A0;
+	vector<CZZX> A1;
 
-	ZZX aStar;
-	ZZX bStar;
+	CZZX aStar;
+	CZZX bStar;
 
-	PolyPubKey(PolyParams& params, PolySecKey& secretKey);
-	virtual ~PolyPubKey();
+	PubKey(Params& params, SecKey& secretKey);
+	virtual ~PubKey();
 };
 
 #endif /* SCHEME_PUBKEY_H_ */

@@ -4,15 +4,9 @@
  *  Created on: May 15, 2016
  *      Author: kimandrik
  */
-
 #include "Params.h"
 
-#include <sstream>
-#include <string>
-
-#include "../utils/PolyRingUtils.h"
-
-PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
+Params::Params(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	levels = 5;
 	stdev = 3;
 	tau = 3;
@@ -23,8 +17,4 @@ PolyParams::PolyParams(long lambda, bool isGauss) : lambda(lambda), isGauss(isGa
 	logT = logP * levels;
 	logTQ = logQ + logT;
 	B = 4;
-}
-
-PolyParams::~PolyParams() {
-	// TODO Auto-generated destructor stub
 }

@@ -1,21 +1,18 @@
 #ifndef SCHEME_CIPHER_H_
 #define SCHEME_CIPHER_H_
 
-#include <NTL/ZZX.h>
+#include "../czz/CZZX.h"
 
 using namespace std;
 using namespace NTL;
 
-class PolyCipher {
+class Cipher {
 public:
-	ZZX c0;
-	ZZX c1;
+	CZZX c0;
+	CZZX c1;
 	long level;
 
-	PolyCipher(ZZX c0, ZZX c1, long level) : c0(c0), c1(c1), level(level) {}
-	virtual ~PolyCipher() {}
-
-	string toString();
+	Cipher(CZZX c0, CZZX c1, long level) : c0(c0), c1(c1), level(level) {}
 };
 
 #endif /* SCHEME_CIPHER_H_ */

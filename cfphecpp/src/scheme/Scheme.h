@@ -1,52 +1,47 @@
 #ifndef SCHEME_SCHEME_H_
 #define SCHEME_SCHEME_H_
 
+#include "Cipher.h"
 #include "Params.h"
 #include "PubKey.h"
 #include "SecKey.h"
 
-
-class PolyCipher;
-
-
 using namespace std;
 using namespace NTL;
 
-class PolyScheme {
+class Scheme {
 private:
 
 public:
-	PolyParams& params;
-	PolySecKey& secretKey;
-	PolyPubKey& publicKey;
+	Params& params;
+	SecKey& secretKey;
+	PubKey& publicKey;
 
 	long getLogQi(long& level);
 	long getLogTQi(long& level);
 
-	PolyScheme(PolyParams& params, PolySecKey& secretKey, PolyPubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
+	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 
-	virtual ~PolyScheme() {};
+	virtual ~Scheme() {};
 
-	PolyCipher encrypt(ZZ& m);
-	ZZ decrypt(PolyCipher& cipher);
+	Cipher encrypt(ZZ& m);
+	ZZ decrypt(Cipher& cipher);
 
-	PolyCipher add(PolyCipher& cipher1, PolyCipher& cipher2);
-	PolyCipher sub(PolyCipher& cipher1, PolyCipher& cipher2);
-	PolyCipher mul(PolyCipher& cipher1, PolyCipher& cipher2);
-	PolyCipher addConstant(PolyCipher& cipher, ZZ& cnst);
-	PolyCipher mulByConstant(PolyCipher& cipher, ZZ& cnst);
-	PolyCipher modSwitch(PolyCipher& cipher, long newLevel);
-	PolyCipher modEmbed(PolyCipher& cipher, long newLevel);
+	Cipher add(Cipher& cipher1, Cipher& cipher2);
+	Cipher sub(Cipher& cipher1, Cipher& cipher2);
+	Cipher mul(Cipher& cipher1, Cipher& cipher2);
+	Cipher addConstant(Cipher& cipher, ZZ& cnst);
+	Cipher mulByConstant(Cipher& cipher, ZZ& cnst);
+	Cipher modSwitch(Cipher& cipher, long newLevel);
+	Cipher modEmbed(Cipher& cipher, long newLevel);
 
-	void modEmbedAndEqual(PolyCipher& cipher, long newLevel);
-	void modSwitchAndEqual(PolyCipher& cipher, long newLevel);
-	void addAndEqual(PolyCipher& cipher1, PolyCipher& cipher2);
-	void subAndEqual(PolyCipher& cipher1, PolyCipher& cipher2);
-	void mulAndEqual(PolyCipher& cipher1, PolyCipher& cipher2);
-	void addConstantAndEqual(PolyCipher& cipher, ZZ& cnst);
-	void mulByConstantAndEqual(PolyCipher& cipher, ZZ& cnst);
-
-
+	void modEmbedAndEqual(Cipher& cipher, long newLevel);
+	void modSwitchAndEqual(Cipher& cipher, long newLevel);
+	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
+	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
+	void mulAndEqual(Cipher& cipher1, Cipher& cipher2);
+	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
+	void mulByConstantAndEqual(Cipher& cipher, ZZ& cnst);
 };
 
 #endif /* SCHEME_SCHEME_H_ */

@@ -2,13 +2,10 @@
 #define SCHEME_PARAMS_H_
 
 #include <NTL/ZZ.h>
-#include <NTL/ZZX.h>
-#include <vector>
 
-using namespace std;
 using namespace NTL;
 
-class PolyParams {
+class Params {
 public:
 	long lambda;
 	long levels;
@@ -26,8 +23,7 @@ public:
 
 	ZZ B;
 
-	PolyParams(long lambda, bool isGauss = false);
-	virtual ~PolyParams();
+	Params(long lambda, bool isGauss = false);
 };
 
 #endif /* SCHEME_PARAMS_H_ */
