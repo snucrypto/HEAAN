@@ -5,7 +5,7 @@
  *      Author: kimandrik
  */
 
-#include "PolySecKey.h"
+#include "SecKey.h"
 
 #include "../utils/PolyRingUtils.h"
 

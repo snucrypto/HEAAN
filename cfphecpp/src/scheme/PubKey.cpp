@@ -5,7 +5,7 @@
  *      Author: kimandrik
  */
 
-#include "PolyPubKey.h"
+#include "PubKey.h"
 
 #include <NTL/ZZ.h>
 

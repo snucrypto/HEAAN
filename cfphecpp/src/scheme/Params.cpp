@@ -5,7 +5,7 @@
  *      Author: kimandrik
  */
 
-#include "PolyParams.h"
+#include "Params.h"
 
 #include <sstream>
 #include <string>

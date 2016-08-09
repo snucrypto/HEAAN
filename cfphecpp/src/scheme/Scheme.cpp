@@ -1,11 +1,11 @@
-#include "PolyScheme.h"
+#include "Scheme.h"
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 #include <iostream>
 
 #include "../utils/PolyRingUtils.h"
-#include "PolyCipher.h"
+#include "Cipher.h"
 
 using namespace std;
 using namespace NTL;

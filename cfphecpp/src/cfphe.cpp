@@ -3,13 +3,13 @@
 #include <iostream>
 #include <vector>
 
+#include "scheme/Cipher.h"
+#include "scheme/Params.h"
+#include "scheme/PubKey.h"
+#include "scheme/Scheme.h"
+#include "scheme/SecKey.h"
 #include "utils/TimeUtils.h"
 #include "utils/PolyRingUtils.h"
-#include "polyscheme/PolyCipher.h"
-#include "polyscheme/PolyParams.h"
-#include "polyscheme/PolyPubKey.h"
-#include "polyscheme/PolyScheme.h"
-#include "polyscheme/PolySecKey.h"
 
 using namespace std;
 using namespace NTL;

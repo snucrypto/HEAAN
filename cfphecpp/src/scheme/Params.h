@@ -1,5 +1,5 @@
-#ifndef POLYSCHEME_POLYPARAMS_H_
-#define POLYSCHEME_POLYPARAMS_H_
+#ifndef SCHEME_PARAMS_H_
+#define SCHEME_PARAMS_H_
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
@@ -30,4 +30,4 @@ public:
 	virtual ~PolyParams();
 };
 
-#endif /* POLYSCHEME_POLYPARAMS_H_ */
+#endif /* SCHEME_PARAMS_H_ */

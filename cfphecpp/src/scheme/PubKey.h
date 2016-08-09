@@ -1,11 +1,11 @@
-#ifndef POLYSCHEME_POLYPUBKEY_H_
-#define POLYSCHEME_POLYPUBKEY_H_
+#ifndef SCHEME_PUBKEY_H_
+#define SCHEME_PUBKEY_H_
 
 #include <NTL/ZZX.h>
 #include <vector>
 
-#include "PolySecKey.h"
-#include "PolyParams.h"
+#include "../scheme/PolyParams.h"
+#include "../scheme/PolySecKey.h"
 
 using namespace std;
 using namespace NTL;
@@ -23,4 +23,4 @@ public:
 	virtual ~PolyPubKey();
 };
 
-#endif /* POLYSCHEME_POLYPUBKEY_H_ */
+#endif /* SCHEME_PUBKEY_H_ */

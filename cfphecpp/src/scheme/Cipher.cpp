@@ -1,8 +1,7 @@
-#include "PolyCipher.h"
-
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "Cipher.h"
 
 
 string PolyCipher::toString() {

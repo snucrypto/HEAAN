@@ -1,5 +1,5 @@
-#ifndef POLYSCHEME_POLYCIPHER_H_
-#define POLYSCHEME_POLYCIPHER_H_
+#ifndef SCHEME_CIPHER_H_
+#define SCHEME_CIPHER_H_
 
 #include <NTL/ZZX.h>
 
@@ -18,4 +18,4 @@ public:
 	string toString();
 };
 
-#endif /* POLYSCHEME_POLYCIPHER_H_ */
+#endif /* SCHEME_CIPHER_H_ */

@@ -1,9 +1,9 @@
-#ifndef POLYSCHEME_POLYSCHEME_H_
-#define POLYSCHEME_POLYSCHEME_H_
+#ifndef SCHEME_SCHEME_H_
+#define SCHEME_SCHEME_H_
 
-#include "PolyParams.h"
-#include "PolyPubKey.h"
-#include "PolySecKey.h"
+#include "../scheme/PolyParams.h"
+#include "../scheme/PolyPubKey.h"
+#include "../scheme/PolySecKey.h"
 
 
 class PolyCipher;
@@ -49,4 +49,4 @@ public:
 
 };
 
-#endif /* POLYSCHEME_POLYSCHEME_H_ */
+#endif /* SCHEME_SCHEME_H_ */

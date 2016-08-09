@@ -1,9 +1,9 @@
-#ifndef POLYSCHEME_POLYSECKEY_H_
-#define POLYSCHEME_POLYSECKEY_H_
+#ifndef SCHEME_SECKEY_H_
+#define SCHEME_SECKEY_H_
 
 #include <NTL/ZZX.h>
 
-#include "PolyParams.h"
+#include "../scheme/PolyParams.h"
 
 using namespace NTL;
 
@@ -16,4 +16,4 @@ public:
 	virtual ~PolySecKey();
 };
 
-#endif /* POLYSCHEME_POLYSECKEY_H_ */
+#endif /* SCHEME_SECKEY_H_ */
