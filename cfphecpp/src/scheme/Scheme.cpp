@@ -1,9 +1,8 @@
 #include "Scheme.h"
 
 #include <NTL/ZZ.h>
-#include <NTL/ZZX.h>
-#include <iostream>
-
+#include "../czz/CZZ.h"
+#include "../czz/CZZX.h"
 #include "../utils/CPolyRingUtils.h"
 
 using namespace std;
@@ -40,14 +39,15 @@ ZZ Scheme::decrypt(Cipher& cipher) {
 	CZZX m;
 	CPolyRingUtils::mulPolyRing2(m, secretKey.s, cipher.c1, logQi, params.phim);
 	CPolyRingUtils::addPolyRing2(m, m, cipher.c0, logQi, params.phim);
-	CZZ c, tmp;
+	CZZ c;
+	ZZ tmp;
 	GetCoeff(c, m, 0);
-	while(c < 0) {
+	while(c.r < 0) {
 		tmp = 1;
 		tmp <<= logQi;
-		c += tmp;
+		c.r += tmp;
 	}
-	return c;
+	return c.r;
 }
 
 Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {

@@ -1,7 +1,6 @@
 #include "PubKey.h"
 
-#include <NTL/ZZ.h>
-
+#include "../czz/CZZX.h"
 #include "../utils/CPolyRingUtils.h"
 
 PubKey::PubKey(Params& params, SecKey& secretKey) {

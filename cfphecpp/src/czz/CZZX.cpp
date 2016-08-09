@@ -36,3 +36,47 @@ void CZZX::operator*=(const CZZX& o) {
 	ix = rx * o.ix + ix * o.rx;
 	rx = tr;
 }
+
+CZZX CZZX::operator >>(const long& s) {
+	return CZZX();
+}
+
+CZZX CZZX::operator <<(const long& s) {
+	return CZZX();
+}
+
+void CZZX::SetMaxLength(long d) {
+
+}
+
+void CZZX::SetLength(long d) {
+
+}
+
+void CZZX::normalize() {
+
+}
+
+CZZ coeff(CZZX& cx, long s) {
+	ZZ r = NTL::coeff(cx.rx, s);
+	ZZ i = NTL::coeff(cx.ix, s);
+	CZZ res(r, i);
+	return res;
+}
+
+void SetCoeff(CZZX& cx, long s, CZZ& c) {
+	NTL::SetCoeff(cx.rx, s, c.r);
+	NTL::SetCoeff(cx.ix, s, c.i);
+}
+
+void GetCoeff(CZZ& c, CZZX& cx, long s) {
+
+}
+
+void mul(CZZX& res, const CZZX& cx1, const CZZX& cx2) {
+
+}
+
+long deg(CZZX& cx) {
+	return 0;
+}

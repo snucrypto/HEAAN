@@ -10,7 +10,6 @@
 using namespace std;
 using namespace NTL;
 
-
 class PubKey {
 public:
 	vector<CZZX> A0;
@@ -20,7 +19,6 @@ public:
 	CZZX bStar;
 
 	PubKey(Params& params, SecKey& secretKey);
-	virtual ~PubKey();
 };
 
 #endif /* SCHEME_PUBKEY_H_ */

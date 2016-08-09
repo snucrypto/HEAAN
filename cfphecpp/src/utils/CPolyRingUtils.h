@@ -2,6 +2,7 @@
 #define POLYSCHEME_ZRINGUTILS_H_
 
 #include <NTL/ZZ.h>
+#include <NTL/ZZX.h>
 #include "../czz/CZZ.h"
 #include "../czz/CZZX.h"
 

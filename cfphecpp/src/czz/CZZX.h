@@ -1,7 +1,10 @@
 #ifndef UTILS_CZZX_H_
 #define UTILS_CZZX_H_
 
+#include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
+
+#include "CZZ.h"
 
 using namespace std;
 using namespace NTL;
@@ -28,30 +31,12 @@ public:
 	void SetMaxLength(long d);
 	void SetLength(long d);
 	void normalize();
-
 };
 
-CZZ coeff(CZZX& cx, long s) {
-	ZZ r = coeff(cx.rx, s);
-	ZZ i = coeff(cx.ix, s);
-	CZZ res(r, i);
-	return res;
-}
+CZZ coeff(CZZX& cx, long s);
+void SetCoeff(CZZX& cx, long s, CZZ& c);
+void GetCoeff(CZZ& c, CZZX& cx, long s);
+void mul(CZZX& res, const CZZX& cx1, const CZZX& cx2);
+long deg(CZZX& cx);
 
-void SetCoeff(CZZX& cx, long s, CZZ& c) {
-	SetCoeff(cx.rx, s, c.r);
-	SetCoeff(cx.ix, s, c.i);
-}
-
-void GetCoeff(CZZ& c, CZZX& cx, long s) {
-
-}
-
-void mul(CZZX& res, const CZZX& cx1, const CZZX& cx2) {
-
-}
-
-long deg(CZZX& cx) {
-
-}
 #endif /* UTILS_CZZX_H_ */

@@ -2,6 +2,9 @@
 
 #include <cassert>
 #include <cmath>
+#include "../czz/CZZ.h"
+#include "../czz/CZZX.h"
+
 
 using namespace std;
 using namespace NTL;
@@ -13,8 +16,8 @@ void CPolyRingUtils::truncate(CZZ& c, const long& logMod) {
 
 void CPolyRingUtils::addPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& deg) {
 	long i;
-	ZZX add;
-	ZZ c;
+	CZZX add;
+	CZZ c;
 	add.SetLength(deg);
 	for (i = 0; i < deg; ++i) {
 		c = (coeff(poly1, i) + coeff(poly2, i)) % mod;

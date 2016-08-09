@@ -15,12 +15,18 @@ public:
 	CZZ() : r(ZZ::zero()), i(ZZ::zero()) {};
 
 	CZZ operator+(const CZZ& o);
+	CZZ operator+(const ZZ& m);
 	CZZ operator-(const CZZ& o);
+	CZZ operator-(const ZZ& m);
 	CZZ operator *(const CZZ& o);
+	CZZ operator *(const ZZ& o);
 	void operator+=(const CZZ& o);
 	void operator-=(const CZZ& o);
 	void operator *=(const CZZ& o);
-	CZZ operator %(const CZZ& o);
+	CZZ operator %(const ZZ& o);
+
+	CZZ operator <<(const long& s);
+	CZZ operator >>(const long& s);
 };
 
 #endif /* UTILS_CZZ_H_ */
