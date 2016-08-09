@@ -4,8 +4,8 @@
 #include <NTL/ZZX.h>
 #include <vector>
 
-#include "../scheme/PolyParams.h"
-#include "../scheme/PolySecKey.h"
+#include "Params.h"
+#include "SecKey.h"
 
 using namespace std;
 using namespace NTL;

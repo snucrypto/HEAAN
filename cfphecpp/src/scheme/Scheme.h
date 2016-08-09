@@ -1,9 +1,9 @@
 #ifndef SCHEME_SCHEME_H_
 #define SCHEME_SCHEME_H_
 
-#include "../scheme/PolyParams.h"
-#include "../scheme/PolyPubKey.h"
-#include "../scheme/PolySecKey.h"
+#include "Params.h"
+#include "PubKey.h"
+#include "SecKey.h"
 
 
 class PolyCipher;
