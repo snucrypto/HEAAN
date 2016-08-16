@@ -46,15 +46,18 @@ CZZX CZZX::operator <<(const long& s) {
 }
 
 void CZZX::SetMaxLength(long d) {
-
+	rx.SetMaxLength(d);
+	ix.SetMaxLength(d);
 }
 
 void CZZX::SetLength(long d) {
-
+	rx.SetLength(d);
+	ix.SetLength(d);
 }
 
 void CZZX::normalize() {
-
+	rx.normalize();
+	ix.normalize();
 }
 
 CZZ coeff(CZZX& cx, long s) {
@@ -70,13 +73,15 @@ void SetCoeff(CZZX& cx, long s, CZZ& c) {
 }
 
 void GetCoeff(CZZ& c, CZZX& cx, long s) {
-
+	GetCoeff(c.r, cx.rx, s);
+	GetCoeff(c.i, cx.ix, s);
 }
 
 void mul(CZZX& res, const CZZX& cx1, const CZZX& cx2) {
-
+	res.rx = cx1.rx * cx2.rx - cx1.ix * cx2.ix;
+	res.ix = cx1.rx * cx2.ix + cx1.ix * cx2.rx;
 }
 
 long deg(CZZX& cx) {
-	return 0;
+	return deg(cx.rx);
 }

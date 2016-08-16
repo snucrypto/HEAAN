@@ -57,13 +57,19 @@ void CZZ::operator*=(const CZZ& o) {
 }
 
 CZZ CZZ::operator %(const ZZ& o) {
-	return CZZ();
+	ZZ tr = r % o;
+	ZZ to = i % o;
+	return CZZ(tr, to);
 }
 
 CZZ CZZ::operator <<(const long& s) {
-	return CZZ();
+	ZZ tr = r << s;
+	ZZ to = i << s;
+	return CZZ(tr, to);
 }
 
 CZZ CZZ::operator >>(const long& s) {
-	return CZZ();
+	ZZ tr = r >> s;
+	ZZ to = i >> s;
+	return CZZ(tr, to);
 }
