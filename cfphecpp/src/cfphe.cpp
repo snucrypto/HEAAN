@@ -24,7 +24,7 @@ void test1() {
 	cout << "------------------" << endl;
 
 	timeutils.start("GenParams");
-	Params params(lambda, false);
+	Params params(lambda);
 	timeutils.stop("GenParams");
 
 	cout << "------------------" << endl;

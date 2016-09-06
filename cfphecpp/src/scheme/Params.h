@@ -2,7 +2,9 @@
 #define SCHEME_PARAMS_H_
 
 #include <NTL/ZZ.h>
+#include <vector>
 
+using namespace std;
 using namespace NTL;
 
 class Params {
@@ -11,19 +13,22 @@ public:
 	long levels;
 	long tau;
 
-	bool isGauss;
-	double stdev;
+	double sigma;
 
 	long logP;
-	long m;
-	long phim;
+	long d;
+	long n;
+	long h;
 	long logT;
 	long logQ;
 	long logTQ;
 
-	ZZ B;
-	ZZ nu;
-	Params(long lambda, bool isGauss = false);
+	ZZ Bclean;
+	ZZ Bscale;
+	vector<ZZ> Bks;
+	vector<ZZ> Bmult;
+
+	Params(long lambda);
 };
 
 #endif /* SCHEME_PARAMS_H_ */
