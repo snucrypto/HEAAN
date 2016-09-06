@@ -13,12 +13,12 @@ class TimeUtils {
 private:
 	struct timeval startTime, stopTime;
 	double timeElapsed;
-    vector<double> expData;
+	vector<double> expData;
 
 public:
-    TimeUtils();
-    void start(string msg);
-    void stop(string msg);
+	TimeUtils();
+	void start(string msg);
+	void stop(string msg);
 };
 
 #endif /* POLYSCHEME_TIMEUTILS_H_ */

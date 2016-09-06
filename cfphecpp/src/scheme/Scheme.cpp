@@ -56,8 +56,10 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	CZZX c1;
 	CPolyRingUtils::addPolyRing2(c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::addPolyRing2(c1, cipher1.c1, cipher2.c1, logQi, params.phim);
+
 	ZZ B = cipher1.B + cipher2.B;
 	ZZ nu = cipher1.nu + cipher2.nu;
+
 	Cipher res(c0, c1, cipher1.level, B, nu);
 	return res;
 }
@@ -66,6 +68,7 @@ void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	CPolyRingUtils::addPolyRing2(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::addPolyRing2(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.phim);
+
 	cipher1.B += cipher2.B;
 	cipher1.nu += cipher2.nu;
 }
@@ -76,8 +79,10 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	CZZX c1;
 	CPolyRingUtils::subPolyRing2(c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::subPolyRing2(c1, cipher1.c1, cipher2.c1, logQi, params.phim);
+
 	ZZ B = cipher1.B + cipher2.B;
 	ZZ nu = cipher1.nu + cipher2.nu;
+
 	Cipher res(c0, c1, cipher1.level, B, nu);
 	return res;
 }
@@ -86,6 +91,7 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	CPolyRingUtils::subPolyRing2(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::subPolyRing2(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.phim);
+
 	cipher1.B += cipher2.B;
 	cipher1.nu += cipher2.nu;
 }
@@ -153,6 +159,7 @@ void Scheme::mulAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 	cipher1.c0 = mulC0;
 	cipher1.c1 = mulC1;
+
 	cipher1.B = cipher1.B * cipher2.nu + cipher1.nu * cipher2.B + cipher1.B * cipher2.B;
 	cipher1.nu = cipher1.nu * cipher2.nu;
 }
@@ -222,6 +229,7 @@ void Scheme::mulByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	}
 	cipher.c0.normalize();
 	cipher.c1.normalize();
+
 	cipher.B *= cnst;
 	cipher.nu *= cnst;
 }

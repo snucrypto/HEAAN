@@ -11,6 +11,7 @@ public:
 	CZZX c0;
 	CZZX c1;
 	long level;
+
 	ZZ B;
 	ZZ nu;
 

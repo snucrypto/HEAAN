@@ -192,63 +192,74 @@ void CPolyRingUtils::leftShiftPolyRing2(CZZX& res, CZZX& poly, const long& bits,
 }
 
 long CPolyRingUtils::mobius(long n) {
-  long p,e,arity=0;
-  PrimeSeq s;
-  while (n!=1)
-    { p=s.next();
-      e=0;
-      while ((n%p==0)) { n=n/p; e++; }
-      if (e>1) { return 0; }
-      if (e!=0) { arity^=1; }
-    }
-  if (arity==0) { return 1; }
-  return -1;
+	long p,e,arity=0;
+	PrimeSeq s;
+	while (n!=1) {
+		p=s.next();
+		e=0;
+		while ((n%p==0)) { n=n/p; e++; }
+		if (e>1) { return 0; }
+		if (e!=0) { arity^=1; }
+	}
+	if(arity==0) { return 1; }
+	return -1;
 }
 
 ZZX CPolyRingUtils::Cyclotomic(long N) {
-  ZZX Num,Den,G,F;
-  set(Num); set(Den);
-  long m,d;
-  for (d=1; d<=N; d++)
-    { if ((N%d)==0)
-         { clear(G);
-           SetCoeff(G,N/d,1); SetCoeff(G,0,-1);
-           m=CPolyRingUtils::mobius(d);
-           if (m==1)       { Num*=G; }
-           else if (m==-1) { Den*=G; }
-         }
-    }
-  F=Num/Den;
-  return F;
+	ZZX Num,Den,G,F;
+	set(Num); set(Den);
+	long m,d;
+	for (d=1; d<=N; d++) {
+		if ((N%d)==0) {
+			clear(G);
+			SetCoeff(G,N/d,1);
+			SetCoeff(G,0,-1);
+			m=CPolyRingUtils::mobius(d);
+			if(m==1) {
+				Num*=G;
+			} else if(m==-1) {
+				Den*=G;
+			}
+		}
+	}
+	F=Num/Den;
+	return F;
 }
 
 void CPolyRingUtils::sampleGaussian(ZZX &res, long d, double stdev) {
-  static double const Pi=4.0*atan(1.0); // Pi=3.1415..
-  static long const bignum = 0xfffffff;
-  // THREADS: C++11 guarantees these are initialized only once
+	static double const Pi=4.0*atan(1.0); // Pi=3.1415..
+	static long const bignum = 0xfffffff;
+	// THREADS: C++11 guarantees these are initialized only once
 
-  if (d<=0) d=deg(res)+1; if (d<=0) return;
-  res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
-  for (long i=0; i<d; i++) SetCoeff(res, i, ZZ::zero());
+	if(d<=0) {
+		d=deg(res)+1;
+	}
+	if (d<=0) {
+		return;
+	}
+	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
+	for(long i=0; i<d; i++) {
+		SetCoeff(res, i, ZZ::zero());
+	}
 
-  // Uses the Box-Muller method to get two Normal(0,stdev^2) variables
-  for (long i=0; i<d; i+=2) {
-    double r1 = (1+RandomBnd(bignum))/((double)bignum+1);
-    double r2 = (1+RandomBnd(bignum))/((double)bignum+1);
-    double theta=2*Pi*r1;
-    double rr= sqrt(-2.0*log(r2))*stdev;
+	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
+	for (long i=0; i<d; i+=2) {
+		double r1 = (1+RandomBnd(bignum))/((double)bignum+1);
+		double r2 = (1+RandomBnd(bignum))/((double)bignum+1);
+		double theta=2*Pi*r1;
+		double rr= sqrt(-2.0*log(r2))*stdev;
 
-    assert(rr < 8*stdev); // sanity-check, no more than 8 standard deviations
+		assert(rr < 8*stdev); // sanity-check, no more than 8 standard deviations
 
-    // Generate two Gaussians RV's, rounded to integers
-    long x = (long) floor(rr*cos(theta) +0.5);
-    SetCoeff(res, i, x);
-    if (i+1 < d) {
-      x = (long) floor(rr*sin(theta) +0.5);
-      SetCoeff(res, i+1, x);
-    }
-  }
-  res.normalize(); // need to call this after we work on the coeffs
+		// Generate two Gaussians RV's, rounded to integers
+		long x = (long) floor(rr*cos(theta) +0.5);
+		SetCoeff(res, i, x);
+		if (i+1 < d) {
+			x = (long) floor(rr*sin(theta) +0.5);
+			SetCoeff(res, i+1, x);
+		}
+	}
+	res.normalize(); // need to call this after we work on the coeffs
 }
 
 void CPolyRingUtils::sampleGaussian(CZZX &res, long d, double stdev) {
