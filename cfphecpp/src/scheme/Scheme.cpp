@@ -29,7 +29,7 @@ Cipher Scheme::encrypt(ZZ& m) {
 	CPolyRingUtils::truncate(tmp2, params.logQ);
 	SetCoeff(c0, 0, tmp2);
 	c0.normalize();
-	Cipher cipher(c0, c1, 1);
+	Cipher cipher(c0, c1, 1, params.B, params.nu);
 	return cipher;
 }
 
@@ -56,7 +56,9 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	CZZX c1;
 	CPolyRingUtils::addPolyRing2(c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::addPolyRing2(c1, cipher1.c1, cipher2.c1, logQi, params.phim);
-	Cipher res(c0, c1, cipher1.level);
+	ZZ B = cipher1.B + cipher2.B;
+	ZZ nu = cipher1.nu + cipher2.nu;
+	Cipher res(c0, c1, cipher1.level, B, nu);
 	return res;
 }
 
@@ -64,6 +66,8 @@ void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	CPolyRingUtils::addPolyRing2(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::addPolyRing2(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.phim);
+	cipher1.B += cipher2.B;
+	cipher1.nu += cipher2.nu;
 }
 
 Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
@@ -72,7 +76,9 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	CZZX c1;
 	CPolyRingUtils::subPolyRing2(c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::subPolyRing2(c1, cipher1.c1, cipher2.c1, logQi, params.phim);
-	Cipher res(c0, c1, cipher1.level);
+	ZZ B = cipher1.B + cipher2.B;
+	ZZ nu = cipher1.nu + cipher2.nu;
+	Cipher res(c0, c1, cipher1.level, B, nu);
 	return res;
 }
 
@@ -80,6 +86,8 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	CPolyRingUtils::subPolyRing2(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.phim);
 	CPolyRingUtils::subPolyRing2(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.phim);
+	cipher1.B += cipher2.B;
+	cipher1.nu += cipher2.nu;
 }
 
 Cipher Scheme::mul(Cipher& cipher1, Cipher& cipher2) {
@@ -109,7 +117,10 @@ Cipher Scheme::mul(Cipher& cipher1, Cipher& cipher2) {
 	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc01, logQi, params.phim);
 	CPolyRingUtils::addPolyRing2(mulC0, mulC0, cc00, logQi, params.phim);
 
-	Cipher cipher(mulC0, mulC1, cipher1.level);
+	ZZ B = cipher1.B * cipher2.nu + cipher1.nu * cipher2.B + cipher1.B * cipher2.B;
+	ZZ nu = cipher1.nu * cipher2.nu;
+
+	Cipher cipher(mulC0, mulC1, cipher1.level, B, nu);
 	return cipher;
 }
 
@@ -142,6 +153,8 @@ void Scheme::mulAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 	cipher1.c0 = mulC0;
 	cipher1.c1 = mulC1;
+	cipher1.B = cipher1.B * cipher2.nu + cipher1.nu * cipher2.B + cipher1.B * cipher2.B;
+	cipher1.nu = cipher1.nu * cipher2.nu;
 }
 
 Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
@@ -153,7 +166,11 @@ Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
 	CPolyRingUtils::truncate(tmp, logQi);
 	SetCoeff(c1, 0, tmp);
 	c0.normalize();
-	Cipher newCipher(c0, c1, cipher.level);
+
+	ZZ B = cipher.B + 1;
+	ZZ nu = cipher.nu + cnst;
+
+	Cipher newCipher(c0, c1, cipher.level, B, nu);
 	return newCipher;
 }
 
@@ -173,7 +190,11 @@ Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
 	}
 	c0.normalize();
 	c1.normalize();
-	Cipher newCipher(c0, c1, cipher.level);
+
+	ZZ B = cipher.B * cnst;
+	ZZ nu = cipher.nu * cnst;
+
+	Cipher newCipher(c0, c1, cipher.level, B, nu);
 	return newCipher;
 }
 
@@ -201,6 +222,8 @@ void Scheme::mulByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	}
 	cipher.c0.normalize();
 	cipher.c1.normalize();
+	cipher.B *= cnst;
+	cipher.nu *= cnst;
 }
 
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
@@ -217,7 +240,12 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	}
 	c0.normalize();
 	c1.normalize();
-	Cipher newCipher(c0, c1, newLevel);
+
+	ZZ Bscale = to_ZZ(0);
+	ZZ B = (cipher.B >> params.logP) + Bscale;
+	ZZ nu = cipher.nu >> params.logP;
+
+	Cipher newCipher(c0, c1, newLevel, B, nu);
 	return newCipher;
 }
 
@@ -234,6 +262,11 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	cipher.c0.normalize();
 	cipher.c1.normalize();
 	cipher.level = newLevel;
+
+	ZZ Bscale = to_ZZ(0);
+	cipher.B >>= params.logP;
+	cipher.B += Bscale;
+	cipher.nu >>= params.logP;
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
@@ -252,7 +285,11 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	}
 	c0.normalize();
 	c1.normalize();
-	Cipher newCipher(c0, c1, newLevel);
+
+	ZZ B = cipher.B;
+	ZZ nu = cipher.nu;
+
+	Cipher newCipher(c0, c1, newLevel, B, nu);
 	return newCipher;
 }
 

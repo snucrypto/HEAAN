@@ -47,11 +47,6 @@ void test1() {
 
 	cout << "------------------" << endl;
 
-//	cout << "sk: " << secretKey.s << endl;
-//	cout << params.toString() << endl;
-
-	cout << "------------------" << endl;
-
 	ZZ m;
 	m = 1;
 	m <<= params.logP;
@@ -151,14 +146,26 @@ void test1() {
 		cout << "m: " << i << " " << m2k[i] << endl;
 		cout << "d: " << i << " " << d2k[i] << endl;
 		cout << "e: " << i << " " << e2k[i] << endl;
+
+		cout << "B: " << i << " " << c2k[i].B << endl;
+		cout << "n: " << i << " " << c2k[i].nu << endl;
+
 		cout << "------------------" << endl;
 		cout << "ms: " << i << " " << m2ks[i] << endl;
 		cout << "ds: " << i << " " << d2ks[i] << endl;
 		cout << "es: " << i << " " << e2ks[i] << endl;
+
+		cout << "Bs: " << i << " " << c2ks[i].B << endl;
+		cout << "ns: " << i << " " << c2ks[i].nu << endl;
+
 		cout << "------------------" << endl;
 		cout << "me: " << i << " " << m2ke[i] << endl;
 		cout << "de: " << i << " " << d2ke[i] << endl;
 		cout << "ee: " << i << " " << e2ke[i] << endl;
+
+		cout << "Be: " << i << " " << c2ke[i].B << endl;
+		cout << "ne: " << i << " " << c2ke[i].nu << endl;
+
 		cout << "------------------" << endl;
 	}
 

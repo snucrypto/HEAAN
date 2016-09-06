@@ -22,7 +22,7 @@ public:
 	long logTQ;
 
 	ZZ B;
-
+	ZZ nu;
 	Params(long lambda, bool isGauss = false);
 };
 

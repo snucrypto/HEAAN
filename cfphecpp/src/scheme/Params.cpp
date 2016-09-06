@@ -17,4 +17,5 @@ Params::Params(long lambda, bool isGauss) : lambda(lambda), isGauss(isGauss) {
 	logT = logP * levels;
 	logTQ = logQ + logT;
 	B = 4;
+	nu = 2 << logP;
 }
