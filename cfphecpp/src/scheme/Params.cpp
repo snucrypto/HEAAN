@@ -4,31 +4,34 @@
  *  Created on: May 15, 2016
  *      Author: kimandrik
  */
+
 #include "Params.h"
 
+#include <cmath>
+
 Params::Params(long lambda) : lambda(lambda) {
-	levels = 5;
+	L = 7;
 	sigma = 3;
 	tau = 3;
 	d = 2 << 14;
 	n = 2 << 13;
 	h = 64;
-	logP = 20;
-	logQ = logP * levels;
-	logT = logP * levels;
-	logTQ = logQ + logT;
+	logp = 25;
+	logq = logp * L;
+	logP = logp * L;
+	logPq = logq + logP;
 
 	Bclean = (8.0 * sqrt(2.0) * sigma * n) + (6.0 * sigma * sqrt(n)) + (16.0 * sigma * sqrt(h * n * 1.0));
 	Bscale = sqrt(3.0 * n) + 8 * sqrt(h * n / 3.0);
-	for (long l = 0; l < levels; ++l) {
+	for (long l = 0; l < L; ++l) {
 		ZZ Bkstemp;
-		Bkstemp = 8 << (logP * (l+1));
+		Bkstemp = 8 << (logp * (l+1));
 		Bkstemp *= (sigma * n);
 		Bkstemp /= sqrt(3.0);
 		Bks.push_back(Bkstemp);
 
 		ZZ Bmulttemp;
-		Bmulttemp = Bkstemp >> logT;
+		Bmulttemp = Bkstemp >> logP;
 		Bmulttemp += Bscale;
 		Bks.push_back(Bmulttemp);
 	}

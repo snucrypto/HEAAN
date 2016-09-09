@@ -10,18 +10,16 @@ using namespace NTL;
 class Params {
 public:
 	long lambda;
-	long levels;
+	long L;
 	long tau;
-
 	double sigma;
-
-	long logP;
+	long logp;
 	long d;
 	long n;
 	long h;
-	long logT;
-	long logQ;
-	long logTQ;
+	long logP;
+	long logq;
+	long logPq;
 
 	ZZ Bclean;
 	ZZ Bscale;

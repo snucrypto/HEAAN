@@ -21,12 +21,12 @@ Cipher Scheme::encrypt(ZZ& m) {
 			CZZX lwe0 = publicKey.A0[i];
 			CZZX lwe1 = publicKey.A1[i];
 
-			CPolyRingUtils::addPolyRing2(c0, c0, lwe0, params.logQ, params.n);
-			CPolyRingUtils::addPolyRing2(c1, c1, lwe1, params.logQ, params.n);
+			CPolyRingUtils::addPolyRing2(c0, c0, lwe0, params.logq, params.n);
+			CPolyRingUtils::addPolyRing2(c1, c1, lwe1, params.logq, params.n);
 		}
 	}
 	tmp2 = coeff(c0, 0) + m;
-	CPolyRingUtils::truncate(tmp2, params.logQ);
+	CPolyRingUtils::truncate(tmp2, params.logq);
 	SetCoeff(c0, 0, tmp2);
 	c0.normalize();
 	Cipher cipher(c0, c1, 1, params.Bclean, m);
@@ -116,8 +116,8 @@ Cipher Scheme::mul(Cipher& cipher1, Cipher& cipher2) {
 	CPolyRingUtils::mulPolyRing2(mulC1, publicKey.aStar, cc11, logTQi, params.n);
 	CPolyRingUtils::mulPolyRing2(mulC0, publicKey.bStar, cc11, logTQi, params.n);
 
-	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logT, logQi, params.n);
-	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logT, logQi, params.n);
+	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logP, logQi, params.n);
+	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logP, logQi, params.n);
 
 	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
 	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc01, logQi, params.n);
@@ -150,8 +150,8 @@ void Scheme::mulAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	CPolyRingUtils::mulPolyRing2(mulC1, publicKey.aStar, cc11, logTQi, params.n);
 	CPolyRingUtils::mulPolyRing2(mulC0, publicKey.bStar, cc11, logTQi, params.n);
 
-	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logT, logQi, params.n);
-	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logT, logQi, params.n);
+	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logP, logQi, params.n);
+	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logP, logQi, params.n);
 
 	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
 	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc01, logQi, params.n);
@@ -235,7 +235,7 @@ void Scheme::mulByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 }
 
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
-	long logDF = params.logP * (newLevel-cipher.level);
+	long logDF = params.logp * (newLevel-cipher.level);
 
 	CZZX c0;
 	CZZX c1;
@@ -249,15 +249,15 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ B = (cipher.B >> params.logP) + params.Bscale;
-	ZZ nu = cipher.nu >> params.logP;
+	ZZ B = (cipher.B >> params.logp) + params.Bscale;
+	ZZ nu = cipher.nu >> params.logp;
 
 	Cipher newCipher(c0, c1, newLevel, B, nu);
 	return newCipher;
 }
 
 void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
-	long logDF = params.logP * (newLevel-cipher.level);
+	long logDF = params.logp * (newLevel-cipher.level);
 
 	long i;
 	for (i = 0; i < params.n; ++i) {
@@ -270,9 +270,9 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	cipher.c1.normalize();
 	cipher.level = newLevel;
 
-	cipher.B >>= params.logP;
+	cipher.B >>= params.logp;
 	cipher.B += params.Bscale;
-	cipher.nu >>= params.logP;
+	cipher.nu >>= params.logp;
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
@@ -318,9 +318,9 @@ void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 }
 
 long Scheme::getLogQi(long& level) {
-	return params.logQ - params.logP * (level-1);
+	return params.logq - params.logp * (level-1);
 }
 
 long Scheme::getLogTQi(long& level) {
-	return params.logTQ - params.logP * (level-1);
+	return params.logPq - params.logp * (level-1);
 }

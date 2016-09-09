@@ -20,6 +20,7 @@ void test1() {
 	TimeUtils timeutils;
 
 	long lambda = 10;
+	long deg = 7;
 
 	cout << "------------------" << endl;
 
@@ -49,7 +50,7 @@ void test1() {
 
 	ZZ m;
 	m = 1;
-	m <<= params.logP;
+	m <<= params.logp;
 	m -= 3;
 
 
@@ -58,7 +59,6 @@ void test1() {
 	vector<ZZ> m2ke;
 
 	long i;
-	long deg = 5;
 
 	m2k.push_back(m);
 	m2ks.push_back(m);
@@ -66,7 +66,7 @@ void test1() {
 
 	for (i = 1; i < deg; ++i) {
 		m2k.push_back(m2ks[i-1] * m2ks[i-1]);
-		m2ks.push_back(m2k[i] >> params.logP);
+		m2ks.push_back(m2k[i] >> params.logp);
 		m2ke.push_back(m2k[i]);
 	}
 
@@ -169,7 +169,7 @@ void test1() {
 		cout << "------------------" << endl;
 	}
 
-	cout << params.logQ << endl;
+	cout << params.logq << endl;
 
 	cout << "!!! END TEST 1 !!!" << endl; // prints !!!Hello World!!!
 }
