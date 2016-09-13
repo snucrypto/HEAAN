@@ -39,6 +39,7 @@ class CPolyRingUtils {
 		static void sampleUniform2(ZZX& res, long& logB, long deg);
 		static void sampleUniform2(CZZX& res, long& logB, long deg);
 		static void truncate(CZZ& c, const long& logMod);
+		static void sampleZO(CZZX& res, double& rho, long& deg);
 };
 
 #endif /* POLYSCHEME_ZRINGUTILS_H_ */

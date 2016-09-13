@@ -12,8 +12,8 @@ using namespace NTL;
 
 class PubKey {
 public:
-	vector<CZZX> A0;
-	vector<CZZX> A1;
+	CZZX a;
+	CZZX b;
 
 	CZZX aStar;
 	CZZX bStar;

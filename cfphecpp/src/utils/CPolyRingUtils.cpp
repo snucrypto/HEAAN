@@ -313,3 +313,20 @@ void CPolyRingUtils::sampleUniform2(CZZX& res, long& logB, long d) {
 	sampleUniform2(res.rx, logB, d);
 	sampleUniform2(res.ix, logB, d);
 }
+
+void CPolyRingUtils::sampleZO(CZZX& res, double& rho, long& deg) {
+	res.ix = ZZX::zero();
+	ZZ temp;
+	long i;
+	for (i = 0; i < deg; ++i) {
+		RandomBits(temp, 2);
+		if(temp == 0) {
+			SetCoeff(res.rx, i, 1);
+		} else if (temp == 1) {
+			SetCoeff(res.rx, i, -1);
+		} else {
+			SetCoeff(res.rx, i, 0);
+		}
+	}
+}
+

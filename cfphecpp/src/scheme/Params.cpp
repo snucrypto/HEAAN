@@ -10,13 +10,13 @@
 #include <cmath>
 
 Params::Params(long lambda) : lambda(lambda) {
-	L = 7;
+	L = 10;
 	sigma = 3;
-	tau = 3;
-	d = 2 << 14;
-	n = 2 << 13;
+	rho = 0.5;
+	d = 1 << 14;
+	n = 1 << 13;
 	h = 64;
-	logp = 25;
+	logp = 30;
 	logq = logp * L;
 	logP = logp * L;
 	logPq = logq + logP;

@@ -11,7 +11,7 @@ class Params {
 public:
 	long lambda;
 	long L;
-	long tau;
+	double rho;
 	double sigma;
 	long logp;
 	long d;

@@ -9,25 +9,26 @@ using namespace std;
 using namespace NTL;
 
 Cipher Scheme::encrypt(ZZ& m) {
-	ZZ tmp;
-	CZZ tmp2;
-	RandomBits(tmp, params.tau);
-	CZZX c0;
-	CZZX c1;
+	CZZ tmp;
 
-	long i;
-	for (i = 0; i < params.tau; ++i) {
-		if(bit(tmp, i)) {
-			CZZX lwe0 = publicKey.A0[i];
-			CZZX lwe1 = publicKey.A1[i];
+	CZZX v;
+	CZZX c0, c1;
+	CZZX e;
 
-			CPolyRingUtils::addPolyRing2(c0, c0, lwe0, params.logq, params.n);
-			CPolyRingUtils::addPolyRing2(c1, c1, lwe1, params.logq, params.n);
-		}
-	}
-	tmp2 = coeff(c0, 0) + m;
-	CPolyRingUtils::truncate(tmp2, params.logq);
-	SetCoeff(c0, 0, tmp2);
+	CPolyRingUtils::sampleZO(v, params.rho, params.n);
+
+
+	CPolyRingUtils::mulPolyRing2(c0, v, publicKey.b, params.logq, params.n);
+	CPolyRingUtils::sampleGaussian(e, params.n, params.sigma);
+	CPolyRingUtils::addPolyRing2(c0, e, c0, params.logq, params.n);
+
+	CPolyRingUtils::mulPolyRing2(c1, v, publicKey.a, params.logq, params.n);
+	CPolyRingUtils::sampleGaussian(e, params.n, params.sigma);
+	CPolyRingUtils::addPolyRing2(c1, e, c1, params.logq, params.n);
+
+	tmp = coeff(c0, 0) + m;
+	CPolyRingUtils::truncate(tmp, params.logq);
+	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 	Cipher cipher(c0, c1, 1, params.Bclean, m);
 	return cipher;
