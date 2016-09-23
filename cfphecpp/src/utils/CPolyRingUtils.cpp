@@ -68,6 +68,21 @@ void CPolyRingUtils::subPolyRing2(CZZX& res, CZZX& poly1, CZZX& poly2, const lon
 	res = add;
 }
 
+void CPolyRingUtils::mulPoly(ZZX& res, ZZX& poly1, ZZX& poly2, const long& d) {
+	long i;
+	ZZ tmp;
+	ZZX poly;
+	res.SetLength(d);
+	mul(poly, poly1, poly2);
+
+	for (i = 0; i < d; ++i) {
+		tmp = coeff(poly, i) - coeff(poly, i + d);
+		SetCoeff(res, i, tmp);
+	}
+	res.normalize();
+}
+
+
 void CPolyRingUtils::mulPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& d) {
 	long i;
 	CZZ tmp;

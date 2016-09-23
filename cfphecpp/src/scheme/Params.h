@@ -9,7 +9,6 @@ using namespace NTL;
 
 class Params {
 public:
-	long lambda;
 	long L;
 	double rho;
 	double sigma;
@@ -21,12 +20,13 @@ public:
 	long logq;
 	long logPq;
 
+	ZZ p;
 	ZZ Bclean;
 	ZZ Bscale;
 	vector<ZZ> Bks;
 	vector<ZZ> Bmult;
 
-	Params(long lambda);
+	Params(long n, long logp, long L, double sigma, double rho, long h);
 };
 
 #endif /* SCHEME_PARAMS_H_ */

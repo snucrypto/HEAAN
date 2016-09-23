@@ -9,17 +9,13 @@
 
 #include <cmath>
 
-Params::Params(long lambda) : lambda(lambda) {
-	L = 10;
-	sigma = 3;
-	rho = 0.5;
-	d = 1 << 15;
-	n = 1 << 14;
-	h = 64;
-	logp = 30;
+Params::Params(long n, long logp, long L, double sigma, double rho, long h) : n(n), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
+	d = n << 1;
 	logq = logp * L;
 	logP = logp * L;
 	logPq = logq + logP;
+
+	power(p, 2, logp);
 
 	Bclean = (8.0 * sqrt(2.0) * sigma * n) + (6.0 * sigma * sqrt(n)) + (16.0 * sigma * sqrt(h * n * 1.0));
 

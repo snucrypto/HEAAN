@@ -13,7 +13,7 @@ class CPolyRingUtils {
 		static void addPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& deg);
 		static void subPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& deg);
 		static void mulPolyRing(CZZX& res, CZZX& poly1, CZZX& poly2, const ZZ& mod, const long& deg);
-
+		static void mulPoly(ZZX& res, ZZX& poly1, ZZX& poly2, const long& d);
 		static void mulPolyByConstantRing(CZZX& res, CZZX& poly, const CZZ& cnst, const ZZ& mod, const long& deg);
 
 		static void leftShiftPolyRing(CZZX& res, CZZX& poly, const long& cnst, const ZZ& mod, const long& deg);

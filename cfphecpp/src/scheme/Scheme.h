@@ -1,10 +1,13 @@
 #ifndef SCHEME_SCHEME_H_
 #define SCHEME_SCHEME_H_
 
-#include "Cipher.h"
+#include <vector>
+
+#include "../eval/Ksi.h"
 #include "Params.h"
-#include "PubKey.h"
+#include "Cipher.h"
 #include "SecKey.h"
+#include "PubKey.h"
 
 using namespace std;
 using namespace NTL;
@@ -32,6 +35,7 @@ public:
 	Cipher mul(Cipher& cipher1, Cipher& cipher2);
 	Cipher addConstant(Cipher& cipher, ZZ& cnst);
 	Cipher mulByConstant(Cipher& cipher, ZZ& cnst);
+	Cipher mulByConstant(Cipher& cipher, ZZ& cnstr, ZZ& cnsti);
 	Cipher modSwitch(Cipher& cipher, long newLevel);
 	Cipher modEmbed(Cipher& cipher, long newLevel);
 
@@ -42,6 +46,8 @@ public:
 	void mulAndEqual(Cipher& cipher1, Cipher& cipher2);
 	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
 	void mulByConstantAndEqual(Cipher& cipher, ZZ& cnst);
+
+	vector<Cipher> fft(vector<Cipher>& ciphers, vector<Ksi>& ksis);
 };
 
 #endif /* SCHEME_SCHEME_H_ */

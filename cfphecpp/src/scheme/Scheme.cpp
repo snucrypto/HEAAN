@@ -206,6 +206,33 @@ Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
 	return newCipher;
 }
 
+Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnstr, ZZ& cnsti) {
+	long logQi = getLogQi(cipher.level);
+	CZZ tmp;
+	CZZX c0;
+	CZZX c1;
+	long i;
+	for (i = 0; i < params.n; ++i) {
+		tmp = coeff(cipher.c0,i) * cnstr - coeff(cipher.c1,i) * cnsti ;
+		CPolyRingUtils::truncate(tmp, logQi);
+		SetCoeff(c0, i, tmp);
+		tmp = coeff(cipher.c1,i) * cnstr + coeff(cipher.c0,i) * cnsti;
+		CPolyRingUtils::truncate(tmp, logQi);
+		SetCoeff(c1, i, tmp);
+	}
+	c0.normalize();
+	c1.normalize();
+
+	ZZ norm;
+	SqrRoot(norm, cnstr * cnstr + cnsti * cnsti);
+
+	ZZ B = cipher.B * norm;
+	ZZ nu = cipher.nu * norm;
+
+	Cipher newCipher(c0, c1, cipher.level, B, nu);
+	return newCipher;
+}
+
 void Scheme::addConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	CZZ tmp;
 	long logQi = getLogQi(cipher.level);
@@ -317,6 +344,51 @@ void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	cipher.c1.normalize();
 	cipher.level = newLevel;
 }
+
+vector<Cipher> Scheme::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
+	long csize = ciphers.size();
+	if(csize == 1) {
+		return ciphers;
+	}
+
+	vector<Cipher> res;
+
+	long logcsize = log2(csize);
+
+	vector<Cipher> sub1;
+	vector<Cipher> sub2;
+
+	long i;
+	for (i = 0; i < csize; i = i+2) {
+		sub1.push_back(ciphers[i]);
+		sub2.push_back(ciphers[i+1]);
+	}
+
+	vector<Cipher> y1 = fft(sub1, ksis);
+	vector<Cipher> y2 = fft(sub2, ksis);
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], params.p);
+		ZZ rx = ksis[logcsize].powr[i];
+		ZZ ix = ksis[logcsize].powi[i];
+		Cipher mul2 = mulByConstant(y2[i], rx, ix);
+		Cipher sum = add(mul1, mul2);
+		Cipher ms = modSwitch(sum, sum.level + 1);
+		res.push_back(ms);
+	}
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], params.p);
+		ZZ rx = ksis[logcsize].powr[i];
+		ZZ ix = ksis[logcsize].powi[i];
+		Cipher mul2 = mulByConstant(y2[i], rx, ix);
+		Cipher diff = sub(mul1, mul2);
+		Cipher ms = modSwitch(diff, diff.level + 1);
+		res.push_back(ms);
+	}
+	return res;
+}
+
 
 long Scheme::getLogQi(long& level) {
 	return params.logq - params.logp * (level-1);
