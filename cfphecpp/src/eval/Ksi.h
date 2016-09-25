@@ -1,9 +1,8 @@
 #ifndef EVAL_KSI_H_
 #define EVAL_KSI_H_
 
-#include <math.h>
 #include <vector>
-#include <NTL/ZZ.h>
+#include "../czz/CZZ.h"
 
 using namespace std;
 using namespace NTL;
@@ -14,8 +13,7 @@ public:
 	long n;
 	long logpow;
 
-	vector<ZZ> powr;
-	vector<ZZ> powi;
+	vector<CZZ> pows;
 
 	Ksi(long n, long logpow);
 };

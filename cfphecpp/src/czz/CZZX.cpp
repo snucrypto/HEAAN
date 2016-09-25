@@ -1,5 +1,8 @@
 #include "CZZX.h"
 
+#include <sstream>
+#include <string>
+
 CZZX CZZX::operator+(const CZZX& o) {
 	ZZX resr = rx + o.rx;
 	ZZX resi = ix + o.ix;
@@ -58,6 +61,16 @@ void CZZX::SetLength(long d) {
 void CZZX::normalize() {
 	rx.normalize();
 	ix.normalize();
+}
+
+string CZZX::toString() {
+	stringstream ss;
+	ss << " [rx = ";
+	ss << rx;
+	ss << " ,ix = ";
+	ss << ix;
+	ss << " ] ";
+	return ss.str();
 }
 
 CZZ coeff(CZZX& cx, long s) {

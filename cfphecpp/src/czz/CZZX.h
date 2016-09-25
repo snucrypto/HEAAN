@@ -31,6 +31,8 @@ public:
 	void SetMaxLength(long d);
 	void SetLength(long d);
 	void normalize();
+
+	string toString();
 };
 
 CZZ coeff(CZZX& cx, long s);

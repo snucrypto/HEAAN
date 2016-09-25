@@ -25,7 +25,6 @@ public:
 	ZZ Bscale;
 	vector<ZZ> Bks;
 	vector<ZZ> Bmult;
-
 	Params(long n, long logp, long L, double sigma, double rho, long h);
 };
 

@@ -1,5 +1,8 @@
 #include "Ksi.h"
 
+#include <NTL/ZZ.h>
+#include <cmath>
+
 Ksi::Ksi(long n, long logpow) : n(n), logpow(logpow) {
 	double angle;
 	long i;
@@ -9,9 +12,8 @@ Ksi::Ksi(long n, long logpow) : n(n), logpow(logpow) {
 
 		double rx = cos(angle) * pow;
 		double ix = sin(angle) * pow;
-
-		powr.push_back(to_ZZ(rx));
-		powi.push_back(to_ZZ(ix));
+		CZZ x(to_ZZ(rx), to_ZZ(ix));
+		pows.push_back(x);
 	}
 }
 

@@ -20,6 +20,7 @@ public:
 	CZZ operator-(const ZZ& m);
 	CZZ operator *(const CZZ& o);
 	CZZ operator *(const ZZ& o);
+	CZZ operator /(const ZZ& o);
 	void operator+=(const CZZ& o);
 	void operator-=(const CZZ& o);
 	void operator *=(const CZZ& o);
@@ -27,6 +28,10 @@ public:
 
 	CZZ operator <<(const long& s);
 	CZZ operator >>(const long& s);
+
+	ZZ norm();
+
+	string toString();
 };
 
 #endif /* UTILS_CZZ_H_ */

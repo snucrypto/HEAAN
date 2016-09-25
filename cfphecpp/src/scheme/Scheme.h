@@ -27,17 +27,20 @@ public:
 
 	virtual ~Scheme() {};
 
-	Cipher encrypt(ZZ& m);
-	ZZ decrypt(Cipher& cipher);
+	Cipher encrypt(CZZ& m);
+	CZZ decrypt(Cipher& cipher);
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
 	Cipher sub(Cipher& cipher1, Cipher& cipher2);
 	Cipher mul(Cipher& cipher1, Cipher& cipher2);
 	Cipher addConstant(Cipher& cipher, ZZ& cnst);
+	Cipher addConstant(Cipher& cipher, CZZ& cnst);
 	Cipher mulByConstant(Cipher& cipher, ZZ& cnst);
-	Cipher mulByConstant(Cipher& cipher, ZZ& cnstr, ZZ& cnsti);
+	Cipher mulByConstant(Cipher& cipher, CZZ& cnst);
 	Cipher modSwitch(Cipher& cipher, long newLevel);
 	Cipher modEmbed(Cipher& cipher, long newLevel);
+
+	Cipher mulAndModSwitch(Cipher& cipher1, Cipher& cipher2);
 
 	void modEmbedAndEqual(Cipher& cipher, long newLevel);
 	void modSwitchAndEqual(Cipher& cipher, long newLevel);
@@ -48,6 +51,7 @@ public:
 	void mulByConstantAndEqual(Cipher& cipher, ZZ& cnst);
 
 	vector<Cipher> fft(vector<Cipher>& ciphers, vector<Ksi>& ksis);
+	vector<CZZ> fft(vector<CZZ>& ciphers, vector<Ksi>& ksis);
 };
 
 #endif /* SCHEME_SCHEME_H_ */

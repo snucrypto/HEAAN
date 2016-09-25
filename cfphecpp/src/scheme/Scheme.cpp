@@ -8,7 +8,7 @@
 using namespace std;
 using namespace NTL;
 
-Cipher Scheme::encrypt(ZZ& m) {
+Cipher Scheme::encrypt(CZZ& m) {
 	CZZ tmp;
 
 	CZZX v;
@@ -30,11 +30,12 @@ Cipher Scheme::encrypt(ZZ& m) {
 	CPolyRingUtils::truncate(tmp, params.logq);
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
-	Cipher cipher(c0, c1, 1, params.Bclean, m);
+	ZZ norm = m.norm();
+	Cipher cipher(c0, c1, 1, params.Bclean, norm);
 	return cipher;
 }
 
-ZZ Scheme::decrypt(Cipher& cipher) {
+CZZ Scheme::decrypt(Cipher& cipher) {
 	long logQi = getLogQi(cipher.level);
 
 	CZZX m;
@@ -43,12 +44,7 @@ ZZ Scheme::decrypt(Cipher& cipher) {
 	CZZ c;
 	ZZ tmp;
 	GetCoeff(c, m, 0);
-	while(c.r < 0) {
-		tmp = 1;
-		tmp <<= logQi;
-		c.r += tmp;
-	}
-	return c.r;
+	return c;
 }
 
 Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
@@ -131,6 +127,12 @@ Cipher Scheme::mul(Cipher& cipher1, Cipher& cipher2) {
 	return cipher;
 }
 
+Cipher Scheme::mulAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
+	Cipher c = mul(cipher1, cipher2);
+	Cipher cms = modSwitch(c, c.level + 1);
+	return cms;
+}
+
 void Scheme::mulAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	long logTQi = getLogTQi(cipher1.level);
@@ -182,6 +184,25 @@ Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
 	return newCipher;
 }
 
+Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
+	long logQi = getLogQi(cipher.level);
+	CZZ tmp;
+	CZZX c0 = cipher.c0;
+	CZZX c1 = cipher.c1;
+	tmp = coeff(cipher.c1,0) + cnst;
+	CPolyRingUtils::truncate(tmp, logQi);
+	SetCoeff(c1, 0, tmp);
+	c0.normalize();
+
+	ZZ norm = cnst.norm();
+
+	ZZ B = cipher.B + 1;
+	ZZ nu = cipher.nu + norm;
+
+	Cipher newCipher(c0, c1, cipher.level, B, nu);
+	return newCipher;
+}
+
 Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
 	long logQi = getLogQi(cipher.level);
 	CZZ tmp;
@@ -206,25 +227,24 @@ Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
 	return newCipher;
 }
 
-Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnstr, ZZ& cnsti) {
+Cipher Scheme::mulByConstant(Cipher& cipher, CZZ& cnst) {
 	long logQi = getLogQi(cipher.level);
 	CZZ tmp;
 	CZZX c0;
 	CZZX c1;
 	long i;
 	for (i = 0; i < params.n; ++i) {
-		tmp = coeff(cipher.c0,i) * cnstr - coeff(cipher.c1,i) * cnsti ;
+		tmp = coeff(cipher.c0,i) * cnst;
 		CPolyRingUtils::truncate(tmp, logQi);
 		SetCoeff(c0, i, tmp);
-		tmp = coeff(cipher.c1,i) * cnstr + coeff(cipher.c0,i) * cnsti;
+		tmp = coeff(cipher.c1,i) * cnst;
 		CPolyRingUtils::truncate(tmp, logQi);
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
 	c1.normalize();
 
-	ZZ norm;
-	SqrRoot(norm, cnstr * cnstr + cnsti * cnsti);
+	ZZ norm = cnst.norm();
 
 	ZZ B = cipher.B * norm;
 	ZZ nu = cipher.nu * norm;
@@ -369,24 +389,68 @@ vector<Cipher> Scheme::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 
 	for (i = 0; i < csize/2; ++i) {
 		Cipher mul1 = mulByConstant(y1[i], params.p);
-		ZZ rx = ksis[logcsize].powr[i];
-		ZZ ix = ksis[logcsize].powi[i];
-		Cipher mul2 = mulByConstant(y2[i], rx, ix);
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
 		Cipher sum = add(mul1, mul2);
 		Cipher ms = modSwitch(sum, sum.level + 1);
+		CZZ d = decrypt(ms);
 		res.push_back(ms);
 	}
 
 	for (i = 0; i < csize/2; ++i) {
 		Cipher mul1 = mulByConstant(y1[i], params.p);
-		ZZ rx = ksis[logcsize].powr[i];
-		ZZ ix = ksis[logcsize].powi[i];
-		Cipher mul2 = mulByConstant(y2[i], rx, ix);
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
 		Cipher diff = sub(mul1, mul2);
 		Cipher ms = modSwitch(diff, diff.level + 1);
 		res.push_back(ms);
 	}
 	return res;
+}
+
+vector<CZZ> Scheme::fft(vector<CZZ>& vals, vector<Ksi>& ksis) {
+	long csize = vals.size();
+	if(csize == 1) {
+		return vals;
+	}
+
+	vector<CZZ> res;
+
+	long logcsize = log2(csize);
+
+	vector<CZZ> sub1;
+	vector<CZZ> sub2;
+
+	long i;
+	for (i = 0; i < csize; i = i+2) {
+		sub1.push_back(vals[i]);
+		sub2.push_back(vals[i+1]);
+	}
+
+	vector<CZZ> y1 = fft(sub1, ksis);
+	vector<CZZ> y2 = fft(sub2, ksis);
+
+	for (i = 0; i < csize/2; ++i) {
+		CZZ mul1 = y1[i] * params.p;
+		CZZ x = ksis[logcsize].pows[i];
+
+		CZZ mul2 = y2[i] * x;
+		CZZ sum = mul1 + mul2;
+		CZZ ms = sum / params.p;
+		res.push_back(ms);
+	}
+
+	for (i = 0; i < csize/2; ++i) {
+		CZZ mul1 = y1[i] * params.p;
+		CZZ x = ksis[logcsize].pows[i];
+
+		CZZ mul2 = y2[i] * x;
+		CZZ diff = mul1 - mul2;
+		CZZ ms = diff / params.p;
+		res.push_back(ms);
+	}
+	return res;
+
 }
 
 

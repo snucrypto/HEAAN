@@ -68,10 +68,10 @@ void CPolyRingUtils::subPolyRing2(CZZX& res, CZZX& poly1, CZZX& poly2, const lon
 	res = add;
 }
 
-void CPolyRingUtils::mulPoly(ZZX& res, ZZX& poly1, ZZX& poly2, const long& d) {
+void CPolyRingUtils::mulPoly(CZZX& res, CZZX& poly1, CZZX& poly2, const long& d) {
 	long i;
-	ZZ tmp;
-	ZZX poly;
+	CZZ tmp;
+	CZZX poly;
 	res.SetLength(d);
 	mul(poly, poly1, poly2);
 
