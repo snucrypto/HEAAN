@@ -33,6 +33,7 @@ public:
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
 	Cipher sub(Cipher& cipher1, Cipher& cipher2);
 	Cipher mul(Cipher& cipher1, Cipher& cipher2);
+	Cipher square(Cipher& cipher);
 	Cipher addConstant(Cipher& cipher, ZZ& cnst);
 	Cipher addConstant(Cipher& cipher, CZZ& cnst);
 	Cipher mulByConstant(Cipher& cipher, ZZ& cnst);
@@ -41,12 +42,14 @@ public:
 	Cipher modEmbed(Cipher& cipher, long newLevel);
 
 	Cipher mulAndModSwitch(Cipher& cipher1, Cipher& cipher2);
+	Cipher squareAndModSwitch(Cipher& cipher);
 
 	void modEmbedAndEqual(Cipher& cipher, long newLevel);
 	void modSwitchAndEqual(Cipher& cipher, long newLevel);
 	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
 	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
 	void mulAndEqual(Cipher& cipher1, Cipher& cipher2);
+	void squareAndEqual(Cipher& cipher);
 	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
 	void mulByConstantAndEqual(Cipher& cipher, ZZ& cnst);
 
