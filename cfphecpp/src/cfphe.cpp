@@ -262,7 +262,7 @@ void testInv() {
 
 	vector<CZZ> e2k;
 
-	for (i = 0; i < r; ++i) {
+	for (i = 0; i < r-1; ++i) {
 		cout << "---------" << i << "---------" << endl;
 		e2k.push_back(minv - d2k[i]);
 		cout << "------------------" << endl;
