@@ -22,6 +22,10 @@ Params::Params(long n, long logp, long L, double sigma, double rho, long h) : n(
 	Bscale = sqrt(3.0 * n) + 8 * sqrt(h * n / 3.0);
 
 	for (long l = 0; l < L; ++l) {
+		ZZ ql;
+		power(ql, 2, logp * (l+1));
+		qi.push_back(ql);
+
 		ZZ Bkstemp;
 		Bkstemp = 8 << (logp * (l+1));
 		Bkstemp *= (sigma * n);

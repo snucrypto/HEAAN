@@ -20,6 +20,7 @@ public:
 	SecKey& secretKey;
 	PubKey& publicKey;
 
+	ZZ getQi(long& level);
 	long getLogQi(long& level);
 	long getLogTQi(long& level);
 

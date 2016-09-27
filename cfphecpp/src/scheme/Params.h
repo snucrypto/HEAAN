@@ -23,8 +23,10 @@ public:
 	ZZ p;
 	ZZ Bclean;
 	ZZ Bscale;
+	vector<ZZ> qi;
 	vector<ZZ> Bks;
 	vector<ZZ> Bmult;
+
 	Params(long n, long logp, long L, double sigma, double rho, long h);
 };
 

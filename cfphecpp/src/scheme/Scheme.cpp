@@ -37,6 +37,7 @@ Cipher Scheme::encrypt(CZZ& m) {
 
 CZZ Scheme::decrypt(Cipher& cipher) {
 	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
 
 	CZZX m;
 	CPolyRingUtils::mulPolyRing2(m, secretKey.s, cipher.c1, logQi, params.n);
@@ -522,6 +523,9 @@ vector<CZZ> Scheme::fft(vector<CZZ>& vals, vector<Ksi>& ksis) {
 
 }
 
+ZZ Scheme:: getQi(long& level) {
+	return params.qi[params.L - level];
+}
 
 long Scheme::getLogQi(long& level) {
 	return params.logq - params.logp * (level-1);
