@@ -21,10 +21,10 @@ void testPow() {
 	long i;
 	TimeUtils timeutils;
 
-	long deg = 5;
-	long L = 5;
-	long n = 1 << 12;
-	long logp = 30;
+	long deg = 11;
+	long L = 11;
+	long n = 1 << 14;
+	long logp = 35;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -60,16 +60,6 @@ void testPow() {
 
 	m.r = 1;
 	m.r <<= params.logp;
-	m.r -= RandomBits_ZZ(error);
-
-	vector<CZZ> m2k;
-
-
-	m2k.push_back(m);
-
-	for (i = 1; i < deg; ++i) {
-		m2k.push_back((m2k[i-1] * m2k[i-1]) >> params.logp);
-	}
 
 	vector<Cipher> c2k;
 
@@ -117,15 +107,13 @@ void testPow() {
 		d2k.push_back(ds);
 	}
 
-	vector<CZZ> e2k;
-
 	for (i = 0; i < deg; ++i) {
 		cout << "---------" << i << "---------" << endl;
-		e2k.push_back(m2k[i] - d2k[i]);
+		ZZ e = params.p - d2k[i].r;
 		cout << "------------------" << endl;
-		cout << "ms: " << i << " " << m2k[i].toString() << endl;
+		cout << "ms: " << i << " " << params.p << endl;
 		cout << "ds: " << i << " " << d2k[i].toString() << endl;
-		cout << "es: " << i << " " << e2k[i].toString() << endl;
+		cout << "es: " << i << " " << e << endl;
 		cout << "Bs: " << i << " " << c2k[i].B << endl;
 		cout << "ns: " << i << " " << c2k[i].nu << endl;
 		cout << "------------------" << endl;
@@ -133,13 +121,123 @@ void testPow() {
 	cout << "!!! END TEST POW !!!" << endl; // prints !!!Hello World!!!
 }
 
+void testProd() {
+	cout << "!!! START TEST PROD !!!" << endl; // prints !!!Hello World!!!
+
+	long i;
+	TimeUtils timeutils;
+
+	long deg = 5;
+	long L = 5;
+	long n = 1 << 12;
+	long logp = 30;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	long error = 6;
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenParams");
+	Params params(n, logp, L, sigma, rho, h);
+	timeutils.stop("GenParams");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenSecKey");
+	SecKey secretKey(params);
+	timeutils.stop("GenSecKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenPubKey");
+	PubKey publicKey(params, secretKey);
+	timeutils.stop("GenPubKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenScheme");
+	Scheme scheme(params, secretKey, publicKey);
+	timeutils.stop("GenScheme");
+
+	cout << "------------------" << endl;
+
+	CZZ m;
+
+	m.r = 1;
+	m.r <<= params.logp;
+
+	vector<Cipher> c2k;
+
+	timeutils.start("Encrypt c");
+	Cipher c = scheme.encrypt(m, params.p);
+	timeutils.stop("Encrypt c");
+
+
+	c2k.push_back(c);
+
+	for (i = 1; i < deg; ++i) {
+		cout << "---------" << i << "---------" << endl;
+
+		timeutils.start("Mul ");
+		Cipher c2 = scheme.mul(c2k[i - 1], c2k[i - 1]);
+		timeutils.stop("Mul ");
+
+		cout << "------------------" << endl;
+
+		timeutils.start("MS ");
+		Cipher cs = scheme.modSwitch(c2, i + 1);
+		timeutils.stop("MS ");
+		c2k.push_back(cs);
+
+		cout << "------------------" << endl;
+	}
+
+	vector<CZZ> d2k;
+
+	timeutils.start("Decrypt c");
+	CZZ d = scheme.decrypt(c);
+	timeutils.stop("Decrypt c");
+
+	d2k.push_back(d);
+
+	for (i = 1; i < deg; ++i) {
+		CZZ ds = scheme.decrypt(c2k[i]);
+
+		ZZ qi = scheme.getQi(c2k[i].level);
+		ds.i %= qi;
+		ds.r %= qi;
+		if(ds.r < 0) ds.r += qi;
+
+		if(2 * ds.i > qi) ds.i -= qi;
+		if(2 * ds.r < params.p) ds.r += qi;
+
+		d2k.push_back(ds);
+	}
+
+
+	for (i = 0; i < deg; ++i) {
+		cout << "---------" << i << "---------" << endl;
+		ZZ e = params.p - d2k[i].r;
+		cout << "------------------" << endl;
+		cout << "ms: " << i << " " << params.p << endl;
+		cout << "ds: " << i << " " << d2k[i].toString() << endl;
+		cout << "es: " << i << " " << e << endl;
+		cout << "Bs: " << i << " " << c2k[i].B << endl;
+		cout << "ns: " << i << " " << c2k[i].nu << endl;
+		cout << "------------------" << endl;
+	}
+	cout << "!!! END TEST PROD !!!" << endl; // prints !!!Hello World!!!
+}
+
+
 void testInv() {
 	cout << "!!! START TEST Inv !!!" << endl; // prints !!!Hello World!!!
 
 	long i;
 	TimeUtils timeutils;
 
-	long r = 5;
+	long r = 6;
 	long L = 6;
 	long n = 1 << 13;
 	long logp = 25;
@@ -179,7 +277,6 @@ void testInv() {
 	CZZ minv;
 
 	mbar.r = RandomBits_ZZ(error);
-	cout << mbar.toString() << endl;
 	m.r = 1;
 	m.r <<= params.logp;
 	m.r -= mbar.r;
@@ -269,8 +366,8 @@ void testInv() {
 		cout << "minv: " << i << " " << minv.toString() << endl;
 		cout << "ds: " << i << " " << d2k[i].toString() << endl;
 		cout << "es: " << i << " " << e2k[i].toString() << endl;
-		cout << "Bs: " << i << " " << c2k[i].B << endl;
-		cout << "ns: " << i << " " << c2k[i].nu << endl;
+		cout << "Bs: " << i << " " << v2k[i].B << endl;
+		cout << "ns: " << i << " " << v2k[i].nu << endl;
 		cout << "------------------" << endl;
 	}
 	cout << "!!! END TEST Inv !!!" << endl; // prints !!!Hello World!!!
@@ -409,8 +506,9 @@ void testFFT() {
 
 
 int main() {
+	testPow();
+//	testProd();
+//	testInv();
 //	testFFT();
-	testInv();
-//	testPow();
 	return 0;
 }
