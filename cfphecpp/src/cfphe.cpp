@@ -74,7 +74,7 @@ void testPow() {
 	vector<Cipher> c2k;
 
 	timeutils.start("Encrypt c");
-	Cipher c = scheme.encrypt(m);
+	Cipher c = scheme.encrypt(m, params.p);
 	timeutils.stop("Encrypt c");
 
 	c2k.push_back(c);
@@ -109,8 +109,9 @@ void testPow() {
 		ZZ qi = scheme.getQi(c2k[i].level);
 		ds.i %= qi;
 		ds.r %= qi;
+		if(ds.r < 0) ds.r += qi;
 
-		if(2 * ds.i > params.p) ds.i -= qi;
+		if(2 * ds.i > qi) ds.i -= qi;
 		if(2 * ds.r < params.p) ds.r += qi;
 
 		d2k.push_back(ds);
@@ -138,14 +139,14 @@ void testInv() {
 	long i;
 	TimeUtils timeutils;
 
-	long deg = 5;
-	long L = 5;
-	long n = 1 << 12;
-	long logp = 30;
+	long r = 5;
+	long L = 6;
+	long n = 1 << 13;
+	long logp = 25;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	long error = 6;
+	long error = 13;
 
 	cout << "------------------" << endl;
 
@@ -174,29 +175,34 @@ void testInv() {
 	cout << "------------------" << endl;
 
 	CZZ m;
+	CZZ mbar;
+	CZZ minv;
 
+	mbar.r = RandomBits_ZZ(error);
+	cout << mbar.toString() << endl;
 	m.r = 1;
 	m.r <<= params.logp;
-	m.r -= RandomBits_ZZ(error);
-
-	vector<CZZ> m2k;
-
-
-	m2k.push_back(m);
-
-	for (i = 1; i < deg; ++i) {
-		m2k.push_back((m2k[i-1] * m2k[i-1]) >> params.logp);
-	}
+	m.r -= mbar.r;
+	minv.r = params.p * params.p / m.r;
 
 	vector<Cipher> c2k;
+	vector<Cipher> v2k;
+
+	ZZ halfp;
+	halfp = params.p / 2;
+
+	CZZ czzp;
+	czzp.r = params.p;
 
 	timeutils.start("Encrypt c");
-	Cipher c = scheme.encrypt(m);
+	Cipher c = scheme.encrypt(mbar, halfp);
 	timeutils.stop("Encrypt c");
-
 	c2k.push_back(c);
+	Cipher cp = scheme.addConstant(c, czzp);
+	Cipher v = scheme.modEmbed(cp, cp.level + 1);
+	v2k.push_back(v);
 
-	for (i = 1; i < deg; ++i) {
+	for (i = 1; i < r-1; ++i) {
 		cout << "---------" << i << "---------" << endl;
 
 		timeutils.start("Mul ");
@@ -209,21 +215,42 @@ void testInv() {
 		Cipher cs = scheme.modSwitch(c2, i + 1);
 		timeutils.stop("MS ");
 		c2k.push_back(cs);
+
+		cout << "------------------" << endl;
+
+		Cipher c2p = scheme.addConstant(cs, czzp);
+
+		timeutils.start("Mul v");
+		Cipher v2 = scheme.mul(v2k[i-1], c2p);
+		timeutils.stop("Mul v");
+
+		timeutils.start("MS v");
+		Cipher vs = scheme.modSwitch(v2, i + 2);
+		timeutils.stop("MS v");
+		v2k.push_back(vs);
+
 		cout << "------------------" << endl;
 	}
 
 	vector<CZZ> d2k;
 
 	timeutils.start("Decrypt c");
-	CZZ d = scheme.decrypt(c);
+	CZZ d = scheme.decrypt(v);
 	timeutils.stop("Decrypt c");
+
+	ZZ qi = scheme.getQi(v.level);
+	d.i %= qi;
+	d.r %= qi;
+
+	if(2 * d.i > params.p) d.i -= qi;
+	if(2 * d.r < params.p) d.r += qi;
 
 	d2k.push_back(d);
 
-	for (i = 1; i < deg; ++i) {
-		CZZ ds = scheme.decrypt(c2k[i]);
+	for (i = 1; i < r-1; ++i) {
+		CZZ ds = scheme.decrypt(v2k[i]);
 
-		ZZ qi = scheme.getQi(c2k[i].level);
+		ZZ qi = scheme.getQi(v2k[i].level);
 		ds.i %= qi;
 		ds.r %= qi;
 
@@ -235,11 +262,11 @@ void testInv() {
 
 	vector<CZZ> e2k;
 
-	for (i = 0; i < deg; ++i) {
+	for (i = 0; i < r; ++i) {
 		cout << "---------" << i << "---------" << endl;
-		e2k.push_back(m2k[i] - d2k[i]);
+		e2k.push_back(minv - d2k[i]);
 		cout << "------------------" << endl;
-		cout << "ms: " << i << " " << m2k[i].toString() << endl;
+		cout << "minv: " << i << " " << minv.toString() << endl;
 		cout << "ds: " << i << " " << d2k[i].toString() << endl;
 		cout << "es: " << i << " " << e2k[i].toString() << endl;
 		cout << "Bs: " << i << " " << c2k[i].B << endl;
@@ -314,8 +341,8 @@ void testFFT() {
 
 	timeutils.start("Encrypting polynomials");
 	for (i = 0; i < N; ++i) {
-		Cipher c1 = scheme.encrypt(poly1[i]);
-		Cipher c2 = scheme.encrypt(poly2[i]);
+		Cipher c1 = scheme.encrypt(poly1[i], params.p);
+		Cipher c2 = scheme.encrypt(poly2[i], params.p);
 		cpoly1.push_back(c1);
 		cpoly2.push_back(c2);
 	}
@@ -383,7 +410,7 @@ void testFFT() {
 
 int main() {
 //	testFFT();
-//	testInv();
-	testPow();
+	testInv();
+//	testPow();
 	return 0;
 }

@@ -8,7 +8,7 @@
 using namespace std;
 using namespace NTL;
 
-Cipher Scheme::encrypt(CZZ& m) {
+Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
 	CZZ tmp;
 
 	CZZX v;
@@ -30,8 +30,7 @@ Cipher Scheme::encrypt(CZZ& m) {
 	CPolyRingUtils::truncate(tmp, params.logq);
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
-	ZZ norm = m.norm();
-	Cipher cipher(c0, c1, 1, params.Bclean, norm);
+	Cipher cipher(c0, c1, 1, params.Bclean, nu);
 	return cipher;
 }
 
@@ -242,9 +241,9 @@ Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
 	CZZ tmp;
 	CZZX c0 = cipher.c0;
 	CZZX c1 = cipher.c1;
-	tmp = coeff(cipher.c1,0) + cnst;
+	tmp = coeff(cipher.c0,0) + cnst;
 	CPolyRingUtils::truncate(tmp, logQi);
-	SetCoeff(c1, 0, tmp);
+	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
 	ZZ B = cipher.B + 1;
@@ -255,13 +254,14 @@ Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
 }
 
 Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
-	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
 	CZZ tmp;
 	CZZX c0 = cipher.c0;
 	CZZX c1 = cipher.c1;
-	tmp = coeff(cipher.c1,0) + cnst;
-	CPolyRingUtils::truncate(tmp, logQi);
-	SetCoeff(c1, 0, tmp);
+	tmp = coeff(cipher.c0,0) + cnst;
+	tmp.r %= qi;
+	tmp.i %= qi;
+	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
 	ZZ norm = cnst.norm();
@@ -394,17 +394,19 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
+	ZZ newQi = getQi(newLevel);
 	CZZ tmp;
-	long newQi = getLogQi(newLevel);
 	CZZX c0;
 	CZZX c1;
 	long i;
 	for (i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i);
-		CPolyRingUtils::truncate(tmp, newQi);
+		tmp.r %= newQi;
+		tmp.i %= newQi;
 		SetCoeff(c0, i, tmp);
 		tmp = coeff(cipher.c1,i);
-		CPolyRingUtils::truncate(tmp, newQi);
+		tmp.r %= newQi;
+		tmp.i %= newQi;
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();

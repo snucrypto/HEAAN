@@ -28,7 +28,7 @@ public:
 
 	virtual ~Scheme() {};
 
-	Cipher encrypt(CZZ& m);
+	Cipher encrypt(CZZ& m, ZZ& nu);
 	CZZ decrypt(Cipher& cipher);
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
