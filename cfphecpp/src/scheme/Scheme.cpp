@@ -9,6 +9,7 @@ using namespace std;
 using namespace NTL;
 
 Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
+	ZZ q = params.qi[params.L - 1];
 	CZZ tmp;
 
 	CZZX v;
@@ -27,7 +28,7 @@ Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
 	CPolyRingUtils::addPolyRing2(c1, e, c1, params.logq, params.n);
 
 	tmp = coeff(c0, 0) + m;
-	CPolyRingUtils::truncate(tmp, params.logq);
+	tmp %= q;
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 	Cipher cipher(c0, c1, 1, params.Bclean, nu);
@@ -43,6 +44,13 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	CPolyRingUtils::addPolyRing2(m, m, cipher.c0, logQi, params.n);
 	CZZ c;
 	GetCoeff(c, m, 0);
+
+	if(2 * c.r > qi) c.r -= qi;
+	if(2 * c.r < -qi) c.r += qi;
+
+	if(2 * c.i > qi) c.i -= qi;
+	if(2 * c.i < -qi) c.i += qi;
+
 	return c;
 }
 
@@ -237,12 +245,12 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 }
 
 Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
-	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
 	CZZ tmp;
 	CZZX c0 = cipher.c0;
 	CZZX c1 = cipher.c1;
 	tmp = coeff(cipher.c0,0) + cnst;
-	CPolyRingUtils::truncate(tmp, logQi);
+	tmp %= qi;
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
@@ -259,8 +267,7 @@ Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
 	CZZX c0 = cipher.c0;
 	CZZX c1 = cipher.c1;
 	tmp = coeff(cipher.c0,0) + cnst;
-	tmp.r %= qi;
-	tmp.i %= qi;
+	tmp %= qi;
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
@@ -274,17 +281,17 @@ Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
 }
 
 Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
-	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
 	CZZ tmp;
 	CZZX c0;
 	CZZX c1;
 	long i;
 	for (i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
-		CPolyRingUtils::truncate(tmp, logQi);
+		tmp %= qi;
 		SetCoeff(c0, i, tmp);
 		tmp = coeff(cipher.c1,i) * cnst;
-		CPolyRingUtils::truncate(tmp, logQi);
+		tmp %= qi;
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
@@ -298,17 +305,17 @@ Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
 }
 
 Cipher Scheme::mulByConstant(Cipher& cipher, CZZ& cnst) {
-	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
 	CZZ tmp;
 	CZZX c0;
 	CZZX c1;
 	long i;
 	for (i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
-		CPolyRingUtils::truncate(tmp, logQi);
+		tmp %= qi;
 		SetCoeff(c0, i, tmp);
 		tmp = coeff(cipher.c1,i) * cnst;
-		CPolyRingUtils::truncate(tmp, logQi);
+		tmp %= qi;
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
@@ -325,24 +332,24 @@ Cipher Scheme::mulByConstant(Cipher& cipher, CZZ& cnst) {
 
 void Scheme::addConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	CZZ tmp;
-	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
 	tmp = coeff(cipher.c0, 0) * cnst;
-	CPolyRingUtils::truncate(tmp, logQi);
+	tmp %= qi;
 	SetCoeff(cipher.c0, 0, tmp);
 	cipher.c0.normalize();
 }
 
 void Scheme::mulByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	CZZ tmp;
-	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
 
 	long i;
 	for (i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
-		CPolyRingUtils::truncate(tmp, logQi);
+		tmp %= qi;
 		SetCoeff(cipher.c0, i, tmp);
 		tmp = coeff(cipher.c1,i) * cnst;
-		CPolyRingUtils::truncate(tmp, logQi);
+		tmp %= qi;
 		SetCoeff(cipher.c1, i, tmp);
 	}
 	cipher.c0.normalize();
@@ -401,12 +408,10 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	long i;
 	for (i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i);
-		tmp.r %= newQi;
-		tmp.i %= newQi;
+		tmp %= newQi;
 		SetCoeff(c0, i, tmp);
 		tmp = coeff(cipher.c1,i);
-		tmp.r %= newQi;
-		tmp.i %= newQi;
+		tmp %= newQi;
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
@@ -421,15 +426,15 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 
 void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	CZZ tmp;
-	long newQi = getLogQi(newLevel);
+	ZZ newQi = getQi(newLevel);
 
 	long i;
 	for (i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i);
-		CPolyRingUtils::truncate(tmp, newQi);
+		tmp %= newQi;
 		SetCoeff(cipher.c0, i, tmp);
 		tmp = coeff(cipher.c1,i);
-		CPolyRingUtils::truncate(tmp, newQi);
+		tmp %= newQi;
 		SetCoeff(cipher.c1, i, tmp);
 	}
 	cipher.c0.normalize();
@@ -461,21 +466,26 @@ vector<Cipher> Scheme::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 
 	for (i = 0; i < csize/2; ++i) {
 		Cipher mul1 = mulByConstant(y1[i], params.p);
+		modSwitchAndEqual(mul1, mul1.level + 1);
+
 		CZZ x = ksis[logcsize].pows[i];
 		Cipher mul2 = mulByConstant(y2[i], x);
+		modSwitchAndEqual(mul2, mul2.level + 1);
+
 		Cipher sum = add(mul1, mul2);
-		Cipher ms = modSwitch(sum, sum.level + 1);
-		CZZ d = decrypt(ms);
-		res.push_back(ms);
+		res.push_back(sum);
 	}
 
 	for (i = 0; i < csize/2; ++i) {
 		Cipher mul1 = mulByConstant(y1[i], params.p);
+		modSwitchAndEqual(mul1, mul1.level + 1);
+
 		CZZ x = ksis[logcsize].pows[i];
 		Cipher mul2 = mulByConstant(y2[i], x);
+		modSwitchAndEqual(mul2, mul2.level + 1);
+
 		Cipher diff = sub(mul1, mul2);
-		Cipher ms = modSwitch(diff, diff.level + 1);
-		res.push_back(ms);
+		res.push_back(diff);
 	}
 	return res;
 }
@@ -522,7 +532,6 @@ vector<CZZ> Scheme::fft(vector<CZZ>& vals, vector<Ksi>& ksis) {
 		res.push_back(ms);
 	}
 	return res;
-
 }
 
 ZZ Scheme:: getQi(long& level) {
