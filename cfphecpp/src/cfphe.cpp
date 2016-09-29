@@ -481,17 +481,20 @@ void testFFT() {
 
 	cout << "------------------" << endl;
 
+	vector<Ksi> ksis;
+	timeutils.start("making ksi");
+	for (i = 0; i < logN + 1; ++i) {
+		Ksi ksi((1 << i), params.logp);
+		ksis.push_back(ksi);
+	}
+	timeutils.stop("making ksi");
+
 	vector<CZZ> poly1;
 	vector<CZZ> poly2;
 
 	for (i = 0; i < deg; ++i) {
-		CZZ m1;
-		CZZ m2;
-		RandomBits(m1.r, 3);
-		RandomBits(m2.r, 3);
-		m1.r = params.p - m1.r;
-		m2.r = params.p - m2.r;
-
+		CZZ m1 = ksis[3].pows[i];
+		CZZ m2 = ksis[3].pows[deg-i];
 		poly1.push_back(m1);
 		poly2.push_back(m2);
 	}
@@ -514,15 +517,6 @@ void testFFT() {
 	}
 	timeutils.stop("Encrypting polynomials");
 
-	vector<Ksi> ksis;
-
-	timeutils.start("making ksi");
-	for (i = 0; i < logN + 1; ++i) {
-		Ksi ksi((1 << i), params.logp);
-		ksis.push_back(ksi);
-	}
-	timeutils.stop("making ksi");
-
 	timeutils.start("fft 1");
 	vector<Cipher> cfft1 = scheme.fft(cpoly1, ksis);
 	timeutils.stop("fft 1");
@@ -533,10 +527,11 @@ void testFFT() {
 
 	timeutils.start("mul and decrypt fft");
 	vector<CZZ> dfft;
-	ZZ qi;
 	for (i = 0; i < cfft1.size(); ++i) {
 		Cipher ms = scheme.mul(cfft1[i], cfft2[i]);
 		CZZ d = scheme.decrypt(ms);
+		d.r /= params.p;
+		d.i /= params.p;
 		dfft.push_back(d);
 	}
 	timeutils.stop("mul and decrypt fft");
@@ -565,15 +560,25 @@ void testFFT() {
 
 	vector<CZZ> mfft;
 	for (i = 0; i < N; ++i) {
-		mfft.push_back(fft1[i] * fft2[i]);
+		CZZ mm = fft1[i] * fft2[i];
+		mm.r /= params.p;
+		mm.i /= params.p;
+		mfft.push_back(mm);
 	}
 
 	vector<CZZ> fft = scheme.fft(poly, ksis);
 
+	vector<CZZ> rfft;
+	for (i = 0; i < N; ++i) {
+		CZZ rm = fft[i];
+		rm.r /= params.p;
+		rm.i /= params.p;
+		rfft.push_back(rm);
+	}
+
 	for (i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
-		cout << qi << endl;
-		cout << i << " step: fft  = " << fft[i].toString() << endl;
+		cout << i << " step: fft  = " << rfft[i].toString() << endl;
 		cout << i << " step: mfft = " << mfft[i].toString() << endl;
 		cout << i << " step: dfft = " << dfft[i].toString() << endl;
 		cout << "----------------------" << endl;
