@@ -55,6 +55,11 @@ public:
 	void mulByConstantAndEqual(Cipher& cipher, ZZ& cnst);
 
 	vector<Cipher> fft(vector<Cipher>& ciphers, vector<Ksi>& ksis);
+	vector<Cipher> fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis);
+
+	vector<Cipher> fftEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B);
+	vector<Cipher> fftInvEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B);
+
 	vector<CZZ> fft(vector<CZZ>& ciphers, vector<Ksi>& ksis);
 };
 

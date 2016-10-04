@@ -21,12 +21,14 @@ void testSimple() {
 
 	TimeUtils timeutils;
 
-	long L = 5;
-	long n = 1 << 13;
-	long logp = 25;
+	long L = 6;
+	long n = 1 << 14;
+	long logp = 51;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
+
+	long scale = 2;
 
 	cout << "------------------" << endl;
 
@@ -63,11 +65,42 @@ void testSimple() {
 	m2.r >>= params.logp;
 	m2.i >>= params.logp;
 
+	timeutils.start("enc");
 	Cipher c1 = scheme.encrypt(m1, params.p);
+	timeutils.stop("enc");
+
+
+
 	Cipher c2 = scheme.squareAndModSwitch(c1);
 
+	timeutils.start("mul by const");
 	Cipher s1 = scheme.mulByConstant(c1, m1);
-	Cipher s2 = scheme.modSwitch(s1, s1.level + 1);
+	timeutils.stop("mul by const");
+
+	Cipher s2 = scheme.modSwitch(s1, s1.level + scale);
+
+	timeutils.start("add");
+	Cipher x1 = scheme.add(c1, c1);
+	timeutils.stop("add");
+
+	timeutils.start("mult");
+	Cipher y1 = scheme.mul(c1, c1);
+	timeutils.stop("mult");
+
+
+	timeutils.start("mul by const");
+	Cipher t1 = scheme.mulByConstant(s2, m1);
+	timeutils.stop("mul by const");
+
+	timeutils.start("add");
+	Cipher x2 = scheme.add(s2, s2);
+	timeutils.stop("add");
+
+	timeutils.start("mult");
+	Cipher y2 = scheme.mul(s2, s2);
+	timeutils.stop("mult");
+
+
 
 	CZZ d1 = scheme.decrypt(c1);
 	CZZ d2 = scheme.decrypt(c2);
@@ -304,7 +337,7 @@ void testProd() {
 
 
 void testInv() {
-	cout << "!!! START TEST Inv !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST INV !!!" << endl; // prints !!!Hello World!!!
 
 	long i;
 	TimeUtils timeutils;
@@ -434,7 +467,7 @@ void testInv() {
 		cout << "ns: " << i << " " << v2k[i].nu << endl;
 		cout << "------------------" << endl;
 	}
-	cout << "!!! END TEST Inv !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST INV !!!" << endl; // prints !!!Hello World!!!
 }
 
 void testFFT() {
@@ -442,14 +475,19 @@ void testFFT() {
 
 	TimeUtils timeutils;
 
-	long L = 10;
-	long n = 1 << 13;
-	long logp = 30;
+	long L = 6;
+	long n = 1 << 14;
+	long logp = 48;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
+	long B = 64;
 
-	long logN = 3;
+	long mulFactor = 20;
+
+
+	long logN = 8;
+
 	long N = 1 << logN;
 
 	long deg = 3;
@@ -578,7 +616,167 @@ void testFFT() {
 
 	for (i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
-		cout << i << " step: fft  = " << rfft[i].toString() << endl;
+		cout << i << " step: rfft  = " << rfft[i].toString() << endl;
+		cout << i << " step: mfft = " << mfft[i].toString() << endl;
+		cout << i << " step: dfft = " << dfft[i].toString() << endl;
+		cout << "----------------------" << endl;
+	}
+
+	cout << "!!! END TEST FFT !!!" << endl; // prints !!!Hello World!!!
+}
+
+void testFFTEasy() {
+	cout << "!!! START TEST FFT !!!" << endl; // prints !!!Hello World!!!
+
+	TimeUtils timeutils;
+
+	long L = 6;
+	long n = 1 << 14;
+	long logp = 50;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	long B = 64;
+	long logN = 8;
+	long N = 1 << logN;
+	long logpprime = 32;
+	ZZ pprime;
+	power(pprime, 2, logpprime);
+	long deg = 3;
+	long i;
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenParams");
+	Params params(n, logp, L, sigma, rho, h);
+	timeutils.stop("GenParams");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenSecKey");
+	SecKey secretKey(params);
+	timeutils.stop("GenSecKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenPubKey");
+	PubKey publicKey(params, secretKey);
+	timeutils.stop("GenPubKey");
+
+	cout << "------------------" << endl;
+
+	timeutils.start("GenScheme");
+	Scheme scheme(params, secretKey, publicKey);
+	timeutils.stop("GenScheme");
+
+	cout << "------------------" << endl;
+
+	vector<Ksi> ksis;
+	timeutils.start("making ksi");
+	for (i = 0; i < logN + 1; ++i) {
+		Ksi ksi((1 << i), logpprime);
+		ksis.push_back(ksi);
+	}
+	timeutils.stop("making ksi");
+
+	vector<CZZ> poly1;
+	vector<CZZ> poly2;
+
+	for (i = 0; i < deg; ++i) {
+		CZZ m1;
+		m1.r = params.p;
+		CZZ m2;
+		m2.r = params.p;
+		poly1.push_back(m1);
+		poly2.push_back(m2);
+	}
+
+	CZZ zero;
+	for (i = deg; i < N; ++i) {
+		poly1.push_back(zero);
+		poly2.push_back(zero);
+	}
+
+	vector<Cipher> cpoly1;
+	vector<Cipher> cpoly2;
+
+	timeutils.start("Encrypting polynomials");
+	for (i = 0; i < N; ++i) {
+		Cipher c1 = scheme.encrypt(poly1[i], params.p);
+		Cipher c2 = scheme.encrypt(poly2[i], params.p);
+		cpoly1.push_back(c1);
+		cpoly2.push_back(c2);
+	}
+	timeutils.stop("Encrypting polynomials");
+
+	timeutils.start("fft 1");
+	vector<Cipher> cfft1 = scheme.fftEasy(cpoly1, ksis, pprime, B);
+	timeutils.stop("fft 1");
+
+	timeutils.start("fft 2");
+	vector<Cipher> cfft2 = scheme.fftEasy(cpoly1, ksis, pprime, B);
+	timeutils.stop("fft 2");
+
+	timeutils.start("mul and decrypt fft");
+
+	for (i = 0; i < cfft1.size(); ++i) {
+		scheme.modSwitchAndEqual(cfft1[i], cfft1[i].level + 2);
+		scheme.modSwitchAndEqual(cfft2[i], cfft2[i].level + 2);
+	}
+
+	vector<CZZ> dfft;
+	for (i = 0; i < cfft1.size(); ++i) {
+		Cipher ms = scheme.mul(cfft1[i], cfft2[i]);
+		CZZ d = scheme.decrypt(ms);
+		d.r /= params.p;
+		d.i /= params.p;
+		dfft.push_back(d);
+	}
+	timeutils.stop("mul and decrypt fft");
+
+
+	CZZX zpoly1;
+	CZZX zpoly2;
+	CZZX zpoly;
+
+	for (i = 0; i < N; ++i) {
+		SetCoeff(zpoly1, i, poly1[i]);
+		SetCoeff(zpoly2, i, poly2[i]);
+	}
+	zpoly1.normalize();
+	zpoly2.normalize();
+	mul(zpoly, zpoly1, zpoly2);
+
+	vector<CZZ> poly;
+
+	for (i = 0; i < N; ++i) {
+		poly.push_back(coeff(zpoly, i));
+	}
+
+	vector<CZZ> fft1 = scheme.fft(poly1, ksis);
+	vector<CZZ> fft2 = scheme.fft(poly2, ksis);
+
+	vector<CZZ> mfft;
+	for (i = 0; i < N; ++i) {
+		CZZ mm = fft1[i] * fft2[i];
+		mm.r /= params.p;
+		mm.i /= params.p;
+		mfft.push_back(mm);
+	}
+
+	vector<CZZ> fft = scheme.fft(poly, ksis);
+
+	vector<CZZ> rfft;
+	for (i = 0; i < N; ++i) {
+		CZZ rm = fft[i];
+		rm.r /= params.p;
+		rm.i /= params.p;
+		rfft.push_back(rm);
+	}
+
+	for (i = 0; i < N; ++i) {
+		cout << "----------------------" << endl;
+		cout << i << " step: rfft  = " << rfft[i].toString() << endl;
 		cout << i << " step: mfft = " << mfft[i].toString() << endl;
 		cout << i << " step: dfft = " << dfft[i].toString() << endl;
 		cout << "----------------------" << endl;
@@ -588,12 +786,12 @@ void testFFT() {
 }
 
 
-
 int main() {
-//	testSimple();
+	testSimple();
 //	testPow();
 //	testProd();
 //	testInv();
-	testFFT();
+//	testFFT();
+//	testFFTEasy();
 	return 0;
 }

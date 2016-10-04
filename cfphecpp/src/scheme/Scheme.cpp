@@ -45,11 +45,11 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	CZZ c;
 	GetCoeff(c, m, 0);
 
-	if(2 * c.r > qi) c.r -= qi;
-	if(2 * c.r < -qi) c.r += qi;
+	while(2 * c.r > qi) c.r -= qi;
+	while(2 * c.r < -qi) c.r += qi;
 
-	if(2 * c.i > qi) c.i -= qi;
-	if(2 * c.i < -qi) c.i += qi;
+	while(2 * c.i > qi) c.i -= qi;
+	while(2 * c.i < -qi) c.i += qi;
 
 	return c;
 }
@@ -489,6 +489,168 @@ vector<Cipher> Scheme::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 	}
 	return res;
 }
+
+vector<Cipher> Scheme::fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
+	long csize = ciphers.size();
+	if(csize == 1) {
+		return ciphers;
+	}
+
+	vector<Cipher> res;
+
+	long logcsize = log2(csize);
+
+	vector<Cipher> sub1;
+	vector<Cipher> sub2;
+
+	long i;
+	for (i = 0; i < csize; i = i+2) {
+		sub1.push_back(ciphers[i]);
+		sub2.push_back(ciphers[i+1]);
+	}
+
+	vector<Cipher> y1 = fft(sub1, ksis);
+	vector<Cipher> y2 = fft(sub2, ksis);
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], params.p);
+		modSwitchAndEqual(mul1, mul1.level + 1);
+
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
+		modSwitchAndEqual(mul2, mul2.level + 1);
+
+		Cipher sum = add(mul1, mul2);
+		res.push_back(sum);
+	}
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], params.p);
+		modSwitchAndEqual(mul1, mul1.level + 1);
+
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
+		modSwitchAndEqual(mul2, mul2.level + 1);
+
+		Cipher diff = sub(mul1, mul2);
+		res.push_back(diff);
+	}
+	return res;
+}
+
+vector<Cipher> Scheme::fftEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B) {
+	long csize = ciphers.size();
+	long logcsize = log2(csize);
+
+	cout << "1" << endl;
+	if(csize == B) {
+		cout << "2" << endl;
+		vector<Cipher> res;
+		long i, j;
+
+		for (i = 0; i < csize; ++i) {
+			CZZ f = ksis[logcsize].pows[0];
+			Cipher c = mulByConstant(ciphers[0], f);
+
+			for (j = 1; j < csize; ++j) {
+				long ij = (i * j) % csize;
+				CZZ f = ksis[logcsize].pows[ij];
+				Cipher cx = mulByConstant(ciphers[j], f);
+				c = add(c, cx);
+			}
+			res.push_back(c);
+		}
+		return res;
+	}
+
+	vector<Cipher> res;
+
+
+	vector<Cipher> sub1;
+	vector<Cipher> sub2;
+	cout << "3" << endl;
+
+	long i;
+	for (i = 0; i < csize; i = i+2) {
+		sub1.push_back(ciphers[i]);
+		sub2.push_back(ciphers[i+1]);
+	}
+
+	vector<Cipher> y1 = fftEasy(sub1, ksis, factor, B);
+	vector<Cipher> y2 = fftEasy(sub2, ksis, factor, B);
+	cout << "4" << endl;
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], factor);
+
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
+
+		Cipher sum = add(mul1, mul2);
+		res.push_back(sum);
+	}
+	cout << "5" << endl;
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], params.p);
+
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
+
+		Cipher diff = sub(mul1, mul2);
+		res.push_back(diff);
+	}
+	return res;
+}
+
+vector<Cipher> Scheme::fftInvEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B) {
+	long csize = ciphers.size();
+	if(csize == 1) {
+		return ciphers;
+	}
+
+	vector<Cipher> res;
+
+	long logcsize = log2(csize);
+
+	vector<Cipher> sub1;
+	vector<Cipher> sub2;
+
+	long i;
+	for (i = 0; i < csize; i = i+2) {
+		sub1.push_back(ciphers[i]);
+		sub2.push_back(ciphers[i+1]);
+	}
+
+	vector<Cipher> y1 = fft(sub1, ksis);
+	vector<Cipher> y2 = fft(sub2, ksis);
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], params.p);
+		modSwitchAndEqual(mul1, mul1.level + 1);
+
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
+		modSwitchAndEqual(mul2, mul2.level + 1);
+
+		Cipher sum = add(mul1, mul2);
+		res.push_back(sum);
+	}
+
+	for (i = 0; i < csize/2; ++i) {
+		Cipher mul1 = mulByConstant(y1[i], params.p);
+		modSwitchAndEqual(mul1, mul1.level + 1);
+
+		CZZ x = ksis[logcsize].pows[i];
+		Cipher mul2 = mulByConstant(y2[i], x);
+		modSwitchAndEqual(mul2, mul2.level + 1);
+
+		Cipher diff = sub(mul1, mul2);
+		res.push_back(diff);
+	}
+	return res;
+}
+
 
 vector<CZZ> Scheme::fft(vector<CZZ>& vals, vector<Ksi>& ksis) {
 	long csize = vals.size();
