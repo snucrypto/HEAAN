@@ -18,8 +18,10 @@ CZZX CZZX::operator-(const CZZX& o) {
 }
 
 CZZX CZZX::operator *(const CZZX& o) {
-	ZZX resr = rx * o.rx - ix * o.ix;
-	ZZX resi = rx * o.ix + ix * o.rx;
+	ZZX tmpProd = (rx + ix) * o.rx;
+
+	ZZX resr = tmpProd - (o.rx + o.ix) * ix;
+	ZZX resi = tmpProd + (o.ix - o.rx) * rx;
 	CZZX res(resr, resi);
 	return res;
 }
@@ -35,17 +37,36 @@ void CZZX::operator-=(const CZZX& o) {
 }
 
 void CZZX::operator*=(const CZZX& o) {
-	ZZX tr = rx * o.rx - ix * o.ix;
-	ix = rx * o.ix + ix * o.rx;
+	ZZX tmpProd = (rx + ix) * o.rx;
+
+	ZZX tr = tmpProd - (o.rx + o.ix) * ix;
+	ix = tmpProd + (o.ix - o.rx) * rx;
 	rx = tr;
 }
 
 CZZX CZZX::operator >>(const long& s) {
-	return CZZX();
+	ZZX resr = rx >> s;
+	ZZX resi = ix >> s;
+	return CZZX(resr, resi);
 }
 
 CZZX CZZX::operator <<(const long& s) {
-	return CZZX();
+	ZZX resr = rx << s;
+	ZZX resi = ix << s;
+	return CZZX(resr, resi);
+}
+
+CZZX CZZX::sqr() {
+	ZZX resr = (rx + ix) * (rx - ix);
+	ZZX resi = (rx << 1) * ix;
+	CZZX res(resr, resi);
+	return res;
+}
+
+void CZZX::sqrThis() {
+	ZZX tr = (rx + ix) * (rx - ix);
+	ix *= (rx << 1);
+	rx = tr;
 }
 
 void CZZX::SetMaxLength(long d) {

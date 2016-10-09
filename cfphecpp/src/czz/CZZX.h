@@ -28,6 +28,8 @@ public:
 	CZZX operator >>(const long& s);
 	CZZX operator <<(const long& s);
 
+	CZZX sqr();
+	void sqrThis();
 	void SetMaxLength(long d);
 	void SetLength(long d);
 	void normalize();

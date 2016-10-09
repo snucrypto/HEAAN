@@ -30,8 +30,10 @@ CZZ CZZ::operator-(const ZZ& o) {
 }
 
 CZZ CZZ::operator *(const CZZ& o) {
-	ZZ resr = r * o.r - i * o.i;
-	ZZ resi = r * o.i + i * o.r;
+	ZZ tmpProd = (r + i) * o.r;
+
+	ZZ resr = tmpProd - (o.r + o.i) * i;
+	ZZ resi = tmpProd + (o.i - o.r) * r;
 	CZZ res(resr, resi);
 	return res;
 }
@@ -61,8 +63,10 @@ void CZZ::operator-=(const CZZ& o) {
 }
 
 void CZZ::operator*=(const CZZ& o) {
-	ZZ tr = r * o.r - i * o.i;
-	i = r * o.i + i * o.r;
+	ZZ tmpProd = (r + i) * o.r;
+
+	ZZ tr = tmpProd - (o.r + o.i) * i;
+	i = tmpProd + (o.i - o.r) * r;
 	r = tr;
 }
 
@@ -87,6 +91,19 @@ CZZ CZZ::operator >>(const long& s) {
 	ZZ tr = r >> s;
 	ZZ to = i >> s;
 	return CZZ(tr, to);
+}
+
+CZZ CZZ::sqr() {
+	ZZ resr = (r + i) * (r - i);
+	ZZ resi = (r << 1) * i;
+	CZZ res(resr, resi);
+	return res;
+}
+
+void CZZ::sqrThis() {
+	ZZ tr = (r + i) * (r - i);
+	i *= (r << 1);
+	r = tr;
 }
 
 ZZ CZZ::norm() {

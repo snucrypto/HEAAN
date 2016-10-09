@@ -30,6 +30,8 @@ public:
 	CZZ operator <<(const long& s);
 	CZZ operator >>(const long& s);
 
+	CZZ sqr();
+	void sqrThis();
 	ZZ norm();
 
 	string toString();
