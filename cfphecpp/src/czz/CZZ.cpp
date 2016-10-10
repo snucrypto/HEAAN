@@ -16,6 +16,11 @@ CZZ CZZ::operator+(const ZZ& o) {
 	return res;
 }
 
+void CZZ::operator+=(const CZZ& o) {
+	r += o.r;
+	i += o.i;
+}
+
 CZZ CZZ::operator-(const CZZ& o) {
 	ZZ resr = r - o.r;
 	ZZ resi = i - o.i;
@@ -27,6 +32,11 @@ CZZ CZZ::operator-(const ZZ& o) {
 	ZZ resr = r - o;
 	CZZ res(resr, i);
 	return res;
+}
+
+void CZZ::operator-=(const CZZ& o) {
+	r -= o.r;
+	i -= o.i;
 }
 
 CZZ CZZ::operator *(const CZZ& o) {
@@ -45,29 +55,19 @@ CZZ CZZ::operator *(const ZZ& o) {
 	return res;
 }
 
-CZZ CZZ::operator /(const ZZ& o) {
-	ZZ resr = r / o;
-	ZZ resi = i / o;
-	CZZ res(resr, resi);
-	return res;
-}
-
-void CZZ::operator+=(const CZZ& o) {
-	r += o.r;
-	i += o.i;
-}
-
-void CZZ::operator-=(const CZZ& o) {
-	r -= o.r;
-	i -= o.i;
-}
-
 void CZZ::operator*=(const CZZ& o) {
 	ZZ tmpProd = (r + i) * o.r;
 
 	ZZ tr = tmpProd - (o.r + o.i) * i;
 	i = tmpProd + (o.i - o.r) * r;
 	r = tr;
+}
+
+CZZ CZZ::operator /(const ZZ& o) {
+	ZZ resr = r / o;
+	ZZ resi = i / o;
+	CZZ res(resr, resi);
+	return res;
 }
 
 CZZ CZZ::operator %(const ZZ& o) {

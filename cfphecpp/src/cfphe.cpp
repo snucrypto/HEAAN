@@ -9,7 +9,7 @@
 #include "scheme/PubKey.h"
 #include "scheme/Scheme.h"
 #include "scheme/SecKey.h"
-#include "utils/CPolyRingUtils.h"
+#include "utils/Ring2Utils.h"
 #include "utils/TimeUtils.h"
 
 using namespace std;
@@ -585,7 +585,7 @@ void testFFT() {
 	}
 	zpoly1.normalize();
 	zpoly2.normalize();
-	mul(zpoly, zpoly1, zpoly2);
+	zpoly = zpoly1 * zpoly2;
 
 	vector<CZZ> poly;
 
@@ -745,7 +745,7 @@ void testFFTEasy() {
 	}
 	zpoly1.normalize();
 	zpoly2.normalize();
-	mul(zpoly, zpoly1, zpoly2);
+	zpoly = zpoly1 * zpoly2;
 
 	vector<CZZ> poly;
 
@@ -787,8 +787,8 @@ void testFFTEasy() {
 
 
 int main() {
-	testSimple();
-//	testPow();
+//	testSimple();
+	testPow();
 //	testProd();
 //	testInv();
 //	testFFT();

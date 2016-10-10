@@ -1,13 +1,15 @@
 #ifndef SCHEME_SECKEY_H_
 #define SCHEME_SECKEY_H_
 
-#include "../czz/CZZX.h"
+#include <NTL/ZZX.h>
 #include "Params.h"
+
+using namespace NTL;
 
 class SecKey {
 public:
 
-	CZZX s;
+	ZZX s;
 
 	SecKey(Params& params);
 };

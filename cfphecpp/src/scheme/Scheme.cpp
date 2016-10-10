@@ -1,9 +1,13 @@
 #include "Scheme.h"
 
 #include <NTL/ZZ.h>
+#include <cmath>
+#include <iostream>
+
 #include "../czz/CZZ.h"
 #include "../czz/CZZX.h"
-#include "../utils/CPolyRingUtils.h"
+#include "../utils/NumUtils.h"
+#include "../utils/Ring2Utils.h"
 
 using namespace std;
 using namespace NTL;
@@ -16,16 +20,16 @@ Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
 	CZZX c0, c1;
 	CZZX e;
 
-	CPolyRingUtils::sampleZO(v, params.rho, params.n);
+	NumUtils::sampleZO(v, params.n, params.rho);
 
 
-	CPolyRingUtils::mulPolyRing2(c0, v, publicKey.b, params.logq, params.n);
-	CPolyRingUtils::sampleGaussian(e, params.n, params.sigma);
-	CPolyRingUtils::addPolyRing2(c0, e, c0, params.logq, params.n);
+	Ring2Utils::mult(c0, v, publicKey.b, params.logq, params.n);
+	NumUtils::sampleGauss(e, params.n, params.sigma);
+	Ring2Utils::add(c0, e, c0, params.logq, params.n);
 
-	CPolyRingUtils::mulPolyRing2(c1, v, publicKey.a, params.logq, params.n);
-	CPolyRingUtils::sampleGaussian(e, params.n, params.sigma);
-	CPolyRingUtils::addPolyRing2(c1, e, c1, params.logq, params.n);
+	Ring2Utils::mult(c1, v, publicKey.a, params.logq, params.n);
+	NumUtils::sampleGauss(e, params.n, params.sigma);
+	Ring2Utils::add(c1, e, c1, params.logq, params.n);
 
 	tmp = coeff(c0, 0) + m;
 	tmp %= q;
@@ -40,8 +44,8 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	ZZ qi = getQi(cipher.level);
 
 	CZZX m;
-	CPolyRingUtils::mulPolyRing2(m, secretKey.s, cipher.c1, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(m, m, cipher.c0, logQi, params.n);
+	Ring2Utils::mult(m, cipher.c1, secretKey.s, logQi, params.n);
+	Ring2Utils::add(m, m, cipher.c0, logQi, params.n);
 	CZZ c;
 	GetCoeff(c, m, 0);
 
@@ -58,8 +62,8 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	CZZX c0;
 	CZZX c1;
-	CPolyRingUtils::addPolyRing2(c0, cipher1.c0, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(c1, cipher1.c1, cipher2.c1, logQi, params.n);
+	Ring2Utils::add(c0, cipher1.c0, cipher2.c0, logQi, params.n);
+	Ring2Utils::add(c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
 	ZZ B = cipher1.B + cipher2.B;
 	ZZ nu = cipher1.nu + cipher2.nu;
@@ -70,8 +74,8 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 
 void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
-	CPolyRingUtils::addPolyRing2(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.n);
+	Ring2Utils::add(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.n);
+	Ring2Utils::add(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
 	cipher1.B += cipher2.B;
 	cipher1.nu += cipher2.nu;
@@ -81,8 +85,8 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	CZZX c0;
 	CZZX c1;
-	CPolyRingUtils::subPolyRing2(c0, cipher1.c0, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::subPolyRing2(c1, cipher1.c1, cipher2.c1, logQi, params.n);
+	Ring2Utils::sub(c0, cipher1.c0, cipher2.c0, logQi, params.n);
+	Ring2Utils::sub(c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
 	ZZ B = cipher1.B + cipher2.B;
 	ZZ nu = cipher1.nu + cipher2.nu;
@@ -93,8 +97,8 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 
 void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
-	CPolyRingUtils::subPolyRing2(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::subPolyRing2(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.n);
+	Ring2Utils::sub(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.n);
+	Ring2Utils::sub(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
 	cipher1.B += cipher2.B;
 	cipher1.nu += cipher2.nu;
@@ -112,20 +116,20 @@ Cipher Scheme::mul(Cipher& cipher1, Cipher& cipher2) {
 	CZZX mulC1;
 	CZZX mulC0;
 
-	CPolyRingUtils::mulPolyRing2(cc00, cipher1.c0, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc01, cipher1.c0, cipher2.c1, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc10, cipher1.c1, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc11, cipher1.c1, cipher2.c1, logQi, params.n);
+	Ring2Utils::mult(cc00, cipher1.c0, cipher2.c0, logQi, params.n);
+	Ring2Utils::mult(cc01, cipher1.c0, cipher2.c1, logQi, params.n);
+	Ring2Utils::mult(cc10, cipher1.c1, cipher2.c0, logQi, params.n);
+	Ring2Utils::mult(cc11, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	CPolyRingUtils::mulPolyRing2(mulC1, publicKey.aStar, cc11, logTQi, params.n);
-	CPolyRingUtils::mulPolyRing2(mulC0, publicKey.bStar, cc11, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
 
-	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logP, logQi, params.n);
-	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
 
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc01, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC0, mulC0, cc00, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc01, logQi, params.n);
+	Ring2Utils::add(mulC0, mulC0, cc00, logQi, params.n);
 
 	ZZ B = cipher1.B * cipher2.nu + cipher1.nu * cipher2.B + cipher1.B * cipher2.B;
 	ZZ nu = cipher1.nu * cipher2.nu;
@@ -145,19 +149,19 @@ Cipher Scheme::square(Cipher& cipher) {
 	CZZX mulC1;
 	CZZX mulC0;
 
-	CPolyRingUtils::mulPolyRing2(cc00, cipher.c0, cipher.c0, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc10, cipher.c1, cipher.c0, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc11, cipher.c1, cipher.c1, logQi, params.n);
+	Ring2Utils::mult(cc00, cipher.c0, cipher.c0, logQi, params.n);
+	Ring2Utils::mult(cc10, cipher.c1, cipher.c0, logQi, params.n);
+	Ring2Utils::mult(cc11, cipher.c1, cipher.c1, logQi, params.n);
 
-	CPolyRingUtils::mulPolyRing2(mulC1, publicKey.aStar, cc11, logTQi, params.n);
-	CPolyRingUtils::mulPolyRing2(mulC0, publicKey.bStar, cc11, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
 
-	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logP, logQi, params.n);
-	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
 
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC0, mulC0, cc00, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
+	Ring2Utils::add(mulC0, mulC0, cc00, logQi, params.n);
 
 	ZZ B = 2 * cipher.B * cipher.nu + cipher.B * cipher.B;
 	ZZ nu = cipher.nu * cipher.nu;
@@ -190,20 +194,20 @@ void Scheme::mulAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	CZZX mulC1;
 	CZZX mulC0;
 
-	CPolyRingUtils::mulPolyRing2(cc00, cipher1.c0, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc01, cipher1.c0, cipher2.c1, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc10, cipher1.c1, cipher2.c0, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc11, cipher1.c1, cipher2.c1, logQi, params.n);
+	Ring2Utils::mult(cc00, cipher1.c0, cipher2.c0, logQi, params.n);
+	Ring2Utils::mult(cc01, cipher1.c0, cipher2.c1, logQi, params.n);
+	Ring2Utils::mult(cc10, cipher1.c1, cipher2.c0, logQi, params.n);
+	Ring2Utils::mult(cc11, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	CPolyRingUtils::mulPolyRing2(mulC1, publicKey.aStar, cc11, logTQi, params.n);
-	CPolyRingUtils::mulPolyRing2(mulC0, publicKey.bStar, cc11, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
 
-	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logP, logQi, params.n);
-	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
 
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc01, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC0, mulC0, cc00, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc01, logQi, params.n);
+	Ring2Utils::add(mulC0, mulC0, cc00, logQi, params.n);
 
 	cipher1.c0 = mulC0;
 	cipher1.c1 = mulC1;
@@ -223,19 +227,19 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 	CZZX mulC1;
 	CZZX mulC0;
 
-	CPolyRingUtils::mulPolyRing2(cc00, cipher.c0, cipher.c0, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc10, cipher.c0, cipher.c1, logQi, params.n);
-	CPolyRingUtils::mulPolyRing2(cc11, cipher.c1, cipher.c1, logQi, params.n);
+	Ring2Utils::mult(cc00, cipher.c0, cipher.c0, logQi, params.n);
+	Ring2Utils::mult(cc10, cipher.c0, cipher.c1, logQi, params.n);
+	Ring2Utils::mult(cc11, cipher.c1, cipher.c1, logQi, params.n);
 
-	CPolyRingUtils::mulPolyRing2(mulC1, publicKey.aStar, cc11, logTQi, params.n);
-	CPolyRingUtils::mulPolyRing2(mulC0, publicKey.bStar, cc11, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
 
-	CPolyRingUtils::rightShiftPolyRing2(mulC1, mulC1, params.logP, logQi, params.n);
-	CPolyRingUtils::rightShiftPolyRing2(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
 
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC1, mulC1, cc10, logQi, params.n);
-	CPolyRingUtils::addPolyRing2(mulC0, mulC0, cc00, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
+	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
+	Ring2Utils::add(mulC0, mulC0, cc00, logQi, params.n);
 
 	cipher.c0 = mulC0;
 	cipher.c1 = mulC1;

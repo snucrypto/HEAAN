@@ -12,11 +12,11 @@ using namespace NTL;
 
 class PubKey {
 public:
-	CZZX a;
-	CZZX b;
+	ZZX a;
+	ZZX b;
 
-	CZZX aStar;
-	CZZX bStar;
+	ZZX aStar;
+	ZZX bStar;
 
 	PubKey(Params& params, SecKey& secretKey);
 };

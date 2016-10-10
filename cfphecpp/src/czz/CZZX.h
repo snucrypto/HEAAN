@@ -19,10 +19,12 @@ public:
 	CZZX() : rx(ZZX::zero()), ix(ZZX::zero()) {};
 
 	CZZX operator+(const CZZX& o);
-	CZZX operator-(const CZZX& o);
-	CZZX operator *(const CZZX& o);
 	void operator+=(const CZZX& o);
+
+	CZZX operator-(const CZZX& o);
 	void operator-=(const CZZX& o);
+
+	CZZX operator *(const CZZX& o);
 	void operator *=(const CZZX& o);
 
 	CZZX operator >>(const long& s);
@@ -40,7 +42,6 @@ public:
 CZZ coeff(CZZX& cx, long s);
 void SetCoeff(CZZX& cx, long s, CZZ& c);
 void GetCoeff(CZZ& c, CZZX& cx, long s);
-void mul(CZZX& res, const CZZX& cx1, const CZZX& cx2);
 long deg(CZZX& cx);
 
 #endif /* UTILS_CZZX_H_ */

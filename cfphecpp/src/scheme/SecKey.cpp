@@ -1,7 +1,7 @@
 #include "SecKey.h"
 
-#include "../utils/CPolyRingUtils.h"
+#include "../utils/NumUtils.h"
 
 SecKey::SecKey(Params& params) {
-	CPolyRingUtils::sampleGaussian(s, params.n, params.sigma);
+	NumUtils::sampleGauss(s, params.n, params.sigma);
 }

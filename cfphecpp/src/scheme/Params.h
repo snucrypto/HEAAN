@@ -9,15 +9,15 @@ using namespace NTL;
 
 class Params {
 public:
-	long L;
-	double rho;
-	double sigma;
-	long logp;
-	long d;
 	long n;
+	long logp;
+	long L;
+	double sigma;
+	double rho;
 	long h;
-	long logP;
+	long d;
 	long logq;
+	long logP;
 	long logPq;
 
 	ZZ p;

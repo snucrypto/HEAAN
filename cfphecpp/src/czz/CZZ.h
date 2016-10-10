@@ -16,14 +16,18 @@ public:
 
 	CZZ operator+(const CZZ& o);
 	CZZ operator+(const ZZ& m);
+	void operator+=(const CZZ& o);
+
 	CZZ operator-(const CZZ& o);
 	CZZ operator-(const ZZ& m);
+	void operator-=(const CZZ& o);
+
 	CZZ operator *(const CZZ& o);
 	CZZ operator *(const ZZ& o);
-	CZZ operator /(const ZZ& o);
-	void operator+=(const CZZ& o);
-	void operator-=(const CZZ& o);
 	void operator *=(const CZZ& o);
+
+	CZZ operator /(const ZZ& o);
+
 	CZZ operator %(const ZZ& o);
 	void operator%=(const ZZ& o);
 

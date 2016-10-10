@@ -10,11 +10,21 @@ CZZX CZZX::operator+(const CZZX& o) {
 	return res;
 }
 
+void CZZX::operator+=(const CZZX& o) {
+	rx += o.rx;
+	ix += o.ix;
+}
+
 CZZX CZZX::operator-(const CZZX& o) {
 	ZZX resr = rx - o.rx;
 	ZZX resi = ix - o.ix;
 	CZZX res(resr, resi);
 	return res;
+}
+
+void CZZX::operator-=(const CZZX& o) {
+	rx -= o.rx;
+	ix -= o.ix;
 }
 
 CZZX CZZX::operator *(const CZZX& o) {
@@ -24,16 +34,6 @@ CZZX CZZX::operator *(const CZZX& o) {
 	ZZX resi = tmpProd + (o.ix - o.rx) * rx;
 	CZZX res(resr, resi);
 	return res;
-}
-
-void CZZX::operator+=(const CZZX& o) {
-	rx += o.rx;
-	ix += o.ix;
-}
-
-void CZZX::operator-=(const CZZX& o) {
-	rx -= o.rx;
-	ix -= o.ix;
 }
 
 void CZZX::operator*=(const CZZX& o) {
@@ -109,11 +109,6 @@ void SetCoeff(CZZX& cx, long s, CZZ& c) {
 void GetCoeff(CZZ& c, CZZX& cx, long s) {
 	GetCoeff(c.r, cx.rx, s);
 	GetCoeff(c.i, cx.ix, s);
-}
-
-void mul(CZZX& res, const CZZX& cx1, const CZZX& cx2) {
-	res.rx = cx1.rx * cx2.rx - cx1.ix * cx2.ix;
-	res.ix = cx1.rx * cx2.ix + cx1.ix * cx2.rx;
 }
 
 long deg(CZZX& cx) {
