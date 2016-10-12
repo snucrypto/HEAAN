@@ -26,6 +26,7 @@ public:
 	static void sampleUniform2(CZZX& res, long& d, long& logBnd);
 
 	static vector<CZZ> fft(vector<CZZ>& coeffs, vector<Ksi>& ksis);
+	static vector<CZZ> fftInv(vector<CZZ>& coeffs, vector<Ksi>& ksis);
 };
 
 #endif /* UTILS_NUMUTILS_H_ */
