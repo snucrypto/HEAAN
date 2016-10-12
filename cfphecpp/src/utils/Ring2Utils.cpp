@@ -4,11 +4,10 @@
 #include <cmath>
 
 void Ring2Utils::add(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {
-	long i;
 	ZZX add;
 	ZZ c;
 	add.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p1, i) + coeff(p2, i);
 		SetCoeff(add, i, c);
 	}
@@ -22,11 +21,10 @@ void Ring2Utils::add(CZZX& res, CZZX& p1, CZZX& p2, const long& degree) {
 }
 
 void Ring2Utils::add(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
-	long i;
 	ZZX add;
 	ZZ c;
 	add.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p1, i) + coeff(p2, i);
 		truncate(c, logMod);
 		SetCoeff(add, i, c);
@@ -41,11 +39,10 @@ void Ring2Utils::add(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const lo
 }
 
 void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {
-	long i;
 	ZZX sub;
 	ZZ c;
 	sub.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p1, i) - coeff(p2, i);
 		SetCoeff(sub, i, c);
 	}
@@ -59,11 +56,10 @@ void Ring2Utils::sub(CZZX& res, CZZX& p1, CZZX& p2, const long& degree) {
 }
 
 void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
-	long i;
 	ZZX sub;
 	ZZ c;
 	sub.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p1, i) - coeff(p2, i);
 		truncate(c, logMod);
 		SetCoeff(sub, i, c);
@@ -78,13 +74,11 @@ void Ring2Utils::sub(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const lo
 }
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {
-	long i;
 	ZZ tmp;
-	ZZX p;
 	res.SetLength(degree);
-	p = p1 * p2;
+	ZZX p = p1 * p2;
 
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		tmp = coeff(p, i) - coeff(p, i + degree);
 		SetCoeff(res, i, tmp);
 	}
@@ -107,13 +101,11 @@ void Ring2Utils::mult(CZZX& res, CZZX& p1, CZZX& p2, const long& degree) {
 }
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
-	long i;
 	ZZ tmp;
-	ZZX p;
 	res.SetLength(degree);
-	mul(p, p1, p2);
+	ZZX p = p1 * p2;
 
-	for (i = 0; i < deg(p); ++i) {
+	for (long i = 0; i < deg(p); ++i) {
 		tmp = coeff(p, i);
 		truncate(tmp, logMod);
 		SetCoeff(p, i, tmp);
@@ -121,7 +113,7 @@ void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long
 
 	p.normalize();
 
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		tmp = coeff(p, i) - coeff(p, i + degree);
 		truncate(tmp, logMod);
 		SetCoeff(res, i, tmp);
@@ -150,11 +142,10 @@ void Ring2Utils::mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const lo
 }
 
 void Ring2Utils::mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& degree) {
-	long i;
 	ZZX mul;
 	ZZ c;
 	mul.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p, i) * cnst;
 		SetCoeff(mul, i, c);
 	}
@@ -179,11 +170,10 @@ void Ring2Utils::mulCnst(CZZX& res, CZZX& p, const CZZ& cnst, const long& degree
 }
 
 void Ring2Utils::mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& logMod, const long& degree) {
-	long i;
 	ZZX mul;
 	ZZ c;
 	mul.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p, i) * cnst;
 		truncate(c, logMod);
 		SetCoeff(mul, i, c);
@@ -209,11 +199,10 @@ void Ring2Utils::mulCnst(CZZX& res, CZZX& p, const CZZ& cnst, const long& logMod
 }
 
 void Ring2Utils::leftShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree) {
-	long i;
 	ZZX mul;
 	ZZ c;
 	mul.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p, i) << bits;
 		truncate(c, logMod);
 		SetCoeff(mul, i, c);
@@ -228,11 +217,10 @@ void Ring2Utils::leftShift(CZZX& res, CZZX& p, const long& bits, const long& log
 }
 
 void Ring2Utils::rightShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree) {
-	long i;
 	ZZX mul;
 	ZZ c;
 	mul.SetLength(degree);
-	for (i = 0; i < degree; ++i) {
+	for (long i = 0; i < degree; ++i) {
 		c = coeff(p, i) >> bits;
 		truncate(c, logMod);
 		SetCoeff(mul, i, c);

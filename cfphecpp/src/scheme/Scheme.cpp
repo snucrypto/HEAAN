@@ -21,8 +21,6 @@ Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
 	CZZX e;
 
 	NumUtils::sampleZO(v, params.n, params.rho);
-
-
 	Ring2Utils::mult(c0, v, publicKey.b, params.logq, params.n);
 	NumUtils::sampleGauss(e, params.n, params.sigma);
 	Ring2Utils::add(c0, e, c0, params.logq, params.n);
@@ -58,6 +56,14 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	return c;
 }
 
+void Scheme::decrypt(vector<CZZ>& res, vector<Cipher>& ciphers) {
+	res.clear();
+	for (long i = 0; i < ciphers.size(); ++i) {
+		CZZ d = decrypt(ciphers[i]);
+		res.push_back(d);
+	}
+}
+
 Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	CZZX c0;
@@ -65,10 +71,10 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(c0, cipher1.c0, cipher2.c0, logQi, params.n);
 	Ring2Utils::add(c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	ZZ B = cipher1.B + cipher2.B;
-	ZZ nu = cipher1.nu + cipher2.nu;
+	ZZ eBnd = cipher1.eBnd + cipher2.eBnd;
+	ZZ mBnd = cipher1.mBnd + cipher2.mBnd;
 
-	Cipher res(c0, c1, cipher1.level, B, nu);
+	Cipher res(c0, c1, cipher1.level, eBnd, mBnd);
 	return res;
 }
 
@@ -77,8 +83,8 @@ void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.n);
 	Ring2Utils::add(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	cipher1.B += cipher2.B;
-	cipher1.nu += cipher2.nu;
+	cipher1.eBnd += cipher2.eBnd;
+	cipher1.mBnd += cipher2.mBnd;
 }
 
 Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
@@ -88,8 +94,8 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::sub(c0, cipher1.c0, cipher2.c0, logQi, params.n);
 	Ring2Utils::sub(c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	ZZ B = cipher1.B + cipher2.B;
-	ZZ nu = cipher1.nu + cipher2.nu;
+	ZZ B = cipher1.eBnd + cipher2.eBnd;
+	ZZ nu = cipher1.mBnd + cipher2.mBnd;
 
 	Cipher res(c0, c1, cipher1.level, B, nu);
 	return res;
@@ -100,11 +106,11 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::sub(cipher1.c0, cipher1.c0, cipher2.c0, logQi, params.n);
 	Ring2Utils::sub(cipher1.c1, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	cipher1.B += cipher2.B;
-	cipher1.nu += cipher2.nu;
+	cipher1.eBnd += cipher2.eBnd;
+	cipher1.mBnd += cipher2.mBnd;
 }
 
-Cipher Scheme::mul(Cipher& cipher1, Cipher& cipher2) {
+Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	long logTQi = getLogTQi(cipher1.level);
 
@@ -131,10 +137,10 @@ Cipher Scheme::mul(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(mulC1, mulC1, cc01, logQi, params.n);
 	Ring2Utils::add(mulC0, mulC0, cc00, logQi, params.n);
 
-	ZZ B = cipher1.B * cipher2.nu + cipher1.nu * cipher2.B + cipher1.B * cipher2.B;
-	ZZ nu = cipher1.nu * cipher2.nu;
+	ZZ eBnd = cipher1.eBnd * (cipher2.mBnd + cipher2.eBnd) + cipher1.mBnd * cipher2.eBnd;
+	ZZ mBnd = cipher1.mBnd * cipher2.mBnd;
 
-	Cipher cipher(mulC0, mulC1, cipher1.level, B, nu);
+	Cipher cipher(mulC0, mulC1, cipher1.level, eBnd, mBnd);
 	return cipher;
 }
 
@@ -163,15 +169,15 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
 	Ring2Utils::add(mulC0, mulC0, cc00, logQi, params.n);
 
-	ZZ B = 2 * cipher.B * cipher.nu + cipher.B * cipher.B;
-	ZZ nu = cipher.nu * cipher.nu;
+	ZZ eBnd = 2 * cipher.eBnd * cipher.mBnd + cipher.eBnd * cipher.eBnd;
+	ZZ mBnd = cipher.mBnd * cipher.mBnd;
 
-	Cipher c(mulC0, mulC1, cipher.level, B, nu);
+	Cipher c(mulC0, mulC1, cipher.level, eBnd, mBnd);
 	return c;
 }
 
-Cipher Scheme::mulAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
-	Cipher c = mul(cipher1, cipher2);
+Cipher Scheme::multAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
+	Cipher c = mult(cipher1, cipher2);
 	Cipher cms = modSwitch(c, c.level + 1);
 	return cms;
 }
@@ -182,7 +188,7 @@ Cipher Scheme::squareAndModSwitch(Cipher& cipher) {
 	return cms;
 }
 
-void Scheme::mulAndEqual(Cipher& cipher1, Cipher& cipher2) {
+void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
 	long logTQi = getLogTQi(cipher1.level);
 
@@ -212,8 +218,8 @@ void Scheme::mulAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	cipher1.c0 = mulC0;
 	cipher1.c1 = mulC1;
 
-	cipher1.B = cipher1.B * cipher2.nu + cipher1.nu * cipher2.B + cipher1.B * cipher2.B;
-	cipher1.nu = cipher1.nu * cipher2.nu;
+	cipher1.eBnd = cipher1.eBnd * (cipher2.mBnd + cipher2.eBnd) + cipher1.mBnd * cipher2.eBnd;
+	cipher1.mBnd = cipher1.mBnd * cipher2.mBnd;
 }
 
 void Scheme::squareAndEqual(Cipher& cipher) {
@@ -244,8 +250,8 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 	cipher.c0 = mulC0;
 	cipher.c1 = mulC1;
 
-	cipher.B *= 2 * cipher.nu + cipher.B;
-	cipher.nu *= cipher.nu;
+	cipher.eBnd *= 2 * cipher.mBnd + cipher.eBnd;
+	cipher.mBnd *= cipher.mBnd;
 }
 
 Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
@@ -258,10 +264,10 @@ Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
-	ZZ B = cipher.B + 1;
-	ZZ nu = cipher.nu + cnst;
+	ZZ eBnd = cipher.eBnd + 1;
+	ZZ mBnd = cipher.mBnd + cnst;
 
-	Cipher newCipher(c0, c1, cipher.level, B, nu);
+	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
 	return newCipher;
 }
 
@@ -277,20 +283,19 @@ Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
 
 	ZZ norm = cnst.norm();
 
-	ZZ B = cipher.B + 1;
-	ZZ nu = cipher.nu + norm;
+	ZZ eBnd = cipher.eBnd + 1;
+	ZZ mBnd = cipher.mBnd + norm;
 
-	Cipher newCipher(c0, c1, cipher.level, B, nu);
+	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
 	return newCipher;
 }
 
-Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
+Cipher Scheme::multByConstant(Cipher& cipher, ZZ& cnst) {
 	ZZ qi = getQi(cipher.level);
 	CZZ tmp;
 	CZZX c0;
 	CZZX c1;
-	long i;
-	for (i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
 		tmp %= qi;
 		SetCoeff(c0, i, tmp);
@@ -301,20 +306,19 @@ Cipher Scheme::mulByConstant(Cipher& cipher, ZZ& cnst) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ B = cipher.B * cnst;
-	ZZ nu = cipher.nu * cnst;
+	ZZ eBnd = cipher.eBnd * cnst;
+	ZZ mBnd = cipher.mBnd * cnst;
 
-	Cipher newCipher(c0, c1, cipher.level, B, nu);
+	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
 	return newCipher;
 }
 
-Cipher Scheme::mulByConstant(Cipher& cipher, CZZ& cnst) {
+Cipher Scheme::multByConstant(Cipher& cipher, CZZ& cnst) {
 	ZZ qi = getQi(cipher.level);
 	CZZ tmp;
 	CZZX c0;
 	CZZX c1;
-	long i;
-	for (i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
 		tmp %= qi;
 		SetCoeff(c0, i, tmp);
@@ -327,10 +331,10 @@ Cipher Scheme::mulByConstant(Cipher& cipher, CZZ& cnst) {
 
 	ZZ norm = cnst.norm();
 
-	ZZ B = cipher.B * norm;
-	ZZ nu = cipher.nu * norm;
+	ZZ eBnd = cipher.eBnd * norm;
+	ZZ mBnd = cipher.mBnd * norm;
 
-	Cipher newCipher(c0, c1, cipher.level, B, nu);
+	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
 	return newCipher;
 }
 
@@ -343,12 +347,11 @@ void Scheme::addConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	cipher.c0.normalize();
 }
 
-void Scheme::mulByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
+void Scheme::multByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	CZZ tmp;
 	ZZ qi = getQi(cipher.level);
 
-	long i;
-	for (i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
 		tmp %= qi;
 		SetCoeff(cipher.c0, i, tmp);
@@ -359,8 +362,8 @@ void Scheme::mulByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	cipher.c0.normalize();
 	cipher.c1.normalize();
 
-	cipher.B *= cnst;
-	cipher.nu *= cnst;
+	cipher.eBnd *= cnst;
+	cipher.mBnd *= cnst;
 }
 
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
@@ -368,8 +371,7 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 
 	CZZX c0;
 	CZZX c1;
-	long i;
-	for (i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		CZZ shift0 = coeff(cipher.c0, i) >> logDF;
 		SetCoeff(c0, i, shift0);
 		CZZ shift1 = coeff(cipher.c1, i) >> logDF;
@@ -378,18 +380,17 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ B = (cipher.B >> params.logp) + params.Bscale;
-	ZZ nu = cipher.nu >> params.logp;
+	ZZ eBnd = (cipher.eBnd >> params.logp) + params.Bscale;
+	ZZ mBnd = cipher.mBnd >> params.logp;
 
-	Cipher newCipher(c0, c1, newLevel, B, nu);
+	Cipher newCipher(c0, c1, newLevel, eBnd, mBnd);
 	return newCipher;
 }
 
 void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	long logDF = params.logp * (newLevel-cipher.level);
 
-	long i;
-	for (i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		CZZ shift0 = coeff(cipher.c0, i) >> logDF;
 		SetCoeff(cipher.c0, i, shift0);
 		CZZ shift1 = coeff(cipher.c1, i) >> logDF;
@@ -399,9 +400,9 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	cipher.c1.normalize();
 	cipher.level = newLevel;
 
-	cipher.B >>= params.logp;
-	cipher.B += params.Bscale;
-	cipher.nu >>= params.logp;
+	cipher.eBnd >>= params.logp;
+	cipher.eBnd += params.Bscale;
+	cipher.mBnd >>= params.logp;
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
@@ -409,8 +410,7 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	CZZ tmp;
 	CZZX c0;
 	CZZX c1;
-	long i;
-	for (i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i);
 		tmp %= newQi;
 		SetCoeff(c0, i, tmp);
@@ -421,10 +421,7 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ B = cipher.B;
-	ZZ nu = cipher.nu;
-
-	Cipher newCipher(c0, c1, newLevel, B, nu);
+	Cipher newCipher(c0, c1, newLevel, cipher.eBnd, cipher.mBnd);
 	return newCipher;
 }
 
@@ -432,8 +429,7 @@ void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	CZZ tmp;
 	ZZ newQi = getQi(newLevel);
 
-	long i;
-	for (i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i);
 		tmp %= newQi;
 		SetCoeff(cipher.c0, i, tmp);
@@ -444,260 +440,6 @@ void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	cipher.c0.normalize();
 	cipher.c1.normalize();
 	cipher.level = newLevel;
-}
-
-vector<Cipher> Scheme::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
-	long csize = ciphers.size();
-	if(csize == 1) {
-		return ciphers;
-	}
-
-	vector<Cipher> res;
-
-	long logcsize = log2(csize);
-
-	vector<Cipher> sub1;
-	vector<Cipher> sub2;
-
-	long i;
-	for (i = 0; i < csize; i = i+2) {
-		sub1.push_back(ciphers[i]);
-		sub2.push_back(ciphers[i+1]);
-	}
-
-	vector<Cipher> y1 = fft(sub1, ksis);
-	vector<Cipher> y2 = fft(sub2, ksis);
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], params.p);
-		modSwitchAndEqual(mul1, mul1.level + 1);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-		modSwitchAndEqual(mul2, mul2.level + 1);
-
-		Cipher sum = add(mul1, mul2);
-		res.push_back(sum);
-	}
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], params.p);
-		modSwitchAndEqual(mul1, mul1.level + 1);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-		modSwitchAndEqual(mul2, mul2.level + 1);
-
-		Cipher diff = sub(mul1, mul2);
-		res.push_back(diff);
-	}
-	return res;
-}
-
-vector<Cipher> Scheme::fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
-	long csize = ciphers.size();
-	if(csize == 1) {
-		return ciphers;
-	}
-
-	vector<Cipher> res;
-
-	long logcsize = log2(csize);
-
-	vector<Cipher> sub1;
-	vector<Cipher> sub2;
-
-	long i;
-	for (i = 0; i < csize; i = i+2) {
-		sub1.push_back(ciphers[i]);
-		sub2.push_back(ciphers[i+1]);
-	}
-
-	vector<Cipher> y1 = fft(sub1, ksis);
-	vector<Cipher> y2 = fft(sub2, ksis);
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], params.p);
-		modSwitchAndEqual(mul1, mul1.level + 1);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-		modSwitchAndEqual(mul2, mul2.level + 1);
-
-		Cipher sum = add(mul1, mul2);
-		res.push_back(sum);
-	}
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], params.p);
-		modSwitchAndEqual(mul1, mul1.level + 1);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-		modSwitchAndEqual(mul2, mul2.level + 1);
-
-		Cipher diff = sub(mul1, mul2);
-		res.push_back(diff);
-	}
-	return res;
-}
-
-vector<Cipher> Scheme::fftEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B) {
-	long csize = ciphers.size();
-	long logcsize = log2(csize);
-
-	cout << "1" << endl;
-	if(csize == B) {
-		cout << "2" << endl;
-		vector<Cipher> res;
-		long i, j;
-
-		for (i = 0; i < csize; ++i) {
-			CZZ f = ksis[logcsize].pows[0];
-			Cipher c = mulByConstant(ciphers[0], f);
-
-			for (j = 1; j < csize; ++j) {
-				long ij = (i * j) % csize;
-				CZZ f = ksis[logcsize].pows[ij];
-				Cipher cx = mulByConstant(ciphers[j], f);
-				c = add(c, cx);
-			}
-			res.push_back(c);
-		}
-		return res;
-	}
-
-	vector<Cipher> res;
-
-
-	vector<Cipher> sub1;
-	vector<Cipher> sub2;
-	cout << "3" << endl;
-
-	long i;
-	for (i = 0; i < csize; i = i+2) {
-		sub1.push_back(ciphers[i]);
-		sub2.push_back(ciphers[i+1]);
-	}
-
-	vector<Cipher> y1 = fftEasy(sub1, ksis, factor, B);
-	vector<Cipher> y2 = fftEasy(sub2, ksis, factor, B);
-	cout << "4" << endl;
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], factor);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-
-		Cipher sum = add(mul1, mul2);
-		res.push_back(sum);
-	}
-	cout << "5" << endl;
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], params.p);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-
-		Cipher diff = sub(mul1, mul2);
-		res.push_back(diff);
-	}
-	return res;
-}
-
-vector<Cipher> Scheme::fftInvEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B) {
-	long csize = ciphers.size();
-	if(csize == 1) {
-		return ciphers;
-	}
-
-	vector<Cipher> res;
-
-	long logcsize = log2(csize);
-
-	vector<Cipher> sub1;
-	vector<Cipher> sub2;
-
-	long i;
-	for (i = 0; i < csize; i = i+2) {
-		sub1.push_back(ciphers[i]);
-		sub2.push_back(ciphers[i+1]);
-	}
-
-	vector<Cipher> y1 = fft(sub1, ksis);
-	vector<Cipher> y2 = fft(sub2, ksis);
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], params.p);
-		modSwitchAndEqual(mul1, mul1.level + 1);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-		modSwitchAndEqual(mul2, mul2.level + 1);
-
-		Cipher sum = add(mul1, mul2);
-		res.push_back(sum);
-	}
-
-	for (i = 0; i < csize/2; ++i) {
-		Cipher mul1 = mulByConstant(y1[i], params.p);
-		modSwitchAndEqual(mul1, mul1.level + 1);
-
-		CZZ x = ksis[logcsize].pows[i];
-		Cipher mul2 = mulByConstant(y2[i], x);
-		modSwitchAndEqual(mul2, mul2.level + 1);
-
-		Cipher diff = sub(mul1, mul2);
-		res.push_back(diff);
-	}
-	return res;
-}
-
-
-vector<CZZ> Scheme::fft(vector<CZZ>& vals, vector<Ksi>& ksis) {
-	long csize = vals.size();
-	if(csize == 1) {
-		return vals;
-	}
-
-	vector<CZZ> res;
-
-	long logcsize = log2(csize);
-
-	vector<CZZ> sub1;
-	vector<CZZ> sub2;
-
-	long i;
-	for (i = 0; i < csize; i = i+2) {
-		sub1.push_back(vals[i]);
-		sub2.push_back(vals[i+1]);
-	}
-
-	vector<CZZ> y1 = fft(sub1, ksis);
-	vector<CZZ> y2 = fft(sub2, ksis);
-
-	for (i = 0; i < csize/2; ++i) {
-		CZZ mul1 = y1[i] * params.p;
-		CZZ x = ksis[logcsize].pows[i];
-
-		CZZ mul2 = y2[i] * x;
-		CZZ sum = mul1 + mul2;
-		CZZ ms = sum / params.p;
-		res.push_back(ms);
-	}
-
-	for (i = 0; i < csize/2; ++i) {
-		CZZ mul1 = y1[i] * params.p;
-		CZZ x = ksis[logcsize].pows[i];
-
-		CZZ mul2 = y2[i] * x;
-		CZZ diff = mul1 - mul2;
-		CZZ ms = diff / params.p;
-		res.push_back(ms);
-	}
-	return res;
 }
 
 ZZ Scheme:: getQi(long& level) {

@@ -114,3 +114,46 @@ void NumUtils::sampleUniform2(CZZX& res, long& d, long& logBnd) {
 	sampleUniform2(res.ix, d, logBnd);
 }
 
+vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, vector<Ksi>& ksis) {
+	long csize = coeffs.size();
+	if(csize == 1) {
+		return coeffs;
+	}
+
+	vector<CZZ> res;
+
+	long logcsize = log2(csize);
+
+	vector<CZZ> sub1;
+	vector<CZZ> sub2;
+
+	for (long i = 0; i < csize; i = i+2) {
+		sub1.push_back(coeffs[i]);
+		sub2.push_back(coeffs[i+1]);
+	}
+
+	vector<CZZ> y1 = fft(sub1, ksis);
+	vector<CZZ> y2 = fft(sub2, ksis);
+
+	for (long i = 0; i < csize/2; ++i) {
+		CZZ mul1 = y1[i] * ksis[0].pow;
+		CZZ x = ksis[logcsize].pows[i];
+
+		CZZ mul2 = y2[i] * x;
+		CZZ sum = mul1 + mul2;
+		CZZ ms = sum / ksis[0].pow;
+		res.push_back(ms);
+	}
+
+	for (long i = 0; i < csize/2; ++i) {
+		CZZ mul1 = y1[i] * ksis[0].pow;
+		CZZ x = ksis[logcsize].pows[i];
+
+		CZZ mul2 = y2[i] * x;
+		CZZ diff = mul1 - mul2;
+		CZZ ms = diff / ksis[0].pow;
+		res.push_back(ms);
+	}
+	return res;
+}
+

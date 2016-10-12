@@ -12,10 +12,10 @@ public:
 	CZZX c1;
 	long level;
 
-	ZZ B;
-	ZZ nu;
+	ZZ eBnd;
+	ZZ mBnd;
 
-	Cipher(CZZX c0, CZZX c1, long level, ZZ B, ZZ nu) : c0(c0), c1(c1), level(level), B(B), nu(nu) {}
+	Cipher(CZZX c0, CZZX c1, long level, ZZ eBnd, ZZ mBnd) : c0(c0), c1(c1), level(level), eBnd(eBnd), mBnd(mBnd) {}
 };
 
 #endif /* SCHEME_CIPHER_H_ */

@@ -12,6 +12,7 @@ public:
 
 	long n;
 	long logpow;
+	long pow;
 
 	vector<CZZ> pows;
 

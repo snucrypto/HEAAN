@@ -5,9 +5,8 @@
 
 Ksi::Ksi(long n, long logpow) : n(n), logpow(logpow) {
 	double angle;
-	long i;
-	long pow = (1 << logpow);
-	for (i = 0; i < n; ++i) {
+	pow = (1 << logpow);
+	for (long i = 0; i < n; ++i) {
 		angle = 2.0 * M_PI * i / n;
 
 		double rx = cos(angle) * pow;

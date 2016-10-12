@@ -15,6 +15,7 @@ public:
 	double sigma;
 	double rho;
 	long h;
+
 	long d;
 	long logq;
 	long logP;

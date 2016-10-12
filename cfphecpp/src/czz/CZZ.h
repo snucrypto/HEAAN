@@ -24,9 +24,11 @@ public:
 
 	CZZ operator *(const CZZ& o);
 	CZZ operator *(const ZZ& o);
+	CZZ operator *(const long& o);
 	void operator *=(const CZZ& o);
 
 	CZZ operator /(const ZZ& o);
+	CZZ operator /(const long& o);
 
 	CZZ operator %(const ZZ& o);
 	void operator%=(const ZZ& o);

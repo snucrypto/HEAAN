@@ -26,41 +26,41 @@ public:
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 
-	virtual ~Scheme() {};
-
 	Cipher encrypt(CZZ& m, ZZ& nu);
 	CZZ decrypt(Cipher& cipher);
+	void decrypt(vector<CZZ>& res, vector<Cipher>& ciphers);
+//--------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
-	Cipher sub(Cipher& cipher1, Cipher& cipher2);
-	Cipher mul(Cipher& cipher1, Cipher& cipher2);
-	Cipher square(Cipher& cipher);
+	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
+
 	Cipher addConstant(Cipher& cipher, ZZ& cnst);
 	Cipher addConstant(Cipher& cipher, CZZ& cnst);
-	Cipher mulByConstant(Cipher& cipher, ZZ& cnst);
-	Cipher mulByConstant(Cipher& cipher, CZZ& cnst);
-	Cipher modSwitch(Cipher& cipher, long newLevel);
-	Cipher modEmbed(Cipher& cipher, long newLevel);
+	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
 
-	Cipher mulAndModSwitch(Cipher& cipher1, Cipher& cipher2);
+	Cipher sub(Cipher& cipher1, Cipher& cipher2);
+	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
+
+	Cipher mult(Cipher& cipher1, Cipher& cipher2);
+	void multAndEqual(Cipher& cipher1, Cipher& cipher2);
+	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
+
+	Cipher multByConstant(Cipher& cipher, ZZ& cnst);
+	Cipher multByConstant(Cipher& cipher, CZZ& cnst);
+	void multByConstantAndEqual(Cipher& cipher, ZZ& cnst);
+
+	Cipher square(Cipher& cipher);
+	void squareAndEqual(Cipher& cipher);
 	Cipher squareAndModSwitch(Cipher& cipher);
 
-	void modEmbedAndEqual(Cipher& cipher, long newLevel);
+	Cipher modSwitch(Cipher& cipher, long newLevel);
 	void modSwitchAndEqual(Cipher& cipher, long newLevel);
-	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
-	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
-	void mulAndEqual(Cipher& cipher1, Cipher& cipher2);
-	void squareAndEqual(Cipher& cipher);
-	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
-	void mulByConstantAndEqual(Cipher& cipher, ZZ& cnst);
 
-	vector<Cipher> fft(vector<Cipher>& ciphers, vector<Ksi>& ksis);
-	vector<Cipher> fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis);
+	Cipher modEmbed(Cipher& cipher, long newLevel);
+	void modEmbedAndEqual(Cipher& cipher, long newLevel);
 
-	vector<Cipher> fftEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B);
-	vector<Cipher> fftInvEasy(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long B);
+//-----------------------------------------
 
-	vector<CZZ> fft(vector<CZZ>& ciphers, vector<Ksi>& ksis);
 };
 
 #endif /* SCHEME_SCHEME_H_ */
