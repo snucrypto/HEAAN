@@ -2,6 +2,7 @@
 #include <NTL/ZZX.h>
 #include <iostream>
 #include <vector>
+#include <random>
 
 #include "czz/CZZ.h"
 #include "czz/CZZX.h"
