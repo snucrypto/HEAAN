@@ -114,7 +114,7 @@ void NumUtils::sampleUniform2(CZZX& res, long& d, long& logBnd) {
 	sampleUniform2(res.ix, d, logBnd);
 }
 
-vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, vector<Ksi>& ksis) {
+vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi) {
 	long csize = coeffs.size();
 	if(csize == 1) {
 		return coeffs;
@@ -130,19 +130,19 @@ vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, vector<Ksi>& ksis) {
 		sub2.push_back(coeffs[i+1]);
 	}
 
-	vector<CZZ> y1 = fft(sub1, ksis);
-	vector<CZZ> y2 = fft(sub2, ksis);
+	vector<CZZ> y1 = fft(sub1, cksi);
+	vector<CZZ> y2 = fft(sub2, cksi);
 
 
 	for (long i = 0; i < csize/2; ++i) {
-		CZZ mul1 = y1[i] * ksis[0].pow;
-		CZZ x = ksis[logcsize].pows[i];
+		CZZ mul1 = y1[i] * cksi.p;
+		CZZ x = cksi.pows[logcsize][i];
 
 		CZZ mul2 = y2[i] * x;
 		CZZ sum = mul1 + mul2;
 		CZZ diff = mul1 - mul2;
-		CZZ ms = sum / ksis[0].pow;
-		CZZ md = sum / ksis[0].pow;
+		CZZ ms = sum / cksi.p;
+		CZZ md = sum / cksi.p;
 		res.push_back(ms);
 		tmp.push_back(md);
 	}
@@ -154,7 +154,7 @@ vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, vector<Ksi>& ksis) {
 	return res;
 }
 
-vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, vector<Ksi>& ksis) {
+vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
 	long csize = coeffs.size();
 	if(csize == 1) {
 		return coeffs;
@@ -170,31 +170,31 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, vector<Ksi>& ksis) {
 		sub2.push_back(coeffs[i+1]);
 	}
 
-	vector<CZZ> y1 = fftInv(sub1, ksis);
-	vector<CZZ> y2 = fftInv(sub2, ksis);
+	vector<CZZ> y1 = fftInv(sub1, cksi);
+	vector<CZZ> y2 = fftInv(sub2, cksi);
 
 	{
-		CZZ mul1 = y1[0] * ksis[0].pow;
-		CZZ x = ksis[logcsize].pows[0];
+		CZZ mul1 = y1[0] * cksi.p;
+		CZZ x = cksi.pows[logcsize][0];
 
 		CZZ mul2 = y2[0] * x;
 		CZZ sum = mul1 + mul2;
 		CZZ diff = mul1 - mul2;
-		CZZ ms = sum / ksis[0].pow;
-		CZZ md = sum / ksis[0].pow;
+		CZZ ms = sum / cksi.p;
+		CZZ md = sum / cksi.p;
 		res.push_back(ms);
 		tmp.push_back(md);
 	}
 
 	for (long i = 1; i < csize/2; ++i) {
-		CZZ mul1 = y1[i] * ksis[0].pow;
-		CZZ x = ksis[logcsize].pows[csize - i];
+		CZZ mul1 = y1[i] * cksi.p;
+		CZZ x = cksi.pows[logcsize][csize - i];
 
 		CZZ mul2 = y2[i] * x;
 		CZZ sum = mul1 + mul2;
 		CZZ diff = mul1 - mul2;
-		CZZ ms = sum / ksis[0].pow;
-		CZZ md = sum / ksis[0].pow;
+		CZZ ms = sum / cksi.p;
+		CZZ md = sum / cksi.p;
 		res.push_back(ms);
 		tmp.push_back(md);
 	}

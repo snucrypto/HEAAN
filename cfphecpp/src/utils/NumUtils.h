@@ -5,9 +5,9 @@
 #include <NTL/ZZX.h>
 #include <vector>
 
+#include "CKsi.h"
 #include "../czz/CZZ.h"
 #include "../czz/CZZX.h"
-#include "../eval/Ksi.h"
 
 using namespace NTL;
 
@@ -25,8 +25,8 @@ public:
 	static void sampleUniform2(ZZX& res, long& d, long& logBnd);
 	static void sampleUniform2(CZZX& res, long& d, long& logBnd);
 
-	static vector<CZZ> fft(vector<CZZ>& coeffs, vector<Ksi>& ksis);
-	static vector<CZZ> fftInv(vector<CZZ>& coeffs, vector<Ksi>& ksis);
+	static vector<CZZ> fft(vector<CZZ>& coeffs, CKsi& ksis);
+	static vector<CZZ> fftInv(vector<CZZ>& coeffs, CKsi& ksis);
 };
 
 #endif /* UTILS_NUMUTILS_H_ */

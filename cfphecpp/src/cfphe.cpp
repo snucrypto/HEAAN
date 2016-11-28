@@ -6,7 +6,7 @@
 
 #include "czz/CZZ.h"
 #include "czz/CZZX.h"
-#include "eval/Ksi.h"
+#include "utils/CKsi.h"
 #include "scheme/Cipher.h"
 #include "scheme/Params.h"
 #include "scheme/PubKey.h"
@@ -51,9 +51,11 @@ void testSimple() {
 	//----------------------------
 
 	long scale = 2;
-	Ksi ksi(16, scheme.params.logp);
+	CKsi cksi(scheme.params.logp);
+	cksi.precompute(4);
 	CZZ m1, m2;
-	m1 = ksi.pows[1];
+
+	m1 = cksi.pows[3][3];
 	m2 = m1 * m1;
 	m2.r >>= scheme.params.logp;
 	m2.i >>= scheme.params.logp;
@@ -302,25 +304,18 @@ void testFFT() {
 	SchemeAlgo algo(scheme, timeutils);
 	//----------------------------
 
-	long deg = 3;
+	long deg = 2;
 	long logN = 3;
 	long N = 1 << logN;
 
-	vector<Ksi> ksis;
-	cout << "------------------" << endl;
-	timeutils.start("making ksi");
-	for (long i = 0; i < logN + 1; ++i) {
-		Ksi ksi((1 << i), scheme.params.logp);
-		ksis.push_back(ksi);
-	}
-	timeutils.stop("making ksi");
-	cout << "------------------" << endl;
+	CKsi cksi(scheme.params.logp);
+	cksi.precompute(logN+1);
 
 	vector<CZZ> px, p1, p2;
 
 	for (long i = 0; i < deg; ++i) {
-		CZZ m1 = ksis[logN].pows[i];
-		CZZ m2 = ksis[logN].pows[deg-i];
+		CZZ m1 = cksi.pows[logN][i];
+		CZZ m2 = cksi.pows[logN][deg-i];
 		p1.push_back(m1);
 		p2.push_back(m2);
 	}
@@ -360,13 +355,13 @@ void testFFT() {
 
 	cout << "------------------" << endl;
 	timeutils.start("fft 1");
-	vector<Cipher> cfft1 = algo.fft(cp1, ksis);
+	vector<Cipher> cfft1 = algo.fft(cp1, cksi);
 	timeutils.stop("fft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("fft 2");
-	vector<Cipher> cfft2 = algo.fft(cp2, ksis);
+	vector<Cipher> cfft2 = algo.fft(cp2, cksi);
 	timeutils.stop("fft 2");
 	cout << "------------------" << endl;
 
@@ -384,8 +379,8 @@ void testFFT() {
 	timeutils.stop("mul and decrypt fft");
 	cout << "------------------" << endl;
 
-	vector<CZZ> fft1 = NumUtils::fft(p1, ksis);
-	vector<CZZ> fft2 = NumUtils::fft(p2, ksis);
+	vector<CZZ> fft1 = NumUtils::fft(p1, cksi);
+	vector<CZZ> fft2 = NumUtils::fft(p2, cksi);
 
 	for (long i = 0; i < N; ++i) {
 		CZZ mm = fft1[i] * fft2[i];
@@ -394,7 +389,7 @@ void testFFT() {
 		mfft.push_back(mm);
 	}
 
-	vector<CZZ> fft = NumUtils::fft(px, ksis);
+	vector<CZZ> fft = NumUtils::fft(px, cksi);
 	for (long i = 0; i < N; ++i) {
 		CZZ rm = fft[i];
 		rm.r /= scheme.params.p;
@@ -440,21 +435,15 @@ void testFFTNew() {
 	ZZ pprime;
 	power(pprime, 2, logpprime);
 
-	vector<Ksi> ksis;
-	cout << "----------------------" << endl;
-	timeutils.start("making ksi");
-	for (long i = 0; i < logN + 1; ++i) {
-		Ksi ksi((1 << i), logpprime);
-		ksis.push_back(ksi);
-	}
-	timeutils.stop("making ksi");
-	cout << "----------------------" << endl;
+	CKsi cksi(logpprime);
+	cksi.precompute(logN + 1);
+
 
 	vector<CZZ> px, p1, p2;
 
 	for (long i = 0; i < deg; ++i) {
-		CZZ m1 = ksis[logN].pows[i];
-		CZZ m2 = ksis[logN].pows[deg-i];
+		CZZ m1 = cksi.pows[logN][i];
+		CZZ m2 = cksi.pows[logN][deg-i];
 		p1.push_back(m1);
 		p2.push_back(m2);
 	}
@@ -494,13 +483,13 @@ void testFFTNew() {
 
 	cout << "----------------------" << endl;
 	timeutils.start("fft 1");
-	vector<Cipher> cfft1 = algo.fftNew(cp1, ksis, pprime, bnd);
+	vector<Cipher> cfft1 = algo.fftNew(cp1, cksi, pprime, bnd);
 	timeutils.stop("fft 1");
 	cout << "----------------------" << endl;
 
 	cout << "----------------------" << endl;
 	timeutils.start("fft 2");
-	vector<Cipher> cfft2 = algo.fftNew(cp1, ksis, pprime, bnd);
+	vector<Cipher> cfft2 = algo.fftNew(cp1, cksi, pprime, bnd);
 	timeutils.stop("fft 2");
 	cout << "----------------------" << endl;
 
@@ -535,8 +524,8 @@ void testFFTNew() {
 		px.push_back(coeff(zp, i));
 	}
 
-	vector<CZZ> fft1 = NumUtils::fft(p1, ksis);
-	vector<CZZ> fft2 = NumUtils::fft(p2, ksis);
+	vector<CZZ> fft1 = NumUtils::fft(p1, cksi);
+	vector<CZZ> fft2 = NumUtils::fft(p2, cksi);
 
 	for (long i = 0; i < N; ++i) {
 		CZZ mm = fft1[i] * fft2[i];
@@ -545,7 +534,7 @@ void testFFTNew() {
 		mfft.push_back(mm);
 	}
 
-	vector<CZZ> fft = NumUtils::fft(px, ksis);
+	vector<CZZ> fft = NumUtils::fft(px, cksi);
 
 	for (long i = 0; i < N; ++i) {
 		CZZ rm = fft[i];
@@ -568,10 +557,10 @@ void testFFTNew() {
 
 int main() {
 //	testSimple();
-	testPow();
+//	testPow();
 //	testProd();
 //	testInv();
-//	testFFT();
+	testFFT();
 //	testFFTNew();
 	return 0;
 }

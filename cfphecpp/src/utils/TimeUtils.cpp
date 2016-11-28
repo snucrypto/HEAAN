@@ -19,6 +19,5 @@ void TimeUtils::stop(string msg) {
 	timeElapsed = (stopTime.tv_sec - startTime.tv_sec) * 1000.0;
 	timeElapsed += (stopTime.tv_usec - startTime.tv_usec) / 1000.0;
 	cout << msg +  " time = "<< timeElapsed << endl;
-	expData.push_back(timeElapsed);
 }
 

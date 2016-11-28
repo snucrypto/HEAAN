@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "../eval/Ksi.h"
 #include "Params.h"
 #include "Cipher.h"
 #include "SecKey.h"

@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "../czz/CZZ.h"
-#include "../eval/Ksi.h"
 #include "Params.h"
 
 void SchemeAlgo::powerOf2(vector<Cipher>& c2k, Cipher& c, long& deg) {
@@ -92,7 +91,7 @@ void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, lo
 }
 
 
-vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
+vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, CKsi& cksi) {
 	long csize = ciphers.size();
 	if(csize == 1) {
 		return ciphers;
@@ -109,8 +108,8 @@ vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 		sub2.push_back(ciphers[i+1]);
 	}
 
-	vector<Cipher> y1 = fft(sub1, ksis);
-	vector<Cipher> y2 = fft(sub2, ksis);
+	vector<Cipher> y1 = fft(sub1, cksi);
+	vector<Cipher> y2 = fft(sub2, cksi);
 
 	vector<Cipher> tmp;
 
@@ -118,7 +117,7 @@ vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 		Cipher mul1 = scheme.multByConstant(y1[i], scheme.params.p);
 		scheme.modSwitchAndEqual(mul1, mul1.level + 1);
 
-		CZZ x = ksis[logcsize].pows[i];
+		CZZ x = cksi.pows[logcsize][i];
 		Cipher mul2 = scheme.multByConstant(y2[i], x);
 		scheme.modSwitchAndEqual(mul2, mul2.level + 1);
 
@@ -134,7 +133,7 @@ vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 	return res;
 }
 
-vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
+vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers, CKsi& cksi) {
 	long csize = ciphers.size();
 	if(csize == 1) {
 		return ciphers;
@@ -151,8 +150,8 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 		sub2.push_back(ciphers[i+1]);
 	}
 
-	vector<Cipher> y1 = fft(sub1, ksis);
-	vector<Cipher> y2 = fft(sub2, ksis);
+	vector<Cipher> y1 = fft(sub1, cksi);
+	vector<Cipher> y2 = fft(sub2, cksi);
 
 	vector<Cipher> tmp;
 
@@ -160,7 +159,7 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 		Cipher mul1 = scheme.multByConstant(y1[0], scheme.params.p);
 		scheme.modSwitchAndEqual(mul1, mul1.level + 1);
 
-		CZZ x = ksis[logcsize].pows[0];
+		CZZ x = cksi.pows[logcsize][0];
 		Cipher mul2 = scheme.multByConstant(y2[0], x);
 		scheme.modSwitchAndEqual(mul2, mul2.level + 1);
 
@@ -174,7 +173,7 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 		Cipher mul1 = scheme.multByConstant(y1[i], scheme.params.p);
 		scheme.modSwitchAndEqual(mul1, mul1.level + 1);
 
-		CZZ x = ksis[logcsize].pows[csize - i];
+		CZZ x = cksi.pows[logcsize][csize - i];
 		Cipher mul2 = scheme.multByConstant(y2[i], x);
 		scheme.modSwitchAndEqual(mul2, mul2.level + 1);
 
@@ -190,7 +189,7 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers, vector<Ksi>& ksis) {
 	return res;
 }
 
-vector<Cipher> SchemeAlgo::fftNew(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long bnd) {
+vector<Cipher> SchemeAlgo::fftNew(vector<Cipher>& ciphers, CKsi& cksi, ZZ& factor, long bnd) {
 	long csize = ciphers.size();
 	long logcsize = log2(csize);
 
@@ -199,12 +198,12 @@ vector<Cipher> SchemeAlgo::fftNew(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ
 	if(csize == bnd) {
 
 		for (long i = 0; i < csize; ++i) {
-			CZZ f = ksis[logcsize].pows[0];
+			CZZ f = cksi.pows[logcsize][0];
 			Cipher c = scheme.multByConstant(ciphers[0], f);
 
 			for (long j = 1; j < csize; ++j) {
 				long ij = (i * j) % csize;
-				CZZ f = ksis[logcsize].pows[ij];
+				CZZ f = cksi.pows[logcsize][ij];
 				Cipher cx = scheme.multByConstant(ciphers[j], f);
 				scheme.addAndEqual(c, cx);
 			}
@@ -220,15 +219,15 @@ vector<Cipher> SchemeAlgo::fftNew(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ
 		sub2.push_back(ciphers[i+1]);
 	}
 
-	vector<Cipher> y1 = fftNew(sub1, ksis, factor, bnd);
-	vector<Cipher> y2 = fftNew(sub2, ksis, factor, bnd);
+	vector<Cipher> y1 = fftNew(sub1, cksi, factor, bnd);
+	vector<Cipher> y2 = fftNew(sub2, cksi, factor, bnd);
 
 	vector<Cipher> tmp;
 
 	for (long i = 0; i < csize/2; ++i) {
 		Cipher mul1 = scheme.multByConstant(y1[i], factor);
 
-		CZZ x = ksis[logcsize].pows[i];
+		CZZ x = cksi.pows[logcsize][i];
 		Cipher mul2 = scheme.multByConstant(y2[i], x);
 
 		Cipher sum = scheme.add(mul1, mul2);
@@ -244,7 +243,7 @@ vector<Cipher> SchemeAlgo::fftNew(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ
 	return res;
 }
 
-vector<Cipher> SchemeAlgo::fftInvNew(vector<Cipher>& ciphers, vector<Ksi>& ksis, ZZ& factor, long bnd) {
+vector<Cipher> SchemeAlgo::fftInvNew(vector<Cipher>& ciphers, CKsi& cksi, ZZ& factor, long bnd) {
 	long csize = ciphers.size();
 	long logcsize = log2(csize);
 
@@ -253,12 +252,12 @@ vector<Cipher> SchemeAlgo::fftInvNew(vector<Cipher>& ciphers, vector<Ksi>& ksis,
 	if(csize == bnd) {
 
 		for (long i = 0; i < csize; ++i) {
-			CZZ f = ksis[logcsize].pows[0];
+			CZZ f = cksi.pows[logcsize][0];
 			Cipher c = scheme.multByConstant(ciphers[0], f);
 
 			for (long j = 1; j < csize; ++j) {
 				long ij = (i * j) % csize;
-				CZZ f = ksis[logcsize].pows[ij];
+				CZZ f = cksi.pows[logcsize][ij];
 				Cipher cx = scheme.multByConstant(ciphers[j], f);
 				scheme.addAndEqual(c, cx);
 			}
@@ -274,15 +273,15 @@ vector<Cipher> SchemeAlgo::fftInvNew(vector<Cipher>& ciphers, vector<Ksi>& ksis,
 		sub2.push_back(ciphers[i+1]);
 	}
 
-	vector<Cipher> y1 = fftNew(sub1, ksis, factor, bnd);
-	vector<Cipher> y2 = fftNew(sub2, ksis, factor, bnd);
+	vector<Cipher> y1 = fftNew(sub1, cksi, factor, bnd);
+	vector<Cipher> y2 = fftNew(sub2, cksi, factor, bnd);
 
 	vector<Cipher> tmp;
 
 	{
 		Cipher mul1 = scheme.multByConstant(y1[0], factor);
 
-		CZZ x = ksis[logcsize].pows[0];
+		CZZ x = cksi.pows[logcsize][0];
 		Cipher mul2 = scheme.multByConstant(y2[0], x);
 
 		Cipher sum = scheme.add(mul1, mul2);
@@ -294,7 +293,7 @@ vector<Cipher> SchemeAlgo::fftInvNew(vector<Cipher>& ciphers, vector<Ksi>& ksis,
 	for (long i = 1; i < csize/2; ++i) {
 		Cipher mul1 = scheme.multByConstant(y1[i], factor);
 
-		CZZ x = ksis[logcsize].pows[csize - i];
+		CZZ x = cksi.pows[logcsize][csize - i];
 		Cipher mul2 = scheme.multByConstant(y2[i], x);
 
 		Cipher sum = scheme.add(mul1, mul2);

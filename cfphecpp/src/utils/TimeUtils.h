@@ -13,7 +13,6 @@ class TimeUtils {
 private:
 	struct timeval startTime, stopTime;
 	double timeElapsed;
-	vector<double> expData;
 
 public:
 	TimeUtils();
