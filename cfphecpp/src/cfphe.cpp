@@ -468,9 +468,9 @@ void testFFT() {
 
 int main() {
 //	testtest();
-//	testEncode();
+	testEncode();
 //	testSimple();
-	testPow();
+//	testPow();
 //	testProd();
 //	testInv();
 //	testFFT();

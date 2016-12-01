@@ -72,8 +72,7 @@ CZZX Scheme::encode(long& logSlots, vector<CZZ>& mvec) {
 	long gap = (params.n >> logSlots);
 
 	for (i = 0; i < slots; ++i) {
-		CZZ c = (fft[i] >> logSlots);
-		SetCoeff(res, idx, c);
+		SetCoeff(res, idx, fft[i]);
 		idx += gap;
 	}
 
