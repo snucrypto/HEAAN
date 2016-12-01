@@ -26,6 +26,9 @@ class Ring2Utils {
 		static void mult(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 		static void mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 
+		static void mulMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree);
+		static void mulMonomial(CZZX& res, CZZX& p, const long& monomialDeg, const long& degree);
+
 		static void mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& degree);
 		static void mulCnst(CZZX& res, CZZX& p, const CZZ& cnst, const long& degree);
 		static void mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& logMod, const long& degree);

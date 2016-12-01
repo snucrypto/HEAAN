@@ -21,6 +21,11 @@ void CZZ::operator+=(const CZZ& o) {
 	i += o.i;
 }
 
+CZZ CZZ::operator-() {
+	CZZ res(-r, -i);
+	return res;
+}
+
 CZZ CZZ::operator-(const CZZ& o) {
 	ZZ resr = r - o.r;
 	ZZ resi = i - o.i;
@@ -101,10 +106,20 @@ CZZ CZZ::operator <<(const long& s) {
 	return CZZ(tr, to);
 }
 
+void CZZ::operator <<=(const long& s) {
+	r <<= s;
+	i <<= s;
+}
+
 CZZ CZZ::operator >>(const long& s) {
 	ZZ tr = r >> s;
 	ZZ to = i >> s;
 	return CZZ(tr, to);
+}
+
+void CZZ::operator >>=(const long& s) {
+	r >>= s;
+	i >>= s;
 }
 
 CZZ CZZ::sqr() {

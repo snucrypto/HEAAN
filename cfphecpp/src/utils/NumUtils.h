@@ -13,21 +13,19 @@ using namespace NTL;
 
 class NumUtils {
 public:
-	static void sampleGauss(ZZX& res, long& d, double& stdev);
-	static void sampleGauss(CZZX& res, long& d, double& stdev);
+	static void sampleGauss(ZZX& res, const long& d, const double& stdev);
+	static void sampleGauss(CZZX& res, const long& d, const double& stdev);
 
-	static void sampleZO(ZZX& res, long& d, double& rho);
-	static void sampleZO(CZZX& res, long& d, double& rho);
+	static void sampleZO(ZZX& res, const long& d, const double& rho);
+	static void sampleZO(CZZX& res, const long& d, const double& rho);
 
-	static void sampleUniform(ZZX& res, long& d, ZZ& bnd);
-	static void sampleUniform(CZZX& res, long& d, ZZ& bnd);
+	static void sampleUniform(ZZX& res, const long& d, const ZZ& bnd);
+	static void sampleUniform(CZZX& res, const long& d, const ZZ& bnd);
 
-	static void sampleUniform2(ZZX& res, long& d, long& logBnd);
-	static void sampleUniform2(CZZX& res, long& d, long& logBnd);
+	static void sampleUniform2(ZZX& res, const long& d, const long& logBnd);
+	static void sampleUniform2(CZZX& res, const long& d, const long& logBnd);
 
-	static vector<CZZ> fft(vector<CZZ>& coeffs, CKsi& cksi);
-	static vector<CZZ> fftInv(vector<CZZ>& coeffs, CKsi& cksi);
-
+	static vector<CZZ> fft(vector<CZZ>& coeffs, CKsi& cksi, const long& is);
 };
 
 #endif /* UTILS_NUMUTILS_H_ */

@@ -33,8 +33,8 @@ void testtest() {
 		mvec.push_back(m);
 	}
 
-	vector<CZZ> fvec = NumUtils::fftInv(mvec, cksi);
-	vector<CZZ> dvec = NumUtils::fft(fvec, cksi);
+	vector<CZZ> fvec = NumUtils::fft(mvec, cksi, -1);
+	vector<CZZ> dvec = NumUtils::fft(fvec, cksi, 1);
 
 	for (i = 0; i < slots; ++i) {
 		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
@@ -374,8 +374,8 @@ void testFFT() {
 	vector<CZZ> px, p1, p2;
 
 	for (long i = 0; i < deg; ++i) {
-		CZZ m1 = params.cksi.pows[logN][i];
-		CZZ m2 = params.cksi.pows[logN][deg-i];
+		CZZ m1 = params.cksi.pows[logN][1];
+		CZZ m2 = params.cksi.pows[logN][1];
 		p1.push_back(m1);
 		p2.push_back(m2);
 	}
@@ -415,13 +415,13 @@ void testFFT() {
 
 	cout << "------------------" << endl;
 	timeutils.start("fft 1");
-	vector<Cipher> cfft1 = algo.fft(cp1, params.cksi);
+	vector<Cipher> cfft1 = algo.fft(cp1, params.cksi, 1);
 	timeutils.stop("fft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("fft 2");
-	vector<Cipher> cfft2 = algo.fft(cp2, params.cksi);
+	vector<Cipher> cfft2 = algo.fft(cp2, params.cksi, 1);
 	timeutils.stop("fft 2");
 	cout << "------------------" << endl;
 
@@ -430,17 +430,15 @@ void testFFT() {
 	cout << "------------------" << endl;
 	timeutils.start("mul and decrypt fft");
 	for (long i = 0; i < cfft1.size(); ++i) {
-		Cipher ms = scheme.mult(cfft1[i], cfft2[i]);
+		Cipher ms = scheme.multAndModSwitch(cfft1[i], cfft2[i]);
 		CZZ d = scheme.decrypt(ms);
-		d.r /= scheme.params.p;
-		d.i /= scheme.params.p;
 		dfft.push_back(d);
 	}
 	timeutils.stop("mul and decrypt fft");
 	cout << "------------------" << endl;
 
-	vector<CZZ> fft1 = NumUtils::fft(p1, params.cksi);
-	vector<CZZ> fft2 = NumUtils::fft(p2, params.cksi);
+	vector<CZZ> fft1 = NumUtils::fft(p1, params.cksi, 1);
+	vector<CZZ> fft2 = NumUtils::fft(p2, params.cksi, 1);
 
 	for (long i = 0; i < N; ++i) {
 		CZZ mm = fft1[i] * fft2[i];
@@ -449,7 +447,7 @@ void testFFT() {
 		mfft.push_back(mm);
 	}
 
-	vector<CZZ> fft = NumUtils::fft(px, params.cksi);
+	vector<CZZ> fft = NumUtils::fft(px, params.cksi, 1);
 	for (long i = 0; i < N; ++i) {
 		CZZ rm = fft[i];
 		rm.r /= scheme.params.p;
@@ -467,162 +465,14 @@ void testFFT() {
 
 	cout << "!!! END TEST FFT !!!" << endl; // prints !!!Hello World!!!
 }
-
-void testFFTNew() {
-	cout << "!!! START TEST FFT !!!" << endl; // prints !!!Hello World!!!
-
-	//----------------------------
-	TimeUtils timeutils;
-	long n = 1 << 14;
-	long logp = 40;
-	long L = 8;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(n, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme, timeutils);
-	//----------------------------
-
-
-	long bnd = 4;
-	long deg = 3;
-	long logN = 3;
-	long N = 1 << logN;
-	long logpprime = 20;
-	ZZ pprime;
-	power(pprime, 2, logpprime);
-
-
-	params.cksi.setLogp(logpprime);
-	params.cksi.precompute(logN + 1);
-
-	vector<CZZ> px, p1, p2;
-
-	for (long i = 0; i < deg; ++i) {
-		CZZ m1 = params.cksi.pows[logN][i];
-		CZZ m2 = params.cksi.pows[logN][deg-i];
-		p1.push_back(m1);
-		p2.push_back(m2);
-	}
-
-	CZZ zero;
-	for (long i = deg; i < N; ++i) {
-		p1.push_back(zero);
-		p2.push_back(zero);
-	}
-
-	CZZX zp, zp1, zp2;
-
-	for (long i = 0; i < N; ++i) {
-		SetCoeff(zp1, i, p1[i]);
-		SetCoeff(zp2, i, p2[i]);
-	}
-	zp1.normalize();
-	zp2.normalize();
-	zp = zp1 * zp2;
-
-	for (long i = 0; i < N; ++i) {
-		px.push_back(coeff(zp, i));
-	}
-
-	vector<Cipher> cp1, cp2;
-
-	cout << "----------------------" << endl;
-	timeutils.start("Encrypting polynomials");
-	for (long i = 0; i < N; ++i) {
-		Cipher c1 = scheme.encrypt(p1[i], scheme.params.p);
-		Cipher c2 = scheme.encrypt(p2[i], scheme.params.p);
-		cp1.push_back(c1);
-		cp2.push_back(c2);
-	}
-	timeutils.stop("Encrypting polynomials");
-	cout << "----------------------" << endl;
-
-	cout << "----------------------" << endl;
-	timeutils.start("fft 1");
-	vector<Cipher> cfft1 = algo.fftNew(cp1, params.cksi, pprime, bnd);
-	timeutils.stop("fft 1");
-	cout << "----------------------" << endl;
-
-	cout << "----------------------" << endl;
-	timeutils.start("fft 2");
-	vector<Cipher> cfft2 = algo.fftNew(cp1, params.cksi, pprime, bnd);
-	timeutils.stop("fft 2");
-	cout << "----------------------" << endl;
-
-	vector<CZZ> dfft, mfft, rfft;
-
-	cout << "----------------------" << endl;
-	timeutils.start("mul and decrypt fft");
-	for (long i = 0; i < cfft1.size(); ++i) {
-		scheme.modSwitchAndEqual(cfft1[i], cfft1[i].level + 1);
-		scheme.modSwitchAndEqual(cfft2[i], cfft2[i].level + 1);
-	}
-
-	for (long i = 0; i < cfft1.size(); ++i) {
-		Cipher ms = scheme.mult(cfft1[i], cfft2[i]);
-		CZZ d = scheme.decrypt(ms);
-		d.r /= scheme.params.p;
-		d.i /= scheme.params.p;
-		dfft.push_back(d);
-	}
-	timeutils.stop("mul and decrypt fft");
-	cout << "----------------------" << endl;
-
-	for (long i = 0; i < N; ++i) {
-		SetCoeff(zp1, i, p1[i]);
-		SetCoeff(zp2, i, p2[i]);
-	}
-	zp1.normalize();
-	zp2.normalize();
-	zp = zp1 * zp2;
-
-	for (long i = 0; i < N; ++i) {
-		px.push_back(coeff(zp, i));
-	}
-
-	vector<CZZ> fft1 = NumUtils::fft(p1, params.cksi);
-	vector<CZZ> fft2 = NumUtils::fft(p2, params.cksi);
-
-	for (long i = 0; i < N; ++i) {
-		CZZ mm = fft1[i] * fft2[i];
-		mm.r /= scheme.params.p;
-		mm.i /= scheme.params.p;
-		mfft.push_back(mm);
-	}
-
-	vector<CZZ> fft = NumUtils::fft(px, params.cksi);
-
-	for (long i = 0; i < N; ++i) {
-		CZZ rm = fft[i];
-		rm.r /= scheme.params.p;
-		rm.i /= scheme.params.p;
-		rfft.push_back(rm);
-	}
-
-	for (long i = 0; i < N; ++i) {
-		cout << "----------------------" << endl;
-		cout << i << " step: rfft  = " << rfft[i].toString() << endl;
-		cout << i << " step: mfft = " << mfft[i].toString() << endl;
-		cout << i << " step: dfft = " << dfft[i].toString() << endl;
-		cout << "----------------------" << endl;
-	}
-
-	cout << "!!! END TEST FFT !!!" << endl; // prints !!!Hello World!!!
-}
-
 
 int main() {
-	testtest();
+//	testtest();
 //	testEncode();
 //	testSimple();
-//	testPow();
+	testPow();
 //	testProd();
 //	testInv();
 //	testFFT();
-//	testFFTNew();
 	return 0;
 }

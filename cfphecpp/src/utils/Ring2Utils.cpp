@@ -141,6 +141,35 @@ void Ring2Utils::mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const lo
 	mult(res.ix, p1.ix, p2, logMod, degree);
 }
 
+void Ring2Utils::mulMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree) {
+	long shift = monomialDeg % (2 * degree);
+	long i, idx = 0;
+
+	for (i = shift; i < degree; ++i) {
+		SetCoeff(res, idx++, coeff(p, i));
+	}
+
+	for (i = 0; i < degree - shift; ++i) {
+		SetCoeff(res, idx++, -coeff(p, i));
+	}
+}
+
+void Ring2Utils::mulMonomial(CZZX& res, CZZX& p, const long& monomialDeg, const long& degree) {
+	long shift = monomialDeg % (2 * degree);
+	long i, idx = 0;
+	CZZ tmp;
+
+	for (i = shift; i < degree; ++i) {
+		tmp = coeff(p,i);
+		SetCoeff(res, idx++, tmp);
+	}
+
+	for (i = 0; i < degree - shift; ++i) {
+		tmp = -coeff(p,i);
+		SetCoeff(res, idx++, tmp);
+	}
+}
+
 void Ring2Utils::mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& degree) {
 	ZZX mul;
 	ZZ c;

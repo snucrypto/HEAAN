@@ -65,7 +65,7 @@ void Scheme::decrypt(vector<CZZ>& res, vector<Cipher>& ciphers) {
 
 CZZX Scheme::encode(long& logSlots, vector<CZZ>& mvec) {
 	CZZX res;
-	vector<CZZ> fft = NumUtils::fftInv(mvec, params.cksi);
+	vector<CZZ> fft = NumUtils::fft(mvec, params.cksi, -1);
 
 	long i, idx = 0;
 	long slots = 1 << logSlots;
@@ -121,7 +121,7 @@ vector<CZZ> Scheme::decrypt(long& logSlots, Cipher& cipher) {
 		idx += gap;
 	}
 
-	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
+	vector<CZZ> res = NumUtils::fft(fft, params.cksi, 1);
 	return res;
 }
 
@@ -409,6 +409,28 @@ void Scheme::multByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	cipher.mBnd *= cnst;
 }
 
+void Scheme::multByConstantAndEqual(Cipher& cipher, CZZ& cnst) {
+	CZZ tmp;
+	ZZ qi = getQi(cipher.level);
+
+	for (long i = 0; i < params.n; ++i) {
+		tmp = coeff(cipher.c0,i) * cnst;
+		tmp %= qi;
+		SetCoeff(cipher.c0, i, tmp);
+		tmp = coeff(cipher.c1,i) * cnst;
+		tmp %= qi;
+		SetCoeff(cipher.c1, i, tmp);
+	}
+	cipher.c0.normalize();
+	cipher.c1.normalize();
+
+	ZZ norm = cnst.norm();
+
+	cipher.eBnd *= norm;
+	cipher.mBnd *= norm;
+
+}
+
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	long logDF = params.logp * (newLevel-cipher.level);
 
@@ -430,6 +452,11 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	return newCipher;
 }
 
+Cipher Scheme::modSwitch(Cipher& cipher) {
+	long newLevel = cipher.level + 1;
+	return modSwitch(cipher, newLevel);
+}
+
 void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	long logDF = params.logp * (newLevel-cipher.level);
 
@@ -446,6 +473,11 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	cipher.eBnd >>= params.logp;
 	cipher.eBnd += params.Bscale;
 	cipher.mBnd >>= params.logp;
+}
+
+void Scheme::modSwitchAndEqual(Cipher& cipher) {
+	long newLevel = cipher.level + 1;
+	modSwitchAndEqual(cipher);
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {

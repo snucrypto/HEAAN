@@ -52,13 +52,16 @@ public:
 	Cipher multByConstant(Cipher& cipher, ZZ& cnst);
 	Cipher multByConstant(Cipher& cipher, CZZ& cnst);
 	void multByConstantAndEqual(Cipher& cipher, ZZ& cnst);
+	void multByConstantAndEqual(Cipher& cipher, CZZ& cnst);
 
 	Cipher square(Cipher& cipher);
 	void squareAndEqual(Cipher& cipher);
 	Cipher squareAndModSwitch(Cipher& cipher);
 
 	Cipher modSwitch(Cipher& cipher, long newLevel);
+	Cipher modSwitch(Cipher& cipher);
 	void modSwitchAndEqual(Cipher& cipher, long newLevel);
+	void modSwitchAndEqual(Cipher& cipher);
 
 	Cipher modEmbed(Cipher& cipher, long newLevel);
 	void modEmbedAndEqual(Cipher& cipher, long newLevel);

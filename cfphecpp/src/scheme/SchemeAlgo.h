@@ -13,14 +13,11 @@ public:
 	TimeUtils& timeutils;
 
 	SchemeAlgo(Scheme& scheme, TimeUtils& timeutils) : scheme(scheme), timeutils(timeutils) {};
-	void powerOf2(vector<Cipher>& c2k, Cipher& c, long& deg);
-	void prodOfSame(vector<Cipher>& c2k, Cipher& c, long& deg);
-	void inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, long& k);
+	void powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg);
+	void prodOfSame(vector<Cipher>& c2k, Cipher& c, const long& deg);
+	void inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, const long& k);
 
-	vector<Cipher> fft(vector<Cipher>& ciphers, CKsi& cksi);
-	vector<Cipher> fftInv(vector<Cipher>& ciphers, CKsi& cksi);
-	vector<Cipher> fftNew(vector<Cipher>& ciphers, CKsi& cksi, ZZ& factor, long bnd);
-	vector<Cipher> fftInvNew(vector<Cipher>& ciphers, CKsi& cksi, ZZ& factor, long bnd);
+	vector<Cipher> fft(vector<Cipher>& ciphers, CKsi& cksi, const long& is);
 };
 
 #endif /* SCHEME_SCHEMEALGO_H_ */

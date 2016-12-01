@@ -3,17 +3,10 @@
 #include <cassert>
 #include <cmath>
 
-void NumUtils::sampleGauss(ZZX& res, long& d, double& stdev) {
+void NumUtils::sampleGauss(ZZX& res, const long& d, const double& stdev) {
 	static double const Pi=4.0*atan(1.0); // Pi=3.1415..
 	static long const bignum = 0xfffffff;
-	// THREADS: C++11 guarantees these are initialized only once
 
-	if(d<=0) {
-		d=deg(res)+1;
-	}
-	if (d<=0) {
-		return;
-	}
 	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
 	for(long i=0; i<d; i++) {
 		SetCoeff(res, i, ZZ::zero());
@@ -39,12 +32,12 @@ void NumUtils::sampleGauss(ZZX& res, long& d, double& stdev) {
 	res.normalize(); // need to call this after we work on the coeffs
 }
 
-void NumUtils::sampleGauss(CZZX& res, long& d, double& stdev) {
+void NumUtils::sampleGauss(CZZX& res, const long& d, const double& stdev) {
 	sampleGauss(res.rx, d, stdev);
 	sampleGauss(res.ix, d, stdev);
 }
 
-void NumUtils::sampleZO(ZZX& res, long& d, double& rho) {
+void NumUtils::sampleZO(ZZX& res, const long& d, const double& rho) {
 	res.SetMaxLength(d);
 	ZZ temp;
 	long i;
@@ -60,7 +53,7 @@ void NumUtils::sampleZO(ZZX& res, long& d, double& rho) {
 	}
 }
 
-void NumUtils::sampleZO(CZZX& res, long& d, double& rho) {
+void NumUtils::sampleZO(CZZX& res, const long& d, const double& rho) {
 	res.ix = ZZX::zero();
 	ZZ temp;
 	long i;
@@ -76,8 +69,7 @@ void NumUtils::sampleZO(CZZX& res, long& d, double& rho) {
 	}
 }
 
-void NumUtils::sampleUniform(ZZX& res, long& d, ZZ& bnd) {
-	if (d<=0) d=deg(res)+1; if (d<=0) return;
+void NumUtils::sampleUniform(ZZX& res, const long& d, const ZZ& bnd) {
 	if (bnd <= 0) {
 		clear(res);
 		return;
@@ -93,13 +85,12 @@ void NumUtils::sampleUniform(ZZX& res, long& d, ZZ& bnd) {
 	res.normalize();
 }
 
-void NumUtils::sampleUniform(CZZX& res, long& d, ZZ& bnd) {
+void NumUtils::sampleUniform(CZZX& res, const long& d, const ZZ& bnd) {
 	sampleUniform(res.rx, d, bnd);
 	sampleUniform(res.ix, d, bnd);
 }
 
-void NumUtils::sampleUniform2(ZZX& res, long& d, long& logBnd) {
-	if (d<=0) d=deg(res)+1; if (d<=0) return;
+void NumUtils::sampleUniform2(ZZX& res, const long& d, const long& logBnd) {
 	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
 	ZZ tmp;
 	for (long i = 0; i < d; i++) {
@@ -109,100 +100,65 @@ void NumUtils::sampleUniform2(ZZX& res, long& d, long& logBnd) {
 	res.normalize();
 }
 
-void NumUtils::sampleUniform2(CZZX& res, long& d, long& logBnd) {
+void NumUtils::sampleUniform2(CZZX& res, const long& d, const long& logBnd) {
 	sampleUniform2(res.rx, d, logBnd);
 	sampleUniform2(res.ix, d, logBnd);
 }
 
-vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi) {
+vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi, const long& is) {
 	long csize = coeffs.size();
+
 	if(csize == 1) {
 		return coeffs;
 	}
 
-
+	long i;
 	long logcsize = log2(csize);
+	long csizeh = csize >> 1;
 
 	vector<CZZ> res, tmp, sub1, sub2;
 
-	for (long i = 0; i < csize; i = i+2) {
+	for (i = 0; i < csize; i = i+2) {
 		sub1.push_back(coeffs[i]);
 		sub2.push_back(coeffs[i+1]);
 	}
 
-	vector<CZZ> y1 = fft(sub1, cksi);
-	vector<CZZ> y2 = fft(sub2, cksi);
+	vector<CZZ> y1 = fft(sub1, cksi, is);
+	vector<CZZ> y2 = fft(sub2, cksi, is);
 
-
-	for (long i = 0; i < csize/2; ++i) {
-		CZZ mul1 = y1[i] * cksi.p;
-		CZZ x = cksi.pows[logcsize][i];
-
-		CZZ mul2 = y2[i] * x;
-		CZZ sum = mul1 + mul2;
-		CZZ diff = mul1 - mul2;
-		CZZ ms = sum / cksi.p;
-		CZZ md = sum / cksi.p;
-		res.push_back(ms);
-		tmp.push_back(md);
+	if(is == 1) {
+		for (i = 0; i < csizeh; ++i) {
+			y2[i] *= cksi.pows[logcsize][i];
+			y2[i] >>= cksi.logp;
+		}
+	} else {
+		for (i = 0; i < csizeh; ++i) {
+			y2[i] *= cksi.pows[logcsize][csizeh - i];
+			y2[i] >>= cksi.logp;
+		}
 	}
 
-	for (long i = 0; i < csize/2; ++i) {
-		res.push_back(tmp[i]);
-	}
-
-	return res;
-}
-
-vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
-	long csize = coeffs.size();
-	if(csize == 1) {
-		return coeffs;
-	}
-
-
-	long logcsize = log2(csize);
-
-	vector<CZZ> res, tmp, sub1, sub2;
-
-	for (long i = 0; i < csize; i = i+2) {
-		sub1.push_back(coeffs[i]);
-		sub2.push_back(coeffs[i+1]);
-	}
-
-	vector<CZZ> y1 = fftInv(sub1, cksi);
-	vector<CZZ> y2 = fftInv(sub2, cksi);
-
-	{
-		CZZ mul1 = y1[0] * cksi.p;
-		CZZ x = cksi.pows[logcsize][0];
-
-		CZZ mul2 = y2[0] * x;
-		CZZ sum = mul1 + mul2;
-		CZZ diff = mul1 - mul2;
-		CZZ ms = sum / cksi.p;
-		CZZ md = sum / cksi.p;
-		res.push_back(ms);
-		tmp.push_back(md);
-	}
-
-	for (long i = 1; i < csize/2; ++i) {
-		CZZ mul1 = y1[i] * cksi.p;
-		CZZ x = cksi.pows[logcsize][csize - i];
-
-		CZZ mul2 = y2[i] * x;
-		CZZ sum = mul1 + mul2;
-		CZZ diff = mul1 - mul2;
-		CZZ ms = sum / cksi.p;
-		CZZ md = sum / cksi.p;
-		res.push_back(ms);
-		tmp.push_back(md);
-	}
-
-	for (long i = 0; i < csize/2; ++i) {
-		res.push_back(tmp[i]);
+	if(is == 1) {
+		for (i = 0; i < csizeh; ++i) {
+			CZZ sum = y1[i] + y2[i];
+			CZZ diff = y1[i] - y2[i];
+			res.push_back(sum);
+			tmp.push_back(diff);
+		}
+		for (i = 0; i < csizeh; ++i) {
+			res.push_back(tmp[i]);
+		}
+	} else {
+		for (i = 0; i < csizeh; ++i) {
+			CZZ sum = (y1[i] + y2[i]) >> 1;
+			CZZ diff = (y1[i] - y2[i]) >> 1;
+			res.push_back(sum);
+			tmp.push_back(diff);
+		}
+		for (i = 0; i < csizeh; ++i) {
+			res.push_back(tmp[i]);
+		}
 	}
 
 	return res;
 }
-

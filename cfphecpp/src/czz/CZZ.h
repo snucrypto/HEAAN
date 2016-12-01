@@ -14,6 +14,7 @@ public:
 	CZZ(ZZ r, ZZ i) : r(r), i(i) {};
 	CZZ() : r(ZZ::zero()), i(ZZ::zero()) {};
 
+	CZZ operator-();
 	CZZ operator+(const CZZ& o);
 	CZZ operator+(const ZZ& m);
 	void operator+=(const CZZ& o);
@@ -34,7 +35,9 @@ public:
 	void operator%=(const ZZ& o);
 
 	CZZ operator <<(const long& s);
+	void operator <<=(const long& s);
 	CZZ operator >>(const long& s);
+	void operator >>=(const long& s);
 
 	CZZ sqr();
 	void sqrThis();
