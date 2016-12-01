@@ -14,6 +14,8 @@ Params::Params(long n, long logp, long L, double sigma, double rho, long h) : n(
 	logq = logp * L;
 	logP = logp * L;
 	logPq = logq + logP;
+	cksi.setLogp(logp);
+
 
 	power(p, 2, logp);
 
@@ -37,4 +39,5 @@ Params::Params(long n, long logp, long L, double sigma, double rho, long h) : n(
 		Bmulttemp += Bscale;
 		Bks.push_back(Bmulttemp);
 	}
+
 }

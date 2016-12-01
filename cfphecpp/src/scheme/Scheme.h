@@ -28,6 +28,11 @@ public:
 	Cipher encrypt(CZZ& m, ZZ& nu);
 	CZZ decrypt(Cipher& cipher);
 	void decrypt(vector<CZZ>& res, vector<Cipher>& ciphers);
+
+	CZZX encode(long& logSlots, vector<CZZ>& mvec);
+	Cipher encrypt(long& logSlots, vector<CZZ>& mvec, ZZ& nu);
+	vector<CZZ> decrypt(long& logSlots, Cipher& cipher);
+
 //--------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);

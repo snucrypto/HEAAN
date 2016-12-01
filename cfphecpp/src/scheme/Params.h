@@ -1,8 +1,10 @@
 #ifndef SCHEME_PARAMS_H_
 #define SCHEME_PARAMS_H_
 
-#include <NTL/ZZ.h>
 #include <vector>
+
+#include "../utils/CKsi.h"
+#include "NTL/ZZ.h"
 
 using namespace std;
 using namespace NTL;
@@ -20,6 +22,8 @@ public:
 	long logq;
 	long logP;
 	long logPq;
+
+	CKsi cksi;
 
 	ZZ p;
 	ZZ Bclean;

@@ -16,9 +16,10 @@ public:
 	long logp;
 	vector<vector<CZZ>> pows;
 
-	CKsi(long logp);
+	CKsi();
+	void setLogp(long logp);
 
-	void precompute(long logN);
+	void precompute(long logSize);
 	virtual ~CKsi();
 };
 

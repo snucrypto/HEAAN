@@ -1,7 +1,13 @@
 #include "CKsi.h"
 #include <cmath>
 
-CKsi::CKsi(long logp) : logp(logp) {
+CKsi::CKsi() {
+	logp = 0;
+	p = 1;
+}
+
+void CKsi::setLogp(long logp) {
+	this->logp = logp;
 	p = (1 << logp);
 }
 
