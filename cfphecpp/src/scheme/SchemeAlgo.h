@@ -17,7 +17,9 @@ public:
 	void prodOfSame(vector<Cipher>& c2k, Cipher& c, const long& deg);
 	void inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, const long& k);
 
-	vector<Cipher> fft(vector<Cipher>& ciphers, CKsi& cksi, const bool& isForward);
+	vector<Cipher> fftRaw(vector<Cipher>& ciphers, CKsi& cksi, const bool& isForward);
+	vector<Cipher> fft(vector<Cipher>& ciphers, CKsi& cksi);
+	vector<Cipher> fftInv(vector<Cipher>& ciphers, CKsi& cksi);
 };
 
 #endif /* SCHEME_SCHEMEALGO_H_ */

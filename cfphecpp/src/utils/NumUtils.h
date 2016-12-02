@@ -25,7 +25,9 @@ public:
 	static void sampleUniform2(ZZX& res, const long& d, const long& logBnd);
 	static void sampleUniform2(CZZX& res, const long& d, const long& logBnd);
 
-	static vector<CZZ> fft(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward);
+	static vector<CZZ> fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward);
+	static vector<CZZ> fft(vector<CZZ>& coeffs, CKsi& cksi);
+	static vector<CZZ> fftInv(vector<CZZ>& coeffs, CKsi& cksi);
 };
 
 #endif /* UTILS_NUMUTILS_H_ */

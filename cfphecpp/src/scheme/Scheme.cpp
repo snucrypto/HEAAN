@@ -65,14 +65,14 @@ void Scheme::decrypt(vector<CZZ>& res, vector<Cipher>& ciphers) {
 
 CZZX Scheme::encode(long& logSlots, vector<CZZ>& mvec) {
 	CZZX res;
-	vector<CZZ> fft = NumUtils::fft(mvec, params.cksi, false);
+	vector<CZZ> fftInv = NumUtils::fftInv(mvec, params.cksi);
 
 	long i, idx = 0;
 	long slots = 1 << logSlots;
 	long gap = (params.n >> logSlots);
 
 	for (i = 0; i < slots; ++i) {
-		SetCoeff(res, idx, fft[i]);
+		SetCoeff(res, idx, fftInv[i]);
 		idx += gap;
 	}
 
@@ -120,7 +120,7 @@ vector<CZZ> Scheme::decrypt(long& logSlots, Cipher& cipher) {
 		idx += gap;
 	}
 
-	vector<CZZ> res = NumUtils::fft(fft, params.cksi, true);
+	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
 	return res;
 }
 

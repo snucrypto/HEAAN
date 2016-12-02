@@ -89,6 +89,11 @@ CZZ CZZ::operator /(const long& o) {
 	return res;
 }
 
+void CZZ::operator /=(const long& o) {
+	r /= o;
+	i /= o;
+}
+
 CZZ CZZ::operator %(const ZZ& o) {
 	ZZ tr = r % o;
 	ZZ to = i % o;

@@ -105,7 +105,7 @@ void NumUtils::sampleUniform2(CZZX& res, const long& d, const long& logBnd) {
 	sampleUniform2(res.ix, d, logBnd);
 }
 
-vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward) {
+vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward) {
 	long csize = coeffs.size();
 
 	if(csize == 1) {
@@ -123,42 +123,46 @@ vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward
 		sub2.push_back(coeffs[i+1]);
 	}
 
-	vector<CZZ> y1 = fft(sub1, cksi, isForward);
-	vector<CZZ> y2 = fft(sub2, cksi, isForward);
-
+	vector<CZZ> y1 = fftRaw(sub1, cksi, isForward);
+	vector<CZZ> y2 = fftRaw(sub2, cksi, isForward);
 	if(isForward) {
 		for (i = 0; i < csizeh; ++i) {
 			y2[i] *= cksi.pows[logcsize][i];
 			y2[i] >>= cksi.logp;
 		}
 	} else {
-		for (i = 0; i < csizeh; ++i) {
-			y2[i] *= cksi.pows[logcsize][csizeh - i];
+		y2[0] *= cksi.pows[logcsize][0];
+		y2[0] >>= cksi.logp;
+
+		for (i = 1; i < csizeh; ++i) {
+			y2[i] *= cksi.pows[logcsize][csize - i];
 			y2[i] >>= cksi.logp;
 		}
 	}
 
-	if(isForward == 1) {
-		for (i = 0; i < csizeh; ++i) {
-			CZZ sum = y1[i] + y2[i];
-			CZZ diff = y1[i] - y2[i];
-			res.push_back(sum);
-			tmp.push_back(diff);
-		}
-		for (i = 0; i < csizeh; ++i) {
-			res.push_back(tmp[i]);
-		}
-	} else {
-		for (i = 0; i < csizeh; ++i) {
-			CZZ sum = (y1[i] + y2[i]) >> 1;
-			CZZ diff = (y1[i] - y2[i]) >> 1;
-			res.push_back(sum);
-			tmp.push_back(diff);
-		}
-		for (i = 0; i < csizeh; ++i) {
-			res.push_back(tmp[i]);
-		}
+	for (i = 0; i < csizeh; ++i) {
+		CZZ sum = y1[i] + y2[i];
+		CZZ diff = y1[i] - y2[i];
+		res.push_back(sum);
+		tmp.push_back(diff);
+	}
+	for (i = 0; i < csizeh; ++i) {
+		res.push_back(tmp[i]);
 	}
 
 	return res;
+}
+
+vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi) {
+	return fftRaw(coeffs, cksi, true);
+}
+
+vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
+	vector<CZZ> fftInv = fftRaw(coeffs, cksi, false);
+	long N = fftInv.size();
+	long logN = log2(N);
+	for (long i = 0; i < N; ++i) {
+		fftInv[i] >>= logN;
+	}
+	return fftInv;
 }
