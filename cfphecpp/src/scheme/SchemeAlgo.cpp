@@ -91,7 +91,7 @@ void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, co
 }
 
 
-vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, CKsi& cksi, const long& is) {
+vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, CKsi& cksi, const bool& isForward) {
 	long csize = ciphers.size();
 
 	if(csize == 1) {
@@ -109,10 +109,10 @@ vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, CKsi& cksi, const long& 
 		sub2.push_back(ciphers[i+1]);
 	}
 
-	vector<Cipher> y1 = fft(sub1, cksi, is);
-	vector<Cipher> y2 = fft(sub2, cksi, is);
+	vector<Cipher> y1 = fft(sub1, cksi, isForward);
+	vector<Cipher> y2 = fft(sub2, cksi, isForward);
 
-	if(is == 1) {
+	if(isForward) {
 		for (i = 0; i < csizeh; ++i) {
 			scheme.multByConstantAndEqual(y2[i], cksi.pows[logcsize][i]);
 			scheme.modSwitchAndEqual(y2[i]);

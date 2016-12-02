@@ -65,7 +65,7 @@ void Scheme::decrypt(vector<CZZ>& res, vector<Cipher>& ciphers) {
 
 CZZX Scheme::encode(long& logSlots, vector<CZZ>& mvec) {
 	CZZX res;
-	vector<CZZ> fft = NumUtils::fft(mvec, params.cksi, -1);
+	vector<CZZ> fft = NumUtils::fft(mvec, params.cksi, false);
 
 	long i, idx = 0;
 	long slots = 1 << logSlots;
@@ -120,7 +120,7 @@ vector<CZZ> Scheme::decrypt(long& logSlots, Cipher& cipher) {
 		idx += gap;
 	}
 
-	vector<CZZ> res = NumUtils::fft(fft, params.cksi, 1);
+	vector<CZZ> res = NumUtils::fft(fft, params.cksi, true);
 	return res;
 }
 
@@ -476,7 +476,7 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 
 void Scheme::modSwitchAndEqual(Cipher& cipher) {
 	long newLevel = cipher.level + 1;
-	modSwitchAndEqual(cipher);
+	modSwitchAndEqual(cipher, newLevel);
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {

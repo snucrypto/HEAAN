@@ -105,7 +105,7 @@ void NumUtils::sampleUniform2(CZZX& res, const long& d, const long& logBnd) {
 	sampleUniform2(res.ix, d, logBnd);
 }
 
-vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi, const long& is) {
+vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward) {
 	long csize = coeffs.size();
 
 	if(csize == 1) {
@@ -123,10 +123,10 @@ vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi, const long& is) {
 		sub2.push_back(coeffs[i+1]);
 	}
 
-	vector<CZZ> y1 = fft(sub1, cksi, is);
-	vector<CZZ> y2 = fft(sub2, cksi, is);
+	vector<CZZ> y1 = fft(sub1, cksi, isForward);
+	vector<CZZ> y2 = fft(sub2, cksi, isForward);
 
-	if(is == 1) {
+	if(isForward) {
 		for (i = 0; i < csizeh; ++i) {
 			y2[i] *= cksi.pows[logcsize][i];
 			y2[i] >>= cksi.logp;
@@ -138,7 +138,7 @@ vector<CZZ> NumUtils::fft(vector<CZZ>& coeffs, CKsi& cksi, const long& is) {
 		}
 	}
 
-	if(is == 1) {
+	if(isForward == 1) {
 		for (i = 0; i < csizeh; ++i) {
 			CZZ sum = y1[i] + y2[i];
 			CZZ diff = y1[i] - y2[i];
