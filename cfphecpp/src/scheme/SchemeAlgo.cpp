@@ -111,42 +111,35 @@ vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, CKsi& cksi, const boo
 
 	vector<Cipher> y1 = fftRaw(sub1, cksi, isForward);
 	vector<Cipher> y2 = fftRaw(sub2, cksi, isForward);
-
+	 cout << csize << endl;
 	if(isForward) {
 		for (i = 0; i < csizeh; ++i) {
 			scheme.multByConstantAndEqual(y2[i], cksi.pows[logcsize][i]);
 			scheme.modSwitchAndEqual(y2[i]);
+			scheme.modEmbedAndEqual(y1[i]);
 		}
 	} else {
 		scheme.multByConstantAndEqual(y2[0], cksi.pows[logcsize][0]);
 		scheme.modSwitchAndEqual(y2[0]);
+		scheme.modEmbedAndEqual(y1[0]);
 		for (i = 1; i < csizeh; ++i) {
 			scheme.multByConstantAndEqual(y2[i], cksi.pows[logcsize][csize - i]);
 			scheme.modSwitchAndEqual(y2[i]);
+			scheme.modEmbedAndEqual(y1[i]);
 		}
 	}
-	if(isForward) {
-		for (i = 0; i < csizeh; ++i) {
-			Cipher sum = scheme.add(y1[i], y2[i]);
-			Cipher diff = scheme.sub(y1[i], y2[i]);
-			res.push_back(sum);
-			tmp.push_back(diff);
-		}
-		for (i = 0; i < csizeh; ++i) {
-			res.push_back(tmp[i]);
-		}
-	} else {
-		for (i = 0; i < csizeh; ++i) {
-			Cipher sum = scheme.add(y1[i], y2[i]);
-			Cipher diff = scheme.sub(y1[i], y2[i]);
-			//should divide by 2 somehow
-			res.push_back(sum);
-			tmp.push_back(diff);
-		}
-		for (i = 0; i < csizeh; ++i) {
-			res.push_back(tmp[i]);
-		}
+
+	for (i = 0; i < csizeh; ++i) {
+		Cipher sum = scheme.add(y1[i], y2[i]);
+		Cipher diff = scheme.sub(y1[i], y2[i]);
+		res.push_back(sum);
+		tmp.push_back(diff);
 	}
+
+	for (i = 0; i < csizeh; ++i) {
+		res.push_back(tmp[i]);
+	}
+
 	return res;
 }
 

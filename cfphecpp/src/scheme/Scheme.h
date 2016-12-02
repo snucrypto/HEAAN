@@ -64,8 +64,9 @@ public:
 	void modSwitchAndEqual(Cipher& cipher);
 
 	Cipher modEmbed(Cipher& cipher, long newLevel);
+	Cipher modEmbed(Cipher& cipher);
 	void modEmbedAndEqual(Cipher& cipher, long newLevel);
-
+	void modEmbedAndEqual(Cipher& cipher);
 //-----------------------------------------
 
 };

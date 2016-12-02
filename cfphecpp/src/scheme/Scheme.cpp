@@ -229,7 +229,7 @@ Cipher Scheme::square(Cipher& cipher) {
 
 Cipher Scheme::multAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
 	Cipher c = mult(cipher1, cipher2);
-	Cipher cms = modSwitch(c, c.level + 1);
+	Cipher cms = modSwitch(c);
 	return cms;
 }
 
@@ -499,6 +499,11 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	return newCipher;
 }
 
+Cipher Scheme::modEmbed(Cipher& cipher) {
+	long newLevel = cipher.level + 1;
+	return modEmbed(cipher, newLevel);
+}
+
 void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	CZZ tmp;
 	ZZ newQi = getQi(newLevel);
@@ -514,6 +519,11 @@ void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	cipher.c0.normalize();
 	cipher.c1.normalize();
 	cipher.level = newLevel;
+}
+
+void Scheme::modEmbedAndEqual(Cipher& cipher) {
+	long newLevel = cipher.level + 1;
+	modEmbedAndEqual(cipher, newLevel);
 }
 
 ZZ Scheme:: getQi(long& level) {

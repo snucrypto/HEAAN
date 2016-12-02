@@ -12,7 +12,6 @@ using namespace NTL;
 class CKsi {
 public:
 
-	long p;
 	long logp;
 	vector<vector<CZZ>> pows;
 
