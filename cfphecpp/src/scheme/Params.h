@@ -20,8 +20,6 @@ public:
 
 	long d;
 	long logq;
-	long logP;
-	long logPq;
 
 	CKsi cksi;
 

@@ -21,7 +21,6 @@ public:
 
 	ZZ getQi(long& level);
 	long getLogQi(long& level);
-	long getLogTQi(long& level);
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 

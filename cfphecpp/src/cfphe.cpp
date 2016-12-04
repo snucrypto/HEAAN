@@ -477,8 +477,8 @@ void testFFT() {
 	//----------------------------
 	TimeUtils timeutils;
 	long n = 1 << 13;
-	long logp = 60;
-	long L = 7;
+	long logp = 40;
+	long L = 8;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -491,7 +491,7 @@ void testFFT() {
 
 	long logN = 5;
 	long N = 1 << logN;
-	long deg = 7;
+	long deg = 6;
 
 
 	params.cksi.precompute(logN+1);
@@ -504,8 +504,7 @@ void testFFT() {
 
 
 	for (long i = 0; i < deg; ++i) {
-//		cout << params.cksi.pows[logN].size() << endl;
-		CZZ m1 = params.cksi.pows[logN][2];
+		CZZ m1 = params.cksi.pows[logN][0];
 		CZZ m2 = params.cksi.pows[logN][i];
 		p1.push_back(m1);
 		p2.push_back(m2);

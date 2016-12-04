@@ -172,7 +172,7 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
-	long logTQi = getLogTQi(cipher1.level);
+	long logTQi = logQi << 1;
 
 	CZZX cc00, cc01, cc10, cc11;
 	CZZX mulC0, mulC1;
@@ -182,11 +182,11 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::mult(cc10, cipher1.c1, cipher2.c0, logQi, params.n);
 	Ring2Utils::mult(cc11, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
-	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStars[cipher1.level-1], logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStars[cipher1.level-1], logTQi, params.n);
 
-	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
-	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, logQi, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, logQi, logQi, params.n);
 
 	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
 	Ring2Utils::add(mulC1, mulC1, cc01, logQi, params.n);
@@ -201,7 +201,7 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 
 Cipher Scheme::square(Cipher& cipher) {
 	long logQi = getLogQi(cipher.level);
-	long logTQi = getLogTQi(cipher.level);
+	long logTQi = logQi << 1;
 
 	CZZX cc00, cc10, cc11;
 	CZZX mulC0, mulC1;
@@ -210,11 +210,11 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::mult(cc10, cipher.c1, cipher.c0, logQi, params.n);
 	Ring2Utils::mult(cc11, cipher.c1, cipher.c1, logQi, params.n);
 
-	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
-	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStars[cipher.level-1], logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStars[cipher.level-1], logTQi, params.n);
 
-	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
-	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, logQi, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, logQi, logQi, params.n);
 
 	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
 	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
@@ -241,7 +241,7 @@ Cipher Scheme::squareAndModSwitch(Cipher& cipher) {
 
 void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logQi = getLogQi(cipher1.level);
-	long logTQi = getLogTQi(cipher1.level);
+	long logTQi = logQi << 1;
 
 	CZZX cc00, cc01, cc10, cc11;
 	CZZX mulC0, mulC1;
@@ -251,11 +251,11 @@ void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::mult(cc10, cipher1.c1, cipher2.c0, logQi, params.n);
 	Ring2Utils::mult(cc11, cipher1.c1, cipher2.c1, logQi, params.n);
 
-	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
-	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStars[cipher1.level-1], logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStars[cipher1.level-1], logTQi, params.n);
 
-	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
-	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, logQi, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, logQi, logQi, params.n);
 
 	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
 	Ring2Utils::add(mulC1, mulC1, cc01, logQi, params.n);
@@ -270,7 +270,7 @@ void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 void Scheme::squareAndEqual(Cipher& cipher) {
 	long logQi = getLogQi(cipher.level);
-	long logTQi = getLogTQi(cipher.level);
+	long logTQi = logQi << 1;
 
 	CZZX cc00, cc10, cc11;
 	CZZX mulC0, mulC1;
@@ -279,11 +279,11 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 	Ring2Utils::mult(cc10, cipher.c0, cipher.c1, logQi, params.n);
 	Ring2Utils::mult(cc11, cipher.c1, cipher.c1, logQi, params.n);
 
-	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logTQi, params.n);
-	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logTQi, params.n);
+	Ring2Utils::mult(mulC1, cc11, publicKey.aStars[cipher.level-1], logTQi, params.n);
+	Ring2Utils::mult(mulC0, cc11, publicKey.bStars[cipher.level-1], logTQi, params.n);
 
-	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logQi, params.n);
-	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logQi, params.n);
+	Ring2Utils::rightShift(mulC1, mulC1, logQi, logQi, params.n);
+	Ring2Utils::rightShift(mulC0, mulC0, logQi, logQi, params.n);
 
 	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
 	Ring2Utils::add(mulC1, mulC1, cc10, logQi, params.n);
@@ -532,8 +532,4 @@ ZZ Scheme:: getQi(long& level) {
 
 long Scheme::getLogQi(long& level) {
 	return params.logq - params.logp * (level-1);
-}
-
-long Scheme::getLogTQi(long& level) {
-	return params.logPq - params.logp * (level-1);
 }

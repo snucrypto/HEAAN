@@ -111,7 +111,6 @@ vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, CKsi& cksi, const boo
 
 	vector<Cipher> y1 = fftRaw(sub1, cksi, isForward);
 	vector<Cipher> y2 = fftRaw(sub2, cksi, isForward);
-	 cout << csize << endl;
 	if(isForward) {
 		for (i = 0; i < csizeh; ++i) {
 			scheme.multByConstantAndEqual(y2[i], cksi.pows[logcsize][i]);
