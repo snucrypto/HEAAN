@@ -11,6 +11,7 @@ using namespace NTL;
 
 class Params {
 public:
+	long logn;
 	long n;
 	long logp;
 	long L;
@@ -30,7 +31,7 @@ public:
 	vector<ZZ> Bks;
 	vector<ZZ> Bmult;
 
-	Params(long n, long logp, long L, double sigma, double rho, long h);
+	Params(long logn, long logp, long L, double sigma, double rho, long h);
 };
 
 #endif /* SCHEME_PARAMS_H_ */

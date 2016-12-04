@@ -13,7 +13,6 @@ using namespace std;
 using namespace NTL;
 
 Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
-	ZZ q = params.qi[params.L - 1];
 	CZZ tmp;
 
 	CZZX v, e, c0, c1;
@@ -28,11 +27,19 @@ Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
 	Ring2Utils::add(c1, e, c1, params.logq, params.n);
 
 	tmp = coeff(c0, 0) + m;
-	tmp %= q;
+	Ring2Utils::truncate(tmp, params.logq);
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 	Cipher cipher(c0, c1, 1, params.Bclean, nu);
 	return cipher;
+}
+
+void Scheme::regroup(CZZ& m, ZZ& qi) {
+	while(2 * m.r > qi) m.r -= qi;
+	while(2 * m.r < -qi) m.r += qi;
+
+	while(2 * m.i > qi) m.i -= qi;
+	while(2 * m.i < -qi) m.i += qi;
 }
 
 CZZ Scheme::decrypt(Cipher& cipher) {
@@ -45,12 +52,7 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 
 	CZZ m;
 	GetCoeff(m, poly, 0);
-
-	while(2 * m.r > qi) m.r -= qi;
-	while(2 * m.r < -qi) m.r += qi;
-
-	while(2 * m.i > qi) m.i -= qi;
-	while(2 * m.i < -qi) m.i += qi;
+	regroup(m, qi);
 
 	return m;
 }
@@ -105,10 +107,9 @@ Cipher Scheme::encrypt(long& logSlots, vector<CZZ>& mvec, ZZ& nu) {
 vector<CZZ> Scheme::decrypt(long& logSlots, Cipher& cipher) {
 	long logQi = getLogQi(cipher.level);
 	ZZ qi = getQi(cipher.level);
-
 	vector<CZZ> fft;
 	CZZX poly;
-
+	CZZ c;
 	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logQi, params.n);
 	Ring2Utils::add(poly, poly, cipher.c0, logQi, params.n);
 
@@ -116,8 +117,74 @@ vector<CZZ> Scheme::decrypt(long& logSlots, Cipher& cipher) {
 	long slots = (1 << logSlots);
 	long gap = (params.n >> logSlots);
 	for (i = 0; i < slots; ++i) {
-		fft.push_back(coeff(poly, idx));
+		c = coeff(poly, idx);
+		regroup(c, qi);
+		fft.push_back(c);
 		idx += gap;
+	}
+
+	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
+	return res;
+}
+
+CZZX Scheme::encodeAll(vector<CZZ>& mvec) {
+	CZZX res;
+	vector<CZZ> fftInv = NumUtils::fftInv(mvec, params.cksi);
+	long i;
+	for (i = 0; i < mvec.size(); ++i) {
+		SetCoeff(res, i, fftInv[i]);
+	}
+	return res;
+}
+
+Cipher Scheme::encryptAll(vector<CZZ>& mvec, ZZ& nu) {
+	CZZ tmp;
+
+	CZZX c0, c1;
+	CZZX v, e;
+
+	NumUtils::sampleZO(v, params.n, params.rho);
+	Ring2Utils::mult(c0, v, publicKey.b, params.logq, params.n);
+	NumUtils::sampleGauss(e, params.n, params.sigma);
+	Ring2Utils::add(c0, e, c0, params.logq, params.n);
+
+	Ring2Utils::mult(c1, v, publicKey.a, params.logq, params.n);
+	NumUtils::sampleGauss(e, params.n, params.sigma);
+	Ring2Utils::add(c1, e, c1, params.logq, params.n);
+
+	CZZX f = encodeAll(mvec);
+	for (long i = 0; i < 10; ++i) {
+		cout << coeff(f, i).toString() << endl;
+	}
+
+	cout << "--------" << endl;
+	Ring2Utils::add(c0, f, c0, params.logq, params.n);
+
+	Cipher cipher(c0, c1, 1, params.Bclean, nu);
+	return cipher;
+
+}
+
+vector<CZZ> Scheme::decryptAll(Cipher& cipher) {
+	long logQi = getLogQi(cipher.level);
+	ZZ qi = getQi(cipher.level);
+
+	vector<CZZ> fft;
+	CZZX poly;
+	CZZ c;
+
+	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logQi, params.n);
+	Ring2Utils::add(poly, poly, cipher.c0, logQi, params.n);
+
+	long i;
+	for (i = 0; i < params.n; ++i) {
+		c = coeff(poly, i);
+		regroup(c, qi);
+
+		fft.push_back(c);
+	}
+	for (i = 0; i < 10; ++i) {
+		cout << fft[i].toString() << endl;
 	}
 
 	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
@@ -297,12 +364,12 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 }
 
 Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
-	ZZ qi = getQi(cipher.level);
+	long logQi = getLogQi(cipher.level);
 	CZZ tmp;
 	CZZX c0 = cipher.c0;
 	CZZX c1 = cipher.c1;
 	tmp = coeff(cipher.c0,0) + cnst;
-	tmp %= qi;
+	Ring2Utils::truncate(tmp, logQi);
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
@@ -314,12 +381,13 @@ Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
 }
 
 Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
-	ZZ qi = getQi(cipher.level);
+	long logQi = getLogQi(cipher.level);
+
 	CZZ tmp;
 	CZZX c0 = cipher.c0;
 	CZZX c1 = cipher.c1;
 	tmp = coeff(cipher.c0,0) + cnst;
-	tmp %= qi;
+	Ring2Utils::truncate(tmp, logQi);
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
@@ -333,16 +401,17 @@ Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
 }
 
 Cipher Scheme::multByConstant(Cipher& cipher, ZZ& cnst) {
-	ZZ qi = getQi(cipher.level);
+	long logQi = getLogQi(cipher.level);
+
 	CZZ tmp;
 	CZZX c0, c1;
 
 	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(c0, i, tmp);
 		tmp = coeff(cipher.c1,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
@@ -356,16 +425,16 @@ Cipher Scheme::multByConstant(Cipher& cipher, ZZ& cnst) {
 }
 
 Cipher Scheme::multByConstant(Cipher& cipher, CZZ& cnst) {
-	ZZ qi = getQi(cipher.level);
+	long logQi = getLogQi(cipher.level);
 	CZZ tmp;
 	CZZX c0, c1;
 
 	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(c0, i, tmp);
 		tmp = coeff(cipher.c1,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
@@ -382,23 +451,23 @@ Cipher Scheme::multByConstant(Cipher& cipher, CZZ& cnst) {
 
 void Scheme::addConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	CZZ tmp;
-	ZZ qi = getQi(cipher.level);
+	long logQi = getLogQi(cipher.level);
 	tmp = coeff(cipher.c0, 0) * cnst;
-	tmp %= qi;
+	Ring2Utils::truncate(tmp, logQi);
 	SetCoeff(cipher.c0, 0, tmp);
 	cipher.c0.normalize();
 }
 
 void Scheme::multByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	CZZ tmp;
-	ZZ qi = getQi(cipher.level);
+	long logQi = getLogQi(cipher.level);
 
 	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(cipher.c0, i, tmp);
 		tmp = coeff(cipher.c1,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(cipher.c1, i, tmp);
 	}
 	cipher.c0.normalize();
@@ -410,14 +479,14 @@ void Scheme::multByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 
 void Scheme::multByConstantAndEqual(Cipher& cipher, CZZ& cnst) {
 	CZZ tmp;
-	ZZ qi = getQi(cipher.level);
+	long logQi = getLogQi(cipher.level);
 
 	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(cipher.c0, i, tmp);
 		tmp = coeff(cipher.c1,i) * cnst;
-		tmp %= qi;
+		Ring2Utils::truncate(tmp, logQi);
 		SetCoeff(cipher.c1, i, tmp);
 	}
 	cipher.c0.normalize();
@@ -480,16 +549,16 @@ void Scheme::modSwitchAndEqual(Cipher& cipher) {
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
-	ZZ newQi = getQi(newLevel);
+	long newLogQi = getLogQi(newLevel);
 	CZZ tmp;
 	CZZX c0, c1;
 
 	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i);
-		tmp %= newQi;
+		Ring2Utils::truncate(tmp, newLogQi);
 		SetCoeff(c0, i, tmp);
 		tmp = coeff(cipher.c1,i);
-		tmp %= newQi;
+		Ring2Utils::truncate(tmp, newLogQi);
 		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
@@ -506,14 +575,14 @@ Cipher Scheme::modEmbed(Cipher& cipher) {
 
 void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	CZZ tmp;
-	ZZ newQi = getQi(newLevel);
+	long newLogQi = getLogQi(newLevel);
 
 	for (long i = 0; i < params.n; ++i) {
 		tmp = coeff(cipher.c0,i);
-		tmp %= newQi;
+		Ring2Utils::truncate(tmp, newLogQi);
 		SetCoeff(cipher.c0, i, tmp);
 		tmp = coeff(cipher.c1,i);
-		tmp %= newQi;
+		Ring2Utils::truncate(tmp, newLogQi);
 		SetCoeff(cipher.c1, i, tmp);
 	}
 	cipher.c0.normalize();

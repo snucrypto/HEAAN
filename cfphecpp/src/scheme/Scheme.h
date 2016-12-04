@@ -21,6 +21,7 @@ public:
 
 	ZZ getQi(long& level);
 	long getLogQi(long& level);
+	void regroup(CZZ& m, ZZ& qi);
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 
@@ -31,6 +32,10 @@ public:
 	CZZX encode(long& logSlots, vector<CZZ>& mvec);
 	Cipher encrypt(long& logSlots, vector<CZZ>& mvec, ZZ& nu);
 	vector<CZZ> decrypt(long& logSlots, Cipher& cipher);
+
+	CZZX encodeAll(vector<CZZ>& mvec);
+	Cipher encryptAll(vector<CZZ>& mvec, ZZ& nu);
+	vector<CZZ> decryptAll(Cipher& cipher);
 
 //--------------------------------
 

@@ -9,7 +9,8 @@
 
 #include <cmath>
 
-Params::Params(long n, long logp, long L, double sigma, double rho, long h) : n(n), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
+Params::Params(long logn, long logp, long L, double sigma, double rho, long h) : logn(logn), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
+	n = 1 << logn;
 	d = n << 1;
 	logq = logp * L;
 	cksi.setLogp(logp);

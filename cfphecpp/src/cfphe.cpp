@@ -21,14 +21,14 @@ using namespace NTL;
 
 void testMult() {
 	TimeUtils timeutils;
-	long n = 1 << 13;
+	long logn = 13;
 	long logp = 60;
 	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
 	long logN = 4;
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -89,16 +89,55 @@ void testtest() {
 
 }
 
-void testEncode() {
+void testEncodeAll() {
 	TimeUtils timeutils;
-	long n = 1 << 13;
+	long logn = 13;
 	long logp = 30;
 	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	long logSlots = 13;
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme, timeutils);
+
+	vector<CZZ> mvec;
+	long i;
+	params.cksi.precompute(params.logn + 1);
+
+	for (i = 0; i < params.n; ++i) {
+		CZZ m;
+		m = params.cksi.pows[params.logn][i % 3];
+		mvec.push_back(m);
+	}
+
+
+	vector<CZZ> fft = NumUtils::fftInv(mvec, params.cksi);
+	vector<CZZ> fft2 = NumUtils::fft(fft, params.cksi);
+	cout << "---------------" << endl;
+	Cipher cipher = scheme.encryptAll(mvec, scheme.params.p);
+	vector<CZZ> dvec = scheme.decryptAll(cipher);
+
+	for (i = 0; i < params.n; ++i) {
+		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
+		cout << "di: " << i << " : " << dvec[i].toString() << endl;
+		cout << "---------------------" << endl;
+
+	}
+}
+
+void testEncode() {
+	TimeUtils timeutils;
+	long logn = 13;
+	long logp = 30;
+	long L = 6;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	long logSlots = 4;
+	Params params(logn, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -123,6 +162,96 @@ void testEncode() {
 	for (i = 0; i < slots; ++i) {
 		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
 		cout << "di: " << i << " : " << dvec[i].toString() << endl;
+		cout << "---------------------" << endl;
+	}
+}
+
+void testEncodeAndSquare() {
+	TimeUtils timeutils;
+	long logn = 13;
+	long logp = 60;
+	long L = 6;
+	double sigma = 1;
+	double rho = 0.5;
+	long h = 64;
+	long logSlots = 6;
+	Params params(logn, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme, timeutils);
+
+	long slots = (1 << logSlots);
+	vector<CZZ> mvec;
+	long i;
+	params.cksi.precompute(logSlots + 1);
+
+	for (i = 0; i < slots; ++i) {
+		CZZ m;
+		m = params.cksi.pows[logSlots][i];
+		mvec.push_back(m);
+	}
+
+	vector<CZZ> m2;
+	for (i = 0; i < slots; ++i) {
+		m2.push_back((mvec[i] * mvec[i]) >> params.logp);
+	}
+
+	cout << "---------------" << endl;
+	Cipher cipher = scheme.encrypt(logSlots, mvec, scheme.params.p);
+	Cipher c2 = scheme.squareAndModSwitch(cipher);
+	vector<CZZ> d2 = scheme.decrypt(logSlots, c2);
+
+	for (i = 0; i < slots; ++i) {
+		cout << "mi: " << i << " : " << m2[i].toString() << endl;
+		cout << "di: " << i << " : " << d2[i].toString() << endl;
+		cout << "---------------------" << endl;
+	}
+}
+
+void testEncodeAndMult() {
+	TimeUtils timeutils;
+	long logn = 13;
+	long logp = 60;
+	long L = 6;
+	double sigma = 1;
+	double rho = 0.5;
+	long h = 64;
+	long logSlots = 4;
+	Params params(logn, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme, timeutils);
+
+	long i;
+	long slots = (1 << logSlots);
+	params.cksi.precompute(logSlots + 1);
+
+	vector<CZZ> mvec1, mvec2;
+	for (i = 0; i < slots; ++i) {
+		CZZ m1, m2;
+		m1 = params.cksi.pows[logSlots][1];
+		m2 = params.cksi.pows[logSlots][i];
+		mvec1.push_back(m1);
+		mvec2.push_back(m2);
+	}
+
+	vector<CZZ> mmult;
+	for (i = 0; i < slots; ++i) {
+		mmult.push_back((mvec1[i] * mvec2[i]) >> params.logp);
+	}
+
+	cout << "---------------" << endl;
+	Cipher c1 = scheme.encrypt(logSlots, mvec1, scheme.params.p);
+	Cipher c2 = scheme.encrypt(logSlots, mvec2, scheme.params.p);
+	Cipher cmult = scheme.multAndModSwitch(c1, c2);
+	vector<CZZ> dmult = scheme.decrypt(logSlots, cmult);
+
+	for (i = 0; i < slots; ++i) {
+		cout << "mmulti: " << i << " : " << mmult[i].toString() << endl;
+		cout << "dmulti: " << i << " : " << dmult[i].toString() << endl;
+		cout << "---------------------" << endl;
 	}
 }
 
@@ -132,7 +261,7 @@ void testSimple() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long n = 1 << 14;
+	long logn = 14;
 	long logp = 50;
 	long L = 6;
 	double sigma = 3;
@@ -140,7 +269,7 @@ void testSimple() {
 	long h = 64;
 	cout << "------------------" << endl;
 	timeutils.start("GenParams");
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
 	timeutils.stop("GenParams");
 	cout << "------------------" << endl;
 	timeutils.start("GenSecKey");
@@ -237,13 +366,13 @@ void testPow() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long n = 1 << 13;
+	long logn = 13;
 	long logp = 30;
 	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -289,13 +418,13 @@ void testProd() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long n = 1 << 12;
+	long logn = 12;
 	long logp = 30;
 	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -341,13 +470,13 @@ void testInv() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long n = 1 << 14;
+	long logn = 14;
 	long logp = 50;
 	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -397,13 +526,13 @@ void testSimpleFFT() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long n = 1 << 14;
+	long logn = 14;
 	long logp = 30;
-	long L = 5;
+	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -476,13 +605,13 @@ void testFFT() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long n = 1 << 13;
+	long logn = 13;
 	long logp = 40;
 	long L = 8;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(n, logp, L, sigma, rho, h);
+	Params params(logn, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -504,7 +633,7 @@ void testFFT() {
 
 
 	for (long i = 0; i < deg; ++i) {
-		CZZ m1 = params.cksi.pows[logN][0];
+		CZZ m1 = params.cksi.pows[logN][i];
 		CZZ m2 = params.cksi.pows[logN][i];
 		p1.push_back(m1);
 		p2.push_back(m2);
@@ -617,12 +746,15 @@ void testFFT() {
 int main() {
 //	testMult();
 //	testtest();
+//	testEncodeAll();
 //	testEncode();
+//	testEncodeAndSquare();
+	testEncodeAndMult();
 //	testSimple();
 //	testPow();
 //	testProd();
 //	testInv();
 //	testSimpleFFT();
-	testFFT();
+//	testFFT();
 	return 0;
 }
