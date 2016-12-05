@@ -38,9 +38,9 @@ void CKsi::precompute(long logSize) {
 			for (j = 0; j < ipow; ++j) {
 				angle = 2.0 * M_PI * j / ipow;
 				ZZ rx = to_ZZ((long)(cos(angle) * tmp));
-				rx <<= (logp-30);
+				rx <<= (logp-31);
 				ZZ ix = to_ZZ((long)(sin(angle) * tmp));
-				ix <<= (logp-30);
+				ix <<= (logp-31);
 				CZZ x(rx, ix);
 				temp.push_back(x);
 			}
