@@ -606,7 +606,7 @@ void testFFT() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
-	long logp = 40;
+	long logp = 30;
 	long L = 8;
 	double sigma = 3;
 	double rho = 0.5;
@@ -748,13 +748,13 @@ int main() {
 //	testtest();
 //	testEncodeAll();
 //	testEncode();
-	testEncodeAndSquare();
+//	testEncodeAndSquare();
 //	testEncodeAndMult();
 //	testSimple();
 //	testPow();
 //	testProd();
 //	testInv();
 //	testSimpleFFT();
-//	testFFT();
+	testFFT();
 	return 0;
 }

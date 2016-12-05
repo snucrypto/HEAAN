@@ -19,12 +19,13 @@ public:
 	SecKey& secretKey;
 	PubKey& publicKey;
 
-	ZZ getQi(long& level);
-	long getLogQi(long& level);
-	long getLogPqi(long& level);
-	void regroup(CZZ& m, ZZ& qi);
-
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
+
+	ZZ getqi(long& level);
+	long getLogqi(long& level);
+
+	void trueValue(CZZ& m, ZZ& qi);
+	void rlweInstance(CZZX& c0, CZZX& c1);
 
 	Cipher encrypt(CZZ& m, ZZ& nu);
 	CZZ decrypt(Cipher& cipher);

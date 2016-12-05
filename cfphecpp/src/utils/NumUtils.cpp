@@ -4,28 +4,28 @@
 #include <cmath>
 
 void NumUtils::sampleGauss(ZZX& res, const long& d, const double& stdev) {
-	static double const Pi=4.0*atan(1.0); // Pi=3.1415..
+	static double const Pi = 4.0 * atan(1.0); // Pi=3.1415..
 	static long const bignum = 0xfffffff;
 
 	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
-	for(long i=0; i<d; i++) {
+	for(long i = 0; i < d; i++) {
 		SetCoeff(res, i, ZZ::zero());
 	}
 
 	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
-	for (long i=0; i<d; i+=2) {
-		double r1 = (1+RandomBnd(bignum))/((double)bignum+1);
-		double r2 = (1+RandomBnd(bignum))/((double)bignum+1);
-		double theta=2*Pi*r1;
-		double rr= sqrt(-2.0*log(r2))*stdev;
+	for (long i = 0; i < d; i+=2) {
+		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
+		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
+		double theta=2 * Pi * r1;
+		double rr= sqrt(-2.0 * log(r2)) * stdev;
 
-		assert(rr < 8*stdev); // sanity-check, no more than 8 standard deviations
+		assert(rr < 8 * stdev); // sanity-check, no more than 8 standard deviations
 
 		// Generate two Gaussians RV's, rounded to integers
-		long x = (long) floor(rr*cos(theta) +0.5);
+		long x = (long) floor(rr * cos(theta) + 0.5);
 		SetCoeff(res, i, x);
 		if (i+1 < d) {
-			x = (long) floor(rr*sin(theta) +0.5);
+			x = (long) floor(rr * sin(theta) + 0.5);
 			SetCoeff(res, i+1, x);
 		}
 	}
@@ -76,7 +76,7 @@ void NumUtils::sampleUniform(ZZX& res, const long& d, const ZZ& bnd) {
 	}
 	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
 	ZZ ubnd, tmp;
-	ubnd =  2*bnd + 1;
+	ubnd =  2 * bnd + 1;
 	for (long i = 0; i < d; i++) {
 		RandomBnd(tmp, ubnd);
 		tmp -= bnd;
