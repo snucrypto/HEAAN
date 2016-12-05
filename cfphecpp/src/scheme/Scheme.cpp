@@ -240,9 +240,10 @@ Cipher Scheme::square(Cipher& cipher) {
 
 	CZZX cc00, cc10, cc11, mulC0, mulC1;
 
-	Ring2Utils::mult(cc00, cipher.c0, cipher.c0, logqi, params.n);
+	Ring2Utils::square(cc00, cipher.c0, logqi, params.n);
 	Ring2Utils::mult(cc10, cipher.c1, cipher.c0, logqi, params.n);
-	Ring2Utils::mult(cc11, cipher.c1, cipher.c1, logqi, params.n);
+	Ring2Utils::leftShift(cc10, cc10, 1, logqi, params.n);
+	Ring2Utils::square(cc11, cipher.c1, logqi, params.n);
 
 	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logPqi, params.n);
 	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logPqi, params.n);
@@ -250,7 +251,6 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logqi, params.n);
 	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logqi, params.n);
 
-	Ring2Utils::add(mulC1, mulC1, cc10, logqi, params.n);
 	Ring2Utils::add(mulC1, mulC1, cc10, logqi, params.n);
 	Ring2Utils::add(mulC0, mulC0, cc00, logqi, params.n);
 
@@ -307,9 +307,10 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 
 	CZZX cc00, cc10, cc11, mulC0, mulC1;
 
-	Ring2Utils::mult(cc00, cipher.c0, cipher.c0, logqi, params.n);
+	Ring2Utils::square(cc00, cipher.c0, logqi, params.n);
 	Ring2Utils::mult(cc10, cipher.c0, cipher.c1, logqi, params.n);
-	Ring2Utils::mult(cc11, cipher.c1, cipher.c1, logqi, params.n);
+	Ring2Utils::leftShift(cc10, cc10, 1, logqi, params.n);
+	Ring2Utils::square(cc11, cipher.c1, logqi, params.n);
 
 	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, logPqi, params.n);
 	Ring2Utils::mult(mulC0, cc11, publicKey.bStar, logPqi, params.n);
@@ -317,7 +318,6 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 	Ring2Utils::rightShift(mulC1, mulC1, params.logP, logqi, params.n);
 	Ring2Utils::rightShift(mulC0, mulC0, params.logP, logqi, params.n);
 
-	Ring2Utils::add(mulC1, mulC1, cc10, logqi, params.n);
 	Ring2Utils::add(mulC1, mulC1, cc10, logqi, params.n);
 	Ring2Utils::add(mulC0, mulC0, cc00, logqi, params.n);
 

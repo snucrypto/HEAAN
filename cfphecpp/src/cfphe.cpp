@@ -22,7 +22,7 @@ using namespace NTL;
 void testMult() {
 	TimeUtils timeutils;
 	long logn = 13;
-	long logp = 60;
+	long logp = 30;
 	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
@@ -61,7 +61,6 @@ void testMult() {
 	cout << "d2: " << d2.toString() << endl;
 	cout << "dm: " << dm.toString() << endl;
 	cout << "dx: " << dx.toString() << endl;
-
 }
 
 void testtest() {
@@ -171,7 +170,7 @@ void testEncodeAndSquare() {
 	long logn = 13;
 	long logp = 30;
 	long L = 6;
-	double sigma = 1;
+	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
 	long logSlots = 6;
@@ -214,7 +213,7 @@ void testEncodeAndMult() {
 	long logn = 13;
 	long logp = 30;
 	long L = 6;
-	double sigma = 1;
+	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
 	long logSlots = 4;
@@ -261,9 +260,9 @@ void testSimple() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 14;
-	long logp = 50;
-	long L = 6;
+	long logn = 13;
+	long logp = 30;
+	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -418,7 +417,7 @@ void testProd() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 12;
+	long logn = 13;
 	long logp = 30;
 	long L = 5;
 	double sigma = 3;
@@ -526,7 +525,7 @@ void testSimpleFFT() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 14;
+	long logn = 13;
 	long logp = 30;
 	long L = 6;
 	double sigma = 3;

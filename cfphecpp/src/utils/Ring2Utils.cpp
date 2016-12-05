@@ -141,6 +141,16 @@ void Ring2Utils::mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const lo
 	mult(res.ix, p1.ix, p2, logMod, degree);
 }
 
+void Ring2Utils::square(CZZX& res, CZZX& p, const long& logMod, const long& degree) {
+	ZZX tmp1, tmp2, tmp3, tmp4;
+
+	add(tmp1, p.rx, p.ix, logMod, degree);
+	sub(tmp2, p.rx, p.ix, logMod, degree);
+	mult(res.rx, tmp1, tmp2, logMod, degree);
+	mult(tmp2, p.rx, p.ix, logMod, degree);
+	leftShift(res.ix, tmp2, 1, logMod, degree);
+}
+
 void Ring2Utils::mulMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree) {
 	long shift = monomialDeg % (2 * degree);
 	long i, idx = 0;
@@ -168,6 +178,30 @@ void Ring2Utils::mulMonomial(CZZX& res, CZZX& p, const long& monomialDeg, const 
 		tmp = -coeff(p,i);
 		SetCoeff(res, idx++, tmp);
 	}
+}
+
+void Ring2Utils::mulCnst(ZZX& res, ZZX& p, const long& cnst, const long& degree) {
+	ZZX mul;
+	ZZ c;
+	mul.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) * cnst;
+		SetCoeff(mul, i, c);
+	}
+	mul.normalize();
+	res = mul;
+}
+
+void Ring2Utils::mulCnst(CZZX& res, CZZX& p, const long& cnst, const long& degree) {
+	CZZX mul;
+	CZZ c;
+	mul.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) * cnst;
+		SetCoeff(mul, i, c);
+	}
+	mul.normalize();
+	res = mul;
 }
 
 void Ring2Utils::mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& degree) {
