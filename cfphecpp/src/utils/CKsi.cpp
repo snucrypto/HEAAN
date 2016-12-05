@@ -30,7 +30,7 @@ void CKsi::precompute(long logSize) {
 			pows.push_back(temp);
 		}
 	} else {
-		long tmp = (1 << 30);
+		long tmp = (1 << 31);
 		for (i = idx; i < logSize; ++i) {
 			long ipow = (1 << i);
 			vector<CZZ> temp;
