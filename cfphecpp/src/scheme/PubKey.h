@@ -15,8 +15,8 @@ public:
 	ZZX a;
 	ZZX b;
 
-	vector<ZZX> aStars;
-	vector<ZZX> bStars;
+	ZZX aStar;
+	ZZX bStar;
 
 	PubKey(Params& params, SecKey& secretKey);
 };

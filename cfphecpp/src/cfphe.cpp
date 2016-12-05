@@ -169,7 +169,7 @@ void testEncode() {
 void testEncodeAndSquare() {
 	TimeUtils timeutils;
 	long logn = 13;
-	long logp = 60;
+	long logp = 30;
 	long L = 6;
 	double sigma = 1;
 	double rho = 0.5;
@@ -212,7 +212,7 @@ void testEncodeAndSquare() {
 void testEncodeAndMult() {
 	TimeUtils timeutils;
 	long logn = 13;
-	long logp = 60;
+	long logp = 30;
 	long L = 6;
 	double sigma = 1;
 	double rho = 0.5;
@@ -748,8 +748,8 @@ int main() {
 //	testtest();
 //	testEncodeAll();
 //	testEncode();
-//	testEncodeAndSquare();
-	testEncodeAndMult();
+	testEncodeAndSquare();
+//	testEncodeAndMult();
 //	testSimple();
 //	testPow();
 //	testProd();

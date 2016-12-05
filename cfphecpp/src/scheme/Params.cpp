@@ -13,6 +13,8 @@ Params::Params(long logn, long logp, long L, double sigma, double rho, long h) :
 	n = 1 << logn;
 	d = n << 1;
 	logq = logp * L;
+	logP = logq;
+	logPq = logP + logq;
 	cksi.setLogp(logp);
 
 

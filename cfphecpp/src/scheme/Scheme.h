@@ -21,6 +21,7 @@ public:
 
 	ZZ getQi(long& level);
 	long getLogQi(long& level);
+	long getLogPqi(long& level);
 	void regroup(CZZ& m, ZZ& qi);
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
