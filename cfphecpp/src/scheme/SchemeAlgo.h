@@ -10,11 +10,10 @@
 class SchemeAlgo {
 public:
 	Scheme& scheme;
-	TimeUtils& timeutils;
 
-	SchemeAlgo(Scheme& scheme, TimeUtils& timeutils) : scheme(scheme), timeutils(timeutils) {};
+	SchemeAlgo(Scheme& scheme) : scheme(scheme) {};
 	void powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg);
-	void prodOfSame(vector<Cipher>& c2k, Cipher& c, const long& deg);
+	void prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const long& deg);
 	void inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, const long& k);
 
 	vector<Cipher> fftRaw(vector<Cipher>& ciphers, CKsi& cksi, const bool& isForward);

@@ -8,45 +8,28 @@
 #include "Params.h"
 
 void SchemeAlgo::powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg) {
-
 	c2k.push_back(c);
-
-	for (long i = 1; i < deg; ++i) {
-		cout << "---------" << i << "---------" << endl;
-
-		timeutils.start("Square ");
+	for (long i = 1; i < deg + 1; ++i) {
 		Cipher c2 = scheme.square(c2k[i - 1]);
-		timeutils.stop("Square ");
-
-		cout << "------------------" << endl;
-
-		timeutils.start("MS ");
 		Cipher cs = scheme.modSwitch(c2, i + 1);
-		timeutils.stop("MS ");
 		c2k.push_back(cs);
-		cout << "------------------" << endl;
 	}
 }
 
-void SchemeAlgo::prodOfSame(vector<Cipher>& c2k, Cipher& c, const long& deg) {
-
-	c2k.push_back(c);
-
-	for (long i = 1; i < deg; ++i) {
-		cout << "---------" << i << "---------" << endl;
-
-		timeutils.start("Mult ");
-		Cipher c2 = scheme.mult(c2k[i - 1], c2k[i - 1]);
-		timeutils.stop("Mult ");
-
-		cout << "------------------" << endl;
-
-		timeutils.start("MS ");
-		Cipher cs = scheme.modSwitch(c2, i + 1);
-		timeutils.stop("MS ");
-		c2k.push_back(cs);
-
-		cout << "------------------" << endl;
+void SchemeAlgo::prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const long& deg) {
+	cs2k.push_back(cs);
+	long size, idx;
+	for (long i = 1; i < deg + 1; ++i) {
+		vector<Cipher> c2k;
+		idx = 0;
+		size = cs2k[i-1].size();
+		while(idx < size) {
+			Cipher c2 = scheme.mult(cs2k[i - 1][idx], cs2k[i - 1][idx + 1]);
+			Cipher cs = scheme.modSwitch(c2, i + 1);
+			c2k.push_back(cs);
+			idx += 2;
+		}
+		cs2k.push_back(c2k);
 	}
 }
 
@@ -58,35 +41,13 @@ void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, co
 	v2k.push_back(v);
 
 	for (long i = 1; i < r-1; ++i) {
-		cout << "---------" << i << "---------" << endl;
-
-		timeutils.start("Square ");
 		Cipher c2 = scheme.square(c2k[i - 1]);
-		timeutils.stop("Square ");
-
-		cout << "------------------" << endl;
-
-		timeutils.start("MS ");
 		Cipher cs = scheme.modSwitch(c2, i + 1);
-		timeutils.stop("MS ");
 		c2k.push_back(cs);
-
-		cout << "------------------" << endl;
-
-		timeutils.start("Add const ");
 		Cipher c2p = scheme.addConstant(cs, scheme.params.p);
-		timeutils.stop("Add const ");
-
-		timeutils.start("Mult ");
 		Cipher v2 = scheme.mult(v2k[i-1], c2p);
-		timeutils.stop("Mult ");
-
-		timeutils.start("MS ");
 		Cipher vs = scheme.modSwitch(v2, i + 2);
-		timeutils.stop("MS ");
 		v2k.push_back(vs);
-
-		cout << "------------------" << endl;
 	}
 }
 
