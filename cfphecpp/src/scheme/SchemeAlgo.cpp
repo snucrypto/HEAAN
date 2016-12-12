@@ -149,7 +149,10 @@ vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers, CKsi& cksi) {
 vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers, CKsi& cksi) {
 	vector<Cipher> fftInv = fftRaw(ciphers, cksi, false);
 	long N = fftInv.size();
+	long logN = log2(N);
+	long bits = scheme.params.logp - logN;
 	for (long i = 0; i < N; ++i) {
+		scheme.leftShiftAndEqual(fftInv[i], bits);
 		scheme.modSwitchAndEqual(fftInv[i]);
 	}
 	return fftInv;

@@ -44,13 +44,13 @@ void testMult() {
 
 	mx = m1 * m2 / scheme.params.p;
 
-	Cipher cx = scheme.multAndModSwitch(c1, c2);
+	Cipher cx = scheme.mult(c1, c2);
 
 	CZZ dx, dm, d1, d2;
 
 	d1 = scheme.decrypt(c1);
 	d2 = scheme.decrypt(c2);
-	dm = d1 * d2 / scheme.params.p;
+	dm = d1 * d2;
 
 	dx = scheme.decrypt(cx);
 
@@ -742,6 +742,113 @@ void testFFT() {
 	cout << "!!! END TEST FFT !!!" << endl; // prints !!!Hello World!!!
 }
 
+void testFullFFT() {
+	cout << "!!! START TEST FULL FFT !!!" << endl; // prints !!!Hello World!!!
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logn = 13;
+	long logp = 30;
+	long L = 12;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logn, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme, timeutils);
+	//----------------------------
+
+	long logN = 4;
+	long N = 1 << logN;
+	long deg = 5;
+
+
+	params.cksi.precompute(logN+1);
+
+	CZZ zero, tmp;
+
+	vector<CZZ> mp1, mp2, mpx;
+	vector<CZZ> mfft1, mfft2, mfftx;
+	vector<Cipher> cp1, cp2, cpx;
+	vector<Cipher> cfft1, cfft2, cfftx;
+	vector<CZZ> dpx;
+
+	for (long i = 0; i < deg; ++i) {
+		mp1.push_back(params.cksi.pows[logN][i]);
+		mp2.push_back(params.cksi.pows[logN][i]);
+	}
+
+	for (long i = deg; i < N; ++i) {
+		mp1.push_back(zero);
+		mp2.push_back(zero);
+	}
+
+	mfft1 = NumUtils::fft(mp1, params.cksi);
+	mfft2 = NumUtils::fft(mp2, params.cksi);
+
+	for (long i = 0; i < N; ++i) {
+		tmp = (mfft1[i] * mfft2[i]) >> params.logp;
+		mfftx.push_back(tmp);
+	}
+
+	mpx = NumUtils::fftInv(mfftx, params.cksi);
+
+	cout << "------------------" << endl;
+	timeutils.start("Encrypting polynomials");
+	for (long i = 0; i < N; ++i) {
+		Cipher c1 = scheme.encrypt(mp1[i], scheme.params.p);
+		Cipher c2 = scheme.encrypt(mp2[i], scheme.params.p);
+		cp1.push_back(c1);
+		cp2.push_back(c2);
+	}
+	timeutils.stop("Encrypting polynomials");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("cfft 1");
+	cfft1 = algo.fft(cp1, params.cksi);
+	timeutils.stop("cfft 1");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("cfft 2");
+	cfft2 = algo.fft(cp2, params.cksi);
+	timeutils.stop("cfft 2");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("mul fft");
+	for (long i = 0; i < N; ++i) {
+		Cipher cfftxi = scheme.multAndModSwitch(cfft1[i], cfft2[i]);
+		cfftx.push_back(cfftxi);
+	}
+	timeutils.stop("mul fft");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("cfftx inv");
+	cpx = algo.fftInv(cfftx, params.cksi);
+	timeutils.stop("cfftx inv");
+	cout << "------------------" << endl;
+
+	for (long i = 0; i < N; ++i) {
+		tmp = scheme.decrypt(cpx[i]);
+		dpx.push_back(tmp);
+	}
+
+	for (long i = 0; i < N; ++i) {
+		cout << "----------------------" << endl;
+		cout << i << " step: cpx  = " << mpx[i].toString() << endl;
+		cout << i << " step: dpx = " << dpx[i].toString() << endl;
+		cout << "----------------------" << endl;
+	}
+
+	cout << "!!! END TEST FULL FFT !!!" << endl; // prints !!!Hello World!!!
+
+}
+
 int main() {
 //	testMult();
 //	testtest();
@@ -754,6 +861,7 @@ int main() {
 //	testProd();
 //	testInv();
 //	testSimpleFFT();
-	testFFT();
+//	testFFT();
+	testFullFFT();
 	return 0;
 }

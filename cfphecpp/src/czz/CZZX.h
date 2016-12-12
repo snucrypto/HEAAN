@@ -28,7 +28,10 @@ public:
 	void operator *=(const CZZX& o);
 
 	CZZX operator >>(const long& s);
+	void operator >>=(const long& s);
+
 	CZZX operator <<(const long& s);
+	void operator <<=(const long& s);
 
 	CZZX sqr();
 	void sqrThis();

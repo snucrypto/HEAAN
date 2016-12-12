@@ -459,6 +459,49 @@ void Scheme::multByConstantAndEqual(Cipher& cipher, CZZ& cnst) {
 
 }
 
+Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
+	long logqi = getLogqi(cipher.level);
+	CZZX c0, c1;
+	CZZ tmp;
+
+	for (long i = 0; i < params.n; ++i) {
+		tmp = coeff(cipher.c0,i) << bits;
+		Ring2Utils::truncate(tmp, logqi);
+		SetCoeff(c0, i, tmp);
+		tmp = coeff(cipher.c1,i) << bits;
+		Ring2Utils::truncate(tmp, logqi);
+		SetCoeff(c1, i, tmp);
+	}
+	c0.normalize();
+	c1.normalize();
+
+	ZZ eBnd = cipher.eBnd << bits;
+	ZZ mBnd = cipher.mBnd << bits;
+
+	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+	return newCipher;
+}
+
+void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
+	long logqi = getLogqi(cipher.level);
+	CZZ tmp;
+
+	for (long i = 0; i < params.n; ++i) {
+		tmp = coeff(cipher.c0,i) << bits;
+		Ring2Utils::truncate(tmp, logqi);
+		SetCoeff(cipher.c0, i, tmp);
+		tmp = coeff(cipher.c1,i) << bits;
+		Ring2Utils::truncate(tmp, logqi);
+		SetCoeff(cipher.c1, i, tmp);
+	}
+	cipher.c0.normalize();
+	cipher.c1.normalize();
+
+
+	cipher.eBnd <<= bits;
+	cipher.mBnd <<= bits;
+}
+
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	long logdf = params.logp * (newLevel-cipher.level);
 	CZZX c0, c1;

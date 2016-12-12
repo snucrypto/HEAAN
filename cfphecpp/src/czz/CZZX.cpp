@@ -50,10 +50,20 @@ CZZX CZZX::operator >>(const long& s) {
 	return CZZX(resr, resi);
 }
 
+void CZZX::operator >>=(const long& s) {
+	rx >>= s;
+	ix >>= s;
+}
+
 CZZX CZZX::operator <<(const long& s) {
 	ZZX resr = rx << s;
 	ZZX resi = ix << s;
 	return CZZX(resr, resi);
+}
+
+void CZZX::operator <<=(const long& s) {
+	rx <<= s;
+	ix <<= s;
 }
 
 CZZX CZZX::sqr() {

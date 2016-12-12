@@ -60,6 +60,9 @@ public:
 	void multByConstantAndEqual(Cipher& cipher, ZZ& cnst);
 	void multByConstantAndEqual(Cipher& cipher, CZZ& cnst);
 
+	Cipher leftShift(Cipher& cipher, long& bits);
+	void leftShiftAndEqual(Cipher& cipher, long& bits);
+
 	Cipher square(Cipher& cipher);
 	void squareAndEqual(Cipher& cipher);
 	Cipher squareAndModSwitch(Cipher& cipher);
