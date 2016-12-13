@@ -13,6 +13,7 @@ class Params {
 public:
 	long logn;
 	long n;
+	long logl;
 	long logp;
 	long logP;
 	long logPq;
@@ -33,7 +34,7 @@ public:
 	vector<ZZ> Bks;
 	vector<ZZ> Bmult;
 
-	Params(long logn, long logp, long L, double sigma, double rho, long h);
+	Params(long logn, long logl, long logp, long L, double sigma, double rho, long h);
 };
 
 #endif /* SCHEME_PARAMS_H_ */

@@ -28,7 +28,8 @@ void testMult() {
 	double rho = 0.5;
 	long h = 64;
 	long logN = 4;
-	Params params(logn, logp, L, sigma, rho, h);
+	long logl = 4;
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -91,12 +92,13 @@ void testtest() {
 void testEncodeAll() {
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 4;
 	long logp = 30;
 	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -130,18 +132,19 @@ void testEncodeAll() {
 void testEncode() {
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 1;
 	long logp = 30;
 	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	long logSlots = 4;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 
+	long logSlots = 4;
 	long slots = (1 << logSlots);
 	vector<CZZ> mvec;
 	long i;
@@ -168,18 +171,19 @@ void testEncode() {
 void testEncodeAndSquare() {
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 4;
 	long logp = 30;
 	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	long logSlots = 6;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 
+	long logSlots = 6;
 	long slots = (1 << logSlots);
 	vector<CZZ> mvec;
 	long i;
@@ -211,13 +215,14 @@ void testEncodeAndSquare() {
 void testEncodeAndMult() {
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 4;
 	long logp = 30;
 	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
 	long logSlots = 4;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -261,6 +266,7 @@ void testSimple() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 4;
 	long logp = 30;
 	long L = 5;
 	double sigma = 3;
@@ -268,7 +274,7 @@ void testSimple() {
 	long h = 64;
 	cout << "------------------" << endl;
 	timeutils.start("GenParams");
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	timeutils.stop("GenParams");
 	cout << "------------------" << endl;
 	timeutils.start("GenSecKey");
@@ -290,9 +296,7 @@ void testSimple() {
 	CZZ m1, m2;
 
 	m1 = params.cksi.pows[3][3];
-	m2 = m1 * m1;
-	m2.r >>= scheme.params.logp;
-	m2.i >>= scheme.params.logp;
+	m2 = (m1 * m1) >> params.logp;
 
 	cout << "------------------" << endl;
 	timeutils.start("enc");
@@ -366,12 +370,13 @@ void testPow() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 15;
+	long logl = 1;
 	long logp = 56;
-	long L = 12;
+	long L = 11;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -424,12 +429,13 @@ void testProd2() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 1;
 	long logp = 30;
-	long L = 6;
+	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -502,12 +508,13 @@ void testInv() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 2;
 	long logp = 25;
 	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -562,12 +569,13 @@ void testSimpleFFT() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 3;
 	long logp = 30;
-	long L = 6;
+	long L = 5;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -641,12 +649,13 @@ void testFFT() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 7;
 	long logp = 30;
-	long L = 8;
+	long L = 7;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -767,12 +776,13 @@ void testFullFFT() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
+	long logl = 3;
 	long logp = 30;
-	long L = 12;
+	long L = 11;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
-	Params params(logn, logp, L, sigma, rho, h);
+	Params params(logn, logl, logp, L, sigma, rho, h);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -876,11 +886,11 @@ int main() {
 //	testEncodeAndSquare();
 //	testEncodeAndMult();
 //	testSimple();
-	testPow();
+//	testPow();
 //	testProd2();
 //	testInv();
 //	testSimpleFFT();
 //	testFFT();
-//	testFullFFT();
+	testFullFFT();
 	return 0;
 }

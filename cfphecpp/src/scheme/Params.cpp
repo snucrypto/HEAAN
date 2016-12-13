@@ -9,10 +9,10 @@
 
 #include <cmath>
 
-Params::Params(long logn, long logp, long L, double sigma, double rho, long h) : logn(logn), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
+Params::Params(long logn, long logl, long logp, long L, double sigma, double rho, long h) : logn(logn), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
 	n = 1 << logn;
 	d = n << 1;
-	logq = logp * L;
+	logq = logl + logp * L;
 	logP = logq;
 	logPq = logP + logq;
 	cksi.setLogp(logp);
@@ -24,13 +24,13 @@ Params::Params(long logn, long logp, long L, double sigma, double rho, long h) :
 
 	Bscale = sqrt(3.0 * n) + 8 * sqrt(h * n / 3.0);
 
-	for (long l = 0; l < L; ++l) {
+	for (long i = 0; i < L; ++i) {
 		ZZ ql;
-		power(ql, 2, logp * (l+1));
+		power(ql, 2, logl + logp * (i+1));
 		qi.push_back(ql);
 
 		ZZ Bkstemp;
-		Bkstemp = 8 << (logp * (l+1));
+		Bkstemp = 8 << (logp * (i+1));
 		Bkstemp *= (sigma * n);
 		Bkstemp /= sqrt(3.0);
 		Bks.push_back(Bkstemp);
