@@ -27,6 +27,10 @@ void CZZX::operator-=(const CZZX& o) {
 	ix -= o.ix;
 }
 
+CZZX CZZX::operator -() {
+	return CZZX(-rx, -ix);
+}
+
 CZZX CZZX::operator *(const CZZX& o) {
 	ZZX tmpProd = (rx + ix) * o.rx;
 

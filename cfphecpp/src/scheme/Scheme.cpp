@@ -146,16 +146,15 @@ vector<CZZ> Scheme::decryptAll(Cipher& cipher) {
 	vector<CZZ> fft;
 	CZZX poly;
 	CZZ c;
-
 	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logqi, params.n);
 	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
-
 	for (long i = 0; i < params.n; ++i) {
 		c = coeff(poly, i);
 		trueValue(c, qi);
 
 		fft.push_back(c);
 	}
+
 	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
 	return res;
 }
@@ -457,6 +456,22 @@ void Scheme::multByConstantAndEqual(Cipher& cipher, CZZ& cnst) {
 	cipher.eBnd *= norm;
 	cipher.mBnd *= norm;
 
+}
+
+Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
+	long logqi = getLogqi(cipher.level);
+	CZZX c0 , c1;
+
+	Ring2Utils::mulMonomial(c0, cipher.c0, degree, params.n);
+	Ring2Utils::mulMonomial(c1, cipher.c1, degree, params.n);
+
+	Cipher res(c0, c1, cipher.level, cipher.eBnd, cipher.mBnd);
+	return res;
+}
+
+void Scheme::multByMonomialAndEqual(Cipher& cipher, const long& degree) {
+	Ring2Utils::mulMonomial(cipher.c0, cipher.c0, degree, params.n);
+	Ring2Utils::mulMonomial(cipher.c1, cipher.c1, degree, params.n);
 }
 
 Cipher Scheme::leftShift(Cipher& cipher, long& bits) {

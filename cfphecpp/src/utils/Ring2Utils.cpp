@@ -153,31 +153,38 @@ void Ring2Utils::square(CZZX& res, CZZX& p, const long& logMod, const long& degr
 
 void Ring2Utils::mulMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree) {
 	long shift = monomialDeg % (2 * degree);
+	ZZX tmpx = (shift < degree) ? p : -p;
+	shift %= degree;
 	long i, idx = 0;
 
-	for (i = shift; i < degree; ++i) {
-		SetCoeff(res, idx++, coeff(p, i));
+	for (i = 0; i < shift; ++i) {
+		SetCoeff(res, idx++, -coeff(p, degree - shift + i));
 	}
 
-	for (i = 0; i < degree - shift; ++i) {
-		SetCoeff(res, idx++, -coeff(p, i));
+	for (i = shift; i < degree; ++i) {
+		SetCoeff(res, idx++, coeff(p, i - shift));
 	}
+
+
 }
 
 void Ring2Utils::mulMonomial(CZZX& res, CZZX& p, const long& monomialDeg, const long& degree) {
 	long shift = monomialDeg % (2 * degree);
+	CZZX tmpx = (shift < degree) ? p : -p;
+	shift %= degree;
 	long i, idx = 0;
 	CZZ tmp;
+	for (i = 0; i < shift; ++i) {
+		tmp = -coeff(tmpx, degree - shift + i);
+		SetCoeff(res, idx++, tmp);
+	}
 
 	for (i = shift; i < degree; ++i) {
-		tmp = coeff(p,i);
+		tmp = coeff(tmpx,i - shift);
 		SetCoeff(res, idx++, tmp);
 	}
 
-	for (i = 0; i < degree - shift; ++i) {
-		tmp = -coeff(p,i);
-		SetCoeff(res, idx++, tmp);
-	}
+
 }
 
 void Ring2Utils::mulCnst(ZZX& res, ZZX& p, const long& cnst, const long& degree) {

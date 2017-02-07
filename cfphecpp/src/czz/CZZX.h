@@ -23,6 +23,7 @@ public:
 
 	CZZX operator-(const CZZX& o);
 	void operator-=(const CZZX& o);
+	CZZX operator -();
 
 	CZZX operator *(const CZZX& o);
 	void operator *=(const CZZX& o);

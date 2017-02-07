@@ -56,9 +56,13 @@ public:
 	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher multByConstant(Cipher& cipher, ZZ& cnst);
-	Cipher multByConstant(Cipher& cipher, CZZ& cnst);
 	void multByConstantAndEqual(Cipher& cipher, ZZ& cnst);
+
+	Cipher multByConstant(Cipher& cipher, CZZ& cnst);
 	void multByConstantAndEqual(Cipher& cipher, CZZ& cnst);
+
+	Cipher multByMonomial(Cipher& cipher, const long& degree);
+	void multByMonomialAndEqual(Cipher& cipher, const long& degree);
 
 	Cipher leftShift(Cipher& cipher, long& bits);
 	void leftShiftAndEqual(Cipher& cipher, long& bits);
@@ -69,11 +73,13 @@ public:
 
 	Cipher modSwitch(Cipher& cipher, long newLevel);
 	Cipher modSwitch(Cipher& cipher);
+
 	void modSwitchAndEqual(Cipher& cipher, long newLevel);
 	void modSwitchAndEqual(Cipher& cipher);
 
 	Cipher modEmbed(Cipher& cipher, long newLevel);
 	Cipher modEmbed(Cipher& cipher);
+
 	void modEmbedAndEqual(Cipher& cipher, long newLevel);
 	void modEmbedAndEqual(Cipher& cipher);
 //-----------------------------------------
