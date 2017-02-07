@@ -19,77 +19,10 @@
 using namespace std;
 using namespace NTL;
 
-void testMult() {
-	TimeUtils timeutils;
-	long logn = 13;
-	long logp = 30;
-	long L = 5;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	long logN = 4;
-	long logl = 4;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-
-	params.cksi.precompute(logN + 1);
-	CZZ mx, m1, m2;
-	m1 = params.cksi.pows[logN][2];
-	Cipher c1 = scheme.encrypt(m1, scheme.params.p);
-
-	m2 = params.cksi.pows[logN][2];
-	Cipher c2 = scheme.encrypt(m2, scheme.params.p);
-
-	mx = m1 * m2 / scheme.params.p;
-
-	Cipher cx = scheme.mult(c1, c2);
-
-	CZZ dx, dm, d1, d2;
-
-	d1 = scheme.decrypt(c1);
-	d2 = scheme.decrypt(c2);
-	dm = d1 * d2;
-
-	dx = scheme.decrypt(cx);
-
-	cout << "m1: " << m1.toString() << endl;
-	cout << "m2: " << m2.toString() << endl;
-	cout << "mx: " << mx.toString() << endl;
-	cout << "d1: " << d1.toString() << endl;
-	cout << "d2: " << d2.toString() << endl;
-	cout << "dm: " << dm.toString() << endl;
-	cout << "dx: " << dx.toString() << endl;
-}
-
-void testtest() {
-	CKsi cksi;
-	cksi.setLogp(30);
-	long i;
-	long logSlots = 3;
-	long slots = 1 << logSlots;
-	vector<CZZ> mvec;
-
-	cksi.precompute(logSlots + 1);
-	for (i = 0; i < slots; ++i) {
-		CZZ m;
-		m = cksi.pows[logSlots][i % 3];
-		mvec.push_back(m);
-	}
-
-	vector<CZZ> fvec = NumUtils::fftInv(mvec, cksi);
-	vector<CZZ> dvec = NumUtils::fft(fvec, cksi);
-
-	for (i = 0; i < slots; ++i) {
-		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
-		cout << "di: " << i << " : " << dvec[i].toString() << endl;
-	}
-
-}
 
 void testEncodeAll() {
+
+	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
 	long logl = 4;
@@ -103,35 +36,36 @@ void testEncodeAll() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
+	params.cksi.precompute(params.logn + 1);
+	//----------------------------
 
 	vector<CZZ> mvec;
-	long i;
-	params.cksi.precompute(params.logn + 1);
-
-	for (i = 0; i < params.n; ++i) {
-		CZZ m;
+	CZZ m;
+	for (long i = 0; i < params.n; ++i) {
 		m = params.cksi.pows[params.logn][i % 3];
 		mvec.push_back(m);
 	}
 
-
-	vector<CZZ> fft = NumUtils::fftInv(mvec, params.cksi);
-	vector<CZZ> fft2 = NumUtils::fft(fft, params.cksi);
+	vector<CZZ> fftInv = NumUtils::fftInv(mvec, params.cksi);
+	vector<CZZ> fft = NumUtils::fft(fftInv, params.cksi);
 	cout << "---------------" << endl;
-//	Cipher cipher = scheme.encryptAll(mvec, scheme.params.p);
+	Cipher cipher = scheme.encryptAll(mvec, scheme.params.p);
 	Cipher cipher2 = scheme.encrypt(params.cksi.pows[params.logn][1], scheme.params.p);
 	vector<CZZ> dvec = scheme.decryptAll(cipher2);
 
-	for (i = 0; i < params.n; ++i) {
-//		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
+	for (long i = 0; i < params.n; ++i) {
+		cout << "---------------------" << endl;
+		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
 		cout << "mm: " << i << " : " << params.cksi.pows[params.logn][1].toString() << endl;
 		cout << "di: " << i << " : " << dvec[i].toString() << endl;
 		cout << "---------------------" << endl;
-
 	}
 }
 
 void testEncode() {
+	cout << "!!! START TEST ENCODE !!!" << endl; // prints !!!Hello World!!!
+
+	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
 	long logl = 1;
@@ -145,225 +79,33 @@ void testEncode() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
+	params.cksi.precompute(logn + 1);
+	//----------------------------
 
 	long logSlots = 4;
 	long slots = (1 << logSlots);
-	vector<CZZ> mvec;
-	long i;
-	params.cksi.precompute(logSlots + 1);
 
-	for (i = 0; i < slots; ++i) {
-		CZZ m;
+	CZZ m;
+	vector<CZZ> mvec, dvec;
+
+	for (long i = 0; i < slots; ++i) {
 		m = params.cksi.pows[logSlots][i % 3];
 		mvec.push_back(m);
 	}
 
 	cout << "---------------" << endl;
 	Cipher cipher = scheme.encrypt(logSlots, mvec, scheme.params.p);
+	dvec = scheme.decrypt(logSlots, cipher);
+	cout << "---------------" << endl;
 
-	vector<CZZ> dvec = scheme.decrypt(logSlots, cipher);
-
-	for (i = 0; i < slots; ++i) {
+	for (long i = 0; i < slots; ++i) {
+		cout << "---------------------" << endl;
 		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
 		cout << "di: " << i << " : " << dvec[i].toString() << endl;
 		cout << "---------------------" << endl;
 	}
-}
 
-void testEncodeAndSquare() {
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 4;
-	long logp = 30;
-	long L = 6;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-
-	long logSlots = 6;
-	long slots = (1 << logSlots);
-	vector<CZZ> mvec;
-	long i;
-	params.cksi.precompute(logSlots + 1);
-
-	for (i = 0; i < slots; ++i) {
-		CZZ m;
-		m = params.cksi.pows[logSlots][i];
-		mvec.push_back(m);
-	}
-
-	vector<CZZ> m2;
-	for (i = 0; i < slots; ++i) {
-		m2.push_back((mvec[i] * mvec[i]) >> params.logp);
-	}
-
-	cout << "---------------" << endl;
-	Cipher cipher = scheme.encrypt(logSlots, mvec, scheme.params.p);
-	Cipher c2 = scheme.squareAndModSwitch(cipher);
-	vector<CZZ> d2 = scheme.decrypt(logSlots, c2);
-
-	for (i = 0; i < slots; ++i) {
-		cout << "mi: " << i << " : " << m2[i].toString() << endl;
-		cout << "di: " << i << " : " << d2[i].toString() << endl;
-		cout << "---------------------" << endl;
-	}
-}
-
-void testEncodeAndMult() {
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 4;
-	long logp = 30;
-	long L = 6;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	long logSlots = 4;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-
-	long i;
-	long slots = (1 << logSlots);
-	params.cksi.precompute(logSlots + 1);
-
-	vector<CZZ> mvec1, mvec2;
-	for (i = 0; i < slots; ++i) {
-		CZZ m1, m2;
-		m1 = params.cksi.pows[logSlots][1];
-		m2 = params.cksi.pows[logSlots][i];
-		mvec1.push_back(m1);
-		mvec2.push_back(m2);
-	}
-
-	vector<CZZ> mmult;
-	for (i = 0; i < slots; ++i) {
-		mmult.push_back((mvec1[i] * mvec2[i]) >> params.logp);
-	}
-
-	cout << "---------------" << endl;
-	Cipher c1 = scheme.encrypt(logSlots, mvec1, scheme.params.p);
-	Cipher c2 = scheme.encrypt(logSlots, mvec2, scheme.params.p);
-	Cipher cmult = scheme.multAndModSwitch(c1, c2);
-	vector<CZZ> dmult = scheme.decrypt(logSlots, cmult);
-
-	for (i = 0; i < slots; ++i) {
-		cout << "mmulti: " << i << " : " << mmult[i].toString() << endl;
-		cout << "dmulti: " << i << " : " << dmult[i].toString() << endl;
-		cout << "---------------------" << endl;
-	}
-}
-
-void testSimple() {
-
-	cout << "!!! START TEST SIMPLE !!!" << endl; // prints !!!Hello World!!!
-
-	//----------------------------
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 4;
-	long logp = 30;
-	long L = 5;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	cout << "------------------" << endl;
-	timeutils.start("GenParams");
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	timeutils.stop("GenParams");
-	cout << "------------------" << endl;
-	timeutils.start("GenSecKey");
-	SecKey secretKey(params);
-	timeutils.stop("GenSecKey");
-	cout << "------------------" << endl;
-	timeutils.start("GenPubKey");
-	PubKey publicKey(params, secretKey);
-	timeutils.stop("GenPubKey");
-	cout << "------------------" << endl;
-	timeutils.start("GenScheme");
-	Scheme scheme(params, secretKey, publicKey);
-	timeutils.stop("GenScheme");
-	cout << "------------------" << endl;
-	//----------------------------
-
-	long scale = 2;
-	params.cksi.precompute(4);
-	CZZ m1, m2;
-
-	m1 = params.cksi.pows[3][3];
-	m2 = (m1 * m1) >> params.logp;
-
-	cout << "------------------" << endl;
-	timeutils.start("enc");
-	Cipher c1 = scheme.encrypt(m1, scheme.params.p);
-	timeutils.stop("enc");
-	cout << "------------------" << endl;
-	timeutils.start("dec");
-	CZZ xxx = scheme.decrypt(c1);
-	timeutils.stop("dec");
-	cout << "------------------" << endl;
-	Cipher c2 = scheme.squareAndModSwitch(c1);
-	cout << "------------------" << endl;
-	timeutils.start("mul by const");
-	Cipher s1 = scheme.multByConstant(c1, m1);
-	timeutils.stop("mul by const");
-	cout << "------------------" << endl;
-	Cipher s2 = scheme.modSwitch(s1, s1.level + scale);
-	cout << "------------------" << endl;
-	timeutils.start("add");
-	Cipher x1 = scheme.add(c1, c1);
-	timeutils.stop("add");
-	cout << "------------------" << endl;
-	timeutils.start("mult");
-	Cipher y1 = scheme.mult(c1, c1);
-	timeutils.stop("mult");
-	cout << "------------------" << endl;
-	timeutils.start("mul by const");
-	Cipher t1 = scheme.multByConstant(s2, m1);
-	timeutils.stop("mul by const");
-	cout << "------------------" << endl;
-	timeutils.start("add");
-	Cipher x2 = scheme.add(s2, s2);
-	timeutils.stop("add");
-	cout << "------------------" << endl;
-	timeutils.start("mult");
-	Cipher y2 = scheme.mult(s2, s2);
-	timeutils.stop("mult");
-	cout << "------------------" << endl;
-
-	CZZ d1 = scheme.decrypt(c1);
-	CZZ d2 = scheme.decrypt(c2);
-	CZZ v2 = scheme.decrypt(s2);
-
-	CZZ e1 = d1 - m1;
-	CZZ e2 = d2 - m2;
-	CZZ f2 = v2 - m2;
-
-	cout << "------------------" << endl;
-	cout << "m1: " << m1.toString() << endl;
-	cout << "d1: " << d1.toString() << endl;
-	cout << "e1: " << e1.toString() << endl;
-	cout << "d1 norm: " << d1.norm() << endl;
-	cout << "------------------" << endl;
-	cout << "m2: " << m2.toString() << endl;
-	cout << "d2: " << d2.toString() << endl;
-	cout << "e2: " << e2.toString() << endl;
-	cout << "d2 norm: " << d2.norm() << endl;
-	cout << "------------------" << endl;
-	cout << "m2: " << m2.toString() << endl;
-	cout << "v2: " << v2.toString() << endl;
-	cout << "f2: " << f2.toString() << endl;
-	cout << "v2 norm: " << v2.norm() << endl;
-	cout << "------------------" << endl;
-
-	cout << "!!! END TEST SIMPLE !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! STOP TEST ENCODE !!!" << endl; // prints !!!Hello World!!!
 }
 
 void testPow() {
@@ -383,19 +125,20 @@ void testPow() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
+	params.cksi.precompute(logn+1);
 	//----------------------------
 
-	long deg = 10;
 	long logN = 5;
-	params.cksi.precompute(logN+1);
+	long deg = 10;
 
 	vector<CZZ> m2k, d2k;
 	vector<Cipher> c2k;
+	CZZ e, m, m2;
 
-	CZZ m = params.cksi.pows[logN][2];
+	m = params.cksi.pows[logN][2];
 	m2k.push_back(m);
-	for (long i = 1; i < deg + 1; ++i) {
-		CZZ m2 = (m2k[i-1] * m2k[i-1]) >> params.logp;
+	for (long i = 0; i < deg; ++i) {
+		m2 = (m2k[i] * m2k[i]) >> params.logp;
 		m2k.push_back(m2);
 	}
 
@@ -409,16 +152,14 @@ void testPow() {
 
 	scheme.decrypt(d2k, c2k);
 
-	CZZ e;
 	for (long i = 0; i < deg + 1; ++i) {
 		e = m2k[i] - d2k[i];
-		cout << "---------" << i << "---------" << endl;
 		cout << "------------------" << endl;
 		cout << "m: " << i << " " << m2k[i].toString() << endl;
 		cout << "d: " << i << " " << d2k[i].toString() << endl;
 		cout << "e: " << i << " " << e.toString() << endl;
-		cout << "eBnds: " << i << " " << c2k[i].eBnd << endl;
-		cout << "mBnds: " << i << " " << c2k[i].mBnd << endl;
+//		cout << "eBnds: " << i << " " << c2k[i].eBnd << endl;
+//		cout << "mBnds: " << i << " " << c2k[i].mBnd << endl;
 		cout << "------------------" << endl;
 	}
 
@@ -442,20 +183,21 @@ void testProd2() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
+	params.cksi.precompute(logn+1);
 	//----------------------------
 
 	long deg = 4;
 	long size = 1 << deg;
 	long logN = 5;
-	params.cksi.precompute(logN+1);
 
+	CZZ m, e;
 	vector<CZZ> ms;
-	vector<Cipher> cs;
 	vector<vector<CZZ>> ms2k, ds2k;
+	vector<Cipher> cs;
 	vector<vector<Cipher>> cs2k;
 
 	for (long i = 0; i < size; ++i) {
-		CZZ m = params.cksi.pows[logN][i % 3];
+		m = params.cksi.pows[logN][i % 3];
 		Cipher c = scheme.encrypt(m, scheme.params.p);
 		ms.push_back(m);
 		cs.push_back(c);
@@ -486,17 +228,15 @@ void testProd2() {
 		ds2k.push_back(d2k);
 	}
 
-	CZZ e;
 	for (long i = 0; i < deg + 1; ++i) {
 		for (long j = 0; j < cs2k[i].size(); ++j) {
 			e = ms2k[i][j] - ds2k[i][j];
-			cout << "---------[ " << i << " ," << j << "]---------" << endl;
 			cout << "------------------" << endl;
-			cout << "m: " << i << " " << ms2k[i][j].toString() << endl;
-			cout << "d: " << i << " " << ds2k[i][j].toString() << endl;
-			cout << "e: " << i << " " << e.toString() << endl;
-			cout << "eBnds: " << i << " " << cs2k[i][j].eBnd << endl;
-			cout << "mBnds: " << i << " " << cs2k[i][j].mBnd << endl;
+			cout << "m: " << i << " " << j << " " << ms2k[i][j].toString() << endl;
+			cout << "d: " << i << " " << j << " " << ds2k[i][j].toString() << endl;
+			cout << "e: " << i << " " << j << " " << e.toString() << endl;
+//			cout << "eBnds: " << i << " " << j << " " << cs2k[i][j].eBnd << endl;
+//			cout << "mBnds: " << i << " " << j << " " << cs2k[i][j].mBnd << endl;
 			cout << "------------------" << endl;
 		}
 	}
@@ -525,13 +265,18 @@ void testInv() {
 
 	long error = 13;
 	long r = 6;
+
+	ZZ halfp;
 	CZZ m, mbar, minv, e;
+	vector<CZZ> d2k;
+	vector<Cipher> c2k, v2k;
+
 	mbar.r = RandomBits_ZZ(error);
 	m.r = 1;
 	m.r <<= scheme.params.logp;
 	m.r -= mbar.r;
 	minv.r = scheme.params.p * scheme.params.p / m.r;
-	ZZ halfp = scheme.params.p / 2;
+	halfp = scheme.params.p / 2;
 
 	cout << "------------------" << endl;
 	timeutils.start("Encrypt c");
@@ -539,41 +284,37 @@ void testInv() {
 	timeutils.stop("Encrypt c");
 	cout << "------------------" << endl;
 
-	vector<Cipher> c2k;
-	vector<Cipher> v2k;
 	cout << "------------------" << endl;
 	timeutils.start("Inverse");
 	algo.inverse(c2k, v2k, c, r);
 	timeutils.stop("Inverse");
 	cout << "------------------" << endl;
 
-	vector<CZZ> d2k;
 	scheme.decrypt(d2k, v2k);
 
 	for (long i = 0; i < r-1; ++i) {
-		cout << "---------" << i << "---------" << endl;
 		e = minv - d2k[i];
 		cout << "------------------" << endl;
-		cout << "minv: " << i << " " << minv.toString() << endl;
-		cout << "ds: " << i << " " << d2k[i].toString() << endl;
-		cout << "es: " << i << " " << e.toString() << endl;
-		cout << "eBnds: " << i << " " << v2k[i].eBnd << endl;
-		cout << "mBnds: " << i << " " << v2k[i].mBnd << endl;
+		cout << "minv:  " << i << " " << minv.toString() << endl;
+		cout << "ds:    " << i << " " << d2k[i].toString() << endl;
+		cout << "es:    " << i << " " << e.toString() << endl;
+//		cout << "eBnds: " << i << " " << v2k[i].eBnd << endl;
+//		cout << "mBnds: " << i << " " << v2k[i].mBnd << endl;
 		cout << "------------------" << endl;
 	}
 
 	cout << "!!! END TEST INV !!!" << endl; // prints !!!Hello World!!!
 }
 
-void testSimpleFFT() {
-	cout << "!!! START TEST SIMPLE FFT !!!" << endl; // prints !!!Hello World!!!
+void testFFTsimple() {
+	cout << "!!! START TEST FFT SIMPLE!!!" << endl; // prints !!!Hello World!!!
 
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
-	long logl = 3;
+	long logl = 1;
 	long logp = 30;
-	long L = 5;
+	long L = 3;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -582,76 +323,87 @@ void testSimpleFFT() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
+	params.cksi.precompute(logn+1);
 	//----------------------------
 
-	long deg = 3;
-	long logN = 4;
+	long logN = 5;
 	long N = 1 << logN;
 
+	vector<CZZ> p, pfft, pfftinv, dfftinv;
+	vector<vector<CZZ>> dfftinvall;
+	vector<Cipher> cp, cfft, cfftinv;
 
-	params.cksi.precompute(logN+1);
-	vector<CZZ> px;
 
-	for (long i = 0; i < deg; ++i) {
-		px.push_back(params.cksi.pows[logN][i % 3]);
+	for (long i = 0; i < N; ++i) {
+		p.push_back(params.cksi.pows[logN][i]);
 	}
-
-	CZZ zero;
-	for (long i = deg; i < N; ++i) {
-		px.push_back(zero);
-	}
-
-	vector<Cipher> cpx;
 
 	cout << "------------------" << endl;
 	timeutils.start("Encrypting polynomials");
 	for (long i = 0; i < N; ++i) {
-		Cipher cx = scheme.encrypt(px[i], scheme.params.p);
-		cpx.push_back(cx);
+		Cipher c = scheme.encrypt(p[i], scheme.params.p);
+		cp.push_back(c);
 	}
 	timeutils.stop("Encrypting polynomials");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
+	timeutils.start("cfft");
+//	cfft = algo.fft(cp, params.cksi);
+	cfft = algo.fft2(cp);
+	timeutils.stop("cfft");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("cfftinv");
+//	cfftinv = algo.fftInv(cfft, params.cksi);
+	cfftinv = algo.fftInv2(cfft);
+	timeutils.stop("cfftinv");
+	cout << "------------------" << endl;
+
+
+	cout << "------------------" << endl;
 	timeutils.start("fft");
-	vector<Cipher> cfftx = algo.fft(cpx, params.cksi);
+	pfft = NumUtils::fft(p, params.cksi);
 	timeutils.stop("fft");
 	cout << "------------------" << endl;
 
-	vector<CZZ> dfft, rfft;
-
 	cout << "------------------" << endl;
-	timeutils.start("decrypt fft");
-	for (long i = 0; i < cfftx.size(); ++i) {
-		CZZ d = scheme.decrypt(cfftx[i]);
-		dfft.push_back(d);
-	}
-	timeutils.stop("decrypt fft");
+	timeutils.start("fft");
+	pfftinv = NumUtils::fftInv(pfft, params.cksi);
+	timeutils.stop("fft");
 	cout << "------------------" << endl;
 
-	vector<CZZ> fft = NumUtils::fft(px, params.cksi);
-	for (long i = 0; i < N; ++i) {
-		rfft.push_back(fft[i]);
+	cout << "------------------" << endl;
+	timeutils.start("mul and decrypt fft");
+	for (long i = 0; i < cfftinv.size(); ++i) {
+//		CZZ minv = scheme.decrypt(cfftinv[i]);
+//		dfftinv.push_back(minv);
+		vector<CZZ> minvall = scheme.decryptAll(cfftinv[i]);
+		dfftinvall.push_back(minvall);
+
 	}
+	timeutils.stop("mul and decrypt fft");
+	cout << "------------------" << endl;
 
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
-		cout << i << " step: rfft  = " << rfft[i].toString() << endl;
-		cout << i << " step: dfft = " << dfft[i].toString() << endl;
+		cout << i << " step: mfft = " << pfftinv[i].toString() << endl;
+//		cout << i << " step: dfft = " << dfftinv[i].toString() << endl;
+		cout << i << " step: dfft = " << dfftinvall[i][i].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 
-	cout << "!!! END TEST SIMPLE FFT !!!" << endl; // prints !!!Hello World!!!
-
+	cout << "!!! END TEST FFT SIMPLE!!!" << endl; // prints !!!Hello World!!!
 }
 
-void testFFT() {
-	cout << "!!! START TEST FFT !!!" << endl; // prints !!!Hello World!!!
+void testFFTdirect() {
+	cout << "!!! START TEST FFT DIRECT!!!" << endl; // prints !!!Hello World!!!
 
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
-	long logl = 0;
+	long logl = 1;
 	long logp = 30;
 	long L = 8;
 	double sigma = 3;
@@ -662,6 +414,7 @@ void testFFT() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
+	params.cksi.precompute(logn+1);
 	//----------------------------
 
 	long logN = 5;
@@ -669,48 +422,25 @@ void testFFT() {
 	long deg = 4;
 
 
-	params.cksi.precompute(logN+1);
-
 	CZZ zero;
-	vector<CZZ> px, p1, p2;
-	CZZX zp, zp1, zp2;
+	vector<CZZ> p1, p2, dfft, mfft;
 	vector<Cipher> cp1, cp2;
-	vector<CZZ> dfft, mfft, rfft;
 
 
 	for (long i = 0; i < deg; ++i) {
-		CZZ m1 = params.cksi.pows[logN][i];
-		CZZ m2 = params.cksi.pows[logN][i];
-		p1.push_back(m1);
-		p2.push_back(m2);
+		p1.push_back(params.cksi.pows[logN][i]);
+		p2.push_back(params.cksi.pows[logN][i]);
 	}
-
 	for (long i = deg; i < N; ++i) {
 		p1.push_back(zero);
 		p2.push_back(zero);
 	}
 
-
-	for (long i = 0; i < N; ++i) {
-		SetCoeff(zp1, i, p1[i]);
-		SetCoeff(zp2, i, p2[i]);
-	}
-	zp1.normalize();
-	zp2.normalize();
-	zp = zp1 * zp2;
-
-	for (long i = 0; i < N; ++i) {
-		px.push_back(coeff(zp, i));
-	}
-
-
 	cout << "------------------" << endl;
 	timeutils.start("Encrypting polynomials");
 	for (long i = 0; i < N; ++i) {
-		Cipher c1 = scheme.encrypt(p1[i], scheme.params.p);
-		Cipher c2 = scheme.encrypt(p2[i], scheme.params.p);
-		cp1.push_back(c1);
-		cp2.push_back(c2);
+		cp1.push_back(scheme.encrypt(p1[i], scheme.params.p));
+		cp2.push_back(scheme.encrypt(p2[i], scheme.params.p));
 	}
 	timeutils.stop("Encrypting polynomials");
 	cout << "------------------" << endl;
@@ -743,8 +473,7 @@ void testFFT() {
 	timeutils.start("mul and decrypt fft");
 	for (long i = 0; i < cfft1.size(); ++i) {
 		Cipher ms = scheme.multAndModSwitch(cfft1[i], cfft2[i]);
-		CZZ ds = scheme.decrypt(ms);
-		dfft.push_back(ds);
+		dfft.push_back(scheme.decrypt(ms));
 	}
 	timeutils.stop("mul and decrypt fft");
 	cout << "------------------" << endl;
@@ -755,24 +484,17 @@ void testFFT() {
 		mfft.push_back(mm);
 	}
 
-	vector<CZZ> fft = NumUtils::fft(px, params.cksi);
-	for (long i = 0; i < N; ++i) {
-		CZZ rm = fft[i] >> params.logp;
-		rfft.push_back(rm);
-	}
-
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
-		cout << i << " step: rfft  = " << rfft[i].toString() << endl;
 		cout << i << " step: mfft = " << mfft[i].toString() << endl;
 		cout << i << " step: dfft = " << dfft[i].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 
-	cout << "!!! END TEST FFT !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST FFT DIRECT!!!" << endl; // prints !!!Hello World!!!
 }
 
-void testFullFFT() {
+void testFFTfull() {
 	cout << "!!! START TEST FULL FFT !!!" << endl; // prints !!!Hello World!!!
 
 	//----------------------------
@@ -789,14 +511,12 @@ void testFullFFT() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
+	params.cksi.precompute(logn+1);
 	//----------------------------
 
 	long logN = 4;
 	long N = 1 << logN;
 	long deg = 5;
-
-
-	params.cksi.precompute(logN+1);
 
 	CZZ zero, tmp;
 
@@ -805,6 +525,7 @@ void testFullFFT() {
 	vector<Cipher> cp1, cp2, cpx;
 	vector<Cipher> cfft1, cfft2, cfftx;
 	vector<CZZ> dpx;
+	vector<vector<CZZ>> dpxAll;
 
 	for (long i = 0; i < deg; ++i) {
 		mp1.push_back(params.cksi.pows[logN][i]);
@@ -840,12 +561,14 @@ void testFullFFT() {
 	cout << "------------------" << endl;
 	timeutils.start("cfft 1");
 	cfft1 = algo.fft(cp1, params.cksi);
+//	cfft1 = algo.fft2(cp1);
 	timeutils.stop("cfft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 2");
 	cfft2 = algo.fft(cp2, params.cksi);
+//	cfft2 = algo.fft2(cp2);
 	timeutils.stop("cfft 2");
 	cout << "------------------" << endl;
 
@@ -861,334 +584,40 @@ void testFullFFT() {
 	cout << "------------------" << endl;
 	timeutils.start("cfftx inv");
 	cpx = algo.fftInv(cfftx, params.cksi);
+//	cpx = algo.fftInv2(cfftx);
 	timeutils.stop("cfftx inv");
 	cout << "------------------" << endl;
 
 	for (long i = 0; i < N; ++i) {
-		tmp = scheme.decrypt(cpx[i]);
-		dpx.push_back(tmp);
+		vector<CZZ> tmpvec;
+		tmpvec = scheme.decryptAll(cpx[i]);
+		dpx.push_back(scheme.decrypt(cpx[i]));
+		dpxAll.push_back(tmpvec);
 	}
 
 	for (long i = 0; i < N; ++i) {
-		cout << "----------------------" << endl;
-		cout << i << " step: cpx  = " << mpx[i].toString() << endl;
-		cout << i << " step: dpx = " << dpx[i].toString() << endl;
-		cout << "----------------------" << endl;
+		for (long j = 0; j < params.n; ++j) {
+			cout << "----------------------" << endl;
+			cout << i << " step: cpx = " << mpx[i].toString() << endl;
+			cout << i << " step: dpx = " << dpx[i].toString() << endl;
+			cout << i << " step: all = " << dpxAll[i][j].toString() << endl;
+			cout << "----------------------" << endl;
+		}
 	}
 
 	cout << "!!! END TEST FULL FFT !!!" << endl; // prints !!!Hello World!!!
 
 }
 
-void testMulMonomial() {
-	cout << "!!! START TEST MULMONOMIAL" << endl;
-	ZZX rx, ix;
-	for (long i = 0; i < 8; ++i) {
-		SetCoeff(rx, i, i * i);
-		SetCoeff(ix, i, i * i * i);
-	}
-
-	CZZX x(rx, ix);
-	CZZX y;
-
-	Ring2Utils::mulMonomial(y, x, 1, 8);
-	cout << x.toString() << endl;
-	cout << y.toString() << endl;
-
-	cout << "!!! END TEST MULMONOMIAL" << endl;
-}
-
-
-void testMulMonomialCipher() {
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 0;
-	long logp = 30;
-	long L = 5;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-
-	vector<CZZ> mvec;
-	long i;
-	params.cksi.precompute(params.logn + 1);
-
-	cout << "---------------" << endl;
-	Cipher cipher1 = scheme.encrypt(params.cksi.pows[params.logn][5], scheme.params.p);
-	Cipher cipher2 = scheme.multByMonomial(cipher1, 4);
-	vector<CZZ> dvec1 = scheme.decryptAll(cipher1);
-	vector<CZZ> dvec2 = scheme.decryptAll(cipher2);
-
-	for (i = 0; i < params.n; ++i) {
-		cout << "mm: " << i << " : " << params.cksi.pows[params.logn][1].toString() << endl;
-		cout << "mm: " << i << " : " << params.cksi.pows[params.logn][5].toString() << endl;
-		cout << "mm: " << i << " : " << params.cksi.pows[params.logn][9].toString() << endl;
-		cout << "d1: " << i << " : " << dvec1[i].toString() << endl;
-		cout << "d2: " << i << " : " << dvec2[i].toString() << endl;
-		cout << "---------------------" << endl;
-	}
-}
-
-
-void testFFT2() {
-	cout << "!!! START TEST FFT 2!!!" << endl; // prints !!!Hello World!!!
-
-	//----------------------------
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 0;
-	long logp = 30;
-	long L = 8;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-	//----------------------------
-
-	long logN = 5;
-	long N = 1 << logN;
-	long deg = 4;
-
-
-	params.cksi.precompute(logn+1);
-
-	CZZ zero;
-	vector<CZZ> px, p1, p2;
-	CZZX zp, zp1, zp2;
-	vector<Cipher> cp1, cp2;
-	vector<CZZ> mfft, rfft;
-	vector<vector<CZZ>> dfft;
-
-	for (long i = 0; i < deg; ++i) {
-		CZZ m1 = params.cksi.pows[logN][i];
-		CZZ m2 = params.cksi.pows[logN][i];
-		p1.push_back(m1);
-		p2.push_back(m2);
-	}
-
-	for (long i = deg; i < N; ++i) {
-		p1.push_back(zero);
-		p2.push_back(zero);
-	}
-
-
-	for (long i = 0; i < N; ++i) {
-		SetCoeff(zp1, i, p1[i]);
-		SetCoeff(zp2, i, p2[i]);
-	}
-	zp1.normalize();
-	zp2.normalize();
-	zp = zp1 * zp2;
-
-	for (long i = 0; i < N; ++i) {
-		px.push_back(coeff(zp, i));
-	}
-
-
-	cout << "------------------" << endl;
-	timeutils.start("Encrypting polynomials");
-	for (long i = 0; i < N; ++i) {
-		Cipher c1 = scheme.encrypt(p1[i], scheme.params.p);
-		Cipher c2 = scheme.encrypt(p2[i], scheme.params.p);
-		cp1.push_back(c1);
-		cp2.push_back(c2);
-	}
-	timeutils.stop("Encrypting polynomials");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft 1");
-	vector<Cipher> cfft1 = algo.fft2(cp1);
-	timeutils.stop("cfft 1");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft 2");
-	vector<Cipher> cfft2 = algo.fft2(cp2);
-	timeutils.stop("cfft 2");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("fft 1");
-	vector<CZZ> fft1 = NumUtils::fft(p1, params.cksi);
-	timeutils.stop("fft 1");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("fft 2");
-	vector<CZZ> fft2 = NumUtils::fft(p2, params.cksi);
-	timeutils.stop("fft 2");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("mul and decrypt fft");
-	for (long i = 0; i < cfft1.size(); ++i) {
-		Cipher ms = scheme.multAndModSwitch(cfft1[i], cfft2[i]);
-		vector<CZZ> ds;
-		ds = scheme.decryptAll(ms);
-		dfft.push_back(ds);
-	}
-	timeutils.stop("mul and decrypt fft");
-	cout << "------------------" << endl;
-
-
-	for (long i = 0; i < N; ++i) {
-		CZZ mm = (fft1[i] * fft2[i]) >> params.logp;
-		mfft.push_back(mm);
-	}
-
-	vector<CZZ> fft = NumUtils::fft(px, params.cksi);
-	for (long i = 0; i < N; ++i) {
-		CZZ rm = fft[i] >> params.logp;
-		rfft.push_back(rm);
-	}
-
-	for (long i = 0; i < N; ++i) {
-		for (long j = 0; j < params.n; j++) {
-			cout << "----------------------" << endl;
-			cout << i << " step: rfft  = " << rfft[i].toString() << endl;
-			cout << i << " step: mfft = " << mfft[i].toString() << endl;
-			cout << i << " step: dfft = " << dfft[i][j].toString() << endl;
-			cout << "----------------------" << endl;
-		}
-	}
-
-	cout << "!!! END TEST FFT 2!!!" << endl; // prints !!!Hello World!!!
-}
-
-void testFullFFT2() {
-	cout << "!!! START TEST FULL FFT 2!!!" << endl; // prints !!!Hello World!!!
-
-	//----------------------------
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 0;
-	long logp = 30;
-	long L = 11;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-	//----------------------------
-
-	long logN = 4;
-	long N = 1 << logN;
-	long deg = 5;
-
-	params.cksi.precompute(logN+1);
-
-	CZZ zero, tmp;
-
-	vector<CZZ> mp1, mp2, mpx;
-	vector<CZZ> mfft1, mfft2, mfftx;
-	vector<Cipher> cp1, cp2, cpx;
-	vector<Cipher> cfft1, cfft2, cfftx;
-	vector<CZZ> dpx;
-
-	for (long i = 0; i < deg; ++i) {
-		mp1.push_back(params.cksi.pows[logN][i]);
-		mp2.push_back(params.cksi.pows[logN][i]);
-	}
-
-	for (long i = deg; i < N; ++i) {
-		mp1.push_back(zero);
-		mp2.push_back(zero);
-	}
-
-	mfft1 = NumUtils::fft(mp1, params.cksi);
-	mfft2 = NumUtils::fft(mp2, params.cksi);
-
-	for (long i = 0; i < N; ++i) {
-		tmp = (mfft1[i] * mfft2[i]) >> params.logp;
-		mfftx.push_back(tmp);
-	}
-
-	mpx = NumUtils::fftInv(mfftx, params.cksi);
-
-	cout << "------------------" << endl;
-	timeutils.start("Encrypting polynomials");
-	for (long i = 0; i < N; ++i) {
-		Cipher c1 = scheme.encrypt(mp1[i], scheme.params.p);
-		Cipher c2 = scheme.encrypt(mp2[i], scheme.params.p);
-		cp1.push_back(c1);
-		cp2.push_back(c2);
-	}
-	timeutils.stop("Encrypting polynomials");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft 1");
-	cfft1 = algo.fft2(cp1);
-	timeutils.stop("cfft 1");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft 2");
-	cfft2 = algo.fft2(cp2);
-	timeutils.stop("cfft 2");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("mul fft");
-	for (long i = 0; i < N; ++i) {
-		Cipher cfftxi = scheme.multAndModSwitch(cfft1[i], cfft2[i]);
-		cfftx.push_back(cfftxi);
-	}
-	timeutils.stop("mul fft");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfftx inv");
-	cpx = algo.fftInv2(cfftx);
-	timeutils.stop("cfftx inv");
-	cout << "------------------" << endl;
-
-	for (long i = 0; i < N; ++i) {
-		tmp = scheme.decrypt(cpx[i]);
-		dpx.push_back(tmp);
-	}
-
-	for (long i = 0; i < N; ++i) {
-		cout << "----------------------" << endl;
-		cout << i << " step: cpx  = " << mpx[i].toString() << endl;
-		cout << i << " step: dpx = " << dpx[i].toString() << endl;
-		cout << "----------------------" << endl;
-	}
-
-	cout << "!!! END TEST FULL FFT 2!!!" << endl; // prints !!!Hello World!!!
-
-}
-
 int main() {
-//	testMult();
-//	testtest();
 //	testEncodeAll();
 //	testEncode();
-//	testEncodeAndSquare();
-//	testEncodeAndMult();
-//	testSimple();
 //	testPow();
 //	testProd2();
 //	testInv();
-//	testSimpleFFT();
-//	testFFT();
-//	testFullFFT();
-//	testMulMonomial();
-//	testMulMonomialCipher();
-	testFFT2();
-//	testFullFFT2();
+	testFFTsimple();
+//	testFFTdirect();
+//	testFFTfull();
+
 	return 0;
 }

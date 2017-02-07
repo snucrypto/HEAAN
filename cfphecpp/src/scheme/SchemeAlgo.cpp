@@ -99,7 +99,6 @@ vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, CKsi& cksi, const boo
 	for (i = 0; i < csizeh; ++i) {
 		res.push_back(tmp[i]);
 	}
-
 	return res;
 }
 
