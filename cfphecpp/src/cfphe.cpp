@@ -323,14 +323,13 @@ void testFFTsimple() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn+1);
+	params.cksi.precompute(logn + 2);
 	//----------------------------
 
 	long logN = 5;
 	long N = 1 << logN;
 
 	vector<CZZ> p, pfft, pfftinv, dfftinv;
-	vector<vector<CZZ>> dfftinvall;
 	vector<Cipher> cp, cfft, cfftinv;
 
 
@@ -341,7 +340,7 @@ void testFFTsimple() {
 	cout << "------------------" << endl;
 	timeutils.start("Encrypting polynomials");
 	for (long i = 0; i < N; ++i) {
-		Cipher c = scheme.encrypt(p[i], scheme.params.p);
+		Cipher c = scheme.encrypt(p[0], scheme.params.p);
 		cp.push_back(c);
 	}
 	timeutils.stop("Encrypting polynomials");
@@ -377,11 +376,7 @@ void testFFTsimple() {
 	cout << "------------------" << endl;
 	timeutils.start("mul and decrypt fft");
 	for (long i = 0; i < cfftinv.size(); ++i) {
-//		CZZ minv = scheme.decrypt(cfftinv[i]);
-//		dfftinv.push_back(minv);
-		vector<CZZ> minvall = scheme.decryptAll(cfftinv[i]);
-		dfftinvall.push_back(minvall);
-
+		dfftinv.push_back(scheme.decrypt2(cfftinv[i]));
 	}
 	timeutils.stop("mul and decrypt fft");
 	cout << "------------------" << endl;
@@ -389,8 +384,7 @@ void testFFTsimple() {
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
 		cout << i << " step: mfft = " << pfftinv[i].toString() << endl;
-//		cout << i << " step: dfft = " << dfftinv[i].toString() << endl;
-		cout << i << " step: dfft = " << dfftinvall[i][i].toString() << endl;
+		cout << i << " step: dfft = " << dfftinv[i].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 
@@ -525,7 +519,6 @@ void testFFTfull() {
 	vector<Cipher> cp1, cp2, cpx;
 	vector<Cipher> cfft1, cfft2, cfftx;
 	vector<CZZ> dpx;
-	vector<vector<CZZ>> dpxAll;
 
 	for (long i = 0; i < deg; ++i) {
 		mp1.push_back(params.cksi.pows[logN][i]);
@@ -590,9 +583,7 @@ void testFFTfull() {
 
 	for (long i = 0; i < N; ++i) {
 		vector<CZZ> tmpvec;
-		tmpvec = scheme.decryptAll(cpx[i]);
 		dpx.push_back(scheme.decrypt(cpx[i]));
-		dpxAll.push_back(tmpvec);
 	}
 
 	for (long i = 0; i < N; ++i) {
@@ -600,7 +591,6 @@ void testFFTfull() {
 			cout << "----------------------" << endl;
 			cout << i << " step: cpx = " << mpx[i].toString() << endl;
 			cout << i << " step: dpx = " << dpx[i].toString() << endl;
-			cout << i << " step: all = " << dpxAll[i][j].toString() << endl;
 			cout << "----------------------" << endl;
 		}
 	}

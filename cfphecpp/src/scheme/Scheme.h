@@ -39,6 +39,8 @@ public:
 	Cipher encryptAll(vector<CZZ>& mvec, ZZ& nu);
 	vector<CZZ> decryptAll(Cipher& cipher);
 
+	CZZ decrypt2(Cipher& cipher);
+
 //--------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);

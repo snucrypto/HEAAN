@@ -59,6 +59,25 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	return m;
 }
 
+CZZ Scheme::decrypt2(Cipher& cipher) {
+	long logqi = getLogqi(cipher.level);
+	ZZ qi = getqi(cipher.level);
+	CZZX poly;
+	CZZ m, res;
+
+	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logqi, params.n);
+	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
+
+	for (int i = 0; i < params.n; ++i) {
+		GetCoeff(m, poly, i);
+		trueValue(m, qi);
+		res += ((m * params.cksi.pows[params.logn + 1][i]) >> params.logp);
+	}
+
+	return res;
+
+}
+
 void Scheme::decrypt(vector<CZZ>& res, vector<Cipher>& ciphers) {
 	res.clear();
 	for (long i = 0; i < ciphers.size(); ++i) {
@@ -459,7 +478,6 @@ void Scheme::multByConstantAndEqual(Cipher& cipher, CZZ& cnst) {
 }
 
 Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
-	long logqi = getLogqi(cipher.level);
 	CZZX c0 , c1;
 
 	Ring2Utils::mulMonomial(c0, cipher.c0, degree, params.n);
