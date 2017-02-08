@@ -55,7 +55,6 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
 	GetCoeff(m, poly, 0);
 	trueValue(m, qi);
-
 	return m;
 }
 

@@ -314,9 +314,9 @@ void testFFTsimple() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
-	long logl = 1;
+	long logl = 0;
 	long logp = 30;
-	long L = 3;
+	long L = 11;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -325,13 +325,13 @@ void testFFTsimple() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn + 3);
+	params.cksi.precompute(logn + 2);
 	//----------------------------
 
-	long logN = 5;
+	long logN = 4;
 	long N = 1 << logN;
 
-	vector<CZZ> p, pfft, pfftinv, dfftinv;
+	vector<CZZ> p, pfft, pfftinv, dfft, dfftinv;
 	vector<Cipher> cp, cfft, cfftinv;
 
 
@@ -342,7 +342,7 @@ void testFFTsimple() {
 	cout << "------------------" << endl;
 	timeutils.start("Encrypting polynomials");
 	for (long i = 0; i < N; ++i) {
-		Cipher c = scheme.encrypt(p[0], scheme.params.p);
+		Cipher c = scheme.encrypt(p[i], scheme.params.p);
 		cp.push_back(c);
 	}
 	timeutils.stop("Encrypting polynomials");
@@ -378,15 +378,19 @@ void testFFTsimple() {
 	cout << "------------------" << endl;
 	timeutils.start("mul and decrypt fft");
 	for (long i = 0; i < cfftinv.size(); ++i) {
-		dfftinv.push_back(scheme.decrypt2(cfftinv[i]));
+		dfft.push_back(scheme.decrypt(cfft[i]));
+		dfftinv.push_back(scheme.decrypt(cfftinv[i]));
 	}
 	timeutils.stop("mul and decrypt fft");
 	cout << "------------------" << endl;
 
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
-		cout << i << " step: mfft = " << pfftinv[i].toString() << endl;
-		cout << i << " step: dfft = " << dfftinv[i].toString() << endl;
+		cout << i << " step: pfft = " << pfft[i].toString() << endl;
+		cout << i << " step: dfft = " << dfft[i].toString() << endl;
+		cout << "----------------------" << endl;
+		cout << i << " step: pfftinv = " << pfftinv[i].toString() << endl;
+		cout << i << " step: dfftinv = " << dfftinv[i].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 
@@ -609,8 +613,8 @@ int main() {
 //	testPow();
 //	testProd2();
 //	testInv();
-//	testFFTsimple();
-	testFFTdirect();
+	testFFTsimple();
+//	testFFTdirect();
 //	testFFTfull();
 
 	return 0;
