@@ -63,7 +63,7 @@ CZZ Scheme::decrypt2(Cipher& cipher) {
 	long logqi = getLogqi(cipher.level);
 	ZZ qi = getqi(cipher.level);
 	CZZX poly;
-	CZZ m, res;
+	CZZ m, res, tmp;
 
 	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logqi, params.n);
 	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
@@ -71,7 +71,8 @@ CZZ Scheme::decrypt2(Cipher& cipher) {
 	for (int i = 0; i < params.n; ++i) {
 		GetCoeff(m, poly, i);
 		trueValue(m, qi);
-		res += ((m * params.cksi.pows[params.logn + 1][i]) >> params.logp);
+		tmp = ((m * params.cksi.pows[params.logn + 1][i]) >> params.logp);
+		res += tmp;
 	}
 
 	return res;

@@ -138,7 +138,7 @@ vector<Cipher> SchemeAlgo::fftRaw2(vector<Cipher>& ciphers, const bool& isForwar
 	vector<Cipher> y1 = fftRaw2(sub1, isForward);
 	vector<Cipher> y2 = fftRaw2(sub2, isForward);
 
-	long MoverD = isForward ? (scheme.params.n / csize) : (scheme.params.d - scheme.params.n / csize);
+	long MoverD = isForward ? (scheme.params.d / csize) : (scheme.params.d - scheme.params.d / csize);
 
 	for (i = 0; i < csizeh; ++i) {
 		scheme.multByMonomialAndEqual(y2[i], MoverD);

@@ -21,6 +21,7 @@ using namespace NTL;
 
 
 void testEncodeAll() {
+	cout << "!!! START TEST ENCODE ALL !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -60,10 +61,11 @@ void testEncodeAll() {
 		cout << "di: " << i << " : " << dvec[i].toString() << endl;
 		cout << "---------------------" << endl;
 	}
+	cout << "!!! END TEST ENCODE ALL !!!" << endl;
 }
 
 void testEncode() {
-	cout << "!!! START TEST ENCODE !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST ENCODE !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -105,11 +107,11 @@ void testEncode() {
 		cout << "---------------------" << endl;
 	}
 
-	cout << "!!! STOP TEST ENCODE !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! STOP TEST ENCODE !!!" << endl;
 }
 
 void testPow() {
-	cout << "!!! START TEST POW !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST POW !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -163,11 +165,11 @@ void testPow() {
 		cout << "------------------" << endl;
 	}
 
-	cout << "!!! END TEST POW !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST POW !!!" << endl;
 }
 
 void testProd2() {
-	cout << "!!! START TEST PROD !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST PROD !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -240,12 +242,12 @@ void testProd2() {
 			cout << "------------------" << endl;
 		}
 	}
-	cout << "!!! END TEST PROD !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST PROD !!!" << endl;
 }
 
 
 void testInv() {
-	cout << "!!! START TEST INV !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST INV !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -303,11 +305,11 @@ void testInv() {
 		cout << "------------------" << endl;
 	}
 
-	cout << "!!! END TEST INV !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST INV !!!" << endl;
 }
 
 void testFFTsimple() {
-	cout << "!!! START TEST FFT SIMPLE!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST FFT SIMPLE !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -323,7 +325,7 @@ void testFFTsimple() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn + 2);
+	params.cksi.precompute(logn + 3);
 	//----------------------------
 
 	long logN = 5;
@@ -388,11 +390,11 @@ void testFFTsimple() {
 		cout << "----------------------" << endl;
 	}
 
-	cout << "!!! END TEST FFT SIMPLE!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST FFT SIMPLE !!!" << endl;
 }
 
 void testFFTdirect() {
-	cout << "!!! START TEST FFT DIRECT!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST FFT DIRECT !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -408,7 +410,7 @@ void testFFTdirect() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn+1);
+	params.cksi.precompute(logn + 2);
 	//----------------------------
 
 	long logN = 5;
@@ -442,12 +444,14 @@ void testFFTdirect() {
 	cout << "------------------" << endl;
 	timeutils.start("cfft 1");
 	vector<Cipher> cfft1 = algo.fft(cp1, params.cksi);
+//	vector<Cipher> cfft1 = algo.fft2(cp1);
 	timeutils.stop("cfft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 2");
 	vector<Cipher> cfft2 = algo.fft(cp2, params.cksi);
+//	vector<Cipher> cfft2 = algo.fft2(cp2);
 	timeutils.stop("cfft 2");
 	cout << "------------------" << endl;
 
@@ -485,11 +489,11 @@ void testFFTdirect() {
 		cout << "----------------------" << endl;
 	}
 
-	cout << "!!! END TEST FFT DIRECT!!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST FFT DIRECT !!!" << endl;
 }
 
 void testFFTfull() {
-	cout << "!!! START TEST FULL FFT !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! START TEST FFT FULL !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -505,7 +509,7 @@ void testFFTfull() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn+1);
+	params.cksi.precompute(logn + 2);
 	//----------------------------
 
 	long logN = 4;
@@ -595,7 +599,7 @@ void testFFTfull() {
 		}
 	}
 
-	cout << "!!! END TEST FULL FFT !!!" << endl; // prints !!!Hello World!!!
+	cout << "!!! END TEST FFT FULL !!!" << endl;
 
 }
 
@@ -605,8 +609,8 @@ int main() {
 //	testPow();
 //	testProd2();
 //	testInv();
-	testFFTsimple();
-//	testFFTdirect();
+//	testFFTsimple();
+	testFFTdirect();
 //	testFFTfull();
 
 	return 0;
