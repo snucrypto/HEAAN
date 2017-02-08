@@ -57,7 +57,9 @@ public:
 
 	Cipher mult(Cipher& cipher1, Cipher& cipher2);
 	void multAndEqual(Cipher& cipher1, Cipher& cipher2);
+
 	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
+	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher multByConstant(Cipher& cipher, ZZ& cnst);
 	void multByConstantAndEqual(Cipher& cipher, ZZ& cnst);
@@ -73,7 +75,9 @@ public:
 
 	Cipher square(Cipher& cipher);
 	void squareAndEqual(Cipher& cipher);
+
 	Cipher squareAndModSwitch(Cipher& cipher);
+	void squareModSwitchAndEqual(Cipher& cipher);
 
 	Cipher modSwitch(Cipher& cipher, long newLevel);
 	Cipher modSwitch(Cipher& cipher);

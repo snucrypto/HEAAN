@@ -291,10 +291,21 @@ Cipher Scheme::multAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
 	return cms;
 }
 
+void Scheme::multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2) {
+	multAndEqual(cipher1, cipher2);
+	modSwitchAndEqual(cipher1);
+}
+
+
 Cipher Scheme::squareAndModSwitch(Cipher& cipher) {
 	Cipher c = square(cipher);
 	Cipher cms = modSwitch(c, c.level + 1);
 	return cms;
+}
+
+void Scheme::squareModSwitchAndEqual(Cipher& cipher) {
+	squareAndEqual(cipher);
+	modSwitchAndEqual(cipher);
 }
 
 void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {

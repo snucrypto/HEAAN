@@ -530,7 +530,7 @@ void testFFTfull() {
 	vector<CZZ> mp1, mp2, mpx;
 	vector<CZZ> mfft1, mfft2, mfftx;
 	vector<Cipher> cp1, cp2, cpx;
-	vector<Cipher> cfft1, cfft2, cfftx;
+	vector<Cipher> cfft1, cfft2;
 	vector<CZZ> dpx;
 
 	for (long i = 0; i < deg; ++i) {
@@ -581,16 +581,15 @@ void testFFTfull() {
 	cout << "------------------" << endl;
 	timeutils.start("mul fft");
 	for (long i = 0; i < N; ++i) {
-		Cipher cfftxi = scheme.multAndModSwitch(cfft1[i], cfft2[i]);
-		cfftx.push_back(cfftxi);
+		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
 	}
 	timeutils.stop("mul fft");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfftx inv");
-//	cpx = algo.fftInv(cfftx, params.cksi);
-	cpx = algo.fftInv2(cfftx);
+//	cpx = algo.fftInv(cfft1, params.cksi);
+	cpx = algo.fftInv2(cfft1);
 	timeutils.stop("cfftx inv");
 	cout << "------------------" << endl;
 
