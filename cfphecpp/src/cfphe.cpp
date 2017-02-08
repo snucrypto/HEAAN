@@ -314,9 +314,9 @@ void testFFTsimple() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
-	long logl = 0;
+	long logl = 3;
 	long logp = 30;
-	long L = 3;
+	long L = 2;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -332,7 +332,7 @@ void testFFTsimple() {
 	long N = 1 << logN;
 
 	vector<CZZ> p, pfft, pfftinv, dfft, dfftinv;
-	vector<vector<CZZ>> dfftAll, dfftinvAll;
+//	vector<vector<CZZ>> dfftAll, dfftinvAll;
 	vector<Cipher> cp, cfft, cfftinv;
 
 
@@ -380,24 +380,22 @@ void testFFTsimple() {
 	timeutils.start("mul and decrypt fft");
 	for (long i = 0; i < cfftinv.size(); ++i) {
 		dfft.push_back(scheme.decrypt(cfft[i]));
-		vector<CZZ> tmpfft = scheme.decryptAll(cfft[i]);
-		dfftAll.push_back(tmpfft);
+//		vector<CZZ> tmpfft = scheme.decryptAll(cfft[i]);
+//		dfftAll.push_back(tmpfft);
 		dfftinv.push_back(scheme.decrypt(cfftinv[i]));
-		vector<CZZ> tmpfftinv = scheme.decryptAll(cfftinv[i]);
-		dfftinvAll.push_back(tmpfftinv);
+//		vector<CZZ> tmpfftinv = scheme.decryptAll(cfftinv[i]);
+//		dfftinvAll.push_back(tmpfftinv);
 	}
 	timeutils.stop("mul and decrypt fft");
 	cout << "------------------" << endl;
 
 	for (long i = 0; i < N; ++i) {
-		cout << "----------------------" << endl;
-		cout << i << " step: pfft = " << pfft[i].toString() << endl;
-		cout << i << " step: dfft = " << dfft[i].toString() << endl;
-		cout << i << " step: dfftall = " << dfftAll[i][i].toString() << endl;
+//		cout << "----------------------" << endl;
+//		cout << i << " step: pfft = " << pfft[i].toString() << endl;
+//		cout << i << " step: dfft = " << dfft[i].toString() << endl;
 		cout << "----------------------" << endl;
 		cout << i << " step: pfftinv = " << pfftinv[i].toString() << endl;
 		cout << i << " step: dfftinv = " << dfftinv[i].toString() << endl;
-		cout << i << " step: dfftinvall = " << dfftinvAll[i][i].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 
@@ -509,9 +507,9 @@ void testFFTfull() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
-	long logl = 3;
+	long logl = 4;
 	long logp = 30;
-	long L = 11;
+	long L = 3;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -568,15 +566,15 @@ void testFFTfull() {
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 1");
-	cfft1 = algo.fft(cp1, params.cksi);
-//	cfft1 = algo.fft2(cp1);
+//	cfft1 = algo.fft(cp1, params.cksi);
+	cfft1 = algo.fft2(cp1);
 	timeutils.stop("cfft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 2");
-	cfft2 = algo.fft(cp2, params.cksi);
-//	cfft2 = algo.fft2(cp2);
+//	cfft2 = algo.fft(cp2, params.cksi);
+	cfft2 = algo.fft2(cp2);
 	timeutils.stop("cfft 2");
 	cout << "------------------" << endl;
 
@@ -591,8 +589,8 @@ void testFFTfull() {
 
 	cout << "------------------" << endl;
 	timeutils.start("cfftx inv");
-	cpx = algo.fftInv(cfftx, params.cksi);
-//	cpx = algo.fftInv2(cfftx);
+//	cpx = algo.fftInv(cfftx, params.cksi);
+	cpx = algo.fftInv2(cfftx);
 	timeutils.stop("cfftx inv");
 	cout << "------------------" << endl;
 
@@ -602,12 +600,10 @@ void testFFTfull() {
 	}
 
 	for (long i = 0; i < N; ++i) {
-		for (long j = 0; j < params.n; ++j) {
-			cout << "----------------------" << endl;
-			cout << i << " step: cpx = " << mpx[i].toString() << endl;
-			cout << i << " step: dpx = " << dpx[i].toString() << endl;
-			cout << "----------------------" << endl;
-		}
+		cout << "----------------------" << endl;
+		cout << i << " step: cpx = " << mpx[i].toString() << endl;
+		cout << i << " step: dpx = " << dpx[i].toString() << endl;
+		cout << "----------------------" << endl;
 	}
 
 	cout << "!!! END TEST FFT FULL !!!" << endl;
@@ -615,14 +611,16 @@ void testFFTfull() {
 }
 
 int main() {
+//	----------------------------
 //	testEncodeAll();
 //	testEncode();
 //	testPow();
 //	testProd2();
 //	testInv();
-	testFFTsimple();
+//	testFFTsimple();
 //	testFFTdirect();
-//	testFFTfull();
+	testFFTfull();
+//	----------------------------
 
 	return 0;
 }

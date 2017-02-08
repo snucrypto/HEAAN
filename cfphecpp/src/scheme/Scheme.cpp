@@ -58,26 +58,6 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	return m;
 }
 
-CZZ Scheme::decrypt2(Cipher& cipher) {
-	long logqi = getLogqi(cipher.level);
-	ZZ qi = getqi(cipher.level);
-	CZZX poly;
-	CZZ m, res, tmp;
-
-	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logqi, params.n);
-	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
-
-	for (int i = 0; i < params.n; ++i) {
-		GetCoeff(m, poly, i);
-		trueValue(m, qi);
-		tmp = ((m * params.cksi.pows[params.logn + 1][i]) >> params.logp);
-		res += tmp;
-	}
-
-	return res;
-
-}
-
 void Scheme::decrypt(vector<CZZ>& res, vector<Cipher>& ciphers) {
 	res.clear();
 	for (long i = 0; i < ciphers.size(); ++i) {
@@ -185,10 +165,11 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(c0, cipher1.c0, cipher2.c0, logqi, params.n);
 	Ring2Utils::add(c1, cipher1.c1, cipher2.c1, logqi, params.n);
 
-	ZZ eBnd = cipher1.eBnd + cipher2.eBnd;
-	ZZ mBnd = cipher1.mBnd + cipher2.mBnd;
+//	ZZ eBnd = cipher1.eBnd + cipher2.eBnd;
+//	ZZ mBnd = cipher1.mBnd + cipher2.mBnd;
 
-	Cipher res(c0, c1, cipher1.level, eBnd, mBnd);
+//	Cipher res(c0, c1, cipher1.level, eBnd, mBnd);
+	Cipher res(c0, c1, cipher1.level);
 	return res;
 }
 
@@ -197,8 +178,8 @@ void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(cipher1.c0, cipher1.c0, cipher2.c0, logqi, params.n);
 	Ring2Utils::add(cipher1.c1, cipher1.c1, cipher2.c1, logqi, params.n);
 
-	cipher1.eBnd += cipher2.eBnd;
-	cipher1.mBnd += cipher2.mBnd;
+//	cipher1.eBnd += cipher2.eBnd;
+//	cipher1.mBnd += cipher2.mBnd;
 }
 
 Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
@@ -208,10 +189,11 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::sub(c0, cipher1.c0, cipher2.c0, logqi, params.n);
 	Ring2Utils::sub(c1, cipher1.c1, cipher2.c1, logqi, params.n);
 
-	ZZ B = cipher1.eBnd + cipher2.eBnd;
-	ZZ nu = cipher1.mBnd + cipher2.mBnd;
+//	ZZ B = cipher1.eBnd + cipher2.eBnd;
+//	ZZ nu = cipher1.mBnd + cipher2.mBnd;
 
-	Cipher res(c0, c1, cipher1.level, B, nu);
+//	Cipher res(c0, c1, cipher1.level, B, nu);
+	Cipher res(c0, c1, cipher1.level);
 	return res;
 }
 
@@ -220,8 +202,8 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::sub(cipher1.c0, cipher1.c0, cipher2.c0, logqi, params.n);
 	Ring2Utils::sub(cipher1.c1, cipher1.c1, cipher2.c1, logqi, params.n);
 
-	cipher1.eBnd += cipher2.eBnd;
-	cipher1.mBnd += cipher2.mBnd;
+//	cipher1.eBnd += cipher2.eBnd;
+//	cipher1.mBnd += cipher2.mBnd;
 }
 
 Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
@@ -245,10 +227,11 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(mulC1, mulC1, cc01, logqi, params.n);
 	Ring2Utils::add(mulC0, mulC0, cc00, logqi, params.n);
 
-	ZZ eBnd = cipher1.eBnd * (cipher2.mBnd + cipher2.eBnd) + cipher1.mBnd * cipher2.eBnd;
-	ZZ mBnd = cipher1.mBnd * cipher2.mBnd;
+//	ZZ eBnd = cipher1.eBnd * (cipher2.mBnd + cipher2.eBnd) + cipher1.mBnd * cipher2.eBnd;
+//	ZZ mBnd = cipher1.mBnd * cipher2.mBnd;
 
-	Cipher cipher(mulC0, mulC1, cipher1.level, eBnd, mBnd);
+//	Cipher cipher(mulC0, mulC1, cipher1.level, eBnd, mBnd);
+	Cipher cipher(mulC0, mulC1, cipher1.level);
 	return cipher;
 }
 
@@ -272,10 +255,11 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::add(mulC1, mulC1, cc10, logqi, params.n);
 	Ring2Utils::add(mulC0, mulC0, cc00, logqi, params.n);
 
-	ZZ eBnd = 2 * cipher.eBnd * cipher.mBnd + cipher.eBnd * cipher.eBnd;
-	ZZ mBnd = cipher.mBnd * cipher.mBnd;
+//	ZZ eBnd = 2 * cipher.eBnd * cipher.mBnd + cipher.eBnd * cipher.eBnd;
+//	ZZ mBnd = cipher.mBnd * cipher.mBnd;
 
-	Cipher c(mulC0, mulC1, cipher.level, eBnd, mBnd);
+//	Cipher c(mulC0, mulC1, cipher.level, eBnd, mBnd);
+	Cipher c(mulC0, mulC1, cipher.level);
 	return c;
 }
 
@@ -315,8 +299,8 @@ void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	cipher1.c0 = mulC0;
 	cipher1.c1 = mulC1;
 
-	cipher1.eBnd = cipher1.eBnd * (cipher2.mBnd + cipher2.eBnd) + cipher1.mBnd * cipher2.eBnd;
-	cipher1.mBnd = cipher1.mBnd * cipher2.mBnd;
+//	cipher1.eBnd = cipher1.eBnd * (cipher2.mBnd + cipher2.eBnd) + cipher1.mBnd * cipher2.eBnd;
+//	cipher1.mBnd = cipher1.mBnd * cipher2.mBnd;
 }
 
 void Scheme::squareAndEqual(Cipher& cipher) {
@@ -342,8 +326,8 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 	cipher.c0 = mulC0;
 	cipher.c1 = mulC1;
 
-	cipher.eBnd *= 2 * cipher.mBnd + cipher.eBnd;
-	cipher.mBnd *= cipher.mBnd;
+//	cipher.eBnd *= 2 * cipher.mBnd + cipher.eBnd;
+//	cipher.mBnd *= cipher.mBnd;
 }
 
 Cipher Scheme::addConstant(Cipher& cipher, ZZ& cnst) {
@@ -371,12 +355,13 @@ Cipher Scheme::addConstant(Cipher& cipher, CZZ& cnst) {
 	SetCoeff(c0, 0, tmp);
 	c0.normalize();
 
-	ZZ norm = cnst.norm();
+//	ZZ norm = cnst.norm();
 
-	ZZ eBnd = cipher.eBnd + 1;
-	ZZ mBnd = cipher.mBnd + norm;
+//	ZZ eBnd = cipher.eBnd + 1;
+//	ZZ mBnd = cipher.mBnd + norm;
 
-	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+//	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+	Cipher newCipher(c0, c1, cipher.level);
 	return newCipher;
 }
 
@@ -396,10 +381,11 @@ Cipher Scheme::multByConstant(Cipher& cipher, ZZ& cnst) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ eBnd = cipher.eBnd * cnst;
-	ZZ mBnd = cipher.mBnd * cnst;
+//	ZZ eBnd = cipher.eBnd * cnst;
+//	ZZ mBnd = cipher.mBnd * cnst;
 
-	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+//	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+	Cipher newCipher(c0, c1, cipher.level);
 	return newCipher;
 }
 
@@ -419,12 +405,13 @@ Cipher Scheme::multByConstant(Cipher& cipher, CZZ& cnst) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ norm = cnst.norm();
+//	ZZ norm = cnst.norm();
 
-	ZZ eBnd = cipher.eBnd * norm;
-	ZZ mBnd = cipher.mBnd * norm;
+//	ZZ eBnd = cipher.eBnd * norm;
+//	ZZ mBnd = cipher.mBnd * norm;
 
-	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+//	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+	Cipher newCipher(c0, c1, cipher.level);
 	return newCipher;
 }
 
@@ -451,8 +438,8 @@ void Scheme::multByConstantAndEqual(Cipher& cipher, ZZ& cnst) {
 	cipher.c0.normalize();
 	cipher.c1.normalize();
 
-	cipher.eBnd *= cnst;
-	cipher.mBnd *= cnst;
+//	cipher.eBnd *= cnst;
+//	cipher.mBnd *= cnst;
 }
 
 void Scheme::multByConstantAndEqual(Cipher& cipher, CZZ& cnst) {
@@ -470,11 +457,10 @@ void Scheme::multByConstantAndEqual(Cipher& cipher, CZZ& cnst) {
 	cipher.c0.normalize();
 	cipher.c1.normalize();
 
-	ZZ norm = cnst.norm();
+//	ZZ norm = cnst.norm();
 
-	cipher.eBnd *= norm;
-	cipher.mBnd *= norm;
-
+//	cipher.eBnd *= norm;
+//	cipher.mBnd *= norm;
 }
 
 Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
@@ -508,10 +494,11 @@ Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ eBnd = cipher.eBnd << bits;
-	ZZ mBnd = cipher.mBnd << bits;
+//	ZZ eBnd = cipher.eBnd << bits;
+//	ZZ mBnd = cipher.mBnd << bits;
 
-	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+//	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
+	Cipher newCipher(c0, c1, cipher.level);
 	return newCipher;
 }
 
@@ -530,9 +517,8 @@ void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
 	cipher.c0.normalize();
 	cipher.c1.normalize();
 
-
-	cipher.eBnd <<= bits;
-	cipher.mBnd <<= bits;
+//	cipher.eBnd <<= bits;
+//	cipher.mBnd <<= bits;
 }
 
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
@@ -548,10 +534,11 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	c0.normalize();
 	c1.normalize();
 
-	ZZ eBnd = (cipher.eBnd >> params.logp) + params.Bscale;
-	ZZ mBnd = cipher.mBnd >> params.logp;
+//	ZZ eBnd = (cipher.eBnd >> params.logp) + params.Bscale;
+//	ZZ mBnd = cipher.mBnd >> params.logp;
 
-	Cipher newCipher(c0, c1, newLevel, eBnd, mBnd);
+//	Cipher newCipher(c0, c1, newLevel, eBnd, mBnd);
+	Cipher newCipher(c0, c1, newLevel);
 	return newCipher;
 }
 
@@ -573,9 +560,9 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	cipher.c1.normalize();
 	cipher.level = newLevel;
 
-	cipher.eBnd >>= params.logp;
-	cipher.eBnd += params.Bscale;
-	cipher.mBnd >>= params.logp;
+//	cipher.eBnd >>= params.logp;
+//	cipher.eBnd += params.Bscale;
+//	cipher.mBnd >>= params.logp;
 }
 
 void Scheme::modSwitchAndEqual(Cipher& cipher) {
