@@ -42,8 +42,9 @@ public:
 //--------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
-	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
+	Cipher addNew(Cipher& cipher1, Cipher& cipher2);
 
+	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
 	void addAndEqualNew(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher addConstant(Cipher& cipher, ZZ& cnst);
@@ -51,8 +52,9 @@ public:
 	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
 
 	Cipher sub(Cipher& cipher1, Cipher& cipher2);
-	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
+	Cipher subNew(Cipher& cipher1, Cipher& cipher2);
 
+	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
 	void subAndEqualNew(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher mult(Cipher& cipher1, Cipher& cipher2);
@@ -70,8 +72,12 @@ public:
 	Cipher multByMonomial(Cipher& cipher, const long& degree);
 	void multByMonomialAndEqual(Cipher& cipher, const long& degree);
 
+	void multByMonomialAndEqualNew(Cipher& cipher, const long& degree);
+
 	Cipher leftShift(Cipher& cipher, long& bits);
 	void leftShiftAndEqual(Cipher& cipher, long& bits);
+
+	void leftShiftAndEqualNew(Cipher& cipher, long& bits);
 
 	Cipher square(Cipher& cipher);
 	void squareAndEqual(Cipher& cipher);

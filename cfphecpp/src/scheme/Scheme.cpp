@@ -176,6 +176,21 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	return res;
 }
 
+Cipher Scheme::addNew(Cipher& cipher1, Cipher& cipher2) {
+	ZZ qi = getqi(cipher1.level);
+	CZZX c0, c1;
+
+	Ring2Utils::addNew(c0, cipher1.c0, cipher2.c0, qi, params.n);
+	Ring2Utils::addNew(c1, cipher1.c1, cipher2.c1, qi, params.n);
+
+//	ZZ eBnd = cipher1.eBnd + cipher2.eBnd;
+//	ZZ mBnd = cipher1.mBnd + cipher2.mBnd;
+
+//	Cipher res(c0, c1, cipher1.level, eBnd, mBnd);
+	Cipher res(c0, c1, cipher1.level);
+	return res;
+}
+
 void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logqi = getLogqi(cipher1.level);
 	Ring2Utils::addAndEqual(cipher1.c0, cipher2.c0, logqi, params.n);
@@ -187,8 +202,8 @@ void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 void Scheme::addAndEqualNew(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
-	Ring2Utils::addModAndEqual(cipher1.c0, cipher2.c0, qi, params.n);
-	Ring2Utils::addModAndEqual(cipher1.c1, cipher2.c1, qi, params.n);
+	Ring2Utils::addAndEqualNew(cipher1.c0, cipher2.c0, qi, params.n);
+	Ring2Utils::addAndEqualNew(cipher1.c1, cipher2.c1, qi, params.n);
 
 //	cipher1.eBnd += cipher2.eBnd;
 //	cipher1.mBnd += cipher2.mBnd;
@@ -200,6 +215,21 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 
 	Ring2Utils::sub(c0, cipher1.c0, cipher2.c0, logqi, params.n);
 	Ring2Utils::sub(c1, cipher1.c1, cipher2.c1, logqi, params.n);
+
+//	ZZ B = cipher1.eBnd + cipher2.eBnd;
+//	ZZ nu = cipher1.mBnd + cipher2.mBnd;
+
+//	Cipher res(c0, c1, cipher1.level, B, nu);
+	Cipher res(c0, c1, cipher1.level);
+	return res;
+}
+
+Cipher Scheme::subNew(Cipher& cipher1, Cipher& cipher2) {
+	ZZ qi = getqi(cipher1.level);
+	CZZX c0 , c1;
+
+	Ring2Utils::subNew(c0, cipher1.c0, cipher2.c0, qi, params.n);
+	Ring2Utils::subNew(c1, cipher1.c1, cipher2.c1, qi, params.n);
 
 //	ZZ B = cipher1.eBnd + cipher2.eBnd;
 //	ZZ nu = cipher1.mBnd + cipher2.mBnd;
@@ -221,8 +251,8 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 void Scheme::subAndEqualNew(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
-	Ring2Utils::subModAndEqual(cipher1.c0, cipher2.c0, qi, params.n);
-	Ring2Utils::subModAndEqual(cipher1.c1, cipher2.c1, qi, params.n);
+	Ring2Utils::subAndEqualNew(cipher1.c0, cipher2.c0, qi, params.n);
+	Ring2Utils::subAndEqualNew(cipher1.c1, cipher2.c1, qi, params.n);
 
 //	cipher1.eBnd += cipher2.eBnd;
 //	cipher1.mBnd += cipher2.mBnd;
@@ -513,6 +543,11 @@ void Scheme::multByMonomialAndEqual(Cipher& cipher, const long& degree) {
 	Ring2Utils::mulMonomialAndEqual(cipher.c1, degree, params.n);
 }
 
+void Scheme::multByMonomialAndEqualNew(Cipher& cipher, const long& degree) {
+	Ring2Utils::mulMonomialAndEqualNew(cipher.c0, degree, params.n);
+	Ring2Utils::mulMonomialAndEqualNew(cipher.c1, degree, params.n);
+}
+
 Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
 	long logqi = getLogqi(cipher.level);
 	CZZX c0, c1;
@@ -549,8 +584,21 @@ void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
 		Ring2Utils::truncate(tmp, logqi);
 		SetCoeff(cipher.c1, i, tmp);
 	}
-	cipher.c0.normalize();
-	cipher.c1.normalize();
+
+//	cipher.eBnd <<= bits;
+//	cipher.mBnd <<= bits;
+}
+
+void Scheme::leftShiftAndEqualNew(Cipher& cipher, long& bits) {
+	ZZ qi = getqi(cipher.level);
+	CZZ tmp;
+
+	for (long i = 0; i < params.n; ++i) {
+		tmp = (coeff(cipher.c0,i) << bits) % qi;
+		SetCoeff(cipher.c0, i, tmp);
+		tmp = (coeff(cipher.c1,i) << bits) % qi;
+		SetCoeff(cipher.c1, i, tmp);
+	}
 
 //	cipher.eBnd <<= bits;
 //	cipher.mBnd <<= bits;
@@ -584,15 +632,13 @@ Cipher Scheme::modSwitch(Cipher& cipher) {
 
 void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	long logdf = params.logp * (newLevel-cipher.level);
-
+	CZZ tmp;
 	for (long i = 0; i < params.n; ++i) {
-		CZZ shift0 = coeff(cipher.c0, i) >> logdf;
-		SetCoeff(cipher.c0, i, shift0);
-		CZZ shift1 = coeff(cipher.c1, i) >> logdf;
-		SetCoeff(cipher.c1, i, shift1);
+		tmp = coeff(cipher.c0, i) >> logdf;
+		SetCoeff(cipher.c0, i, tmp);
+		tmp = coeff(cipher.c1, i) >> logdf;
+		SetCoeff(cipher.c1, i, tmp);
 	}
-	cipher.c0.normalize();
-	cipher.c1.normalize();
 	cipher.level = newLevel;
 
 //	cipher.eBnd >>= params.logp;

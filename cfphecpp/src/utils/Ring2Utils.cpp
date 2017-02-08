@@ -38,6 +38,25 @@ void Ring2Utils::add(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const lo
 	add(res.ix, p1.ix, p2.ix, logMod, degree);
 }
 
+void Ring2Utils::addNew(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
+	ZZX add;
+	ZZ c;
+	add.SetLength(degree);
+	p1.SetLength(degree);
+	p2.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		AddMod(add.rep[i], p1.rep[i], p2.rep[i], mod);
+	}
+	res = add;
+
+}
+
+void Ring2Utils::addNew(CZZX& res, CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
+	addNew(res.rx, p1.rx, p2.rx, mod, degree);
+	addNew(res.ix, p1.ix, p2.ix, mod, degree);
+}
+
+
 void Ring2Utils::addAndEqual(ZZX& p1, ZZX& p2, const long& degree) {
 	ZZ c;
 	for (long i = 0; i < degree; ++i) {
@@ -65,17 +84,18 @@ void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long&
 	addAndEqual(p1.ix, p2.ix, logMod, degree);
 }
 
-void Ring2Utils::addModAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
+void Ring2Utils::addAndEqualNew(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	ZZ c;
+	p1.SetLength(degree);
+	p2.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
-		AddMod(c, coeff(p1, i), coeff(p2, i), mod);
-		SetCoeff(p1, i, c);
+		AddMod(p1.rep[i], p1.rep[i], p2.rep[i], mod);
 	}
 }
 
-void Ring2Utils::addModAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
-	addModAndEqual(p1.rx, p2.rx, mod, degree);
-	addModAndEqual(p1.ix, p2.ix, mod, degree);
+void Ring2Utils::addAndEqualNew(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
+	addAndEqualNew(p1.rx, p2.rx, mod, degree);
+	addAndEqualNew(p1.ix, p2.ix, mod, degree);
 }
 
 
@@ -114,6 +134,23 @@ void Ring2Utils::sub(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const lo
 	sub(res.ix, p1.ix, p2.ix, logMod, degree);
 }
 
+void Ring2Utils::subNew(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
+	ZZX sub;
+	ZZ c;
+	sub.SetLength(degree);
+	p1.SetLength(degree);
+	p2.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		AddMod(sub.rep[i], p1.rep[i], -p2.rep[i], mod);
+	}
+	res = sub;
+}
+
+void Ring2Utils::subNew(CZZX& res, CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
+	subNew(res.rx, p1.rx, p2.rx, mod, degree);
+	subNew(res.ix, p1.ix, p2.ix, mod, degree);
+}
+
 void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, const long& degree) {
 	ZZ c;
 	for (long i = 0; i < degree; ++i) {
@@ -121,6 +158,7 @@ void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, const long& degree) {
 		SetCoeff(p1, i, c);
 	}
 }
+
 
 void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, const long& degree) {
 	subAndEqual(p1.rx, p2.rx, degree);
@@ -141,17 +179,18 @@ void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long&
 	subAndEqual(p1.ix, p2.ix, logMod, degree);
 }
 
-void Ring2Utils::subModAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
+void Ring2Utils::subAndEqualNew(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	ZZ c;
+	p1.SetLength(degree);
+	p2.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
-		AddMod(c, coeff(p1, i), -coeff(p2, i), mod);
-		SetCoeff(p1, i, c);
+		AddMod(p1.rep[i], p1.rep[i], -p2.rep[i], mod);
 	}
 }
 
-void Ring2Utils::subModAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
-	subModAndEqual(p1.rx, p2.rx, mod, degree);
-	subModAndEqual(p1.ix, p2.ix, mod, degree);
+void Ring2Utils::subAndEqualNew(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
+	subAndEqualNew(p1.rx, p2.rx, mod, degree);
+	subAndEqualNew(p1.ix, p2.ix, mod, degree);
 }
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {
@@ -365,23 +404,33 @@ void Ring2Utils::mulMonomialAndEqual(ZZX& p, const long& monomialDeg, const long
 }
 
 void Ring2Utils::mulMonomialAndEqual(CZZX& p, const long& monomialDeg, const long& degree) {
+	mulMonomialAndEqual(p.rx, monomialDeg, degree);
+	mulMonomialAndEqual(p.ix, monomialDeg, degree);
+}
+
+void Ring2Utils::mulMonomialAndEqualNew(ZZX& p, const long& monomialDeg, const long& degree) {
 	long shift = monomialDeg % (2 * degree);
 	if(shift == 0) {
 		return;
 	}
-	CZZX tmpx = (shift < degree) ? p : -p;
+	ZZX tmpx = (shift < degree) ? p : -p;
 	shift %= degree;
-	CZZ tmp;
+	p.SetLength(degree);
+	tmpx.SetLength(degree);
 	for (long i = 0; i < shift; ++i) {
-		tmp = -coeff(tmpx, degree - shift + i);
-		SetCoeff(p, i, tmp);
+		p.rep[i] = -tmpx.rep[degree - shift + i];
 	}
 
 	for (long i = shift; i < degree; ++i) {
-		tmp = coeff(tmpx,i - shift);
-		SetCoeff(p, i, tmp);
+		p.rep[i] = tmpx.rep[i - shift];
 	}
 }
+
+void Ring2Utils::mulMonomialAndEqualNew(CZZX& p, const long& monomialDeg, const long& degree) {
+	mulMonomialAndEqualNew(p.rx, monomialDeg, degree);
+	mulMonomialAndEqualNew(p.ix, monomialDeg, degree);
+}
+
 
 void Ring2Utils::mulCnst(ZZX& res, ZZX& p, const long& cnst, const long& degree) {
 	ZZX mul;
