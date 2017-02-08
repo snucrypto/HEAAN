@@ -28,11 +28,15 @@ public:
 	CKsi cksi;
 
 	ZZ p;
-	ZZ Bclean;
-	ZZ Bscale;
+	ZZ q;
+	ZZ Pq;
+
+//	ZZ Bclean;
+//	ZZ Bscale;
 	vector<ZZ> qi;
-	vector<ZZ> Bks;
-	vector<ZZ> Bmult;
+	vector<ZZ> Pqi;
+//	vector<ZZ> Bks;
+//	vector<ZZ> Bmult;
 
 	Params(long logn, long logl, long logp, long L, double sigma, double rho, long h);
 };

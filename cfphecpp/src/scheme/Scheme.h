@@ -21,9 +21,6 @@ public:
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 
-	ZZ getqi(long& level);
-	long getLogqi(long& level);
-
 	void trueValue(CZZ& m, ZZ& qi);
 	void rlweInstance(CZZX& c0, CZZX& c1);
 
@@ -42,48 +39,49 @@ public:
 //--------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
-	Cipher addNew(Cipher& cipher1, Cipher& cipher2);
-
 	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
+
+	Cipher addNew(Cipher& cipher1, Cipher& cipher2);
 	void addAndEqualNew(Cipher& cipher1, Cipher& cipher2);
 
-	Cipher addConstant(Cipher& cipher, ZZ& cnst);
-	Cipher addConstant(Cipher& cipher, CZZ& cnst);
-	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
+	Cipher addConst(Cipher& cipher, ZZ& cnst);
+	Cipher addConst(Cipher& cipher, CZZ& cnst);
+	void addConstAndEqual(Cipher& cipher, ZZ& cnst);
+
+	Cipher addConstNew(Cipher& cipher, ZZ& cnst);
+	Cipher addConstNew(Cipher& cipher, CZZ& cnst);
+	void addConstAndEqualNew(Cipher& cipher, ZZ& cnst);
 
 	Cipher sub(Cipher& cipher1, Cipher& cipher2);
-	Cipher subNew(Cipher& cipher1, Cipher& cipher2);
-
 	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
+
+	Cipher subNew(Cipher& cipher1, Cipher& cipher2);
 	void subAndEqualNew(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher mult(Cipher& cipher1, Cipher& cipher2);
 	void multAndEqual(Cipher& cipher1, Cipher& cipher2);
 
-	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
-	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
+	Cipher square(Cipher& cipher);
+	void squareAndEqual(Cipher& cipher);
 
-	Cipher multByConstant(Cipher& cipher, ZZ& cnst);
-	void multByConstantAndEqual(Cipher& cipher, ZZ& cnst);
+	Cipher multByConst(Cipher& cipher, ZZ& cnst);
+	Cipher multByConst(Cipher& cipher, CZZ& cnst);
+	void multByConstAndEqual(Cipher& cipher, ZZ& cnst);
+	void multByConstAndEqual(Cipher& cipher, CZZ& cnst);
 
-	Cipher multByConstant(Cipher& cipher, CZZ& cnst);
-	void multByConstantAndEqual(Cipher& cipher, CZZ& cnst);
+	Cipher multByConstNew(Cipher& cipher, ZZ& cnst);
+	Cipher multByConstNew(Cipher& cipher, CZZ& cnst);
+	void multByConstAndEqualNew(Cipher& cipher, ZZ& cnst);
+	void multByConstAndEqualNew(Cipher& cipher, CZZ& cnst);
 
 	Cipher multByMonomial(Cipher& cipher, const long& degree);
 	void multByMonomialAndEqual(Cipher& cipher, const long& degree);
 
+	Cipher multByMonomialNew(Cipher& cipher, const long& degree);
 	void multByMonomialAndEqualNew(Cipher& cipher, const long& degree);
 
 	Cipher leftShift(Cipher& cipher, long& bits);
 	void leftShiftAndEqual(Cipher& cipher, long& bits);
-
-	void leftShiftAndEqualNew(Cipher& cipher, long& bits);
-
-	Cipher square(Cipher& cipher);
-	void squareAndEqual(Cipher& cipher);
-
-	Cipher squareAndModSwitch(Cipher& cipher);
-	void squareModSwitchAndEqual(Cipher& cipher);
 
 	Cipher modSwitch(Cipher& cipher, long newLevel);
 	Cipher modSwitch(Cipher& cipher);
@@ -96,7 +94,17 @@ public:
 
 	void modEmbedAndEqual(Cipher& cipher, long newLevel);
 	void modEmbedAndEqual(Cipher& cipher);
+
+	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
+	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
+
+	Cipher squareAndModSwitch(Cipher& cipher);
+	void squareModSwitchAndEqual(Cipher& cipher);
 //-----------------------------------------
+
+	ZZ getqi(long& level);
+	ZZ getPqi(long& level);
+	long getLogqi(long& level);
 
 };
 

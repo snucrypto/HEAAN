@@ -131,7 +131,7 @@ void testPow() {
 	//----------------------------
 
 	long logN = 5;
-	long deg = 10;
+	long deg = 4;
 
 	vector<CZZ> m2k, d2k;
 	vector<Cipher> c2k;
@@ -350,15 +350,15 @@ void testFFTsimple() {
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft");
-//	cfft = algo.fft(cp, params.cksi);
-	cfft = algo.fft2(cp);
+	cfft = algo.fft(cp, params.cksi);
+//	cfft = algo.fft2(cp);
 	timeutils.stop("cfft");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfftinv");
-//	cfftinv = algo.fftInv(cfft, params.cksi);
-	cfftinv = algo.fftInv2(cfft);
+	cfftinv = algo.fftInv(cfft, params.cksi);
+//	cfftinv = algo.fftInv2(cfft);
 	timeutils.stop("cfftinv");
 	cout << "------------------" << endl;
 
