@@ -316,7 +316,7 @@ void testFFTsimple() {
 	long logn = 13;
 	long logl = 0;
 	long logp = 30;
-	long L = 11;
+	long L = 3;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -332,6 +332,7 @@ void testFFTsimple() {
 	long N = 1 << logN;
 
 	vector<CZZ> p, pfft, pfftinv, dfft, dfftinv;
+	vector<vector<CZZ>> dfftAll, dfftinvAll;
 	vector<Cipher> cp, cfft, cfftinv;
 
 
@@ -379,7 +380,11 @@ void testFFTsimple() {
 	timeutils.start("mul and decrypt fft");
 	for (long i = 0; i < cfftinv.size(); ++i) {
 		dfft.push_back(scheme.decrypt(cfft[i]));
+		vector<CZZ> tmpfft = scheme.decryptAll(cfft[i]);
+		dfftAll.push_back(tmpfft);
 		dfftinv.push_back(scheme.decrypt(cfftinv[i]));
+		vector<CZZ> tmpfftinv = scheme.decryptAll(cfftinv[i]);
+		dfftinvAll.push_back(tmpfftinv);
 	}
 	timeutils.stop("mul and decrypt fft");
 	cout << "------------------" << endl;
@@ -388,9 +393,11 @@ void testFFTsimple() {
 		cout << "----------------------" << endl;
 		cout << i << " step: pfft = " << pfft[i].toString() << endl;
 		cout << i << " step: dfft = " << dfft[i].toString() << endl;
+		cout << i << " step: dfftall = " << dfftAll[i][i].toString() << endl;
 		cout << "----------------------" << endl;
 		cout << i << " step: pfftinv = " << pfftinv[i].toString() << endl;
 		cout << i << " step: dfftinv = " << dfftinv[i].toString() << endl;
+		cout << i << " step: dfftinvall = " << dfftinvAll[i][i].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 

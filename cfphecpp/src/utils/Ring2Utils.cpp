@@ -172,16 +172,16 @@ void Ring2Utils::mulMonomial(CZZX& res, CZZX& p, const long& monomialDeg, const 
 	long shift = monomialDeg % (2 * degree);
 	CZZX tmpx = (shift < degree) ? p : -p;
 	shift %= degree;
-	long i, idx = 0;
+	long i;
 	CZZ tmp;
 	for (i = 0; i < shift; ++i) {
 		tmp = -coeff(tmpx, degree - shift + i);
-		SetCoeff(res, idx++, tmp);
+		SetCoeff(res, i, tmp);
 	}
 
 	for (i = shift; i < degree; ++i) {
 		tmp = coeff(tmpx,i - shift);
-		SetCoeff(res, idx++, tmp);
+		SetCoeff(res, i, tmp);
 	}
 
 
