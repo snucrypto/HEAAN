@@ -65,6 +65,20 @@ void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long&
 	addAndEqual(p1.ix, p2.ix, logMod, degree);
 }
 
+void Ring2Utils::addModAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		AddMod(c, coeff(p1, i), coeff(p2, i), mod);
+		SetCoeff(p1, i, c);
+	}
+}
+
+void Ring2Utils::addModAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
+	addModAndEqual(p1.rx, p2.rx, mod, degree);
+	addModAndEqual(p1.ix, p2.ix, mod, degree);
+}
+
+
 void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {
 	ZZX sub;
 	ZZ c;
@@ -125,6 +139,19 @@ void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& d
 void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree) {
 	subAndEqual(p1.rx, p2.rx, logMod, degree);
 	subAndEqual(p1.ix, p2.ix, logMod, degree);
+}
+
+void Ring2Utils::subModAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		AddMod(c, coeff(p1, i), -coeff(p2, i), mod);
+		SetCoeff(p1, i, c);
+	}
+}
+
+void Ring2Utils::subModAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
+	subModAndEqual(p1.rx, p2.rx, mod, degree);
+	subModAndEqual(p1.ix, p2.ix, mod, degree);
 }
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {

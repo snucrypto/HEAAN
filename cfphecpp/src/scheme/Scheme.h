@@ -44,12 +44,16 @@ public:
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
 	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
 
+	void addAndEqualNew(Cipher& cipher1, Cipher& cipher2);
+
 	Cipher addConstant(Cipher& cipher, ZZ& cnst);
 	Cipher addConstant(Cipher& cipher, CZZ& cnst);
 	void addConstantAndEqual(Cipher& cipher, ZZ& cnst);
 
 	Cipher sub(Cipher& cipher1, Cipher& cipher2);
 	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
+
+	void subAndEqualNew(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher mult(Cipher& cipher1, Cipher& cipher2);
 	void multAndEqual(Cipher& cipher1, Cipher& cipher2);

@@ -185,6 +185,15 @@ void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
 //	cipher1.mBnd += cipher2.mBnd;
 }
 
+void Scheme::addAndEqualNew(Cipher& cipher1, Cipher& cipher2) {
+	ZZ qi = getqi(cipher1.level);
+	Ring2Utils::addModAndEqual(cipher1.c0, cipher2.c0, qi, params.n);
+	Ring2Utils::addModAndEqual(cipher1.c1, cipher2.c1, qi, params.n);
+
+//	cipher1.eBnd += cipher2.eBnd;
+//	cipher1.mBnd += cipher2.mBnd;
+}
+
 Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	long logqi = getLogqi(cipher1.level);
 	CZZX c0 , c1;
@@ -204,6 +213,16 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	long logqi = getLogqi(cipher1.level);
 	Ring2Utils::subAndEqual(cipher1.c0, cipher2.c0, logqi, params.n);
 	Ring2Utils::subAndEqual(cipher1.c1, cipher2.c1, logqi, params.n);
+
+//	cipher1.eBnd += cipher2.eBnd;
+//	cipher1.mBnd += cipher2.mBnd;
+}
+
+
+void Scheme::subAndEqualNew(Cipher& cipher1, Cipher& cipher2) {
+	ZZ qi = getqi(cipher1.level);
+	Ring2Utils::subModAndEqual(cipher1.c0, cipher2.c0, qi, params.n);
+	Ring2Utils::subModAndEqual(cipher1.c1, cipher2.c1, qi, params.n);
 
 //	cipher1.eBnd += cipher2.eBnd;
 //	cipher1.mBnd += cipher2.mBnd;

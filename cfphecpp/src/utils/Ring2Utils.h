@@ -12,32 +12,44 @@ class Ring2Utils {
 	public:
 		static void add(ZZX& res, ZZX& p1, ZZX& p2, const long& degree);
 		static void add(CZZX& res, CZZX& p1, CZZX& p2, const long& degree);
+
 		static void add(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 		static void add(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 
 		static void addAndEqual(ZZX& p1, ZZX& p2, const long& degree);
 		static void addAndEqual(CZZX& p1, CZZX& p2, const long& degree);
+
 		static void addAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 		static void addAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 
+		static void addModAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree);
+		static void addModAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree);
+
 		static void sub(ZZX& res, ZZX& p1, ZZX& p2, const long& degree);
 		static void sub(CZZX& res, CZZX& p1, CZZX& p2, const long& degree);
+
 		static void sub(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 		static void sub(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 
 		static void subAndEqual(ZZX& p1, ZZX& p2, const long& degree);
 		static void subAndEqual(CZZX& p1, CZZX& p2, const long& degree);
+
 		static void subAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 		static void subAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 
+		static void subModAndEqual(ZZX& p1, ZZX& p2, ZZ& logMod, const long& degree);
+		static void subModAndEqual(CZZX& p1, CZZX& p2, ZZ& logMod, const long& degree);
+
 		static void mult(ZZX& res, ZZX& p1, ZZX& p2, const long& degree);
 		static void mult(CZZX& res, CZZX& p1, CZZX& p2, const long& degree);
+
 		static void mult(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 		static void mult(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 		static void mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 
 		static void multAndEqual(ZZX& p1, ZZX& p2, const long& degree);
 		static void multAndEqual(CZZX& p1, CZZX& p2, const long& degree);
+
 		static void multAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 		static void multAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 		static void multAndEqual(CZZX& p1, ZZX& p2, const long& logMod, const long& degree);
@@ -56,6 +68,7 @@ class Ring2Utils {
 		static void mulCnst(CZZX& res, CZZX& p, const long& cnst, const long& degree);
 		static void mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& degree);
 		static void mulCnst(CZZX& res, CZZX& p, const CZZ& cnst, const long& degree);
+
 		static void mulCnst(ZZX& res, ZZX& p, const ZZ& cnst, const long& logMod, const long& degree);
 		static void mulCnst(CZZX& res, CZZX& p, const CZZ& cnst, const long& logMod, const long& degree);
 
@@ -63,6 +76,7 @@ class Ring2Utils {
 		static void mulCnstAndEqual(CZZX& p, const long& cnst, const long& degree);
 		static void mulCnstAndEqual(ZZX& p, const ZZ& cnst, const long& degree);
 		static void mulCnstAndEqual(CZZX& p, const CZZ& cnst, const long& degree);
+
 		static void mulCnstAndEqual(ZZX& p, const ZZ& cnst, const long& logMod, const long& degree);
 		static void mulCnstAndEqual(CZZX& p, const CZZ& cnst, const long& logMod, const long& degree);
 

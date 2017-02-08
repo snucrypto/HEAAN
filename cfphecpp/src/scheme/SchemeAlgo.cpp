@@ -146,8 +146,8 @@ vector<Cipher> SchemeAlgo::fftRaw2(vector<Cipher>& ciphers, const bool& isForwar
 
 	for (i = 0; i < csizeh; ++i) {
 		Cipher sum = y1[i];
-		scheme.addAndEqual(sum, y2[i]);
-		scheme.subAndEqual(y1[i], y2[i]);
+		scheme.addAndEqualNew(sum, y2[i]);
+		scheme.subAndEqualNew(y1[i], y2[i]);
 		res.push_back(sum);
 	}
 
