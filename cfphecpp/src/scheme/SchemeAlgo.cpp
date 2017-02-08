@@ -128,7 +128,7 @@ vector<Cipher> SchemeAlgo::fftRaw2(vector<Cipher>& ciphers, const bool& isForwar
 	long i;
 	long csizeh = csize >> 1;
 
-	vector<Cipher> res, tmp, sub1, sub2;
+	vector<Cipher> res, sub1, sub2;
 
 	for (i = 0; i < csize; i = i+2) {
 		sub1.push_back(ciphers[i]);
@@ -145,14 +145,14 @@ vector<Cipher> SchemeAlgo::fftRaw2(vector<Cipher>& ciphers, const bool& isForwar
 	}
 
 	for (i = 0; i < csizeh; ++i) {
-		Cipher sum = scheme.add(y1[i], y2[i]);
-		Cipher diff = scheme.sub(y1[i], y2[i]);
+		Cipher sum = y1[i];
+		scheme.addAndEqual(sum, y2[i]);
+		scheme.subAndEqual(y1[i], y2[i]);
 		res.push_back(sum);
-		tmp.push_back(diff);
 	}
 
 	for (i = 0; i < csizeh; ++i) {
-		res.push_back(tmp[i]);
+		res.push_back(y1[i]);
 	}
 
 	return res;

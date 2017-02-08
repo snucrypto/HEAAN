@@ -38,6 +38,33 @@ void Ring2Utils::add(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const lo
 	add(res.ix, p1.ix, p2.ix, logMod, degree);
 }
 
+void Ring2Utils::addAndEqual(ZZX& p1, ZZX& p2, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p1, i) + coeff(p2, i);
+		SetCoeff(p1, i, c);
+	}
+}
+
+void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, const long& degree) {
+	addAndEqual(p1.rx, p2.rx, degree);
+	addAndEqual(p1.rx, p2.rx, degree);
+}
+
+void Ring2Utils::addAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p1, i) + coeff(p2, i);
+		truncate(c, logMod);
+		SetCoeff(p1, i, c);
+	}
+}
+
+void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree) {
+	addAndEqual(p1.rx, p2.rx, logMod, degree);
+	addAndEqual(p1.ix, p2.ix, logMod, degree);
+}
+
 void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {
 	ZZX sub;
 	ZZ c;
@@ -71,6 +98,33 @@ void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long&
 void Ring2Utils::sub(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const long& degree) {
 	sub(res.rx, p1.rx, p2.rx, logMod, degree);
 	sub(res.ix, p1.ix, p2.ix, logMod, degree);
+}
+
+void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p1, i) - coeff(p2, i);
+		SetCoeff(p1, i, c);
+	}
+}
+
+void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, const long& degree) {
+	subAndEqual(p1.rx, p2.rx, degree);
+	subAndEqual(p1.ix, p2.ix, degree);
+}
+
+void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p1, i) - coeff(p2, i);
+		truncate(c, logMod);
+		SetCoeff(p1, i, c);
+	}
+}
+
+void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree) {
+	subAndEqual(p1.rx, p2.rx, logMod, degree);
+	subAndEqual(p1.ix, p2.ix, logMod, degree);
 }
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, const long& degree) {
@@ -141,6 +195,70 @@ void Ring2Utils::mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const lo
 	mult(res.ix, p1.ix, p2, logMod, degree);
 }
 
+void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, const long& degree) {
+	ZZ tmp;
+	ZZX p = p1 * p2;
+
+	for (long i = 0; i < degree; ++i) {
+		tmp = coeff(p, i) - coeff(p, i + degree);
+		SetCoeff(p1, i, tmp);
+	}
+}
+
+void Ring2Utils::multAndEqual(CZZX& p1, CZZX& p2, const long& degree) {
+	ZZX tmp1, tmp2, tmp3, tmp4;
+
+	add(tmp1, p1.rx, p1.ix, degree);
+	mult(tmp2, tmp1, p2.rx, degree);
+	add(tmp3, p2.rx, p2.ix, degree);
+	mult(tmp4, tmp3, p1.ix, degree);
+
+	sub(tmp1, p2.ix, p2.rx, degree);
+	multAndEqual(tmp1, p1.rx, degree);
+
+	sub(p1.rx, tmp2, tmp4, degree);
+	add(p1.ix, tmp2, tmp1, degree);
+}
+
+void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
+	ZZ tmp;
+	ZZX p = p1 * p2;
+
+	for (long i = 0; i < deg(p); ++i) {
+		tmp = coeff(p, i);
+		truncate(tmp, logMod);
+		SetCoeff(p, i, tmp);
+	}
+
+	p.normalize();
+
+	for (long i = 0; i < degree; ++i) {
+		tmp = coeff(p, i) - coeff(p, i + degree);
+		truncate(tmp, logMod);
+		SetCoeff(p1, i, tmp);
+	}
+}
+
+void Ring2Utils::multAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree) {
+	ZZX tmp1, tmp2, tmp3, tmp4;
+
+	add(tmp1, p1.rx, p1.ix, logMod, degree);
+	mult(tmp2, tmp1, p2.rx, logMod, degree);
+	add(tmp3, p2.rx, p2.ix, logMod, degree);
+	mult(tmp4, tmp3, p1.ix, logMod, degree);
+
+	sub(tmp1, p2.ix, p2.rx, logMod, degree);
+	multAndEqual(tmp1, p1.rx, logMod, degree);
+
+	sub(p1.rx, tmp2, tmp4, logMod, degree);
+	add(p2.ix, tmp2, tmp1, logMod, degree);
+}
+
+void Ring2Utils::multAndEqual(CZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
+	multAndEqual(p1.rx, p2, logMod, degree);
+	multAndEqual(p1.ix, p2, logMod, degree);
+}
+
 void Ring2Utils::square(CZZX& res, CZZX& p, const long& logMod, const long& degree) {
 	ZZX tmp1, tmp2, tmp3, tmp4;
 
@@ -151,17 +269,33 @@ void Ring2Utils::square(CZZX& res, CZZX& p, const long& logMod, const long& degr
 	leftShift(res.ix, tmp2, 1, logMod, degree);
 }
 
+void Ring2Utils::squareAndEqual(CZZX& p, const long& logMod, const long& degree) {
+	ZZX tmp1, tmp2, tmp3, tmp4;
+
+	add(tmp1, p.rx, p.ix, logMod, degree);
+	sub(tmp2, p.rx, p.ix, logMod, degree);
+	mult(p.rx, tmp1, tmp2, logMod, degree);
+	mult(tmp2, p.rx, p.ix, logMod, degree);
+	leftShift(p.ix, tmp2, 1, logMod, degree);
+}
+
 void Ring2Utils::mulMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree) {
 	long shift = monomialDeg % (2 * degree);
+	if(shift == 0) {
+		res = p;
+	}
 	ZZX tmpx = (shift < degree) ? p : -p;
 	shift %= degree;
 
+	ZZ tmp;
 	for (long i = 0; i < shift; ++i) {
-		SetCoeff(res, i, -coeff(tmpx, degree - shift + i));
+		tmp = -coeff(tmpx, degree - shift + i);
+		SetCoeff(res, i, tmp);
 	}
 
 	for (long i = shift; i < degree; ++i) {
-		SetCoeff(res, i, coeff(tmpx, i - shift));
+		tmp = coeff(tmpx, i - shift);
+		SetCoeff(res, i, tmp);
 	}
 }
 
@@ -181,6 +315,44 @@ void Ring2Utils::mulMonomial(CZZX& res, CZZX& p, const long& monomialDeg, const 
 	for (long i = shift; i < degree; ++i) {
 		tmp = coeff(tmpx,i - shift);
 		SetCoeff(res, i, tmp);
+	}
+}
+
+void Ring2Utils::mulMonomialAndEqual(ZZX& p, const long& monomialDeg, const long& degree) {
+	long shift = monomialDeg % (2 * degree);
+	if(shift == 0) {
+		return;
+	}
+	ZZX tmpx = (shift < degree) ? p : -p;
+	shift %= degree;
+	ZZ tmp;
+	for (long i = 0; i < shift; ++i) {
+		tmp = -coeff(tmpx, degree - shift + i);
+		SetCoeff(p, i, tmp);
+	}
+
+	for (long i = shift; i < degree; ++i) {
+		tmp = coeff(tmpx, i - shift);
+		SetCoeff(p, i, tmp);
+	}
+}
+
+void Ring2Utils::mulMonomialAndEqual(CZZX& p, const long& monomialDeg, const long& degree) {
+	long shift = monomialDeg % (2 * degree);
+	if(shift == 0) {
+		return;
+	}
+	CZZX tmpx = (shift < degree) ? p : -p;
+	shift %= degree;
+	CZZ tmp;
+	for (long i = 0; i < shift; ++i) {
+		tmp = -coeff(tmpx, degree - shift + i);
+		SetCoeff(p, i, tmp);
+	}
+
+	for (long i = shift; i < degree; ++i) {
+		tmp = coeff(tmpx,i - shift);
+		SetCoeff(p, i, tmp);
 	}
 }
 
@@ -265,6 +437,71 @@ void Ring2Utils::mulCnst(CZZX& res, CZZX& p, const CZZ& cnst, const long& logMod
 	add(res.ix, tmp2, tmp3, logMod, degree);
 }
 
+void Ring2Utils::mulCnstAndEqual(ZZX& p, const long& cnst, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) * cnst;
+		SetCoeff(p, i, c);
+	}
+}
+
+void Ring2Utils::mulCnstAndEqual(CZZX& p, const long& cnst, const long& degree) {
+	CZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) * cnst;
+		SetCoeff(p, i, c);
+	}
+}
+
+void Ring2Utils::mulCnstAndEqual(ZZX& p, const ZZ& cnst, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) * cnst;
+		SetCoeff(p, i, c);
+	}
+}
+
+void Ring2Utils::mulCnstAndEqual(CZZX& p, const CZZ& cnst, const long& degree) {
+	ZZX tmp1, tmp2, tmp3, tmp4;
+
+	add(tmp1, p.rx, p.ix, degree);
+	mulCnst(tmp2, tmp1, cnst.r, degree);
+
+	ZZ tmp = cnst.r + cnst.i;
+	mulCnst(tmp4, p.ix, tmp, degree);
+
+	tmp = cnst.i - cnst.r;
+	mulCnst(tmp3, p.rx, tmp, degree);
+
+	sub(p.rx, tmp2, tmp4, degree);
+	add(p.ix, tmp2, tmp3, degree);
+}
+
+void Ring2Utils::mulCnstAndEqual(ZZX& p, const ZZ& cnst, const long& logMod, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) * cnst;
+		truncate(c, logMod);
+		SetCoeff(p, i, c);
+	}
+}
+
+void Ring2Utils::mulCnstAndEqual(CZZX& p, const CZZ& cnst, const long& logMod, const long& degree) {
+	ZZX tmp1, tmp2, tmp3, tmp4;
+
+	add(tmp1, p.rx, p.ix, logMod, degree);
+	mulCnst(tmp2, tmp1, cnst.r, logMod, degree);
+
+	ZZ tmp = cnst.r + cnst.i;
+	mulCnst(tmp4, p.ix, tmp, logMod, degree);
+
+	tmp = cnst.i - cnst.r;
+	mulCnst(tmp3, p.rx, tmp, logMod, degree);
+
+	sub(p.rx, tmp2, tmp4, logMod, degree);
+	add(p.ix, tmp2, tmp3, logMod, degree);
+}
+
 void Ring2Utils::leftShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree) {
 	ZZX mul;
 	ZZ c;
@@ -283,6 +520,20 @@ void Ring2Utils::leftShift(CZZX& res, CZZX& p, const long& bits, const long& log
 	leftShift(res.ix, p.ix, bits, logMod, degree);
 }
 
+void Ring2Utils::leftShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) << bits;
+		truncate(c, logMod);
+		SetCoeff(p, i, c);
+	}
+}
+
+void Ring2Utils::leftShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree) {
+	leftShiftAndEqual(p.rx, bits, logMod, degree);
+	leftShiftAndEqual(p.ix, bits, logMod, degree);
+}
+
 void Ring2Utils::rightShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree) {
 	ZZX mul;
 	ZZ c;
@@ -299,6 +550,20 @@ void Ring2Utils::rightShift(ZZX& res, ZZX& p, const long& bits, const long& logM
 void Ring2Utils::rightShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree) {
 	rightShift(res.rx, p.rx, bits, logMod, degree);
 	rightShift(res.ix, p.ix, bits, logMod, degree);
+}
+
+void Ring2Utils::rightShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree) {
+	ZZ c;
+	for (long i = 0; i < degree; ++i) {
+		c = coeff(p, i) >> bits;
+		truncate(c, logMod);
+		SetCoeff(p, i, c);
+	}
+}
+
+void Ring2Utils::rightShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree) {
+	rightShiftAndEqual(p.rx, bits, logMod, degree);
+	rightShiftAndEqual(p.ix, bits, logMod, degree);
 }
 
 void Ring2Utils::truncate(ZZ& c, const long& logMod) {
