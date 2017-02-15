@@ -59,10 +59,14 @@ public:
 	void subAndEqualNew(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher mult(Cipher& cipher1, Cipher& cipher2);
+	Cipher multNew(Cipher& cipher1, Cipher& cipher2);
 	void multAndEqual(Cipher& cipher1, Cipher& cipher2);
+	void multAndEqualNew(Cipher& cipher1, Cipher& cipher2);
 
 	Cipher square(Cipher& cipher);
+	Cipher squareNew(Cipher& cipher);
 	void squareAndEqual(Cipher& cipher);
+	void squareAndEqualNew(Cipher& cipher);
 
 	Cipher multByConst(Cipher& cipher, ZZ& cnst);
 	Cipher multByConst(Cipher& cipher, CZZ& cnst);

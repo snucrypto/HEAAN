@@ -26,9 +26,10 @@ Params::Params(long logn, long logl, long logp, long L, double sigma, double rho
 
 	for (long i = 0; i < L; ++i) {
 		ZZ ql, Pql;
-		power(ql, 2, logl + logp * (i + 1));
+		long logql = logl + logp * (i + 1);
+		power(ql, 2, logql);
 		qi.push_back(ql);
-		power(Pql, 2, 2 * logl + logp * (i + 1 + L));
+		power(Pql, 2, logql + logq);
 		Pqi.push_back(Pql);
 //		ZZ Bkstemp;
 //		Bkstemp = 8 << (logp * (i+1));

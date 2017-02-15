@@ -262,6 +262,41 @@ void Ring2Utils::mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const lo
 	mult(res.ix, p1.ix, p2, logMod, degree);
 }
 
+void Ring2Utils::multNew(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree) {
+	ZZ tmp1, tmp2;
+	res.SetLength(degree);
+	ZZX p = p1 * p2;
+
+	res.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		tmp1 = coeff(p, i);
+		tmp2 = coeff(p, i + degree);
+		truncate(tmp1, logMod);
+		truncate(tmp2, logMod);
+		AddMod(res.rep[i], tmp1, -tmp2, mod);
+	}
+}
+
+void Ring2Utils::multNew(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, ZZ& mod, const long& degree) {
+	ZZX tmp1, tmp2, tmp3;
+
+	addNew(tmp1, p1.rx, p1.ix, mod, degree);
+	multAndEqualNew(tmp1, p2.rx, logMod, mod, degree);
+
+	addNew(tmp2, p2.rx, p2.ix, mod, degree);
+	multAndEqualNew(tmp2, p1.ix, logMod, mod, degree);
+	subNew(res.rx, tmp1, tmp2, mod, degree);
+
+	subNew(tmp2, p2.ix, p2.rx, mod, degree);
+	multAndEqualNew(tmp2, p1.rx, logMod, mod, degree);
+	addNew(res.ix, tmp1, tmp2, mod, degree);
+}
+
+void Ring2Utils::multNew(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree) {
+	multNew(res.rx, p1.rx, p2, logMod, mod, degree);
+	multNew(res.ix, p1.ix, p2, logMod, mod, degree);
+}
+
 void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, const long& degree) {
 	ZZ tmp;
 	ZZX p = p1 * p2;
@@ -328,6 +363,41 @@ void Ring2Utils::multAndEqual(CZZX& p1, ZZX& p2, const long& logMod, const long&
 	multAndEqual(p1.ix, p2, logMod, degree);
 }
 
+void Ring2Utils::multAndEqualNew(ZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree) {
+	ZZ tmp1, tmp2;
+	ZZX p = p1 * p2;
+
+	p1.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		tmp1 = coeff(p, i);
+		tmp2 = coeff(p, i + degree);
+		truncate(tmp1, logMod);
+		truncate(tmp2, logMod);
+		AddMod(p1.rep[i], tmp1, -tmp2, mod);
+	}
+}
+
+void Ring2Utils::multAndEqualNew(CZZX& p1, CZZX& p2, const long& logMod, ZZ& mod, const long& degree) {
+	ZZX tmp1, tmp2, tmp3;
+
+	addNew(tmp1, p1.rx, p1.ix, mod, degree);
+	multAndEqualNew(tmp1, p2.rx, logMod, mod, degree);
+
+	addNew(tmp2, p2.rx, p2.ix, mod, degree);
+	multAndEqualNew(tmp2, p1.ix, logMod, mod, degree);
+
+	subNew(tmp3, p2.ix, p2.rx, mod, degree);
+	multAndEqualNew(tmp3, p1.rx, logMod, mod, degree);
+
+	subNew(p1.rx, tmp1, tmp2, mod, degree);
+	addNew(p2.ix, tmp1, tmp3, mod, degree);
+}
+
+void Ring2Utils::multAndEqualNew(CZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree) {
+	multAndEqualNew(p1.rx, p2, logMod, mod, degree);
+	multAndEqualNew(p1.ix, p2, logMod, mod, degree);
+}
+
 void Ring2Utils::square(CZZX& res, CZZX& p, const long& logMod, const long& degree) {
 	ZZX tmp1, tmp2;
 
@@ -338,6 +408,15 @@ void Ring2Utils::square(CZZX& res, CZZX& p, const long& logMod, const long& degr
 	leftShift(res.ix, tmp2, 1, logMod, degree);
 }
 
+void Ring2Utils::squareNew(CZZX& res, CZZX& p, const long& logMod, ZZ& mod, const long& degree) {
+	ZZX tmp1, tmp2;
+
+	addNew(tmp1, p.rx, p.ix, mod, degree);
+	subNew(tmp2, p.rx, p.ix, mod, degree);
+	multNew(res.rx, tmp1, tmp2, logMod, mod, degree);
+	multNew(tmp2, p.rx, p.ix, logMod, mod, degree);
+	leftShift(res.ix, tmp2, 1, logMod, degree);
+}
 void Ring2Utils::squareAndEqual(CZZX& p, const long& logMod, const long& degree) {
 	ZZX tmp1, tmp2;
 
@@ -346,6 +425,17 @@ void Ring2Utils::squareAndEqual(CZZX& p, const long& logMod, const long& degree)
 
 	mult(p.rx, tmp1, tmp2, logMod, degree);
 	multAndEqual(p.ix, p.rx, logMod, degree);
+	leftShiftAndEqual(p.ix, 1, logMod, degree);
+}
+
+void Ring2Utils::squareAndEqualNew(CZZX& p, const long& logMod, ZZ& mod, const long& degree) {
+	ZZX tmp1, tmp2;
+
+	addNew(tmp1, p.rx, p.ix, mod, degree);
+	subNew(tmp2, p.rx, p.ix, mod, degree);
+
+	multNew(p.rx, tmp1, tmp2, logMod, mod, degree);
+	multAndEqualNew(p.ix, p.rx, logMod, mod, degree);
 	leftShiftAndEqual(p.ix, 1, logMod, degree);
 }
 

@@ -53,6 +53,10 @@ class Ring2Utils {
 		static void mult(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 		static void mult(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 
+		static void multNew(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree);
+		static void multNew(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, ZZ& mod, const long& degree);
+		static void multNew(CZZX& res, CZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree);
+
 		static void multAndEqual(ZZX& p1, ZZX& p2, const long& degree);
 		static void multAndEqual(CZZX& p1, CZZX& p2, const long& degree);
 
@@ -60,9 +64,15 @@ class Ring2Utils {
 		static void multAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long& degree);
 		static void multAndEqual(CZZX& p1, ZZX& p2, const long& logMod, const long& degree);
 
+		static void multAndEqualNew(ZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree);
+		static void multAndEqualNew(CZZX& p1, CZZX& p2, const long& logMod, ZZ& mod, const long& degree);
+		static void multAndEqualNew(CZZX& p1, ZZX& p2, const long& logMod, ZZ& mod, const long& degree);
+
 		static void square(CZZX& res, CZZX& p, const long& logMod, const long& degree);
+		static void squareNew(CZZX& res, CZZX& p, const long& logMod, ZZ& mod, const long& degree);
 
 		static void squareAndEqual(CZZX& p, const long& logMod, const long& degree);
+		static void squareAndEqualNew(CZZX& p, const long& logMod, ZZ& mod, const long& degree);
 
 		static void multByMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree);
 		static void multByMonomial(CZZX& res, CZZX& p, const long& monomialDeg, const long& degree);

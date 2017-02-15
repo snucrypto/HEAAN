@@ -10,7 +10,7 @@
 void SchemeAlgo::powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg) {
 	c2k.push_back(c);
 	for (long i = 1; i < deg + 1; ++i) {
-		Cipher c2 = scheme.square(c2k[i - 1]);
+		Cipher c2 = scheme.squareNew(c2k[i - 1]);
 		scheme.modSwitchAndEqual(c2);
 		c2k.push_back(c2);
 	}
@@ -24,7 +24,7 @@ void SchemeAlgo::prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const l
 		idx = 0;
 		size = cs2k[i-1].size();
 		while(idx < size) {
-			Cipher c2 = scheme.mult(cs2k[i - 1][idx], cs2k[i - 1][idx + 1]);
+			Cipher c2 = scheme.multNew(cs2k[i - 1][idx], cs2k[i - 1][idx + 1]);
 			scheme.modSwitchAndEqual(c2);
 			c2k.push_back(c2);
 			idx += 2;
