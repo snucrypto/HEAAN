@@ -793,6 +793,23 @@ void Ring2Utils::rightShift(CZZX& res, CZZX& p, const long& bits, const long& lo
 	rightShift(res.ix, p.ix, bits, logMod, degree);
 }
 
+void Ring2Utils::rightShift(ZZX& res, ZZX& p, const long& bits, const long& degree) {
+	ZZX mul;
+	ZZ c;
+	mul.SetLength(degree);
+	p.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		mul.rep[i] = p.rep[i] >> bits;
+	}
+	mul.normalize();
+	res = mul;
+}
+
+void Ring2Utils::rightShift(CZZX& res, CZZX& p, const long& bits, const long& degree) {
+	rightShift(res.rx, p.rx, bits, degree);
+	rightShift(res.ix, p.ix, bits, degree);
+}
+
 void Ring2Utils::rightShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree) {
 	ZZ c;
 	for (long i = 0; i < degree; ++i) {
@@ -806,6 +823,47 @@ void Ring2Utils::rightShiftAndEqual(CZZX& p, const long& bits, const long& logMo
 	rightShiftAndEqual(p.rx, bits, logMod, degree);
 	rightShiftAndEqual(p.ix, bits, logMod, degree);
 }
+
+void Ring2Utils::rightShiftAndEqual(ZZX& p, const long& bits, const long& degree) {
+	p.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		p.rep[i] >>= bits;
+	}
+}
+
+void Ring2Utils::rightShiftAndEqual(CZZX& p, const long& bits, const long& degree) {
+	rightShiftAndEqual(p.rx, bits, degree);
+	rightShiftAndEqual(p.ix, bits, degree);
+}
+
+void Ring2Utils::truncate(ZZX& res, ZZX& p, const long& logMod, const long& degree) {
+	res = p;
+	res.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		truncate(res.rep[i], logMod);
+	}
+	res.normalize();
+}
+
+void Ring2Utils::truncate(CZZX& res,  CZZX& p, const long& logMod, const long& degree) {
+	truncate(res.rx, p.rx, logMod, degree);
+	truncate(res.ix, p.ix, logMod, degree);
+}
+
+void Ring2Utils::truncateAndEqual(ZZX& p, const long& logMod, const long& degree) {
+	p.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		truncate(p.rep[i], logMod);
+	}
+	p.normalize();
+}
+
+void Ring2Utils::truncateAndEqual(CZZX& p, const long& logMod, const long& degree) {
+	truncateAndEqual(p.rx, logMod, degree);
+	truncateAndEqual(p.ix, logMod, degree);
+}
+
+//---------------------------------
 
 void Ring2Utils::truncate(ZZ& c, const long& logMod) {
 	c = sign(c) * trunc_ZZ(c, logMod);

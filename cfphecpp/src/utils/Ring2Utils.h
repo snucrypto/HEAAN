@@ -118,12 +118,25 @@ class Ring2Utils {
 		static void leftShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree);
 		static void leftShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree);
 
+		static void rightShift(ZZX& res, ZZX& p, const long& bits, const long& degree);
+		static void rightShift(CZZX& res, CZZX& p, const long& bits, const long& degree);
+
 		static void rightShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree);
 		static void rightShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree);
+
+		static void rightShiftAndEqual(ZZX& p, const long& bits, const long& degree);
+		static void rightShiftAndEqual(CZZX& p, const long& bits, const long& degree);
 
 		static void rightShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree);
 		static void rightShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree);
 
+		static void truncate(ZZX& res, ZZX& p, const long& logMod, const long& degree);
+		static void truncate(CZZX& res, CZZX& p, const long& logMod, const long& degree);
+
+		static void truncateAndEqual(ZZX& p, const long& logMod, const long& degree);
+		static void truncateAndEqual(CZZX& p, const long& logMod, const long& degree);
+
+		//-------------------------
 		static void truncate(ZZ& res, const long& logMod);
 		static void truncate(CZZ& res, const long& logMod);
 };

@@ -102,6 +102,9 @@ public:
 	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
 	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
 
+	Cipher multAndModSwitchNew(Cipher& cipher1, Cipher& cipher2);
+	void multModSwitchAndEqualNew(Cipher& cipher1, Cipher& cipher2);
+
 	Cipher squareAndModSwitch(Cipher& cipher);
 	void squareModSwitchAndEqual(Cipher& cipher);
 //-----------------------------------------

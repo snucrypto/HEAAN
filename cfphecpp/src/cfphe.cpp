@@ -566,7 +566,7 @@ void testFFTfull() {
 	cout << "------------------" << endl;
 	timeutils.start("mul fft");
 	for (long i = 0; i < N; ++i) {
-		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
+		scheme.multModSwitchAndEqualNew(cfft1[i], cfft2[i]);
 	}
 	timeutils.stop("mul fft");
 	cout << "------------------" << endl;
