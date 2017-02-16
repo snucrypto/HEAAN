@@ -15,13 +15,13 @@ using namespace NTL;
 void Scheme::rlweInstance(CZZX& c0, CZZX& c1) {
 	CZZX v, e;
 	NumUtils::sampleZO(v, params.n, params.rho);
-	Ring2Utils::mult(c0, v, publicKey.b, params.logq, params.n);
+	Ring2Utils::multNew(c0, v, publicKey.b, params.logq, params.q, params.n);
 	NumUtils::sampleGauss(e, params.n, params.sigma);
-	Ring2Utils::add(c0, e, c0, params.logq, params.n);
+	Ring2Utils::addNew(c0, e, c0, params.q, params.n);
 
-	Ring2Utils::mult(c1, v, publicKey.a, params.logq, params.n);
+	Ring2Utils::multNew(c1, v, publicKey.a, params.logq, params.q, params.n);
 	NumUtils::sampleGauss(e, params.n, params.sigma);
-	Ring2Utils::add(c1, e, c1, params.logq, params.n);
+	Ring2Utils::addNew(c1, e, c1, params.q, params.n);
 }
 
 void Scheme::trueValue(CZZ& m, ZZ& qi) {
@@ -39,7 +39,6 @@ Cipher Scheme::encrypt(CZZ& m, ZZ& nu) {
 	CZZ tmp = coeff(c0, 0) + m;
 	Ring2Utils::truncate(tmp, params.logq);
 	SetCoeff(c0, 0, tmp);
-	c0.normalize();
 //	Cipher cipher(c0, c1, 1, params.Bclean, nu);
 	Cipher cipher(c0, c1, 1);
 	return cipher;
@@ -52,8 +51,8 @@ CZZ Scheme::decrypt(Cipher& cipher) {
 	CZZX poly;
 	CZZ m;
 
-	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logqi, params.n);
-	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
+	Ring2Utils::multNew(poly, cipher.c1, secretKey.s, logqi, qi, params.n);
+	Ring2Utils::addNew(poly, poly, cipher.c0, qi, params.n);
 	GetCoeff(m, poly, 0);
 	trueValue(m, qi);
 	return m;
@@ -88,7 +87,7 @@ Cipher Scheme::encrypt(long& logSlots, vector<CZZ>& mvec, ZZ& nu) {
 	rlweInstance(c0, c1);
 
 	CZZX f = encode(logSlots, mvec);
-	Ring2Utils::add(c0, f, c0, params.logq, params.n);
+	Ring2Utils::addNew(c0, f, c0, params.q, params.n);
 
 //	Cipher cipher(c0, c1, 1, params.Bclean, nu);
 	Cipher cipher(c0, c1, 1);
@@ -106,8 +105,8 @@ vector<CZZ> Scheme::decrypt(long& logSlots, Cipher& cipher) {
 	long slots = (1 << logSlots);
 	long gap = (params.n >> logSlots);
 
-	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logqi, params.n);
-	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
+	Ring2Utils::multNew(poly, cipher.c1, secretKey.s, logqi, qi, params.n);
+	Ring2Utils::addNew(poly, poly, cipher.c0, qi, params.n);
 
 	for (long i = 0; i < slots; ++i) {
 		c = coeff(poly, idx);
@@ -148,8 +147,8 @@ vector<CZZ> Scheme::decryptAll(Cipher& cipher) {
 	vector<CZZ> fft;
 	CZZX poly;
 	CZZ c;
-	Ring2Utils::mult(poly, cipher.c1, secretKey.s, logqi, params.n);
-	Ring2Utils::add(poly, poly, cipher.c0, logqi, params.n);
+	Ring2Utils::multNew(poly, cipher.c1, secretKey.s, logqi, qi, params.n);
+	Ring2Utils::addNew(poly, poly, cipher.c0, qi, params.n);
 	for (long i = 0; i < params.n; ++i) {
 		c = coeff(poly, i);
 		trueValue(c, qi);
@@ -160,6 +159,8 @@ vector<CZZ> Scheme::decryptAll(Cipher& cipher) {
 	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
 	return res;
 }
+
+//-----------------------------
 
 Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	long logqi = getLogqi(cipher1.level);
@@ -821,6 +822,8 @@ void Scheme::squareModSwitchAndEqual(Cipher& cipher) {
 	squareAndEqual(cipher);
 	modSwitchAndEqual(cipher);
 }
+
+//----------------------------------
 
 ZZ Scheme::getqi(long& level) {
 	return params.qi[params.L - level];
