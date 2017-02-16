@@ -762,11 +762,10 @@ void Ring2Utils::leftShift(CZZX& res, CZZX& p, const long& bits, const long& log
 }
 
 void Ring2Utils::leftShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree) {
-	ZZ c;
+	p.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
-		c = coeff(p, i) << bits;
-		truncate(c, logMod);
-		SetCoeff(p, i, c);
+		truncate(p.rep[i], logMod - bits);
+		p.rep[i] <<= bits;
 	}
 }
 

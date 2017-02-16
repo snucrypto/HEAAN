@@ -128,7 +128,7 @@ void testPow() {
 	//----------------------------
 
 	long logN = 5;
-	long deg = 4;
+	long deg = 10;
 
 	vector<CZZ> m2k, d2k;
 	vector<Cipher> c2k;
@@ -170,10 +170,10 @@ void testProd2() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 1;
-	long logp = 30;
-	long L = 5;
+	long logn = 15;
+	long logl = 3;
+	long logp = 56;
+	long L = 11;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -184,7 +184,7 @@ void testProd2() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long deg = 4;
+	long deg = 6;
 	long size = 1 << deg;
 	long logN = 5;
 

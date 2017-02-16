@@ -8,7 +8,7 @@
 #include "Params.h"
 
 void SchemeAlgo::powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg) {
-	c2k.reserve(deg+1);
+	c2k.reserve(deg + 1);
 	c2k.push_back(c);
 	for (long i = 1; i < deg + 1; ++i) {
 		Cipher c2 = scheme.squareNew(c2k[i - 1]);
@@ -18,7 +18,7 @@ void SchemeAlgo::powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg) {
 }
 
 void SchemeAlgo::prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const long& deg) {
-	cs2k.reserve(deg+1);
+	cs2k.reserve(deg + 1);
 	cs2k.push_back(cs);
 	long size, idx;
 	for (long i = 1; i < deg + 1; ++i) {
@@ -40,18 +40,18 @@ void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, co
 	v2k.reserve(r-1);
 	c2k.push_back(c);
 
-	Cipher cp = scheme.addConstNew(c, scheme.params.p);
-	Cipher v = scheme.modEmbed(cp, cp.level + 1);
-	v2k.push_back(v);
+	Cipher tmp = scheme.addConstNew(c, scheme.params.p);
+	scheme.modEmbedAndEqual(tmp);
+	v2k.push_back(tmp);
 
 	for (long i = 1; i < r-1; ++i) {
-		Cipher c2 = scheme.squareNew(c2k[i - 1]);
-		Cipher cs = scheme.modSwitch(c2, i + 1);
-		c2k.push_back(cs);
-		Cipher c2p = scheme.addConstNew(cs, scheme.params.p);
-		Cipher v2 = scheme.multNew(v2k[i-1], c2p);
-		Cipher vs = scheme.modSwitch(v2, i + 2);
-		v2k.push_back(vs);
+		tmp = scheme.squareNew(c2k[i - 1]);
+		scheme.modSwitchAndEqual(tmp);
+		c2k.push_back(tmp);
+		scheme.addConstAndEqualNew(tmp, scheme.params.p);
+		scheme.multAndEqualNew(tmp, v2k[i-1]);
+		scheme.modSwitchAndEqual(tmp, i + 2);
+		v2k.push_back(tmp);
 	}
 }
 
