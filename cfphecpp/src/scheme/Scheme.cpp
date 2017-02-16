@@ -732,12 +732,12 @@ void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	long logdf = params.logp * (newLevel-cipher.level);
 	CZZX c0, c1;
-
+	CZZ tmp;
 	for (long i = 0; i < params.n; ++i) {
-		CZZ shift0 = coeff(cipher.c0, i) >> logdf;
-		SetCoeff(c0, i, shift0);
-		CZZ shift1 = coeff(cipher.c1, i) >> logdf;
-		SetCoeff(c1, i, shift1);
+		tmp = coeff(cipher.c0, i) >> logdf;
+		SetCoeff(c0, i, tmp);
+		tmp = coeff(cipher.c1, i) >> logdf;
+		SetCoeff(c1, i, tmp);
 	}
 	c0.normalize();
 	c1.normalize();

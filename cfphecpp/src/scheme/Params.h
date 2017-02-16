@@ -30,11 +30,11 @@ public:
 	ZZ p;
 	ZZ q;
 	ZZ Pq;
+	vector<ZZ> qi;
+	vector<ZZ> Pqi;
 
 //	ZZ Bclean;
 //	ZZ Bscale;
-	vector<ZZ> qi;
-	vector<ZZ> Pqi;
 //	vector<ZZ> Bks;
 //	vector<ZZ> Bmult;
 

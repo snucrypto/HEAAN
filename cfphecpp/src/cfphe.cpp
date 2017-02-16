@@ -37,7 +37,6 @@ void testEncodeAll() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(params.logn + 1);
 	//----------------------------
 
 	vector<CZZ> mvec;
@@ -81,7 +80,6 @@ void testEncode() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn + 1);
 	//----------------------------
 
 	long logSlots = 4;
@@ -127,7 +125,6 @@ void testPow() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn+1);
 	//----------------------------
 
 	long logN = 5;
@@ -185,7 +182,6 @@ void testProd2() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn+1);
 	//----------------------------
 
 	long deg = 4;
@@ -325,7 +321,6 @@ void testFFTsimple() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn + 2);
 	//----------------------------
 
 	long logN = 4;
@@ -350,14 +345,14 @@ void testFFTsimple() {
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft");
-	cfft = algo.fft(cp, params.cksi);
+	cfft = algo.fft(cp);
 //	cfft = algo.fft2(cp);
 	timeutils.stop("cfft");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfftinv");
-	cfftinv = algo.fftInv(cfft, params.cksi);
+	cfftinv = algo.fftInv(cfft);
 //	cfftinv = algo.fftInv2(cfft);
 	timeutils.stop("cfftinv");
 	cout << "------------------" << endl;
@@ -411,7 +406,6 @@ void testFFTdirect() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn + 2);
 	//----------------------------
 
 	long logN = 5;
@@ -444,14 +438,14 @@ void testFFTdirect() {
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 1");
-	vector<Cipher> cfft1 = algo.fft(cp1, params.cksi);
+	vector<Cipher> cfft1 = algo.fft(cp1);
 //	vector<Cipher> cfft1 = algo.fft2(cp1);
 	timeutils.stop("cfft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 2");
-	vector<Cipher> cfft2 = algo.fft(cp2, params.cksi);
+	vector<Cipher> cfft2 = algo.fft(cp2);
 //	vector<Cipher> cfft2 = algo.fft2(cp2);
 	timeutils.stop("cfft 2");
 	cout << "------------------" << endl;
@@ -510,7 +504,6 @@ void testFFTfull() {
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
-	params.cksi.precompute(logn + 2);
 	//----------------------------
 
 	long logN = 4;
@@ -558,14 +551,14 @@ void testFFTfull() {
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 1");
-//	cfft1 = algo.fft(cp1, params.cksi);
+//	cfft1 = algo.fft(cp1);
 	cfft1 = algo.fft2(cp1);
 	timeutils.stop("cfft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 2");
-//	cfft2 = algo.fft(cp2, params.cksi);
+//	cfft2 = algo.fft(cp2);
 	cfft2 = algo.fft2(cp2);
 	timeutils.stop("cfft 2");
 	cout << "------------------" << endl;
@@ -580,7 +573,7 @@ void testFFTfull() {
 
 	cout << "------------------" << endl;
 	timeutils.start("cfftx inv");
-//	cpx = algo.fftInv(cfft1, params.cksi);
+//	cpx = algo.fftInv(cfft1);
 	cpx = algo.fftInv2(cfft1);
 	timeutils.stop("cfftx inv");
 	cout << "------------------" << endl;

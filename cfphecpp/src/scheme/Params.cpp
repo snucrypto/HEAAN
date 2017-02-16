@@ -16,11 +16,10 @@ Params::Params(long logn, long logl, long logp, long L, double sigma, double rho
 	logP = logq;
 	logPq = logP + logq;
 	cksi.setLogp(logp);
-
-
+	cksi.precompute(logn + 1);
 	power(p, 2, logp);
 	power(q, 2, logl + logp * L);
-
+	power(Pq, 2, 2 * logl + 2 * logp * L);
 //	Bclean = (8.0 * sqrt(2.0) * sigma * n) + (6.0 * sigma * sqrt(n)) + (16.0 * sigma * sqrt(h * n * 1.0));
 //	Bscale = sqrt(3.0 * n) + 8 * sqrt(h * n / 3.0);
 
@@ -31,6 +30,7 @@ Params::Params(long logn, long logl, long logp, long L, double sigma, double rho
 		qi.push_back(ql);
 		power(Pql, 2, logql + logq);
 		Pqi.push_back(Pql);
+
 //		ZZ Bkstemp;
 //		Bkstemp = 8 << (logp * (i+1));
 //		Bkstemp *= (sigma * n);

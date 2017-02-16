@@ -85,7 +85,6 @@ void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long&
 }
 
 void Ring2Utils::addAndEqualNew(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
-	ZZ c;
 	p1.SetLength(degree);
 	p2.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
@@ -136,7 +135,6 @@ void Ring2Utils::sub(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const lo
 
 void Ring2Utils::subNew(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	ZZX sub;
-	ZZ c;
 	sub.SetLength(degree);
 	p1.SetLength(degree);
 	p2.SetLength(degree);
@@ -180,7 +178,6 @@ void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, const long& logMod, const long&
 }
 
 void Ring2Utils::subAndEqualNew(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
-	ZZ c;
 	p1.SetLength(degree);
 	p2.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
@@ -221,24 +218,19 @@ void Ring2Utils::mult(CZZX& res, CZZX& p1, CZZX& p2, const long& degree) {
 }
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
-	ZZ tmp;
+	ZZ tmp1, tmp2;
 	res.SetLength(degree);
 	ZZX p = p1 * p2;
 
-	for (long i = 0; i < deg(p); ++i) {
-		tmp = coeff(p, i);
-		truncate(tmp, logMod);
-		SetCoeff(p, i, tmp);
-	}
-
-	p.normalize();
-
 	for (long i = 0; i < degree; ++i) {
-		tmp = coeff(p, i) - coeff(p, i + degree);
-		truncate(tmp, logMod);
-		SetCoeff(res, i, tmp);
+		tmp1 = coeff(p, i);
+		tmp2 = coeff(p, i + degree);
+		truncate(tmp1, logMod);
+		truncate(tmp2, logMod);
+		tmp1 -= tmp2;
+		truncate(tmp1, logMod);
+		SetCoeff(res, i, tmp1);
 	}
-	res.normalize();
 }
 
 void Ring2Utils::mult(CZZX& res, CZZX& p1, CZZX& p2, const long& logMod, const long& degree) {
@@ -324,21 +316,17 @@ void Ring2Utils::multAndEqual(CZZX& p1, CZZX& p2, const long& degree) {
 }
 
 void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, const long& logMod, const long& degree) {
-	ZZ tmp;
+	ZZ tmp1, tmp2;
 	ZZX p = p1 * p2;
 
-	for (long i = 0; i < deg(p); ++i) {
-		tmp = coeff(p, i);
-		truncate(tmp, logMod);
-		SetCoeff(p, i, tmp);
-	}
-
-	p.normalize();
-
 	for (long i = 0; i < degree; ++i) {
-		tmp = coeff(p, i) - coeff(p, i + degree);
-		truncate(tmp, logMod);
-		SetCoeff(p1, i, tmp);
+		tmp1 = coeff(p, i);
+		tmp2 = coeff(p, i + degree);
+		truncate(tmp1, logMod);
+		truncate(tmp2, logMod);
+		tmp1 -= tmp2;
+		truncate(tmp1, logMod);
+		SetCoeff(p1, i, tmp1);
 	}
 }
 

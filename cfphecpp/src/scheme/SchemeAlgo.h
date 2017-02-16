@@ -16,9 +16,9 @@ public:
 	void prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const long& deg);
 	void inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, const long& k);
 
-	vector<Cipher> fftRaw(vector<Cipher>& ciphers, CKsi& cksi, const bool& isForward);
-	vector<Cipher> fft(vector<Cipher>& ciphers, CKsi& cksi);
-	vector<Cipher> fftInv(vector<Cipher>& ciphers, CKsi& cksi);
+	vector<Cipher> fftRaw(vector<Cipher>& ciphers, const bool& isForward);
+	vector<Cipher> fft(vector<Cipher>& ciphers);
+	vector<Cipher> fftInv(vector<Cipher>& ciphers);
 
 	vector<Cipher> fftRaw2(vector<Cipher>& ciphers, const bool& isForward);
 	vector<Cipher> fft2(vector<Cipher>& ciphers);
