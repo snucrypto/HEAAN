@@ -20,6 +20,54 @@ using namespace std;
 using namespace NTL;
 
 
+void testDumb() {
+	cout << "!!! START TEST DUMB !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logn = 13;
+	long logl = 4;
+	long logp = 30;
+	long L = 5;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logn, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	CZZ m = params.cksi.pows[params.logn][0];
+	Cipher c = scheme.encrypt(m, scheme.params.p);
+	ZZX p1 = c.c0.rx;
+	ZZX p2 = c.c1.rx;
+	long degree = params.n;
+	ZZ mod = params.q;
+	ZZ tmp1, tmp2;
+
+	timeutils.start("1");
+	ZZX p = p1 * p2;
+	timeutils.stop("1");
+
+	timeutils.start("2");
+	p1.SetLength(degree);
+	p.SetLength(2 * degree);
+	for (long i = 0; i < degree; ++i) {
+		tmp1 = p.rep[i];
+		tmp2 = p.rep[i + degree];
+		tmp1 %= mod;
+		tmp2 %= mod;
+//		Ring2Utils::truncate(tmp1, logMod);
+//		Ring2Utils::truncate(tmp2, logMod);
+		AddMod(p1.rep[i], tmp1, -tmp2, mod);
+	}
+	timeutils.stop("2");
+
+	cout << "!!! END TEST DUMB !!!" << endl;
+}
+
 void testEncodeAll() {
 	cout << "!!! START TEST ENCODE ALL !!!" << endl;
 
@@ -566,7 +614,7 @@ void testFFTfull() {
 	cout << "------------------" << endl;
 	timeutils.start("mul fft");
 	for (long i = 0; i < N; ++i) {
-		scheme.multModSwitchAndEqualNew(cfft1[i], cfft2[i]);
+		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
 	}
 	timeutils.stop("mul fft");
 	cout << "------------------" << endl;
@@ -596,6 +644,7 @@ void testFFTfull() {
 
 int main() {
 //	----------------------------
+//	testDumb();
 //	testEncodeAll();
 //	testEncode();
 //	testPow();
