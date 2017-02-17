@@ -55,84 +55,7 @@ void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, co
 	}
 }
 
-
 vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, const bool& isForward) {
-	long csize = ciphers.size();
-
-	if(csize == 1) {
-		return ciphers;
-	}
-
-	long i;
-	long logcsize = log2(csize);
-	long csizeh = csize >> 1;
-
-	vector<Cipher> res, sub1, sub2;
-
-	res.reserve(csize);
-	sub1.reserve(csizeh);
-	sub2.reserve(csizeh);
-
-	for (i = 0; i < csize; i = i+2) {
-		sub1.push_back(ciphers[i]);
-		sub2.push_back(ciphers[i+1]);
-	}
-
-	vector<Cipher> y1 = fftRaw(sub1, isForward);
-	vector<Cipher> y2 = fftRaw(sub2, isForward);
-	if(isForward) {
-		for (i = 0; i < csizeh; ++i) {
-			scheme.multByConstAndEqual(y2[i], scheme.params.cksi.pows[logcsize][i]);
-			scheme.modSwitchAndEqual(y2[i]);
-			scheme.modEmbedAndEqual(y1[i]);
-			Cipher sum = y1[i];
-			scheme.addAndEqual(sum, y2[i]);
-			scheme.subAndEqual(y1[i], y2[i]);
-			res.push_back(sum);
-		}
-	} else {
-		scheme.multByConstAndEqual(y2[0], scheme.params.cksi.pows[logcsize][0]);
-		scheme.modSwitchAndEqual(y2[0]);
-		scheme.modEmbedAndEqual(y1[0]);
-		Cipher sum = y1[0];
-		scheme.addAndEqual(sum, y2[0]);
-		scheme.subAndEqual(y1[0], y2[0]);
-		res.push_back(sum);
-
-		for (i = 1; i < csizeh; ++i) {
-			scheme.multByConstAndEqual(y2[i], scheme.params.cksi.pows[logcsize][csize - i]);
-			scheme.modSwitchAndEqual(y2[i]);
-			scheme.modEmbedAndEqual(y1[i]);
-			Cipher sum = y1[i];
-			scheme.addAndEqual(sum, y2[i]);
-			scheme.subAndEqual(y1[i], y2[i]);
-			res.push_back(sum);
-		}
-	}
-
-	for (i = 0; i < csizeh; ++i) {
-		res.push_back(y1[i]);
-	}
-	return res;
-}
-
-vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers) {
-	return fftRaw(ciphers, true);
-}
-
-vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers) {
-	vector<Cipher> fftInv = fftRaw(ciphers, false);
-	long N = fftInv.size();
-	long logN = log2(N);
-	long bits = scheme.params.logp - logN;
-	for (long i = 0; i < N; ++i) {
-		scheme.leftShiftAndEqual(fftInv[i], bits);
-		scheme.modSwitchAndEqual(fftInv[i]);
-	}
-	return fftInv;
-}
-
-vector<Cipher> SchemeAlgo::fftRaw2(vector<Cipher>& ciphers, const bool& isForward) {
 	long csize = ciphers.size();
 
 	if(csize == 1) {
@@ -152,10 +75,11 @@ vector<Cipher> SchemeAlgo::fftRaw2(vector<Cipher>& ciphers, const bool& isForwar
 		sub2.push_back(ciphers[i+1]);
 	}
 
-	vector<Cipher> y1 = fftRaw2(sub1, isForward);
-	vector<Cipher> y2 = fftRaw2(sub2, isForward);
+	vector<Cipher> y1 = fftRaw(sub1, isForward);
+	vector<Cipher> y2 = fftRaw(sub2, isForward);
 
 	long shift = isForward ? (scheme.params.d / csize) : (scheme.params.d - scheme.params.d / csize);
+
 	for (long i = 0; i < csizeh; ++i) {
 		scheme.multByMonomialAndEqual(y2[i], shift * i);
 		Cipher sum = y1[i];
@@ -170,12 +94,12 @@ vector<Cipher> SchemeAlgo::fftRaw2(vector<Cipher>& ciphers, const bool& isForwar
 	return res;
 }
 
-vector<Cipher> SchemeAlgo::fft2(vector<Cipher>& ciphers) {
-	return fftRaw2(ciphers, true);
+vector<Cipher> SchemeAlgo::fft(vector<Cipher>& ciphers) {
+	return fftRaw(ciphers, true);
 }
 
-vector<Cipher> SchemeAlgo::fftInv2(vector<Cipher>& ciphers) {
-	vector<Cipher> fftInv = fftRaw2(ciphers, false);
+vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers) {
+	vector<Cipher> fftInv = fftRaw(ciphers, false);
 	long N = fftInv.size();
 	long logN = log2(N);
 	long bits = scheme.params.logp - logN;

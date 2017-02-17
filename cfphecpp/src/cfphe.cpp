@@ -352,191 +352,8 @@ void testInv() {
 	cout << "!!! END TEST INV !!!" << endl;
 }
 
-void testFFTsimple() {
-	cout << "!!! START TEST FFT SIMPLE !!!" << endl;
-
-	//----------------------------
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 3;
-	long logp = 30;
-	long L = 11;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-	//----------------------------
-
-	long logN = 4;
-	long N = 1 << logN;
-
-	vector<CZZ> p, pfft, pfftinv, dfft, dfftinv;
-	vector<Cipher> cp, cfft, cfftinv;
-
-
-	for (long i = 0; i < N; ++i) {
-		p.push_back(params.cksi.pows[logN][i]);
-	}
-
-	cout << "------------------" << endl;
-	timeutils.start("Encrypting polynomials");
-	for (long i = 0; i < N; ++i) {
-		Cipher c = scheme.encrypt(p[i], scheme.params.p);
-		cp.push_back(c);
-	}
-	timeutils.stop("Encrypting polynomials");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft");
-	cfft = algo.fft(cp);
-//	cfft = algo.fft2(cp);
-	timeutils.stop("cfft");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfftinv");
-	cfftinv = algo.fftInv(cfft);
-//	cfftinv = algo.fftInv2(cfft);
-	timeutils.stop("cfftinv");
-	cout << "------------------" << endl;
-
-
-	cout << "------------------" << endl;
-	timeutils.start("fft");
-	pfft = NumUtils::fft(p, params.cksi);
-	timeutils.stop("fft");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("fft");
-	pfftinv = NumUtils::fftInv(pfft, params.cksi);
-	timeutils.stop("fft");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("mul and decrypt fft");
-	for (long i = 0; i < cfftinv.size(); ++i) {
-		dfft.push_back(scheme.decrypt(cfft[i]));
-		dfftinv.push_back(scheme.decrypt(cfftinv[i]));
-	}
-	timeutils.stop("mul and decrypt fft");
-	cout << "------------------" << endl;
-
-	for (long i = 0; i < N; ++i) {
-		cout << "----------------------" << endl;
-		cout << i << " step: pfftinv = " << pfftinv[i].toString() << endl;
-		cout << i << " step: dfftinv = " << dfftinv[i].toString() << endl;
-		cout << "----------------------" << endl;
-	}
-
-	cout << "!!! END TEST FFT SIMPLE !!!" << endl;
-}
-
-void testFFTdirect() {
-	cout << "!!! START TEST FFT DIRECT !!!" << endl;
-
-	//----------------------------
-	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 1;
-	long logp = 30;
-	long L = 8;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(logn, logl, logp, L, sigma, rho, h);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-	//----------------------------
-
-	long logN = 5;
-	long N = 1 << logN;
-	long deg = 4;
-
-
-	CZZ zero;
-	vector<CZZ> p1, p2, dfft, mfft;
-	vector<Cipher> cp1, cp2;
-
-
-	for (long i = 0; i < deg; ++i) {
-		p1.push_back(params.cksi.pows[logN][i]);
-		p2.push_back(params.cksi.pows[logN][i]);
-	}
-	for (long i = deg; i < N; ++i) {
-		p1.push_back(zero);
-		p2.push_back(zero);
-	}
-
-	cout << "------------------" << endl;
-	timeutils.start("Encrypting polynomials");
-	for (long i = 0; i < N; ++i) {
-		cp1.push_back(scheme.encrypt(p1[i], scheme.params.p));
-		cp2.push_back(scheme.encrypt(p2[i], scheme.params.p));
-	}
-	timeutils.stop("Encrypting polynomials");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft 1");
-	vector<Cipher> cfft1 = algo.fft(cp1);
-//	vector<Cipher> cfft1 = algo.fft2(cp1);
-	timeutils.stop("cfft 1");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft 2");
-	vector<Cipher> cfft2 = algo.fft(cp2);
-//	vector<Cipher> cfft2 = algo.fft2(cp2);
-	timeutils.stop("cfft 2");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("fft 1");
-	vector<CZZ> fft1 = NumUtils::fft(p1, params.cksi);
-	timeutils.stop("fft 1");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("fft 2");
-	vector<CZZ> fft2 = NumUtils::fft(p2, params.cksi);
-	timeutils.stop("fft 2");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("mul and decrypt fft");
-	for (long i = 0; i < cfft1.size(); ++i) {
-		Cipher ms = scheme.multAndModSwitch(cfft1[i], cfft2[i]);
-		dfft.push_back(scheme.decrypt(ms));
-	}
-	timeutils.stop("mul and decrypt fft");
-	cout << "------------------" << endl;
-
-
-	for (long i = 0; i < N; ++i) {
-		CZZ mm = (fft1[i] * fft2[i]) >> params.logp;
-		mfft.push_back(mm);
-	}
-
-	for (long i = 0; i < N; ++i) {
-		cout << "----------------------" << endl;
-		cout << i << " step: mfft = " << mfft[i].toString() << endl;
-		cout << i << " step: dfft = " << dfft[i].toString() << endl;
-		cout << "----------------------" << endl;
-	}
-
-	cout << "!!! END TEST FFT DIRECT !!!" << endl;
-}
-
-void testFFTfull() {
-	cout << "!!! START TEST FFT FULL !!!" << endl;
+void testFFT() {
+	cout << "!!! START TEST FFT !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
@@ -600,14 +417,14 @@ void testFFTfull() {
 	cout << "------------------" << endl;
 	timeutils.start("cfft 1");
 //	cfft1 = algo.fft(cp1);
-	cfft1 = algo.fft2(cp1);
+	cfft1 = algo.fft(cp1);
 	timeutils.stop("cfft 1");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("cfft 2");
 //	cfft2 = algo.fft(cp2);
-	cfft2 = algo.fft2(cp2);
+	cfft2 = algo.fft(cp2);
 	timeutils.stop("cfft 2");
 	cout << "------------------" << endl;
 
@@ -622,7 +439,7 @@ void testFFTfull() {
 	cout << "------------------" << endl;
 	timeutils.start("cfftx inv");
 //	cpx = algo.fftInv(cfft1);
-	cpx = algo.fftInv2(cfft1);
+	cpx = algo.fftInv(cfft1);
 	timeutils.stop("cfftx inv");
 	cout << "------------------" << endl;
 
@@ -638,7 +455,7 @@ void testFFTfull() {
 		cout << "----------------------" << endl;
 	}
 
-	cout << "!!! END TEST FFT FULL !!!" << endl;
+	cout << "!!! END TEST FFT !!!" << endl;
 
 }
 
@@ -650,9 +467,7 @@ int main() {
 //	testPow();
 //	testProd2();
 //	testInv();
-//	testFFTsimple();
-//	testFFTdirect();
-	testFFTfull();
+	testFFT();
 //	----------------------------
 
 	return 0;
