@@ -156,6 +156,104 @@ void testEncode() {
 	cout << "!!! STOP TEST ENCODE !!!" << endl;
 }
 
+void testOperations() {
+	cout << "!!! START TEST OPERATIONS !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logn = 13;
+	long logl = 1;
+	long logp = 30;
+	long L = 2;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logn, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	CZZ m1, m2, madd, mmult, mmulte, mmultms;
+	CZZ d1, d2, dadd, dmult, dmulte, dmultms;
+
+	m1 = params.cksi.pows[5][2];
+	m2 = params.cksi.pows[5][3];
+	madd = m1 + m2;
+	mmult = m1 * m2;
+	mmulte = m1 * m2;
+	mmultms = m1 * m2 / params.p;
+
+	Cipher c1 = scheme.encrypt(m1, params.p);
+	Cipher cmulte = scheme.encrypt(m1, params.p);
+	Cipher c2 = scheme.encrypt(m2, params.p);
+
+	cout << "------------------" << endl;
+	timeutils.start("add");
+	Cipher cadd = scheme.add(c1, c2);
+	timeutils.stop("add");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("mult");
+	Cipher cmult = scheme.mult(c1, c2);
+	timeutils.stop("mult");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("mult and equal");
+	scheme.multAndEqual(cmulte, c2);
+	timeutils.stop("mult and equal");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("mult and mod switch");
+	Cipher cmultms = scheme.multAndModSwitch(c1, c2);
+	timeutils.stop("mult and mod switch");
+	cout << "------------------" << endl;
+
+	d1 = scheme.decrypt(c1);
+	d2 = scheme.decrypt(c2);
+	dadd = scheme.decrypt(cadd);
+	dmult = scheme.decrypt(cmult);
+	dmulte = scheme.decrypt(cmulte);
+	dmultms = scheme.decrypt(cmultms);
+
+	cout << "------------------" << endl;
+	cout << "m1:  " << m1.toString() << endl;
+	cout << "d1:  " << d1.toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "m2:  " << m2.toString() << endl;
+	cout << "d2:  " << d2.toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "madd:  " << madd.toString() << endl;
+	cout << "dadd:  " << dadd.toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "mmult:  " << mmult.toString() << endl;
+	cout << "dmult:  " << dmult.toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "mmulte:  " << mmulte.toString() << endl;
+	cout << "dmulte:  " << dmulte.toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "mmultms:  " << mmultms.toString() << endl;
+	cout << "dmultms:  " << dmultms.toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "!!! STOP TEST OPERATIONS !!!" << endl;
+
+}
+
 void testPow() {
 	cout << "!!! START TEST POW !!!" << endl;
 
@@ -446,7 +544,7 @@ void testFFT() {
 
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
-		cout << i << " step: cpx = " << mpx[i].toString() << endl;
+		cout << i << " step: mpx = " << mpx[i].toString() << endl;
 		cout << i << " step: dpx = " << dpx[i].toString() << endl;
 		cout << "----------------------" << endl;
 	}
@@ -460,10 +558,11 @@ int main() {
 //	testDumb();
 //	testEncodeAll();
 //	testEncode();
+	testOperations();
 //	testPow();
 //	testProd2();
 //	testInv();
-	testFFT();
+//	testFFT();
 //	----------------------------
 
 	return 0;
