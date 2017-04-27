@@ -53,7 +53,6 @@
 								<option id="gnu.cpp.link.option.libs.1463765050" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="ntl"/>
 									<listOptionValue builtIn="false" value="gmp"/>
-									<listOptionValue builtIn="false" value="gf2x"/>
 									<listOptionValue builtIn="false" value="m"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.888922650" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
