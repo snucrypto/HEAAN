@@ -1,11 +1,9 @@
 #ifndef SCHEME_SCHEME_H_
 #define SCHEME_SCHEME_H_
 
-#include <vector>
-
-#include "Params.h"
-#include "Cipher.h"
 #include "SecKey.h"
+#include "Cipher.h"
+#include "Message.h"
 #include "PubKey.h"
 
 using namespace std;

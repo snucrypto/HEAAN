@@ -1,11 +1,9 @@
 #include "Scheme.h"
 
 #include <NTL/ZZ.h>
-#include <cmath>
-#include <iostream>
+#include <NTL/ZZX.h>
 
 #include "../czz/CZZ.h"
-#include "../czz/CZZX.h"
 #include "../utils/NumUtils.h"
 #include "../utils/Ring2Utils.h"
 
@@ -15,15 +13,15 @@ using namespace NTL;
 void Scheme::rlweInstance(ZZX& c0, ZZX& c1) {
 	vector<CZZ> vvec, evec;
 	ZZX v, e;
-	NumUtils::sampleZO(vvec, params.n);
+	NumUtils::sampleZO(vvec, params.n / 2);
 	NumUtils::fftInvSpecial(v, vvec, params.cksi);
 	Ring2Utils::mult(c0, v, publicKey.b, params.q, params.n);
-	NumUtils::sampleGauss(evec, params.n, params.sigma);
+	NumUtils::sampleGauss(evec, params.n / 2, params.sigma);
 	NumUtils::fftInvSpecial(e, evec, params.cksi);
 	Ring2Utils::add(c0, e, c0, params.q, params.n);
 
 	Ring2Utils::mult(c1, v, publicKey.a, params.q, params.n);
-	NumUtils::sampleGauss(evec, params.n, params.sigma);
+	NumUtils::sampleGauss(evec, params.n / 2, params.sigma);
 	NumUtils::fftInvSpecial(e, evec, params.cksi);
 	Ring2Utils::add(c1, e, c1, params.q, params.n);
 }
@@ -86,7 +84,8 @@ Message Scheme::decrypt(Cipher& cipher) {
 	}
 
 	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
-	return res;
+	Message msg = Message(res, params.p);
+	return msg;
 }
 
 //-----------------------------

@@ -68,14 +68,14 @@ void testEncode() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long logSlots = 4;
+	long logSlots = 12;
 	long slots = (1 << logSlots);
 
 	CZZ m;
-	vector<CZZ> mvec, dvec;
+	vector<CZZ> mvec;
 
 	for (long i = 0; i < slots; ++i) {
-		m = params.cksi.pows[logSlots][i % 3];
+		m = params.cksi.pows[5][i % 3];
 		mvec.push_back(m);
 	}
 	Message msg = Message(mvec, params.p);
@@ -242,7 +242,7 @@ void testPow() {
 	}
 
 	for (long i = 0; i < deg + 1; ++i) {
-		e = m2k[i] - d2k[i];
+		e = m2k[i] - d2k[i].vals[0];
 		cout << "------------------" << endl;
 		cout << "m: " << i << " " << m2k[i].toString() << endl;
 		cout << "d: " << i << " " << d2k[i].vals[0].toString() << endl;
@@ -322,7 +322,7 @@ void testProd2() {
 
 	for (long i = 0; i < deg + 1; ++i) {
 		for (long j = 0; j < cs2k[i].size(); ++j) {
-			e = ms2k[i][j] - ds2k[i][j];
+			e = ms2k[i][j] - ds2k[i][j].vals[0];
 			cout << "------------------" << endl;
 			cout << "m: " << i << " " << j << " " << ms2k[i][j].toString() << endl;
 			cout << "d: " << i << " " << j << " " << ds2k[i][j].vals[0].toString() << endl;
@@ -389,7 +389,7 @@ void testInv() {
 	}
 
 	for (long i = 0; i < r-1; ++i) {
-		e = minv - d2k[i];
+		e = minv - d2k[i].vals[0];
 		cout << "------------------" << endl;
 		cout << "minv:  " << i << " " << minv.toString() << endl;
 		cout << "ds:    " << i << " " << d2k[i].vals[0].toString() << endl;
@@ -509,8 +509,8 @@ void testFFT() {
 
 int main() {
 //	----------------------------
-	testDumb();
-//	testEncode();
+//	testDumb();
+	testEncode();
 //	testOperations();
 //	testPow();
 //	testProd2();

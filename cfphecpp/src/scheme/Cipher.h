@@ -1,6 +1,8 @@
 #ifndef SCHEME_CIPHER_H_
 #define SCHEME_CIPHER_H_
 
+#include <NTL/ZZX.h>
+
 using namespace std;
 using namespace NTL;
 

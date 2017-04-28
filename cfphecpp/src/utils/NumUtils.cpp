@@ -120,7 +120,14 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
 	return fftInv;
 }
 
-void NumUtils::fftInvSpecial(ZZX res, vector<CZZ>& coeffs, CKsi& cksi) {
+void NumUtils::fftInvSpecial(ZZX& res, vector<CZZ>& coeffs, CKsi& cksi) {
+	vector<CZZ> dcoeffs = doubleConjugate(coeffs);
+	res.SetLength(dcoeffs.size());
+	vector<CZZ> special = fftInv(dcoeffs, cksi);
+	for (long i = 0; i < special.size(); ++i) {
+		res.rep[i] = special[i].r;
+	}
+	res.normalize();
 
 }
 

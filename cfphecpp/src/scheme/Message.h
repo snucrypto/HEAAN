@@ -22,7 +22,7 @@ public:
 		vals.push_back(m);
 	};
 
-	Message(CZZ m, ZZ nu) ; nu(nu) {
+	Message(CZZ m, ZZ nu) : nu(nu) {
 		vals.clear();
 		vals.push_back(m);
 		this->logSlots = log2(vals.size()) + 1;
@@ -30,7 +30,7 @@ public:
 	};
 
 	Message(vector<CZZ> vals, ZZ nu) : vals(vals) , nu(nu) {
-		logSlots = log2(vals.size()) + 1;
+		this->logSlots = log2(vals.size()) + 1;
 	};
 };
 
