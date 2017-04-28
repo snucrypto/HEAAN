@@ -3,5 +3,7 @@
 #include "../utils/NumUtils.h"
 
 SecKey::SecKey(Params& params) {
-	NumUtils::sampleGauss(s, params.n, params.sigma);
+	vector<CZZ> svec;
+	NumUtils::sampleGauss(svec, params.n, params.sigma);
+	NumUtils::fftInvSpecial(s, svec, params.cksi);
 }

@@ -3,17 +3,13 @@
 #include <cassert>
 #include <cmath>
 
-void NumUtils::sampleGauss(ZZX& res, const long& d, const double& stdev) {
+void NumUtils::sampleGauss(vector<CZZ>& res, const long& d, const double& stdev) {
 	static double const Pi = 4.0 * atan(1.0); // Pi=3.1415..
 	static long const bignum = 0xfffffff;
 
-	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
-	for(long i = 0; i < d; i++) {
-		SetCoeff(res, i, ZZ::zero());
-	}
-
+	res.clear();
 	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
-	for (long i = 0; i < d; i+=2) {
+	for (long i = 0; i < d; i++) {
 		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
 		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
 		double theta=2 * Pi * r1;
@@ -22,87 +18,44 @@ void NumUtils::sampleGauss(ZZX& res, const long& d, const double& stdev) {
 		assert(rr < 8 * stdev); // sanity-check, no more than 8 standard deviations
 
 		// Generate two Gaussians RV's, rounded to integers
-		long x = (long) floor(rr * cos(theta) + 0.5);
-		SetCoeff(res, i, x);
-		if (i+1 < d) {
-			x = (long) floor(rr * sin(theta) + 0.5);
-			SetCoeff(res, i+1, x);
-		}
+		long xr = (long) floor(rr * cos(theta) + 0.5);
+		long xi = (long) floor(rr * sin(theta) + 0.5);
+		res.push_back(CZZ(xr, xi));
 	}
-	res.normalize(); // need to call this after we work on the coeffs
 }
 
-void NumUtils::sampleGauss(CZZX& res, const long& d, const double& stdev) {
-	sampleGauss(res.rx, d, stdev);
-	sampleGauss(res.ix, d, stdev);
-}
-
-void NumUtils::sampleZO(ZZX& res, const long& d, const double& rho) {
-	res.SetMaxLength(d);
+void NumUtils::sampleZO(vector<CZZ>& res, const long& d) {
 	ZZ temp;
 	long i;
 	for (i = 0; i < d; ++i) {
 		RandomBits(temp, 2);
 		if(temp == 0) {
-			SetCoeff(res, i, 1);
+			res.push_back(CZZ(1, 0));
 		} else if (temp == 1) {
-			SetCoeff(res, i, -1);
+			res.push_back(CZZ(-1, 0));
 		} else {
-			SetCoeff(res, i, 0);
+			res.push_back(CZZ(0,0));
 		}
 	}
 }
 
-void NumUtils::sampleZO(CZZX& res, const long& d, const double& rho) {
-	res.ix = ZZX::zero();
-	ZZ temp;
-	long i;
-	for (i = 0; i < d; ++i) {
-		RandomBits(temp, 2);
-		if(temp == 0) {
-			SetCoeff(res.rx, i, 1);
-		} else if (temp == 1) {
-			SetCoeff(res.rx, i, -1);
-		} else {
-			SetCoeff(res.rx, i, 0);
-		}
-	}
-}
-
-void NumUtils::sampleUniform(ZZX& res, const long& d, const ZZ& bnd) {
-	if (bnd <= 0) {
-		clear(res);
-		return;
-	}
-	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
-	ZZ ubnd, tmp;
-	ubnd =  2 * bnd + 1;
+void NumUtils::sampleUniform2(vector<CZZ>& res, const long& d, const long& logBnd) {
+	ZZ tmpr, tmpi;
 	for (long i = 0; i < d; i++) {
-		RandomBnd(tmp, ubnd);
-		tmp -= bnd;
-		SetCoeff(res, i, tmp);
+		RandomBits(tmpr, logBnd);
+		RandomBits(tmpi, logBnd);
+		res.push_back(CZZ(tmpr, tmpi));
 	}
-	res.normalize();
-}
-
-void NumUtils::sampleUniform(CZZX& res, const long& d, const ZZ& bnd) {
-	sampleUniform(res.rx, d, bnd);
-	sampleUniform(res.ix, d, bnd);
 }
 
 void NumUtils::sampleUniform2(ZZX& res, const long& d, const long& logBnd) {
-	res.SetMaxLength(d); // allocate space for degree-(n-1) polynomial
 	ZZ tmp;
+	res.SetMaxLength(d);
 	for (long i = 0; i < d; i++) {
 		RandomBits(tmp, logBnd);
-		SetCoeff(res, i, tmp);
+		res.rep[i] = tmp;
 	}
 	res.normalize();
-}
-
-void NumUtils::sampleUniform2(CZZX& res, const long& d, const long& logBnd) {
-	sampleUniform2(res.rx, d, logBnd);
-	sampleUniform2(res.ix, d, logBnd);
 }
 
 vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward) {
@@ -165,4 +118,21 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
 		fftInv[i] >>= logN;
 	}
 	return fftInv;
+}
+
+void NumUtils::fftInvSpecial(ZZX res, vector<CZZ>& coeffs, CKsi& cksi) {
+
+}
+
+
+vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& coeffs) {
+	vector<CZZ> res;
+	long csize = coeffs.size();
+	for (long i = 0; i < csize; ++i) {
+		res.push_back(coeffs[i]);
+	}
+	for (long i = 0; i < csize; ++i) {
+		res.push_back(coeffs[csize - i - 1].conjugate());
+	}
+	return res;
 }

@@ -11,6 +11,7 @@ public:
 	ZZ r;
 	ZZ i;
 
+	CZZ(long r, long i) : r(ZZ(r)), i(ZZ(i)) {};
 	CZZ(ZZ r, ZZ i) : r(r), i(i) {};
 	CZZ() : r(ZZ::zero()), i(ZZ::zero()) {};
 
@@ -43,6 +44,7 @@ public:
 	CZZ sqr();
 	void sqrThis();
 	ZZ norm();
+	CZZ conjugate();
 
 	string toString();
 };

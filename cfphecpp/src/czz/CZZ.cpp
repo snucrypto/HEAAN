@@ -144,6 +144,11 @@ ZZ CZZ::norm() {
 	return SqrRoot(r*r + i*i);
 }
 
+CZZ CZZ::conjugate() {
+	CZZ res = CZZ(r, -i);
+	return res;
+}
+
 string CZZ::toString() {
 	stringstream ss;
 	ss << " [r = ";

@@ -137,6 +137,21 @@ void Ring2Utils::multAndEqual(CZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	multAndEqual(p1.ix, p2, mod, degree);
 }
 
+void Ring2Utils::square(ZZX& res, ZZX& p, ZZ& mod, const long& degree) {
+	ZZ tmp1, tmp2;
+	res.SetLength(degree);
+	ZZX p2 = p * p;
+
+	res.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		tmp1 = coeff(p2, i);
+		tmp2 = coeff(p2, i + degree);
+		tmp1 %= mod;
+		tmp2 %= mod;
+		AddMod(res.rep[i], tmp1, -tmp2, mod);
+	}
+}
+
 void Ring2Utils::square(CZZX& res, CZZX& p, ZZ& mod, const long& degree) {
 	ZZX tmp1, tmp2;
 
@@ -145,6 +160,18 @@ void Ring2Utils::square(CZZX& res, CZZX& p, ZZ& mod, const long& degree) {
 	mult(res.rx, tmp1, tmp2, mod, degree);
 	mult(tmp2, p.rx, p.ix, mod, degree);
 	add(res.ix, tmp2, tmp2, mod, degree);
+}
+
+void Ring2Utils::squareAndEqual(ZZX& p, ZZ& mod, const long& degree) {
+	ZZX p2 = p * p;
+
+	p.SetLength(degree);
+	p2.SetLength(2 * degree);
+	for (long i = 0; i < degree; ++i) {
+		p2.rep[i] %= mod;
+		p2.rep[i + degree] %= mod;
+		AddMod(p.rep[i], p2.rep[i], -p2.rep[i + degree], mod);
+	}
 }
 
 void Ring2Utils::squareAndEqual(CZZX& p, ZZ& mod, const long& degree) {

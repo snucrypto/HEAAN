@@ -102,6 +102,7 @@ string CZZX::toString() {
 	stringstream ss;
 	ss << " [rx = ";
 	ss << rx;
+	ss << "\n";
 	ss << " ,ix = ";
 	ss << ix;
 	ss << " ] ";

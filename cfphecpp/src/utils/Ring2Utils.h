@@ -34,8 +34,10 @@ class Ring2Utils {
 		static void multAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree);
 		static void multAndEqual(CZZX& p1, ZZX& p2, ZZ& mod, const long& degree);
 
+		static void square(ZZX& res, ZZX& p, ZZ& mod, const long& degree);
 		static void square(CZZX& res, CZZX& p, ZZ& mod, const long& degree);
 
+		static void squareAndEqual(ZZX& p, ZZ& mod, const long& degree);
 		static void squareAndEqual(CZZX& p, ZZ& mod, const long& degree);
 
 		static void multByMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree);

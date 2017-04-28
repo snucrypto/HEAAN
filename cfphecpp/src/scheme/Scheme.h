@@ -22,19 +22,16 @@ public:
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
 
 	void trueValue(CZZ& m, ZZ& qi);
-	void rlweInstance(CZZX& c0, CZZX& c1);
+	void rlweInstance(ZZX& c0, ZZX& c1);
 
-	Cipher encrypt(CZZ& m, ZZ& nu);
-	CZZ decrypt(Cipher& cipher);
-	void decrypt(vector<CZZ>& res, vector<Cipher>& ciphers);
+	ZZX encode(Message& msg);
+	Cipher encrypt(Message& msg);
+	Message decrypt(Cipher& cipher);
 
-	CZZX encode(long& logSlots, vector<CZZ>& mvec);
-	Cipher encrypt(long& logSlots, vector<CZZ>& mvec, ZZ& nu);
-	vector<CZZ> decrypt(long& logSlots, Cipher& cipher);
 
-	CZZX encodeAll(vector<CZZ>& mvec);
-	Cipher encryptAll(vector<CZZ>& mvec, ZZ& nu);
-	vector<CZZ> decryptAll(Cipher& cipher);
+	ZZX encodeAll(Message& msg);
+	Cipher encryptAll(Message& msg);
+	Message decryptAll(Cipher& cipher);
 
 //--------------------------------
 
@@ -55,9 +52,7 @@ public:
 	void squareAndEqual(Cipher& cipher);
 
 	Cipher multByConst(Cipher& cipher, ZZ& cnst);
-	Cipher multByConst(Cipher& cipher, CZZ& cnst);
 	void multByConstAndEqual(Cipher& cipher, ZZ& cnst);
-	void multByConstAndEqual(Cipher& cipher, CZZ& cnst);
 
 	Cipher multByMonomial(Cipher& cipher, const long& degree);
 	void multByMonomialAndEqual(Cipher& cipher, const long& degree);
