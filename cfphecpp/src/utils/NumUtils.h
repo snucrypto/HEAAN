@@ -15,7 +15,9 @@ class NumUtils {
 public:
 
 	static void sampleGauss(vector<CZZ>& res, const long& d, const double& stdev);
+	static void sampleGauss(ZZX& res, const long& d, const double& stdev);
 	static void sampleZO(vector<CZZ>& res, const long& d);
+	static void sampleZO(ZZX& res, const long& d);
 	static void sampleUniform2(vector<CZZ>& res, const long& d, const long& logBnd);
 	static void sampleUniform2(ZZX& res, const long& d, const long& logBnd);
 
@@ -24,6 +26,7 @@ public:
 	static vector<CZZ> fftInv(vector<CZZ>& coeffs, CKsi& cksi);
 
 	static void fftInvSpecial(ZZX& res, vector<CZZ>& coeffs, CKsi& cksi);
+	static void fftInvSpecial(CZZX& res, vector<CZZ>& coeffs, CKsi& cksi);
 
 	static vector<CZZ> doubleConjugate(vector<CZZ>& coeffs);
 };

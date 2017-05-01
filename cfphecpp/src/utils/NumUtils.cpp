@@ -24,6 +24,30 @@ void NumUtils::sampleGauss(vector<CZZ>& res, const long& d, const double& stdev)
 	}
 }
 
+void NumUtils::sampleGauss(ZZX& res, const long& d, const double& stdev) {
+	static double const Pi = 4.0 * atan(1.0); // Pi=3.1415..
+	static long const bignum = 0xfffffff;
+	res.SetMaxLength(d);
+	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
+	for (long i = 0; i < d; i++) {
+		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
+		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
+		double theta=2 * Pi * r1;
+		double rr= sqrt(-2.0 * log(r2)) * stdev;
+
+		assert(rr < 8 * stdev); // sanity-check, no more than 8 standard deviations
+
+		// Generate two Gaussians RV's, rounded to integers
+		long x1 = (long) floor(rr * cos(theta) + 0.5);
+		SetCoeff(res, i, x1);
+		if(i + 1 < d) {
+			long x2 = (long) floor(rr * sin(theta) + 0.5);
+			SetCoeff(res, i + 1, x2);
+		}
+
+	}
+}
+
 void NumUtils::sampleZO(vector<CZZ>& res, const long& d) {
 	ZZ temp;
 	long i;
@@ -35,6 +59,21 @@ void NumUtils::sampleZO(vector<CZZ>& res, const long& d) {
 			res.push_back(CZZ(-1, 0));
 		} else {
 			res.push_back(CZZ(0,0));
+		}
+	}
+}
+
+void NumUtils::sampleZO(ZZX& res, const long& d) {
+	ZZ temp;
+	long i;
+	for (i = 0; i < d; ++i) {
+		RandomBits(temp, 2);
+		if(temp == 0) {
+			SetCoeff(res, i, ZZ(1));
+		} else if (temp == 1) {
+			SetCoeff(res, i, ZZ(-1));
+		} else {
+			SetCoeff(res, i, ZZ(0));
 		}
 	}
 }
@@ -128,7 +167,16 @@ void NumUtils::fftInvSpecial(ZZX& res, vector<CZZ>& coeffs, CKsi& cksi) {
 		res.rep[i] = special[i].r;
 	}
 	res.normalize();
+}
 
+void NumUtils::fftInvSpecial(CZZX& res, vector<CZZ>& coeffs, CKsi& cksi) {
+	vector<CZZ> dcoeffs = doubleConjugate(coeffs);
+	res.SetLength(dcoeffs.size());
+	vector<CZZ> special = fftInv(dcoeffs, cksi);
+	for (long i = 0; i < special.size(); ++i) {
+		SetCoeff(res, i, special[i]);
+	}
+	res.normalize();
 }
 
 
@@ -138,8 +186,10 @@ vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& coeffs) {
 	for (long i = 0; i < csize; ++i) {
 		res.push_back(coeffs[i]);
 	}
+
 	for (long i = 0; i < csize; ++i) {
 		res.push_back(coeffs[csize - i - 1].conjugate());
 	}
+
 	return res;
 }

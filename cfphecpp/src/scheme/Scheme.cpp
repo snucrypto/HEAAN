@@ -11,18 +11,14 @@ using namespace std;
 using namespace NTL;
 
 void Scheme::rlweInstance(ZZX& c0, ZZX& c1) {
-	vector<CZZ> vvec, evec;
 	ZZX v, e;
-	NumUtils::sampleZO(vvec, params.n / 2);
-	NumUtils::fftInvSpecial(v, vvec, params.cksi);
+	NumUtils::sampleZO(v, params.n);
 	Ring2Utils::mult(c0, v, publicKey.b, params.q, params.n);
-	NumUtils::sampleGauss(evec, params.n / 2, params.sigma);
-	NumUtils::fftInvSpecial(e, evec, params.cksi);
+	NumUtils::sampleGauss(e, params.n, params.sigma);
 	Ring2Utils::add(c0, e, c0, params.q, params.n);
 
 	Ring2Utils::mult(c1, v, publicKey.a, params.q, params.n);
-	NumUtils::sampleGauss(evec, params.n / 2, params.sigma);
-	NumUtils::fftInvSpecial(e, evec, params.cksi);
+	NumUtils::sampleGauss(e, params.n, params.sigma);
 	Ring2Utils::add(c1, e, c1, params.q, params.n);
 }
 
@@ -36,15 +32,19 @@ void Scheme::trueValue(CZZ& m, ZZ& qi) {
 
 ZZX Scheme::encode(Message& msg) {
 	ZZX res;
-	ZZX fftInvSpecial;
+	CZZX fftInvSpecial;
 
 	NumUtils::fftInvSpecial(fftInvSpecial, msg.vals, params.cksi);
+	for (long i = 0; i < msg.vals.size(); ++i) {
+		cout << msg.vals[i].toString() << endl;
+
+	}
 	long idx = 0;
 	long slots = 1 << msg.logSlots;
 	long gap = (params.n >> msg.logSlots);
 
 	for (long i = 0; i < slots; ++i) {
-		SetCoeff(res, idx, fftInvSpecial.rep[i]);
+		SetCoeff(res, idx, coeff(fftInvSpecial, i).r);
 		idx += gap;
 	}
 

@@ -25,10 +25,10 @@ void testDumb() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 13;
-	long logl = 4;
+	long logn = 6;
+	long logl = 1;
 	long logp = 30;
-	long L = 5;
+	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -39,11 +39,24 @@ void testDumb() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	vector<CZZ> mvec;
-	CZZ m;
-	for (long i = 0; i < params.n / 2; ++i) {
-		m = params.cksi.pows[params.logn][i % 3];
+	long logSlots = 6;
+	long slots = (1 << logSlots);
+
+	vector<CZZ> mvec, fftinv;
+
+	for (long i = 0; i < slots; ++i) {
+		CZZ m = CZZ(params.cksi.pows[5][i % 3].r, ZZ(0));
 		mvec.push_back(m);
+	}
+	fftinv = NumUtils::fft(mvec, params.cksi);
+
+	for (int i = 0; i < mvec.size(); ++i) {
+		cout << mvec[i].toString() << endl;
+	}
+	cout << "dfssffafa" << endl;
+
+	for (int i = 0; i < fftinv.size(); ++i) {
+		cout << fftinv[i].toString() << endl;
 	}
 
 	cout << "!!! END TEST DUMB !!!" << endl;
@@ -509,8 +522,8 @@ void testFFT() {
 
 int main() {
 //	----------------------------
-//	testDumb();
-	testEncode();
+	testDumb();
+//	testEncode();
 //	testOperations();
 //	testPow();
 //	testProd2();
