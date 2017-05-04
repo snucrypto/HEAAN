@@ -11,8 +11,6 @@ using namespace NTL;
 class Ring2Utils {
 	public:
 
-		static void polyMult(ZZX& res, ZZX& p1, ZZX& p2);
-
 		//-------------------------
 		static void add(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree);
 		static void add(CZZX& res, CZZX& p1, CZZX& p2, ZZ& mod, const long& degree);

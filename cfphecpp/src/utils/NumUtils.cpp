@@ -29,7 +29,7 @@ void NumUtils::sampleGauss(ZZX& res, const long& d, const double& stdev) {
 	static long const bignum = 0xfffffff;
 	res.SetMaxLength(d);
 	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
-	for (long i = 0; i < d; i++) {
+	for (long i = 0; i < d; i+=2) {
 		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
 		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
 		double theta=2 * Pi * r1;

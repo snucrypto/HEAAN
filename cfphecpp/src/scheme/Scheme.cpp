@@ -85,7 +85,6 @@ Message Scheme::decrypt(Cipher& cipher) {
 	vector<CZZ> fft = NumUtils::fft(fftinv, params.cksi);
 	vector<CZZ> res;
 	for (long i = 1; i < slots / 2; ++i) {
-		trueValue(fft[i], qi);
 		res.push_back(fft[i]);
 	}
 	Message msg = Message(res, params.p);
