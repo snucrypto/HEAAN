@@ -540,7 +540,7 @@ void testFFT() {
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
 		cout << i << " step: mpx = " << mpx[i].toString() << endl;
-		cout << i << " step: dpx = " << dpx[i].vals[1].toString() << endl;
+		cout << i << " step: dpx = " << dpx[i].vals[0].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 
@@ -552,11 +552,11 @@ int main() {
 //	----------------------------
 //	testDumb();
 //	testEncode();
-	testOperations();
+//	testOperations();
 //	testPow();
 //	testProd2();
 //	testInv();
-//	testFFT();
+	testFFT();
 //	----------------------------
 
 	return 0;
