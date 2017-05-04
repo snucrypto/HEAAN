@@ -18,7 +18,7 @@ public:
 	ZZ nu;
 
 	Message(vector<CZZ> msgs, ZZ nu) : vals(msgs), nu(nu) {
-		logSlots = log2(vals.size()) + 1;
+		logSlots = log2(vals.size() + 1) + 1;
 	};
 
 	Message(CZZ m, ZZ nu) : nu(nu) {

@@ -44,13 +44,7 @@ void testDumb() {
 
 	vector<CZZ> mvec, fftinv, fft;
 
-	//any real
-	for (long i = 1; i < slots / 2; ++i) {
-		CZZ m = CZZ(random(), random());
-//		CZZ m = params.cksi.pows[5][i % 3];
-		mvec.push_back(m);
-	}
-
+	NumUtils::sampleGauss(mvec, slots / 2 - 1, 30);
 	mvec = NumUtils::doubleConjugate(mvec);
 
 	timeutils.start("xx");
@@ -88,7 +82,7 @@ void testEncode() {
 	long logn = 13;
 	long logl = 1;
 	long logp = 30;
-	long L = 6;
+	long L = 10;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -99,19 +93,18 @@ void testEncode() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long logSlots = 2;
+	long logSlots = 12;
 	long mvecsize = (1 << logSlots) - 1;
 
 	CZZ m;
 	vector<CZZ> mvec;
 
-	for (long i = 1; i < mvecsize; ++i) {
+	for (long i = 0; i < mvecsize; ++i) {
 		m = params.cksi.pows[5][i % 3];
 		mvec.push_back(m);
 	}
 
 	Message msg = Message(mvec, params.p);
-	cout << msg.logSlots << endl;
 
 	cout << "---------------" << endl;
 	Cipher cipher = scheme.encrypt(msg);
@@ -133,10 +126,10 @@ void testOperations() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 6;
+	long logn = 13;
 	long logl = 1;
 	long logp = 30;
-	long L = 4;
+	long L = 6;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -147,21 +140,24 @@ void testOperations() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
+	long slots = (1 << (logn-1)) - 1;
 	CZZ m1, m2, madd, mmult, mmulte, mmultms;
 
-	m1 = params.cksi.pows[4][1];
-	m2 = params.cksi.pows[4][2];
-
+	m1 = params.cksi.pows[4][0];
+	m2 = params.cksi.pows[4][0];
+	vector<CZZ> m1vec;
+	vector<CZZ> m2vec;
 	madd = m1 + m2;
 	mmult = m1 * m2;
 	mmulte = m1 * m2;
 	mmultms = m1 * m2 / params.p;
 
-	Message msg1 = Message(m1, params.p);
-	Message msg2 = Message(m2, params.p);
-	Message msgadd = Message(madd, params.p);
-	Message msgmult = Message(mmult, params.p);
-	Message msgmultms = Message(mmultms, params.p);
+	for (long i = 0; i < slots; ++i) {
+		m1vec.push_back(m1);
+		m2vec.push_back(m2);
+	}
+	Message msg1 = Message(m1vec, params.p);
+	Message msg2 = Message(m2vec, params.p);
 
 	Cipher c1 = scheme.encrypt(msg1);
 	Cipher cmulte = scheme.encrypt(msg1);
@@ -191,12 +187,19 @@ void testOperations() {
 	timeutils.stop("mult and mod switch");
 	cout << "------------------" << endl;
 
+	cout << "------------------" << endl;
 	Message d1 = scheme.decrypt(c1);
+	cout << "------------------" << endl;
 	Message d2 = scheme.decrypt(c2);
+	cout << "------------------" << endl;
 	Message dadd = scheme.decrypt(cadd);
+	cout << "------------------" << endl;
 	Message dmult = scheme.decrypt(cmult);
+	cout << "------------------" << endl;
 	Message dmulte = scheme.decrypt(cmulte);
+	cout << "------------------" << endl;
 	Message dmultms = scheme.decrypt(cmultms);
+	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	cout << "m1:  " << m1.toString() << endl;
@@ -552,11 +555,11 @@ int main() {
 //	----------------------------
 //	testDumb();
 //	testEncode();
-//	testOperations();
+	testOperations();
 //	testPow();
 //	testProd2();
 //	testInv();
-	testFFT();
+//	testFFT();
 //	----------------------------
 
 	return 0;

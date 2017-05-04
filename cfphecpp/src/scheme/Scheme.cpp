@@ -81,8 +81,11 @@ Message Scheme::decrypt(Cipher& cipher) {
 		fftinv.push_back(c);
 		idx += gap;
 	}
-
 	vector<CZZ> fft = NumUtils::fft(fftinv, params.cksi);
+
+	for (int i = 0; i < 10; ++i) {
+		cout << fft[i].toString() << endl;
+	}
 	vector<CZZ> res;
 	for (long i = 1; i < slots / 2; ++i) {
 		res.push_back(fft[i]);
