@@ -45,18 +45,13 @@ void testDumb() {
 	vector<CZZ> mvec, fftinv, fft;
 
 	//any real
-	mvec.push_back(CZZ(random(), 0));
 	for (long i = 1; i < slots / 2; ++i) {
 		CZZ m = CZZ(random(), random());
 //		CZZ m = params.cksi.pows[5][i % 3];
 		mvec.push_back(m);
 	}
-	//any real
-	mvec.push_back(CZZ(random(), 0));
-	for (long i = 1; i < slots / 2; ++i) {
-		CZZ m = mvec[slots/2 - i].conjugate();
-		mvec.push_back(m);
-	}
+
+	mvec = NumUtils::doubleConjugate(mvec);
 
 	timeutils.start("xx");
 	fftinv = NumUtils::fftInv(mvec, params.cksi);
@@ -104,24 +99,26 @@ void testEncode() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long logSlots = 12;
-	long slots = (1 << logSlots);
+	long logSlots = 2;
+	long mvecsize = (1 << logSlots) - 1;
 
 	CZZ m;
 	vector<CZZ> mvec;
 
-	for (long i = 0; i < slots; ++i) {
+	for (long i = 1; i < mvecsize; ++i) {
 		m = params.cksi.pows[5][i % 3];
 		mvec.push_back(m);
 	}
+
 	Message msg = Message(mvec, params.p);
+	cout << msg.logSlots << endl;
 
 	cout << "---------------" << endl;
 	Cipher cipher = scheme.encrypt(msg);
 	Message dmsg = scheme.decrypt(cipher);
 	cout << "---------------" << endl;
 
-	for (long i = 0; i < slots; ++i) {
+	for (long i = 0; i < mvecsize; ++i) {
 		cout << "---------------------" << endl;
 		cout << "mi: " << i << " : " << msg.vals[i].toString() << endl;
 		cout << "di: " << i << " : " << dmsg.vals[i].toString() << endl;
@@ -136,10 +133,10 @@ void testOperations() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 13;
+	long logn = 6;
 	long logl = 1;
 	long logp = 30;
-	long L = 2;
+	long L = 4;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -152,8 +149,9 @@ void testOperations() {
 
 	CZZ m1, m2, madd, mmult, mmulte, mmultms;
 
-	m1 = params.cksi.pows[5][2];
-	m2 = params.cksi.pows[5][3];
+	m1 = params.cksi.pows[4][1];
+	m2 = params.cksi.pows[4][2];
+
 	madd = m1 + m2;
 	mmult = m1 * m2;
 	mmulte = m1 * m2;
@@ -161,6 +159,9 @@ void testOperations() {
 
 	Message msg1 = Message(m1, params.p);
 	Message msg2 = Message(m2, params.p);
+	Message msgadd = Message(madd, params.p);
+	Message msgmult = Message(mmult, params.p);
+	Message msgmultms = Message(mmultms, params.p);
 
 	Cipher c1 = scheme.encrypt(msg1);
 	Cipher cmulte = scheme.encrypt(msg1);
@@ -469,17 +470,18 @@ void testFFT() {
 	vector<Cipher> cfft1, cfft2;
 	vector<Message> dpx;
 
-	mp1.push_back(zero);
-	mp2.push_back(zero);
-	for (long i = 1; i < deg; ++i) {
+	for (long i = 0; i < deg; ++i) {
 		mp1.push_back(params.cksi.pows[logN][i]);
 		mp2.push_back(params.cksi.pows[logN][i]);
 	}
 
-	for (long i = deg; i < N; ++i) {
+	for (long i = deg; i < N / 2 - 1; ++i) {
 		mp1.push_back(zero);
 		mp2.push_back(zero);
 	}
+
+	mp1 = NumUtils::doubleConjugate(mp1);
+	mp2 = NumUtils::doubleConjugate(mp2);
 
 	mfft1 = NumUtils::fft(mp1, params.cksi);
 	mfft2 = NumUtils::fft(mp2, params.cksi);
@@ -531,13 +533,14 @@ void testFFT() {
 	cout << "------------------" << endl;
 
 	for (long i = 0; i < N; ++i) {
-		dpx.push_back(scheme.decrypt(cpx[i]));
+		Message dx = scheme.decrypt(cpx[i]);
+		dpx.push_back(dx);
 	}
 
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
 		cout << i << " step: mpx = " << mpx[i].toString() << endl;
-		cout << i << " step: dpx = " << dpx[i].vals[0].toString() << endl;
+		cout << i << " step: dpx = " << dpx[i].vals[1].toString() << endl;
 		cout << "----------------------" << endl;
 	}
 
@@ -547,9 +550,9 @@ void testFFT() {
 
 int main() {
 //	----------------------------
-	testDumb();
+//	testDumb();
 //	testEncode();
-//	testOperations();
+	testOperations();
 //	testPow();
 //	testProd2();
 //	testInv();

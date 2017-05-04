@@ -30,32 +30,31 @@ void Scheme::trueValue(CZZ& m, ZZ& qi) {
 	while(2 * m.i < -qi) m.i += qi;
 }
 
+void Scheme::trueValue(ZZ& m, ZZ& qi) {
+	while(2 * m > qi) m -= qi;
+	while(2 * m < -qi) m += qi;
+}
+
 ZZX Scheme::encode(Message& msg) {
 	ZZX res;
-	CZZX fftInvSpecial;
 
-	NumUtils::fftInvSpecial(fftInvSpecial, msg.vals, params.cksi);
-	for (long i = 0; i < msg.vals.size(); ++i) {
-		cout << msg.vals[i].toString() << endl;
-
-	}
 	long idx = 0;
 	long slots = 1 << msg.logSlots;
 	long gap = (params.n >> msg.logSlots);
-
+	vector<CZZ> vals = NumUtils::doubleConjugate(msg.vals);
+	vector<CZZ> fftInv = NumUtils::fftInv(vals, params.cksi);
 	for (long i = 0; i < slots; ++i) {
-		SetCoeff(res, idx, coeff(fftInvSpecial, i).r);
+		SetCoeff(res, idx, fftInv[i].r);
 		idx += gap;
 	}
-
 	return res;
 }
 
 Cipher Scheme::encrypt(Message& msg) {
 	ZZX c0, c1;
 	rlweInstance(c0, c1);
-
 	ZZX f = encode(msg);
+
 	Ring2Utils::add(c0, f, c0, params.q, params.n);
 
 //	Cipher cipher(c0, c1, 1, params.Bclean, msg.nu);
@@ -68,7 +67,7 @@ Message Scheme::decrypt(Cipher& cipher) {
 	long idx = 0;
 	ZZX poly;
 	CZZ c;
-	vector<CZZ> fft;
+	vector<CZZ> fftinv;
 
 	long slots = (1 << cipher.logSlots);
 	long gap = (params.n >> cipher.logSlots);
@@ -79,11 +78,16 @@ Message Scheme::decrypt(Cipher& cipher) {
 	for (long i = 0; i < slots; ++i) {
 		c = CZZ(coeff(poly, idx), ZZ(0));
 		trueValue(c, qi);
-		fft.push_back(c);
+		fftinv.push_back(c);
 		idx += gap;
 	}
 
-	vector<CZZ> res = NumUtils::fft(fft, params.cksi);
+	vector<CZZ> fft = NumUtils::fft(fftinv, params.cksi);
+	vector<CZZ> res;
+	for (long i = 1; i < slots / 2; ++i) {
+		trueValue(fft[i], qi);
+		res.push_back(fft[i]);
+	}
 	Message msg = Message(res, params.p);
 	return msg;
 }

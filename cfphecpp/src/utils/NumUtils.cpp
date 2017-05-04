@@ -159,37 +159,16 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
 	return fftInv;
 }
 
-void NumUtils::fftInvSpecial(ZZX& res, vector<CZZ>& coeffs, CKsi& cksi) {
-	vector<CZZ> dcoeffs = doubleConjugate(coeffs);
-	res.SetLength(dcoeffs.size());
-	vector<CZZ> special = fftInv(dcoeffs, cksi);
-	for (long i = 0; i < special.size(); ++i) {
-		res.rep[i] = special[i].r;
-	}
-	res.normalize();
-}
-
-void NumUtils::fftInvSpecial(CZZX& res, vector<CZZ>& coeffs, CKsi& cksi) {
-	vector<CZZ> dcoeffs = doubleConjugate(coeffs);
-	res.SetLength(dcoeffs.size());
-	vector<CZZ> special = fftInv(dcoeffs, cksi);
-	for (long i = 0; i < special.size(); ++i) {
-		SetCoeff(res, i, special[i]);
-	}
-	res.normalize();
-}
-
-
 vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& coeffs) {
 	vector<CZZ> res;
 	long csize = coeffs.size();
 	res.push_back(CZZ(0,0));
-	for (long i = 1; i < csize; ++i) {
+	for (long i = 0; i < csize; ++i) {
 		res.push_back(coeffs[i]);
 	}
 	res.push_back(CZZ(0,0));
-	for (long i = 1; i < csize; ++i) {
-		res.push_back(coeffs[csize - i].conjugate());
+	for (long i = 0; i < csize; ++i) {
+		res.push_back(coeffs[csize - i - 1].conjugate());
 	}
 
 	return res;
