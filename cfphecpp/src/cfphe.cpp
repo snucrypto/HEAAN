@@ -39,24 +39,47 @@ void testDumb() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long logSlots = 6;
+	long logSlots = logn;
 	long slots = (1 << logSlots);
 
-	vector<CZZ> mvec, fftinv;
+	vector<CZZ> mvec, fftinv, fft;
 
-	for (long i = 0; i < slots; ++i) {
-		CZZ m = CZZ(params.cksi.pows[5][i % 3].r, ZZ(0));
+	//any real
+	mvec.push_back(CZZ(random(), 0));
+	for (long i = 1; i < slots / 2; ++i) {
+		CZZ m = CZZ(random(), random());
+//		CZZ m = params.cksi.pows[5][i % 3];
 		mvec.push_back(m);
 	}
-	fftinv = NumUtils::fft(mvec, params.cksi);
+	//any real
+	mvec.push_back(CZZ(random(), 0));
+	for (long i = 1; i < slots / 2; ++i) {
+		CZZ m = mvec[slots/2 - i].conjugate();
+		mvec.push_back(m);
+	}
+
+	timeutils.start("xx");
+	fftinv = NumUtils::fftInv(mvec, params.cksi);
+	timeutils.stop("xx");
+
+	timeutils.start("xx");
+	fft = NumUtils::fft(fftinv, params.cksi);
+	timeutils.stop("xx");
 
 	for (int i = 0; i < mvec.size(); ++i) {
 		cout << mvec[i].toString() << endl;
 	}
-	cout << "dfssffafa" << endl;
+
+	cout << "-------------" << endl;
 
 	for (int i = 0; i < fftinv.size(); ++i) {
 		cout << fftinv[i].toString() << endl;
+	}
+
+	cout << "-------------" << endl;
+
+	for (int i = 0; i < fft.size(); ++i) {
+		cout << fft[i].toString() << endl;
 	}
 
 	cout << "!!! END TEST DUMB !!!" << endl;
@@ -446,7 +469,9 @@ void testFFT() {
 	vector<Cipher> cfft1, cfft2;
 	vector<Message> dpx;
 
-	for (long i = 0; i < deg; ++i) {
+	mp1.push_back(zero);
+	mp2.push_back(zero);
+	for (long i = 1; i < deg; ++i) {
 		mp1.push_back(params.cksi.pows[logN][i]);
 		mp2.push_back(params.cksi.pows[logN][i]);
 	}

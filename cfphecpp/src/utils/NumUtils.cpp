@@ -183,12 +183,13 @@ void NumUtils::fftInvSpecial(CZZX& res, vector<CZZ>& coeffs, CKsi& cksi) {
 vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& coeffs) {
 	vector<CZZ> res;
 	long csize = coeffs.size();
-	for (long i = 0; i < csize; ++i) {
+	res.push_back(CZZ(0,0));
+	for (long i = 1; i < csize; ++i) {
 		res.push_back(coeffs[i]);
 	}
-
-	for (long i = 0; i < csize; ++i) {
-		res.push_back(coeffs[csize - i - 1].conjugate());
+	res.push_back(CZZ(0,0));
+	for (long i = 1; i < csize; ++i) {
+		res.push_back(coeffs[csize - i].conjugate());
 	}
 
 	return res;

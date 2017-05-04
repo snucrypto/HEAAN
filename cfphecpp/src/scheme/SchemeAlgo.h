@@ -19,6 +19,7 @@ public:
 	vector<Cipher> fftRaw(vector<Cipher>& ciphers, const bool& isForward);
 	vector<Cipher> fft(vector<Cipher>& ciphers);
 	vector<Cipher> fftInv(vector<Cipher>& ciphers);
+
 };
 
 #endif /* SCHEME_SCHEMEALGO_H_ */
