@@ -55,6 +55,14 @@ void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, co
 	}
 }
 
+void SchemeAlgo::exp(Cipher& res, Cipher& c, const long& deg) {
+
+}
+
+void SchemeAlgo::sigmoid(Cipher& res, Cipher& c, const long& deg) {
+
+}
+
 vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, const bool& isForward) {
 	long csize = ciphers.size();
 

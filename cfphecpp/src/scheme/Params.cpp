@@ -20,6 +20,7 @@ Params::Params(long logn, long logl, long logp, long L, double sigma, double rho
 	power(p, 2, logp);
 	power(q, 2, logl + logp * L);
 	power(Pq, 2, 2 * logl + 2 * logp * L);
+
 //	Bclean = (8.0 * sqrt(2.0) * sigma * n) + (6.0 * sigma * sqrt(n)) + (16.0 * sigma * sqrt(h * n * 1.0));
 //	Bscale = sqrt(3.0 * n) + 8 * sqrt(h * n / 3.0);
 

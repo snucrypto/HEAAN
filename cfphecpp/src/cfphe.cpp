@@ -554,8 +554,8 @@ void testFFT() {
 int main() {
 //	----------------------------
 //	testDumb();
-//	testEncode();
-	testOperations();
+	testEncode();
+//	testOperations();
 //	testPow();
 //	testProd2();
 //	testInv();

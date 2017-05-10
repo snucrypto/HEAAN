@@ -2,24 +2,33 @@
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
+#include <iostream>
+#include <vector>
 
 #include "../czz/CZZ.h"
 #include "../utils/NumUtils.h"
 #include "../utils/Ring2Utils.h"
+#include "Params.h"
 
 using namespace std;
 using namespace NTL;
 
-void Scheme::rlweInstance(ZZX& c0, ZZX& c1) {
+Scheme::Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
+
+void Scheme::rlweInstance(ZZX& c0, ZZX& c1, ZZ& qi) {
 	ZZX v, e;
 	NumUtils::sampleZO(v, params.n);
-	Ring2Utils::mult(c0, v, publicKey.b, params.q, params.n);
+	Ring2Utils::mult(c0, v, publicKey.b, qi, params.n);
 	NumUtils::sampleGauss(e, params.n, params.sigma);
-	Ring2Utils::add(c0, e, c0, params.q, params.n);
+	Ring2Utils::add(c0, e, c0, qi, params.n);
 
-	Ring2Utils::mult(c1, v, publicKey.a, params.q, params.n);
+	Ring2Utils::mult(c1, v, publicKey.a, qi, params.n);
 	NumUtils::sampleGauss(e, params.n, params.sigma);
-	Ring2Utils::add(c1, e, c1, params.q, params.n);
+	Ring2Utils::add(c1, e, c1, qi, params.n);
+}
+
+void Scheme::rlweInstance(ZZX& c0, ZZX& c1) {
+	rlweInstance(c0, c1, params.q);
 }
 
 void Scheme::trueValue(CZZ& m, ZZ& qi) {
@@ -50,15 +59,23 @@ ZZX Scheme::encode(Message& msg) {
 	return res;
 }
 
-Cipher Scheme::encrypt(Message& msg) {
+
+Cipher Scheme::encrypt(Message& msg, long& level) {
 	ZZX c0, c1;
-	rlweInstance(c0, c1);
+	ZZ qi = getqi(level);
+	rlweInstance(c0, c1, qi);
 	ZZX f = encode(msg);
 
-	Ring2Utils::add(c0, f, c0, params.q, params.n);
+	Ring2Utils::add(c0, f, c0, qi, params.n);
 
 //	Cipher cipher(c0, c1, 1, params.Bclean, msg.nu);
-	Cipher cipher(c0, c1, 1, msg.logSlots);
+	Cipher cipher(c0, c1, level, msg.logSlots);
+	return cipher;
+}
+
+Cipher Scheme::encrypt(Message& msg) {
+	long level = 1;
+	Cipher cipher = encrypt(msg, level);
 	return cipher;
 }
 
@@ -141,17 +158,16 @@ Cipher Scheme::addConst(Cipher& cipher, CZZ& cnst) {
 	ZZX c0 = cipher.c0;
 	ZZX c1 = cipher.c1;
 
-	AddMod(c0.rep[0], cipher.c0.rep[0], cnst.r, qi);
-	c0.normalize();
+	Message cnstmsg = Message(cnst, cipher.logSlots, params.p);
+	Cipher cnstcipher = encrypt(cnstmsg, cipher.level);
+	Cipher res = add(cipher, cnstcipher);
 
 //	ZZ norm = cnst.norm();
 
 //	ZZ eBnd = cipher.eBnd + 1;
 //	ZZ mBnd = cipher.mBnd + norm;
 
-//	Cipher newCipher(c0, c1, cipher.level, eBnd, mBnd);
-	Cipher newCipher(c0, c1, cipher.level, cipher.logSlots);
-	return newCipher;
+	return res;
 }
 
 void Scheme::addConstAndEqual(Cipher& cipher, ZZ& cnst) {

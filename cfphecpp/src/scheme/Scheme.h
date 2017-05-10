@@ -17,13 +17,16 @@ public:
 	SecKey& secretKey;
 	PubKey& publicKey;
 
-	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
+	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey);
 
 	void trueValue(CZZ& m, ZZ& qi);
 	void trueValue(ZZ& m, ZZ& qi);
+
+	void rlweInstance(ZZX& c0, ZZX& c1, ZZ& qi);
 	void rlweInstance(ZZX& c0, ZZX& c1);
 
 	ZZX encode(Message& msg);
+	Cipher encrypt(Message& msg, long& level);
 	Cipher encrypt(Message& msg);
 	Message decrypt(Cipher& cipher);
 
