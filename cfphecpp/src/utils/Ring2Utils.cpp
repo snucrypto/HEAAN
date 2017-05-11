@@ -67,17 +67,20 @@ void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	ZZ tmp1, tmp2;
+	ZZX p;
 	res.SetLength(degree);
-	ZZX p = p1 * p2;
+	p.SetLength(2 * degree);
+	mul(p, p1, p2);
 
-	res.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
 		tmp1 = coeff(p, i);
 		tmp2 = coeff(p, i + degree);
 		tmp1 %= mod;
 		tmp2 %= mod;
-		AddMod(res.rep[i], tmp1, -tmp2, mod);
+		tmp2 = mod - tmp2;
+		AddMod(res.rep[i], tmp1, tmp2, mod);
 	}
+	res.normalize();
 }
 
 void Ring2Utils::mult(CZZX& res, CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
@@ -315,6 +318,7 @@ void Ring2Utils::leftShiftAndEqual(ZZX& p, const long& bits, const long& logMod,
 		truncate(p.rep[i], logMod - bits);
 		p.rep[i] <<= bits;
 	}
+	p.normalize();
 }
 
 void Ring2Utils::leftShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree) {

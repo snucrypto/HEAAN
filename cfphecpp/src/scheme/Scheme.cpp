@@ -100,9 +100,6 @@ Message Scheme::decrypt(Cipher& cipher) {
 	}
 	vector<CZZ> fft = NumUtils::fft(fftinv, params.cksi);
 
-	for (int i = 0; i < 10; ++i) {
-		cout << fft[i].toString() << endl;
-	}
 	vector<CZZ> res;
 	for (long i = 1; i < slots / 2; ++i) {
 		res.push_back(fft[i]);
@@ -204,7 +201,7 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
 
-	ZZX cc00, cc01, cc10, cc11, mulC0, mulC1;
+	ZZX cc00, cc01, cc10, cc11, mulC1, mulC0;
 
 	Ring2Utils::mult(cc00, cipher1.c0, cipher2.c0, qi, params.n);
 	Ring2Utils::mult(cc01, cipher1.c0, cipher2.c1, qi, params.n);

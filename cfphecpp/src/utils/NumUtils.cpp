@@ -27,7 +27,7 @@ void NumUtils::sampleGauss(vector<CZZ>& res, const long& d, const double& stdev)
 void NumUtils::sampleGauss(ZZX& res, const long& d, const double& stdev) {
 	static double const Pi = 4.0 * atan(1.0); // Pi=3.1415..
 	static long const bignum = 0xfffffff;
-	res.SetMaxLength(d);
+	res.SetLength(d);
 	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
 	for (long i = 0; i < d; i+=2) {
 		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
@@ -89,7 +89,7 @@ void NumUtils::sampleUniform2(vector<CZZ>& res, const long& d, const long& logBn
 
 void NumUtils::sampleUniform2(ZZX& res, const long& d, const long& logBnd) {
 	ZZ tmp;
-	res.SetMaxLength(d);
+	res.SetLength(d);
 	for (long i = 0; i < d; i++) {
 		RandomBits(tmp, logBnd);
 		res.rep[i] = tmp;

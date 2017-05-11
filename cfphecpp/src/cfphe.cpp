@@ -121,7 +121,7 @@ void testEncode() {
 	cout << "!!! STOP TEST ENCODE !!!" << endl;
 }
 
-void testOperations() {
+void testOperationssame() {
 	cout << "!!! START TEST OPERATIONS !!!" << endl;
 
 	//----------------------------
@@ -187,19 +187,119 @@ void testOperations() {
 	timeutils.stop("mult and mod switch");
 	cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
 	Message d1 = scheme.decrypt(c1);
-	cout << "------------------" << endl;
 	Message d2 = scheme.decrypt(c2);
-	cout << "------------------" << endl;
 	Message dadd = scheme.decrypt(cadd);
-	cout << "------------------" << endl;
 	Message dmult = scheme.decrypt(cmult);
-	cout << "------------------" << endl;
 	Message dmulte = scheme.decrypt(cmulte);
-	cout << "------------------" << endl;
 	Message dmultms = scheme.decrypt(cmultms);
+
 	cout << "------------------" << endl;
+	cout << "m1:  " << m1.toString() << endl;
+	cout << "d1:  " << d1.vals[0].toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "m2:  " << m2.toString() << endl;
+	cout << "d2:  " << d2.vals[0].toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "madd:  " << madd.toString() << endl;
+	cout << "dadd:  " << dadd.vals[0].toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "mmult:  " << mmult.toString() << endl;
+	cout << "dmult:  " << dmult.vals[0].toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "mmulte:  " << mmulte.toString() << endl;
+	cout << "dmulte:  " << dmulte.vals[0].toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	cout << "mmultms:  " << mmultms.toString() << endl;
+	cout << "dmultms:  " << dmultms.vals[0].toString() << endl;
+	cout << "------------------" << endl;
+
+	cout << "!!! STOP TEST OPERATIONS !!!" << endl;
+
+}
+
+void testOperationsdifferent() {
+	cout << "!!! START TEST OPERATIONS !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logn = 13;
+	long logl = 1;
+	long logp = 30;
+	long L = 6;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logn, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	long slots = (1 << (logn-1)) - 1;
+	CZZ m1, m2, madd, mmult, mmulte, mmultms;
+
+	m1 = params.cksi.pows[4][1];
+	m2 = params.cksi.pows[4][2];
+	vector<CZZ> m1vec;
+	vector<CZZ> m2vec;
+	madd = m1 + m2;
+	mmult = m1 * m2;
+	mmulte = m1 * m2;
+	mmultms = m1 * m2 / params.p;
+
+	for (long i = 0; i < slots; ++i) {
+		m1vec.push_back(m1);
+		m2vec.push_back(m2);
+	}
+	Message msg1 = Message(m1vec, params.p);
+	Message msg2 = Message(m2vec, params.p);
+
+	Cipher c1 = scheme.encrypt(msg1);
+	Cipher cmulte = scheme.encrypt(msg1);
+	Cipher c2 = scheme.encrypt(msg2);
+
+	cout << "------------------" << endl;
+	timeutils.start("add");
+	Cipher cadd = scheme.add(c1, c2);
+	timeutils.stop("add");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("mult");
+	Cipher cmult = scheme.mult(c1, c2);
+	timeutils.stop("mult");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("mult and equal");
+	scheme.multAndEqual(cmulte, c2);
+	timeutils.stop("mult and equal");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("mult and mod switch");
+	Cipher cmultms = scheme.multAndModSwitch(c1, c2);
+	timeutils.stop("mult and mod switch");
+	cout << "------------------" << endl;
+
+	Message d1 = scheme.decrypt(c1);
+	Message d2 = scheme.decrypt(c2);
+	Message dadd = scheme.decrypt(cadd);
+	Message dmult = scheme.decrypt(cmult);
+	Message dmulte = scheme.decrypt(cmulte);
+	Message dmultms = scheme.decrypt(cmultms);
 
 	cout << "------------------" << endl;
 	cout << "m1:  " << m1.toString() << endl;
@@ -374,7 +474,6 @@ void testProd2() {
 	}
 	cout << "!!! END TEST PROD !!!" << endl;
 }
-
 
 void testInv() {
 	cout << "!!! START TEST INV !!!" << endl;
@@ -554,8 +653,9 @@ void testFFT() {
 int main() {
 //	----------------------------
 //	testDumb();
-	testEncode();
-//	testOperations();
+//	testEncode();
+//	testOperationssame();
+	testOperationsdifferent();
 //	testPow();
 //	testProd2();
 //	testInv();

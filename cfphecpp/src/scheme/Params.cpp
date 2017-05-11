@@ -7,7 +7,6 @@
 
 #include "Params.h"
 
-#include <cmath>
 
 Params::Params(long logn, long logl, long logp, long L, double sigma, double rho, long h) : logn(logn), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
 	n = 1 << logn;
@@ -18,8 +17,8 @@ Params::Params(long logn, long logl, long logp, long L, double sigma, double rho
 	cksi.setLogp(logp);
 	cksi.precompute(logn + 1);
 	power(p, 2, logp);
-	power(q, 2, logl + logp * L);
-	power(Pq, 2, 2 * logl + 2 * logp * L);
+	power(q, 2, logq);
+	power(Pq, 2, logPq);
 
 //	Bclean = (8.0 * sqrt(2.0) * sigma * n) + (6.0 * sigma * sqrt(n)) + (16.0 * sigma * sqrt(h * n * 1.0));
 //	Bscale = sqrt(3.0 * n) + 8 * sqrt(h * n / 3.0);
@@ -29,7 +28,7 @@ Params::Params(long logn, long logl, long logp, long L, double sigma, double rho
 		long logql = logl + logp * (i + 1);
 		power(ql, 2, logql);
 		qi.push_back(ql);
-		power(Pql, 2, logql + logq);
+		power(Pql, 2, logql + logP);
 		Pqi.push_back(Pql);
 
 //		ZZ Bkstemp;
