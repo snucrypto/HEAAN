@@ -25,7 +25,6 @@ public:
 	static vector<CZZ> fft(vector<CZZ>& coeffs, CKsi& cksi);
 	static vector<CZZ> fftInv(vector<CZZ>& coeffs, CKsi& cksi);
 
-	static vector<CZZ> doubleConjugate(vector<CZZ>& coeffs);
 };
 
 #endif /* UTILS_NUMUTILS_H_ */

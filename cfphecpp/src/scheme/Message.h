@@ -13,13 +13,15 @@ using namespace NTL;
 
 class Message {
 public:
-	vector<CZZ> vals;
+	ZZX poly;
 	long logSlots;
-	ZZ nu;
+	long level;
 
-	Message(vector<CZZ> msgs, ZZ nu);
-	Message(CZZ m, ZZ nu);
-	Message(CZZ m, long logSlots, ZZ nu);
+	Message(ZZX& poly, long& logSlots, long& level) : poly(poly), logSlots(logSlots), level(level) {}
+
+	Message(ZZX& poly, long& logSlots) : poly(poly), logSlots(logSlots) {
+		level = 1;
+	}
 
 };
 

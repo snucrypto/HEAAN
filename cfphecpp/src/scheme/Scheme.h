@@ -25,11 +25,16 @@ public:
 	void rlweInstance(ZZX& c0, ZZX& c1, ZZ& qi);
 	void rlweInstance(ZZX& c0, ZZX& c1);
 
-	ZZX encode(Message& msg);
+	vector<CZZ> conj(vector<CZZ>& vals);
+	vector<CZZ> conj(CZZ& val);
+
+	Message encode(vector<CZZ>& vals);
 	Cipher encrypt(Message& msg, long& level);
 	Cipher encrypt(Message& msg);
-	Message decrypt(Cipher& cipher);
 
+	Message decrypt(Cipher& cipher);
+	vector<CZZ> decode(Message& msg);
+	vector<CZZ> dconj(vector<CZZ>& vals);
 //--------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);

@@ -44,33 +44,50 @@ void Scheme::trueValue(ZZ& m, ZZ& qi) {
 	while(2 * m < -qi) m += qi;
 }
 
-ZZX Scheme::encode(Message& msg) {
-	ZZX res;
-	res.SetLength(params.n);
-	long idx = 0;
-	long slots = 1 << msg.logSlots;
-	long gap = (params.n >> msg.logSlots);
-	vector<CZZ> vals = NumUtils::doubleConjugate(msg.vals);
-	vector<CZZ> fftInv = NumUtils::fftInv(vals, params.cksi);
-	for (long i = 0; i < slots; ++i) {
-		SetCoeff(res, idx, fftInv[i].r);
-		idx += gap;
+vector<CZZ> Scheme::conj(vector<CZZ>& vals) {
+	vector<CZZ> res;
+	long vsize = vals.size();
+	res.push_back(CZZ(0,0));
+	for (long i = 0; i < vsize; ++i) {
+		res.push_back(vals[i]);
+	}
+	res.push_back(CZZ(0,0));
+	for (long i = 0; i < vsize; ++i) {
+		res.push_back(vals[vsize - i - 1].conjugate());
 	}
 	return res;
 }
 
+vector<CZZ> Scheme::conj(CZZ& val) {
+	vector<CZZ> res;
+	res.push_back(CZZ(0,0));
+	res.push_back(val);
+	res.push_back(CZZ(0,0));
+	res.push_back(val.conjugate());
+	return res;
+}
+
+Message Scheme::encode(vector<CZZ>& vals) {
+	ZZX poly;
+	poly.SetLength(params.n);
+	long idx = 0;
+	long slots = vals.size();
+	long logSlots = log2(slots);
+	long gap = (params.n >> logSlots);
+	vector<CZZ> fftInv = NumUtils::fftInv(vals, params.cksi);
+	for (long i = 0; i < slots; ++i) {
+		poly.rep[idx] = fftInv[i].r;
+		idx += gap;
+	}
+	Message res(poly, logSlots);
+	return res;
+}
 
 Cipher Scheme::encrypt(Message& msg, long& level) {
 	ZZX c0, c1;
-	c0.SetLength(params.n);
-	c1.SetLength(params.n);
-
 	ZZ qi = getqi(level);
 	rlweInstance(c0, c1, qi);
-	ZZX f = encode(msg);
-
-	Ring2Utils::add(c0, f, c0, qi, params.n);
-
+	Ring2Utils::add(c0, msg.poly, c0, qi, params.n);
 //	Cipher cipher(c0, c1, 1, params.Bclean, msg.nu);
 	Cipher cipher(c0, c1, level, msg.logSlots);
 	return cipher;
@@ -84,34 +101,39 @@ Cipher Scheme::encrypt(Message& msg) {
 
 Message Scheme::decrypt(Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
-	long idx = 0;
 	ZZX poly;
 	poly.SetLength(params.n);
-	CZZ c;
-	vector<CZZ> fftinv;
-
-	long slots = (1 << cipher.logSlots);
-	long gap = (params.n >> cipher.logSlots);
-
 	Ring2Utils::mult(poly, cipher.c1, secretKey.s, qi, params.n);
 	Ring2Utils::add(poly, poly, cipher.c0, qi, params.n);
+	Message msg(poly, cipher.logSlots, cipher.level);
+	return msg;
+}
 
+vector<CZZ> Scheme::decode(Message& msg) {
+	vector<CZZ> fftinv;
+	ZZ qi = getqi(msg.level);
+
+	long idx = 0;
+	long slots = (1 << msg.logSlots);
+	long gap = (params.n >> msg.logSlots);
 	for (long i = 0; i < slots; ++i) {
-		c = CZZ(coeff(poly, idx), ZZ(0));
+		CZZ c(msg.poly.rep[idx], ZZ(0));
 		trueValue(c, qi);
 		fftinv.push_back(c);
 		idx += gap;
 	}
 	vector<CZZ> fft = NumUtils::fft(fftinv, params.cksi);
-
-	vector<CZZ> res;
-	for (long i = 1; i < slots / 2; ++i) {
-		res.push_back(fft[i]);
-	}
-	Message msg = Message(res, params.p);
-	return msg;
+	return fft;
 }
 
+vector<CZZ> Scheme::dconj(vector<CZZ>& vals) {
+	vector<CZZ> res;
+	long size = vals.size();
+	for (long i = 1; i < size / 2; ++i) {
+		res.push_back(vals[i]);
+	}
+	return res;
+}
 //-----------------------------
 
 Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
@@ -159,8 +181,9 @@ Cipher Scheme::addConst(Cipher& cipher, CZZ& cnst) {
 	ZZX c0 = cipher.c0;
 	ZZX c1 = cipher.c1;
 
-	Message cnstmsg = Message(cnst, cipher.logSlots, params.p);
-	Cipher cnstcipher = encrypt(cnstmsg, cipher.level);
+	vector<CZZ> cconj = conj(cnst);
+	Message cmsg = encode(cconj);
+	Cipher cnstcipher = encrypt(cmsg, cipher.level);
 	Cipher res = add(cipher, cnstcipher);
 
 //	ZZ norm = cnst.norm();

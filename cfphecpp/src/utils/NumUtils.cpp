@@ -161,17 +161,3 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
 	return fftInv;
 }
 
-vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& coeffs) {
-	vector<CZZ> res;
-	long csize = coeffs.size();
-	res.push_back(CZZ(0,0));
-	for (long i = 0; i < csize; ++i) {
-		res.push_back(coeffs[i]);
-	}
-	res.push_back(CZZ(0,0));
-	for (long i = 0; i < csize; ++i) {
-		res.push_back(coeffs[csize - i - 1].conjugate());
-	}
-
-	return res;
-}
