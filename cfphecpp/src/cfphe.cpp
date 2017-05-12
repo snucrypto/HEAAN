@@ -162,9 +162,11 @@ void testOperations() {
 
 	Cipher cmultx = scheme.encrypt(msgmult);
 	Message dmsgmultx = scheme.decrypt(cmultx);
-
-	ZZX msgmultx;
-	Ring2Utils::mult(msgmultx, msg1.poly, msg2.poly, params.q, params.n);
+	vector<CZZ> dconjx = scheme.decode(dmsgmultx);
+	ZZX polymultx;
+	Ring2Utils::mult(polymultx, msg1.poly, msg2.poly, params.q, params.n);
+	Message msgmultx(polymultx, msg1.logSlots);
+	vector<CZZ> mconjx = scheme.decode(msgmultx);
 
 	vector<CZZ> d1conj = scheme.decode(dmsg1);
 	vector<CZZ> d2conj = scheme.decode(dmsg2);
@@ -179,6 +181,18 @@ void testOperations() {
 	vector<CZZ> dmultvec = scheme.dconj(dmultconj);
 	vector<CZZ> dmultevec = scheme.dconj(dmulteconj);
 	vector<CZZ> dmultmsvec = scheme.dconj(dmultmsconj);
+
+	StringUtils::show(m1conj);
+	StringUtils::show(d1conj);
+
+	StringUtils::show(m2conj);
+	StringUtils::show(d2conj);
+
+	StringUtils::show(mmultconj);
+	StringUtils::show(dconjx);
+
+	StringUtils::show(dmultconj);
+	StringUtils::show(mconjx);
 
 	cout << "------------------" << endl;
 	cout << "m1:  " << m1vec[0].toString() << endl;
@@ -205,7 +219,7 @@ void testOperations() {
 	cout << "mmult:  " << mmultvec[0].toString() << endl;
 	cout << "dmult:  " << dmultvec[0].toString() << endl;
 	cout << "msgmult:  " << msgmult.poly << endl;
-	cout << "msgmultx:  " << msgmultx << endl;
+	cout << "msgmultx:  " << msgmultx.poly << endl;
 	cout << "dmsgmult:  " << dmsgmult.poly << endl;
 	cout << "dmsgmultx:  " << dmsgmultx.poly << endl;
 	cout << "------------------" << endl;

@@ -1,9 +1,9 @@
 #include "StringUtils.h"
 
 void StringUtils::show(vector<CZZ>& vals) {
-	cout << "------------------" << endl;
+	cout << "[";
 	for (long i = 0; i < vals.size(); ++i) {
-		cout << vals[i].toString() << endl;
+		cout << vals[i].toString() << ", ";
 	}
-	cout << "------------------" << endl;
+	cout << "]" << endl;
 }
