@@ -22,6 +22,79 @@ using namespace NTL;
 
 
 void testDumb() {
+	cout << "!!! START TEST DUMB !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logn = 5;
+	long logl = 1;
+	long logp = 30;
+	long L = 6;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logn, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	long slots = (1 << (logn-1)) - 1;
+	CZZ m1, m2, madd, mmult, mmulte, mmultms;
+
+	m1 = params.cksi.pows[4][1];
+	m2 = params.cksi.pows[4][2];
+
+	vector<CZZ> m1vec;
+	vector<CZZ> m2vec;
+	vector<CZZ> mmultvec;
+
+
+	for (long i = 0; i < slots; ++i) {
+		m1vec.push_back(m1);
+		m2vec.push_back(m2);
+		mmultvec.push_back(m1vec[i] * m2vec[i]);
+	}
+
+	vector<CZZ> m1conj = scheme.conj(m1vec);
+	vector<CZZ> m2conj = scheme.conj(m2vec);
+	vector<CZZ> mmultconj = scheme.conj(mmultvec);
+
+	vector<CZZ> fftinv1 = NumUtils::fftInv(m1conj, params.cksi);
+	vector<CZZ> fftinv2 = NumUtils::fftInv(m2conj, params.cksi);
+	ZZX poly1, poly2;
+	poly1.SetLength(params.n);
+	poly2.SetLength(params.n);
+	for (long i = 0; i < params.n; ++i) {
+		poly1.rep[i] = fftinv1[i].r;
+		poly2.rep[i] = fftinv2[i].r;
+	}
+
+	poly1.normalize();
+	poly2.normalize();
+
+	ZZX poly;
+	poly.SetLength(params.n);
+	Ring2Utils::mult(poly, poly1, poly2, params.q, params.n);
+
+	vector<CZZ> fftinvmult;
+	for (int i = 0; i < params.n; ++i) {
+		CZZ v(poly.rep[i], ZZ(0));
+		scheme.trueValue(v, params.q);
+		fftinvmult.push_back(v);
+	}
+
+	vector<CZZ> dmultconj = NumUtils::fft(fftinvmult, params.cksi);
+
+	StringUtils::show(m1conj);
+	StringUtils::show(m2conj);
+	StringUtils::show(mmultconj);
+	StringUtils::show(dmultconj);
+
+	cout << "!!! STOP TEST DUMB !!!" << endl;
+
+
 }
 
 void testEncode() {
@@ -579,9 +652,9 @@ void testFFT() {
 
 int main() {
 //	----------------------------
-//	testDumb();
+	testDumb();
 //	testEncode();
-	testOperations();
+//	testOperations();
 //	testPow();
 //	testProd2();
 //	testInv();
