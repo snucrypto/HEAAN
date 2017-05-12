@@ -127,9 +127,7 @@ void testOperations() {
 
 	Cipher cipher1 = scheme.encrypt(msg1);
 	Cipher cipher2 = scheme.encrypt(msg2);
-
 	Cipher cmulte = scheme.encrypt(msg1);
-
 	cout << "------------------" << endl;
 	timeutils.start("add");
 	Cipher cadd = scheme.add(cipher1, cipher2);
@@ -160,6 +158,12 @@ void testOperations() {
 	Message dmsgmult = scheme.decrypt(cmult);
 	Message dmsgmulte = scheme.decrypt(cmulte);
 	Message dmsgmultms = scheme.decrypt(cmultms);
+
+	Cipher cmultx = scheme.encrypt(msgmult);
+	Message dmsgmultx = scheme.decrypt(cmultx);
+
+	ZZX msgmultx;
+	Ring2Utils::mult(msgmultx, msg1.poly, msg2.poly, params.q, params.n);
 
 	vector<CZZ> d1conj = scheme.decode(dmsg1);
 	vector<CZZ> d2conj = scheme.decode(dmsg2);
@@ -200,7 +204,9 @@ void testOperations() {
 	cout << "mmult:  " << mmultvec[0].toString() << endl;
 	cout << "dmult:  " << dmultvec[0].toString() << endl;
 	cout << "msgmult:  " << msgmult.poly << endl;
+	cout << "msgmultx:  " << msgmultx << endl;
 	cout << "dmsgmult:  " << dmsgmult.poly << endl;
+	cout << "dmsgmultx:  " << dmsgmultx.poly << endl;
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
