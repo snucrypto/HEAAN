@@ -20,16 +20,15 @@
 using namespace std;
 using namespace NTL;
 
-
-void testDumb() {
-	cout << "!!! START TEST DUMB !!!" << endl;
+void testtest() {
+	cout << "!!! START TEST TEST !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 5;
+	long logn = 3;
 	long logl = 1;
-	long logp = 30;
-	long L = 6;
+	long logp = 8;
+	long L = 2;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -43,8 +42,63 @@ void testDumb() {
 	long slots = (1 << (logn-1)) - 1;
 	CZZ m1, m2, madd, mmult, mmulte, mmultms;
 
-	m1 = params.cksi.pows[4][1];
-	m2 = params.cksi.pows[4][2];
+	m1 = params.cksi.pows[2][1];
+	m2 = params.cksi.pows[2][0];
+
+	vector<CZZ> m1vec;
+	vector<CZZ> m2vec;
+	vector<CZZ> mmultvec;
+
+	m1vec.push_back(m2);
+	for (long i = 1; i < slots; ++i) {
+		m1vec.push_back(m1);
+	}
+
+	vector<CZZ> m1conj = scheme.conj(m1vec);
+
+	vector<CZZ> fftinv1 = NumUtils::fftInv(m1conj, params.cksi);
+	for (int i = 0; i < params.n; ++i) {
+
+		fftinv1[i] = fftinv1[i] + CZZ(random() / 100000, random() / 100000);
+	}
+	vector<CZZ> fft1 = NumUtils::fft(fftinv1, params.cksi);
+	vector<CZZ> fftinv11 = NumUtils::fftInv(fft1, params.cksi);
+
+	cout << "---------------------" << endl;
+	StringUtils::show(m1conj);
+	StringUtils::show(fft1);
+	cout << "---------------------" << endl;
+	StringUtils::show(fftinv1);
+	StringUtils::show(fftinv11);
+	cout << "---------------------" << endl;
+
+	cout << "!!! STOP TEST TEST !!!" << endl;
+}
+
+void testDumb() {
+	cout << "!!! START TEST DUMB !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logn = 5;
+	long logl = 1;
+	long logp = 15;
+	long L = 2;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logn, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	long slots = (1 << (logn-1)) - 1;
+	CZZ m1, m2, madd, mmult, mmulte, mmultms;
+
+	m1 = params.cksi.pows[3][0];
+	m2 = params.cksi.pows[3][1];
 
 	vector<CZZ> m1vec;
 	vector<CZZ> m2vec;
@@ -77,24 +131,28 @@ void testDumb() {
 	ZZX poly;
 	poly.SetLength(params.n);
 	Ring2Utils::mult(poly, poly1, poly2, params.q, params.n);
-
 	vector<CZZ> fftinvmult;
 	for (int i = 0; i < params.n; ++i) {
 		CZZ v(poly.rep[i], ZZ(0));
 		scheme.trueValue(v, params.q);
 		fftinvmult.push_back(v);
 	}
-
 	vector<CZZ> dmultconj = NumUtils::fft(fftinvmult, params.cksi);
 
 	StringUtils::show(m1conj);
 	StringUtils::show(m2conj);
+	cout<< "------------------" << endl;
+	StringUtils::show(fftinv1);
+	StringUtils::show(fftinv2);
+	cout<< "------------------" << endl;
+	StringUtils::show(fftinvmult);
+	cout<< "------------------" << endl;
 	StringUtils::show(mmultconj);
 	StringUtils::show(dmultconj);
+	cout<< "------------------" << endl;
+
 
 	cout << "!!! STOP TEST DUMB !!!" << endl;
-
-
 }
 
 void testEncode() {
@@ -652,6 +710,7 @@ void testFFT() {
 
 int main() {
 //	----------------------------
+//	testtest();
 	testDumb();
 //	testEncode();
 //	testOperations();
