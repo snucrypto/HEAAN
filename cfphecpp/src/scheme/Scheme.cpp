@@ -46,7 +46,7 @@ void Scheme::trueValue(ZZ& m, ZZ& qi) {
 
 ZZX Scheme::encode(Message& msg) {
 	ZZX res;
-
+	res.SetLength(params.n);
 	long idx = 0;
 	long slots = 1 << msg.logSlots;
 	long gap = (params.n >> msg.logSlots);
@@ -62,6 +62,9 @@ ZZX Scheme::encode(Message& msg) {
 
 Cipher Scheme::encrypt(Message& msg, long& level) {
 	ZZX c0, c1;
+	c0.SetLength(params.n);
+	c1.SetLength(params.n);
+
 	ZZ qi = getqi(level);
 	rlweInstance(c0, c1, qi);
 	ZZX f = encode(msg);
@@ -83,6 +86,7 @@ Message Scheme::decrypt(Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
 	long idx = 0;
 	ZZX poly;
+	poly.SetLength(params.n);
 	CZZ c;
 	vector<CZZ> fftinv;
 

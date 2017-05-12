@@ -65,17 +65,19 @@ void NumUtils::sampleZO(vector<CZZ>& res, const long& d) {
 
 void NumUtils::sampleZO(ZZX& res, const long& d) {
 	ZZ temp;
+	res.SetLength(d);
 	long i;
 	for (i = 0; i < d; ++i) {
 		RandomBits(temp, 2);
 		if(temp == 0) {
-			SetCoeff(res, i, ZZ(1));
+			res.rep[i] = ZZ(1);
 		} else if (temp == 1) {
-			SetCoeff(res, i, ZZ(-1));
+			res.rep[i] = ZZ(-1);
 		} else {
-			SetCoeff(res, i, ZZ(0));
+			res.rep[i] = ZZ(0);
 		}
 	}
+	res.normalize();
 }
 
 void NumUtils::sampleUniform2(vector<CZZ>& res, const long& d, const long& logBnd) {
