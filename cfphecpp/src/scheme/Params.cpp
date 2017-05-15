@@ -15,7 +15,7 @@ Params::Params(long logn, long logl, long logp, long L, double sigma, double rho
 	logP = logq;
 	logPq = logP + logq;
 	cksi.setLogp(logp);
-	cksi.precompute(logn + 1);
+	cksi.precompute(logn + 2);
 	power(p, 2, logp);
 	power(q, 2, logq);
 	power(Pq, 2, logPq);

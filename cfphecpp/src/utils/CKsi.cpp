@@ -27,6 +27,7 @@ void CKsi::precompute(long logSize) {
 				CZZ x(rx, ix);
 				temp.push_back(x);
 			}
+			temp.push_back(CZZ(ZZ(p), ZZ(0)));
 			pows.push_back(temp);
 		}
 	} else {

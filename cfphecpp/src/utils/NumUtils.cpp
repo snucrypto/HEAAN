@@ -100,19 +100,19 @@ void NumUtils::sampleUniform2(ZZX& res, const long& d, const long& logBnd) {
 }
 
 vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward) {
-	long csize = coeffs.size();
+	long N = coeffs.size();
 
-	if(csize == 1) {
+	if(N == 1) {
 		return coeffs;
 	}
 
 	long i;
-	long logcsize = log2(csize);
-	long csizeh = csize >> 1;
+	long logcsize = log2(N);
+	long Nh = N >> 1;
 
 	vector<CZZ> res, tmp, sub1, sub2;
 
-	for (i = 0; i < csize; i = i+2) {
+	for (i = 0; i < N; i = i+2) {
 		sub1.push_back(coeffs[i]);
 		sub2.push_back(coeffs[i+1]);
 	}
@@ -120,27 +120,24 @@ vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForw
 	vector<CZZ> y1 = fftRaw(sub1, cksi, isForward);
 	vector<CZZ> y2 = fftRaw(sub2, cksi, isForward);
 	if(isForward) {
-		for (i = 0; i < csizeh; ++i) {
+		for (i = 0; i < Nh; ++i) {
 			y2[i] *= cksi.pows[logcsize][i];
 			y2[i] >>= cksi.logp;
 		}
 	} else {
-		y2[0] *= cksi.pows[logcsize][0];
-		y2[0] >>= cksi.logp;
-
-		for (i = 1; i < csizeh; ++i) {
-			y2[i] *= cksi.pows[logcsize][csize - i];
+		for (i = 0; i < Nh; ++i) {
+			y2[i] *= cksi.pows[logcsize][N - i];
 			y2[i] >>= cksi.logp;
 		}
 	}
 
-	for (i = 0; i < csizeh; ++i) {
+	for (i = 0; i < Nh; ++i) {
 		CZZ sum = y1[i] + y2[i];
 		CZZ diff = y1[i] - y2[i];
 		res.push_back(sum);
 		tmp.push_back(diff);
 	}
-	for (i = 0; i < csizeh; ++i) {
+	for (i = 0; i < Nh; ++i) {
 		res.push_back(tmp[i]);
 	}
 
@@ -161,3 +158,77 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& coeffs, CKsi& cksi) {
 	return fftInv;
 }
 
+vector<CZZ> NumUtils::bitReverse(vector<CZZ>& coeffs) {
+	vector<CZZ> res;
+	vector<CZZ> tmp;
+	long N = coeffs.size();
+	long logN = log2(N);
+	res.push_back(coeffs[0]);
+	for (long i = 0; i < logN; ++i) {
+		long powi = (1 << i);
+		long powni = (1 << (logN - i));
+		long pownih = (1 << (logN - i - 1));
+		for (long j = 0; j < powi; ++j) {
+			tmp.push_back(coeffs[j * powni + pownih]);
+		}
+		cout << tmp.size() << endl;
+		tmp = bitReverse(tmp);
+		for (long j = 0; j < tmp.size(); ++j) {
+			res.push_back(tmp[j]);
+		}
+		tmp.clear();
+	}
+	return res;
+}
+
+vector<CZZ> NumUtils::fftbutterfly(vector<CZZ>& coeffs, CKsi& cksi) {
+	vector<CZZ> fft = coeffs;
+	long N = coeffs.size();
+	CZZ as, at, w;
+	long logN = log2(N);
+	for (long i = 0; i < logN; ++i) {
+		long powi = (1 << i);
+		long logNi = logN - i;
+		long pownih = (1 << (logNi - 1));
+		long powni = (1 << logNi);
+		for (long j = 0; j < powi; ++j) {
+			for (long k = 0; k < pownih; ++k) {
+				long s = j * powni + k;
+				long t = s + pownih;
+				as = fft[s] + fft[t];
+				at = ((cksi.pows[logNi][k] * (fft[s] - fft[t])) >> cksi.logp);
+				fft[s] = as;
+				fft[t] = at;
+			}
+		}
+	}
+
+	return bitReverse(fft);
+}
+
+vector<CZZ> NumUtils::fftbutterflyInv(vector<CZZ>& coeffs, CKsi& cksi) {
+	vector<CZZ> fftInv = coeffs;
+	long N = coeffs.size();
+	CZZ as, at;
+	long logN = log2(N);
+	for (long i = 0; i < logN; ++i) {
+		long powi = (1 << i);
+		long logNi = logN - i;
+		long pownih = (1 << (logNi - 1));
+		long powni = (1 << logNi);
+		for (long j = 0; j < powi; ++j) {
+			for (long k = 0; k < pownih; ++k) {
+				long s = j * powni + k;
+				long t = s + pownih;
+				as = fftInv[s] + fftInv[t];
+				at = ((cksi.pows[logNi][powni - k] * (fftInv[s] - fftInv[t])) >> cksi.logp);
+				fftInv[s] = as;
+				fftInv[t] = at;
+			}
+		}
+	}
+	for (long i = 0; i < N; ++i) {
+		fftInv[i] >>= logN;
+	}
+	return bitReverse(fftInv);
+}

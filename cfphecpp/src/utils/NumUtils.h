@@ -25,6 +25,11 @@ public:
 	static vector<CZZ> fft(vector<CZZ>& coeffs, CKsi& cksi);
 	static vector<CZZ> fftInv(vector<CZZ>& coeffs, CKsi& cksi);
 
+	static vector<CZZ> bitReverse(vector<CZZ>& coeffs);
+	static vector<CZZ> fftbutterfly(vector<CZZ>& coeffs, CKsi& cksi);
+	static vector<CZZ> fftbutterflyInv(vector<CZZ>& coeffs, CKsi& cksi);
+
+
 };
 
 #endif /* UTILS_NUMUTILS_H_ */

@@ -25,7 +25,7 @@ void testtest() {
 
 	//----------------------------
 	TimeUtils timeutils;
-	long logn = 3;
+	long logn = 4;
 	long logl = 1;
 	long logp = 8;
 	long L = 2;
@@ -62,14 +62,19 @@ void testtest() {
 		fftinv1[i] = fftinv1[i] + CZZ(random() / 100000, random() / 100000);
 	}
 	vector<CZZ> fft1 = NumUtils::fft(fftinv1, params.cksi);
+	vector<CZZ> fftbut = NumUtils::fftbutterfly(fftinv1, params.cksi);
+	vector<CZZ> fftbutInv = NumUtils::fftbutterflyInv(fftbut, params.cksi);
+	cout << "---------------------" << endl;
 	vector<CZZ> fftinv11 = NumUtils::fftInv(fft1, params.cksi);
 
 	cout << "---------------------" << endl;
 	StringUtils::show(m1conj);
 	StringUtils::show(fft1);
+	StringUtils::show(fftbut);
 	cout << "---------------------" << endl;
 	StringUtils::show(fftinv1);
 	StringUtils::show(fftinv11);
+	StringUtils::show(fftbutInv);
 	cout << "---------------------" << endl;
 
 	cout << "!!! STOP TEST TEST !!!" << endl;
@@ -82,8 +87,8 @@ void testDumb() {
 	TimeUtils timeutils;
 	long logn = 5;
 	long logl = 1;
-	long logp = 15;
-	long L = 2;
+	long logp = 30;
+	long L = 4;
 	double sigma = 3;
 	double rho = 0.5;
 	long h = 64;
@@ -132,12 +137,15 @@ void testDumb() {
 	poly.SetLength(params.n);
 	Ring2Utils::mult(poly, poly1, poly2, params.q, params.n);
 	vector<CZZ> fftinvmult;
-	for (int i = 0; i < params.n; ++i) {
+	for (long i = 0; i < params.n; ++i) {
 		CZZ v(poly.rep[i], ZZ(0));
 		scheme.trueValue(v, params.q);
 		fftinvmult.push_back(v);
 	}
 	vector<CZZ> dmultconj = NumUtils::fft(fftinvmult, params.cksi);
+	for (long i = 0; i < params.n; ++i) {
+		scheme.trueValue(dmultconj[i], params.q);
+	}
 
 	StringUtils::show(m1conj);
 	StringUtils::show(m2conj);
@@ -710,8 +718,8 @@ void testFFT() {
 
 int main() {
 //	----------------------------
-//	testtest();
-	testDumb();
+	testtest();
+//	testDumb();
 //	testEncode();
 //	testOperations();
 //	testPow();
