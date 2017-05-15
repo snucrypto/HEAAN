@@ -99,15 +99,14 @@ void NumUtils::sampleUniform2(ZZX& res, const long& d, const long& logBnd) {
 	res.normalize();
 }
 
-vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward) {
+vector<CZZ> NumUtils::fftHalf(vector<CZZ>& coeffs, CKsi& cksi) {
 	long N = coeffs.size();
-
 	if(N == 1) {
 		return coeffs;
 	}
 
 	long i;
-	long logcsize = log2(N);
+	long logN = log2(N);
 	long Nh = N >> 1;
 
 	vector<CZZ> res, tmp, sub1, sub2;
@@ -117,18 +116,11 @@ vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForw
 		sub2.push_back(coeffs[i+1]);
 	}
 
-	vector<CZZ> y1 = fftRaw(sub1, cksi, isForward);
-	vector<CZZ> y2 = fftRaw(sub2, cksi, isForward);
-	if(isForward) {
-		for (i = 0; i < Nh; ++i) {
-			y2[i] *= cksi.pows[logcsize][i];
-			y2[i] >>= cksi.logp;
-		}
-	} else {
-		for (i = 0; i < Nh; ++i) {
-			y2[i] *= cksi.pows[logcsize][N - i];
-			y2[i] >>= cksi.logp;
-		}
+	vector<CZZ> y1 = fftHalf(sub1, cksi);
+	vector<CZZ> y2 = fftHalf(sub2, cksi);
+	for (i = 0; i < Nh; ++i) {
+		y2[i] *= cksi.pows[logN + 1][2 * i + 1];
+		y2[i] >>= cksi.logp;
 	}
 
 	for (i = 0; i < Nh; ++i) {
@@ -138,6 +130,61 @@ vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForw
 		tmp.push_back(diff);
 	}
 	for (i = 0; i < Nh; ++i) {
+		res.push_back(tmp[i]);
+	}
+
+	return res;
+}
+
+vector<CZZ> NumUtils::fftHalfInv(vector<CZZ>& coeffs, CKsi& cksi) {
+	vector<CZZ> fftInv = fftRaw(coeffs, cksi, false);
+	long N = fftInv.size();
+	long logN = log2(N);
+	for (long i = 0; i < N; ++i) {
+		fftInv[i] *= cksi.pows[logN + 1][2 * N - i];
+		fftInv[i] >>= (cksi.logp + logN);
+	}
+	return fftInv;
+}
+
+vector<CZZ> NumUtils::fftRaw(vector<CZZ>& coeffs, CKsi& cksi, const bool& isForward) {
+	long N = coeffs.size();
+
+	if(N == 1) {
+		return coeffs;
+	}
+
+	long logN = log2(N);
+	long Nh = N >> 1;
+
+	vector<CZZ> res, tmp, sub1, sub2;
+
+	for (long i = 0; i < N; i = i+2) {
+		sub1.push_back(coeffs[i]);
+		sub2.push_back(coeffs[i+1]);
+	}
+
+	vector<CZZ> y1 = fftRaw(sub1, cksi, isForward);
+	vector<CZZ> y2 = fftRaw(sub2, cksi, isForward);
+	if(isForward) {
+		for (long i = 0; i < Nh; ++i) {
+			y2[i] *= cksi.pows[logN][i];
+			y2[i] >>= cksi.logp;
+		}
+	} else {
+		for (long i = 0; i < Nh; ++i) {
+			y2[i] *= cksi.pows[logN][N - i];
+			y2[i] >>= cksi.logp;
+		}
+	}
+
+	for (long i = 0; i < Nh; ++i) {
+		CZZ sum = y1[i] + y2[i];
+		CZZ diff = y1[i] - y2[i];
+		res.push_back(sum);
+		tmp.push_back(diff);
+	}
+	for (long i = 0; i < Nh; ++i) {
 		res.push_back(tmp[i]);
 	}
 

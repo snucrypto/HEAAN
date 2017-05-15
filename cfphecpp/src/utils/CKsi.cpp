@@ -27,11 +27,11 @@ void CKsi::precompute(long logSize) {
 				CZZ x(rx, ix);
 				temp.push_back(x);
 			}
-			temp.push_back(CZZ(ZZ(p), ZZ(0)));
+			temp.push_back(temp[0]);
 			pows.push_back(temp);
 		}
 	} else {
-		long tmp = (1 << 31);
+		long tmp = (1 << 30);
 		for (i = idx; i < logSize; ++i) {
 			long ipow = (1 << i);
 			vector<CZZ> temp;
@@ -39,12 +39,13 @@ void CKsi::precompute(long logSize) {
 			for (j = 0; j < ipow; ++j) {
 				angle = 2.0 * M_PI * j / ipow;
 				ZZ rx = to_ZZ((long)(cos(angle) * tmp));
-				rx <<= (logp-31);
+				rx <<= (logp - 30);
 				ZZ ix = to_ZZ((long)(sin(angle) * tmp));
-				ix <<= (logp-31);
+				ix <<= (logp - 30);
 				CZZ x(rx, ix);
 				temp.push_back(x);
 			}
+			temp.push_back(temp[0]);
 			pows.push_back(temp);
 		}
 	}

@@ -44,25 +44,21 @@ void Scheme::trueValue(ZZ& m, ZZ& qi) {
 	while(2 * m < -qi) m += qi;
 }
 
-vector<CZZ> Scheme::conj(vector<CZZ>& vals) {
+vector<CZZ> Scheme::conjugate(vector<CZZ>& vals) {
 	vector<CZZ> res;
 	long vsize = vals.size();
-	res.push_back(CZZ(0,0));
 	for (long i = 0; i < vsize; ++i) {
 		res.push_back(vals[i]);
 	}
-	res.push_back(CZZ(0,0));
 	for (long i = 0; i < vsize; ++i) {
 		res.push_back(vals[vsize - i - 1].conjugate());
 	}
 	return res;
 }
 
-vector<CZZ> Scheme::conj(CZZ& val) {
+vector<CZZ> Scheme::conjugate(CZZ& val) {
 	vector<CZZ> res;
-	res.push_back(CZZ(0,0));
 	res.push_back(val);
-	res.push_back(CZZ(0,0));
 	res.push_back(val.conjugate());
 	return res;
 }
@@ -74,7 +70,7 @@ Message Scheme::encode(vector<CZZ>& vals) {
 	long slots = vals.size();
 	long logSlots = log2(slots);
 	long gap = (params.n >> logSlots);
-	vector<CZZ> fftInv = NumUtils::fftInv(vals, params.cksi);
+	vector<CZZ> fftInv = NumUtils::fftHalfInv(vals, params.cksi);
 	for (long i = 0; i < slots; ++i) {
 		poly.rep[idx] = fftInv[i].r;
 		idx += gap;
@@ -122,14 +118,14 @@ vector<CZZ> Scheme::decode(Message& msg) {
 		fftinv.push_back(c);
 		idx += gap;
 	}
-	vector<CZZ> fft = NumUtils::fft(fftinv, params.cksi);
+	vector<CZZ> fft = NumUtils::fftHalf(fftinv, params.cksi);
 	return fft;
 }
 
-vector<CZZ> Scheme::dconj(vector<CZZ>& vals) {
+vector<CZZ> Scheme::deconjugate(vector<CZZ>& vals) {
 	vector<CZZ> res;
 	long size = vals.size();
-	for (long i = 1; i < size / 2; ++i) {
+	for (long i = 0; i < size / 2; ++i) {
 		res.push_back(vals[i]);
 	}
 	return res;
@@ -181,7 +177,7 @@ Cipher Scheme::addConst(Cipher& cipher, CZZ& cnst) {
 	ZZX c0 = cipher.c0;
 	ZZX c1 = cipher.c1;
 
-	vector<CZZ> cconj = conj(cnst);
+	vector<CZZ> cconj = conjugate(cnst);
 	Message cmsg = encode(cconj);
 	Cipher cnstcipher = encrypt(cmsg, cipher.level);
 	Cipher res = add(cipher, cnstcipher);

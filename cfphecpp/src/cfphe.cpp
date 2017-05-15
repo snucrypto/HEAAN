@@ -27,7 +27,7 @@ void testtest() {
 	TimeUtils timeutils;
 	long logn = 4;
 	long logl = 1;
-	long logp = 8;
+	long logp = 30;
 	long L = 2;
 	double sigma = 3;
 	double rho = 0.5;
@@ -39,7 +39,7 @@ void testtest() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long slots = (1 << (logn-1)) - 1;
+	long slots = (1 << (logn-1));
 	CZZ m1, m2, madd, mmult, mmulte, mmultms;
 
 	m1 = params.cksi.pows[2][1];
@@ -49,36 +49,28 @@ void testtest() {
 	vector<CZZ> m2vec;
 	vector<CZZ> mmultvec;
 
-	m1vec.push_back(m2);
-	for (long i = 1; i < slots; ++i) {
+	for (long i = 0; i < slots; ++i) {
 		m1vec.push_back(m1);
+		m2vec.push_back(m2);
 	}
 
-	vector<CZZ> m1conj = scheme.conj(m1vec);
+	vector<CZZ> m1conj = scheme.conjugate(m1vec);
+	vector<CZZ> fftinv1 = NumUtils::fftHalfInv(m1conj, params.cksi);
 
-	vector<CZZ> fftinv1 = NumUtils::fftInv(m1conj, params.cksi);
-	for (int i = 0; i < params.n; ++i) {
+	vector<CZZ> m2conj = scheme.conjugate(m2vec);
+	vector<CZZ> fft2 = NumUtils::fftHalf(m2conj, params.cksi);
 
-		fftinv1[i] = fftinv1[i] + CZZ(random() / 100000, random() / 100000);
-	}
-	timeutils.start("fft");
-	vector<CZZ> fft1 = NumUtils::fft(fftinv1, params.cksi);
-	timeutils.stop("fft");
-	timeutils.start("fft but");
-	vector<CZZ> fftbut = NumUtils::fftbutterfly(fftinv1, params.cksi);
-	timeutils.stop("fft but");
-	vector<CZZ> fftbutInv = NumUtils::fftbutterflyInv(fftbut, params.cksi);
-	cout << "---------------------" << endl;
-	vector<CZZ> fftinv11 = NumUtils::fftInv(fft1, params.cksi);
+	vector<CZZ> fft1 = NumUtils::fftHalf(fftinv1, params.cksi);
+
+	vector<CZZ> fftinv11 = NumUtils::fftHalfInv(fft1, params.cksi);
 
 	cout << "---------------------" << endl;
 	StringUtils::show(m1conj);
 	StringUtils::show(fft1);
-	StringUtils::show(fftbut);
+	StringUtils::show(fft2);
 	cout << "---------------------" << endl;
 	StringUtils::show(fftinv1);
 	StringUtils::show(fftinv11);
-	StringUtils::show(fftbutInv);
 	cout << "---------------------" << endl;
 
 	cout << "!!! STOP TEST TEST !!!" << endl;
@@ -103,10 +95,10 @@ void testDumb() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long slots = (1 << (logn-1)) - 1;
+	long slots = (1 << (logn-1));
 	CZZ m1, m2, madd, mmult, mmulte, mmultms;
 
-	m1 = params.cksi.pows[3][0];
+	m1 = params.cksi.pows[3][2];
 	m2 = params.cksi.pows[3][1];
 
 	vector<CZZ> m1vec;
@@ -120,12 +112,12 @@ void testDumb() {
 		mmultvec.push_back(m1vec[i] * m2vec[i]);
 	}
 
-	vector<CZZ> m1conj = scheme.conj(m1vec);
-	vector<CZZ> m2conj = scheme.conj(m2vec);
-	vector<CZZ> mmultconj = scheme.conj(mmultvec);
+	vector<CZZ> m1conj = scheme.conjugate(m1vec);
+	vector<CZZ> m2conj = scheme.conjugate(m2vec);
+	vector<CZZ> mmultconj = scheme.conjugate(mmultvec);
 
-	vector<CZZ> fftinv1 = NumUtils::fftInv(m1conj, params.cksi);
-	vector<CZZ> fftinv2 = NumUtils::fftInv(m2conj, params.cksi);
+	vector<CZZ> fftinv1 = NumUtils::fftHalfInv(m1conj, params.cksi);
+	vector<CZZ> fftinv2 = NumUtils::fftHalfInv(m2conj, params.cksi);
 	ZZX poly1, poly2;
 	poly1.SetLength(params.n);
 	poly2.SetLength(params.n);
@@ -146,7 +138,7 @@ void testDumb() {
 		scheme.trueValue(v, params.q);
 		fftinvmult.push_back(v);
 	}
-	vector<CZZ> dmultconj = NumUtils::fft(fftinvmult, params.cksi);
+	vector<CZZ> dmultconj = NumUtils::fftHalf(fftinvmult, params.cksi);
 	for (long i = 0; i < params.n; ++i) {
 		scheme.trueValue(dmultconj[i], params.q);
 	}
@@ -187,7 +179,7 @@ void testEncode() {
 	//----------------------------
 
 	long logSlots = 12;
-	long mvecsize = (1 << logSlots) - 1;
+	long mvecsize = (1 << logSlots);
 
 	CZZ m;
 	vector<CZZ> mvec;
@@ -196,12 +188,12 @@ void testEncode() {
 		mvec.push_back(m);
 	}
 
-	vector<CZZ> mconj = scheme.conj(mvec);
+	vector<CZZ> mconj = scheme.conjugate(mvec);
 	Message msg = scheme.encode(mconj);
 	Cipher cipher = scheme.encrypt(msg);
 	Message denc = scheme.decrypt(cipher);
 	vector<CZZ> dconj = scheme.decode(denc);
-	vector<CZZ> dvec = scheme.dconj(dconj);
+	vector<CZZ> dvec = scheme.deconjugate(dconj);
 
 	for (long i = 0; i < mvecsize; ++i) {
 		cout << "---------------------" << endl;
@@ -232,7 +224,7 @@ void testOperations() {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long slots = (1 << (logn-1)) - 1;
+	long slots = (1 << (logn-1));
 	CZZ m1, m2, madd, mmult, mmulte, mmultms;
 
 	m1 = params.cksi.pows[4][1];
@@ -255,12 +247,12 @@ void testOperations() {
 		mmultmsvec.push_back(m1vec[i] * m2vec[i] / params.p);
 	}
 
-	vector<CZZ> m1conj = scheme.conj(m1vec);
-	vector<CZZ> m2conj = scheme.conj(m2vec);
-	vector<CZZ> maddconj = scheme.conj(maddvec);
-	vector<CZZ> mmultconj = scheme.conj(mmultvec);
-	vector<CZZ> mmulteconj = scheme.conj(mmultevec);
-	vector<CZZ> mmultmsconj = scheme.conj(mmultmsvec);
+	vector<CZZ> m1conj = scheme.conjugate(m1vec);
+	vector<CZZ> m2conj = scheme.conjugate(m2vec);
+	vector<CZZ> maddconj = scheme.conjugate(maddvec);
+	vector<CZZ> mmultconj = scheme.conjugate(mmultvec);
+	vector<CZZ> mmulteconj = scheme.conjugate(mmultevec);
+	vector<CZZ> mmultmsconj = scheme.conjugate(mmultmsvec);
 
 	Message msg1 = scheme.encode(m1conj);
 	Message msg2 = scheme.encode(m2conj);
@@ -303,14 +295,6 @@ void testOperations() {
 	Message dmsgmulte = scheme.decrypt(cmulte);
 	Message dmsgmultms = scheme.decrypt(cmultms);
 
-	Cipher cmultx = scheme.encrypt(msgmult);
-	Message dmsgmultx = scheme.decrypt(cmultx);
-	vector<CZZ> dconjx = scheme.decode(dmsgmultx);
-	ZZX polymultx;
-	Ring2Utils::mult(polymultx, msg1.poly, msg2.poly, params.q, params.n);
-	Message msgmultx(polymultx, msg1.logSlots);
-	vector<CZZ> mconjx = scheme.decode(msgmultx);
-
 	vector<CZZ> d1conj = scheme.decode(dmsg1);
 	vector<CZZ> d2conj = scheme.decode(dmsg2);
 	vector<CZZ> daddconj = scheme.decode(dmsgadd);
@@ -318,53 +302,39 @@ void testOperations() {
 	vector<CZZ> dmulteconj = scheme.decode(dmsgmulte);
 	vector<CZZ> dmultmsconj = scheme.decode(dmsgmultms);
 
-	vector<CZZ> d1vec = scheme.dconj(d1conj);
-	vector<CZZ> d2vec = scheme.dconj(d2conj);
-	vector<CZZ> daddvec = scheme.dconj(daddconj);
-	vector<CZZ> dmultvec = scheme.dconj(dmultconj);
-	vector<CZZ> dmultevec = scheme.dconj(dmulteconj);
-	vector<CZZ> dmultmsvec = scheme.dconj(dmultmsconj);
-
-	StringUtils::show(m1conj);
-	StringUtils::show(d1conj);
-
-	StringUtils::show(m2conj);
-	StringUtils::show(d2conj);
-
-	StringUtils::show(mmultconj);
-	StringUtils::show(dconjx);
-
-	StringUtils::show(dmultconj);
-	StringUtils::show(mconjx);
+	vector<CZZ> d1vec = scheme.deconjugate(d1conj);
+	vector<CZZ> d2vec = scheme.deconjugate(d2conj);
+	vector<CZZ> daddvec = scheme.deconjugate(daddconj);
+	vector<CZZ> dmultvec = scheme.deconjugate(dmultconj);
+	vector<CZZ> dmultevec = scheme.deconjugate(dmulteconj);
+	vector<CZZ> dmultmsvec = scheme.deconjugate(dmultmsconj);
 
 	cout << "------------------" << endl;
 	cout << "m1:  " << m1vec[0].toString() << endl;
 	cout << "d1:  " << d1vec[0].toString() << endl;
-	cout << "msg:  " << msg1.poly << endl;
-	cout << "dmsg:  " << dmsg1.poly << endl;
+//	cout << "msg:  " << msg1.poly << endl;
+//	cout << "dmsg:  " << dmsg1.poly << endl;
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	cout << "m2:  " << m2vec[0].toString() << endl;
 	cout << "d2:  " << d2vec[0].toString() << endl;
-	cout << "msg2:  " << msg2.poly << endl;
-	cout << "dmsg2:  " << dmsg2.poly << endl;
+//	cout << "msg2:  " << msg2.poly << endl;
+//	cout << "dmsg2:  " << dmsg2.poly << endl;
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	cout << "madd:  " << maddvec[0].toString() << endl;
 	cout << "dadd:  " << daddvec[0].toString() << endl;
-	cout << "msgadd:  " << msgadd.poly << endl;
-	cout << "dmsgadd:  " << dmsgadd.poly << endl;
+//	cout << "msgadd:  " << msgadd.poly << endl;
+//	cout << "dmsgadd:  " << dmsgadd.poly << endl;
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	cout << "mmult:  " << mmultvec[0].toString() << endl;
 	cout << "dmult:  " << dmultvec[0].toString() << endl;
-	cout << "msgmult:  " << msgmult.poly << endl;
-	cout << "msgmultx:  " << msgmultx.poly << endl;
-	cout << "dmsgmult:  " << dmsgmult.poly << endl;
-	cout << "dmsgmultx:  " << dmsgmultx.poly << endl;
+//	cout << "msgmult:  " << msgmult.poly << endl;
+//	cout << "dmsgmult:  " << dmsgmult.poly << endl;
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
@@ -391,7 +361,7 @@ void testPow() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 15;
-	long logl = 1;
+	long logl = 3;
 	long logp = 56;
 	long L = 11;
 	double sigma = 3;
@@ -418,8 +388,7 @@ void testPow() {
 		m2 = (m2k[i] * m2k[i]) >> params.logp;
 		m2k.push_back(m2);
 	}
-
-	vector<CZZ> mconj = scheme.conj(m);
+	vector<CZZ> mconj = scheme.conjugate(m);
 	Message msg = scheme.encode(mconj);
 	Cipher c = scheme.encrypt(msg);
 
@@ -432,7 +401,7 @@ void testPow() {
 	for (long i = 0; i < c2k.size(); ++i) {
 		Message dmsg = scheme.decrypt(c2k[i]);
 		vector<CZZ> ddconj = scheme.decode(dmsg);
-		vector<CZZ> dvec = scheme.dconj(ddconj);
+		vector<CZZ> dvec = scheme.deconjugate(ddconj);
 		d2k.push_back(dvec[0]);
 	}
 
@@ -482,7 +451,7 @@ void testProd2() {
 
 	for (long i = 0; i < size; ++i) {
 		m = params.cksi.pows[logN][i % 3];
-		vector<CZZ> mconj = scheme.conj(m);
+		vector<CZZ> mconj = scheme.conjugate(m);
 		Message msg = scheme.encode(mconj);
 		Cipher c = scheme.encrypt(msg);
 		ms.push_back(m);
@@ -513,7 +482,7 @@ void testProd2() {
 		for (long j = 0; j < cs2k[i].size(); ++j) {
 			Message dmsg = scheme.decrypt(cs2k[i][j]);
 			vector<CZZ> dconj = scheme.decode(dmsg);
-			vector<CZZ> dvec = scheme.dconj(dconj);
+			vector<CZZ> dvec = scheme.deconjugate(dconj);
 			d2k.push_back(dvec[0]);
 		}
 		ds2k.push_back(d2k);
@@ -568,7 +537,7 @@ void testInv() {
 	minv.r = params.p * params.p / m.r;
 	halfp = params.p / 2;
 
-	vector<CZZ> mbarconj = scheme.conj(mbar);
+	vector<CZZ> mbarconj = scheme.conjugate(mbar);
 	Message msgbar = scheme.encode(mbarconj);
 
 	cout << "------------------" << endl;
@@ -586,7 +555,7 @@ void testInv() {
 	for (long i = 0; i < v2k.size(); ++i) {
 		Message dmsg = scheme.decrypt(v2k[i]);
 		vector<CZZ> dconj = scheme.decode(dmsg);
-		vector<CZZ> dvec = scheme.dconj(dconj);
+		vector<CZZ> dvec = scheme.deconjugate(dconj);
 		d2k.push_back(dvec[0]);
 	}
 
@@ -610,7 +579,7 @@ void testFFT() {
 	//----------------------------
 	TimeUtils timeutils;
 	long logn = 13;
-	long logl = 4;
+	long logl = 5;
 	long logp = 30;
 	long L = 3;
 	double sigma = 3;
@@ -633,22 +602,20 @@ void testFFT() {
 	vector<CZZ> mfft1, mfft2, mfftx;
 	vector<Cipher> cp1, cp2, cpx;
 	vector<Cipher> cfft1, cfft2;
-	vector<Cipher> cfftbut1, cfftbut2, cpxbut;
 	vector<CZZ> dpx;
-	vector<CZZ> dpxbut;
 
 	for (long i = 0; i < deg; ++i) {
 		mp1.push_back(params.cksi.pows[logN][i]);
 		mp2.push_back(params.cksi.pows[logN][i]);
 	}
 
-	for (long i = deg; i < N / 2 - 1; ++i) {
+	for (long i = deg; i < N / 2; ++i) {
 		mp1.push_back(zero);
 		mp2.push_back(zero);
 	}
 
-	mp1 = scheme.conj(mp1);
-	mp2 = scheme.conj(mp2);
+	mp1 = scheme.conjugate(mp1);
+	mp2 = scheme.conjugate(mp2);
 
 	mfft1 = NumUtils::fft(mp1, params.cksi);
 	mfft2 = NumUtils::fft(mp2, params.cksi);
@@ -663,8 +630,8 @@ void testFFT() {
 	cout << "------------------" << endl;
 	timeutils.start("Encrypting polynomials");
 	for (long i = 0; i < N; ++i) {
-		vector<CZZ> mconj1 = scheme.conj(mp1[i]);
-		vector<CZZ> mconj2 = scheme.conj(mp2[i]);
+		vector<CZZ> mconj1 = scheme.conjugate(mp1[i]);
+		vector<CZZ> mconj2 = scheme.conjugate(mp2[i]);
 
 		Message msgp1 = scheme.encode(mconj1);
 		Message msgp2 = scheme.encode(mconj2);
@@ -691,18 +658,6 @@ void testFFT() {
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
-	timeutils.start("cfft but 1");
-	cfftbut1 = algo.fftButterfly(cp1);
-	timeutils.stop("cfft but 1");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
-	timeutils.start("cfft but 2");
-	cfftbut2 = algo.fftButterfly(cp2);
-	timeutils.stop("cfft but 2");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
 	timeutils.start("mul fft");
 	for (long i = 0; i < N; ++i) {
 		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
@@ -711,44 +666,23 @@ void testFFT() {
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
-	timeutils.start("mul fft but");
-	for (long i = 0; i < N; ++i) {
-		scheme.multModSwitchAndEqual(cfftbut1[i], cfftbut2[i]);
-	}
-	timeutils.stop("mul fft but");
-	cout << "------------------" << endl;
-
-	cout << "------------------" << endl;
 	timeutils.start("cfftx inv");
 	cpx = algo.fftInv(cfft1);
 	timeutils.stop("cfftx inv");
 	cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
-	timeutils.start("cfftx inv");
-	cpxbut = algo.fftButterflyInv(cfftbut1);
-	timeutils.stop("cfftx inv");
-	cout << "------------------" << endl;
 
 	for (long i = 0; i < N; ++i) {
 		Message dx = scheme.decrypt(cpx[i]);
 		vector<CZZ> dconj = scheme.decode(dx);
-		vector<CZZ> dmp = scheme.dconj(dconj);
+		vector<CZZ> dmp = scheme.deconjugate(dconj);
 		dpx.push_back(dmp[0]);
-	}
-
-	for (long i = 0; i < N; ++i) {
-		Message dx = scheme.decrypt(cpxbut[i]);
-		vector<CZZ> dconj = scheme.decode(dx);
-		vector<CZZ> dmp = scheme.dconj(dconj);
-		dpxbut.push_back(dmp[0]);
 	}
 
 	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
 		cout << i << " step: mpx    = " << mpx[i].toString() << endl;
 		cout << i << " step: dpx    = " << dpx[i].toString() << endl;
-		cout << i << " step: dpxbut = " << dpxbut[i].toString() << endl;
 
 		cout << "----------------------" << endl;
 	}
