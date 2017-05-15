@@ -23,6 +23,9 @@ public:
 	vector<Cipher> fft(vector<Cipher>& ciphers);
 	vector<Cipher> fftInv(vector<Cipher>& ciphers);
 
+	vector<Cipher> bitReverse(vector<Cipher>& ciphers);
+	vector<Cipher> fftButterfly(vector<Cipher>& ciphers);
+	vector<Cipher> fftButterflyInv(vector<Cipher>& ciphers);
 };
 
 #endif /* SCHEME_SCHEMEALGO_H_ */

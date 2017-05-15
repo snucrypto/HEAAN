@@ -171,7 +171,6 @@ vector<CZZ> NumUtils::bitReverse(vector<CZZ>& coeffs) {
 		for (long j = 0; j < powi; ++j) {
 			tmp.push_back(coeffs[j * powni + pownih]);
 		}
-		cout << tmp.size() << endl;
 		tmp = bitReverse(tmp);
 		for (long j = 0; j < tmp.size(); ++j) {
 			res.push_back(tmp[j]);

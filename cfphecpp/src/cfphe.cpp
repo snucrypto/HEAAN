@@ -61,8 +61,12 @@ void testtest() {
 
 		fftinv1[i] = fftinv1[i] + CZZ(random() / 100000, random() / 100000);
 	}
+	timeutils.start("fft");
 	vector<CZZ> fft1 = NumUtils::fft(fftinv1, params.cksi);
+	timeutils.stop("fft");
+	timeutils.start("fft but");
 	vector<CZZ> fftbut = NumUtils::fftbutterfly(fftinv1, params.cksi);
+	timeutils.stop("fft but");
 	vector<CZZ> fftbutInv = NumUtils::fftbutterflyInv(fftbut, params.cksi);
 	cout << "---------------------" << endl;
 	vector<CZZ> fftinv11 = NumUtils::fftInv(fft1, params.cksi);
@@ -629,7 +633,9 @@ void testFFT() {
 	vector<CZZ> mfft1, mfft2, mfftx;
 	vector<Cipher> cp1, cp2, cpx;
 	vector<Cipher> cfft1, cfft2;
+	vector<Cipher> cfftbut1, cfftbut2, cpxbut;
 	vector<CZZ> dpx;
+	vector<CZZ> dpxbut;
 
 	for (long i = 0; i < deg; ++i) {
 		mp1.push_back(params.cksi.pows[logN][i]);
@@ -685,6 +691,18 @@ void testFFT() {
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
+	timeutils.start("cfft but 1");
+	cfftbut1 = algo.fftButterfly(cp1);
+	timeutils.stop("cfft but 1");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("cfft but 2");
+	cfftbut2 = algo.fftButterfly(cp2);
+	timeutils.stop("cfft but 2");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
 	timeutils.start("mul fft");
 	for (long i = 0; i < N; ++i) {
 		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
@@ -693,8 +711,22 @@ void testFFT() {
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
+	timeutils.start("mul fft but");
+	for (long i = 0; i < N; ++i) {
+		scheme.multModSwitchAndEqual(cfftbut1[i], cfftbut2[i]);
+	}
+	timeutils.stop("mul fft but");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
 	timeutils.start("cfftx inv");
 	cpx = algo.fftInv(cfft1);
+	timeutils.stop("cfftx inv");
+	cout << "------------------" << endl;
+
+	cout << "------------------" << endl;
+	timeutils.start("cfftx inv");
+	cpxbut = algo.fftButterflyInv(cfftbut1);
 	timeutils.stop("cfftx inv");
 	cout << "------------------" << endl;
 
@@ -706,9 +738,18 @@ void testFFT() {
 	}
 
 	for (long i = 0; i < N; ++i) {
+		Message dx = scheme.decrypt(cpxbut[i]);
+		vector<CZZ> dconj = scheme.decode(dx);
+		vector<CZZ> dmp = scheme.dconj(dconj);
+		dpxbut.push_back(dmp[0]);
+	}
+
+	for (long i = 0; i < N; ++i) {
 		cout << "----------------------" << endl;
-		cout << i << " step: mpx = " << mpx[i].toString() << endl;
-		cout << i << " step: dpx = " << dpx[i].toString() << endl;
+		cout << i << " step: mpx    = " << mpx[i].toString() << endl;
+		cout << i << " step: dpx    = " << dpx[i].toString() << endl;
+		cout << i << " step: dpxbut = " << dpxbut[i].toString() << endl;
+
 		cout << "----------------------" << endl;
 	}
 
@@ -718,14 +759,14 @@ void testFFT() {
 
 int main() {
 //	----------------------------
-	testtest();
+//	testtest();
 //	testDumb();
 //	testEncode();
 //	testOperations();
 //	testPow();
 //	testProd2();
 //	testInv();
-//	testFFT();
+	testFFT();
 //	----------------------------
 
 	return 0;

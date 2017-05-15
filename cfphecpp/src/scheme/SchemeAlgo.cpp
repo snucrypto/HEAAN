@@ -117,3 +117,79 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers) {
 	}
 	return fftInv;
 }
+
+vector<Cipher> SchemeAlgo::bitReverse(vector<Cipher>& ciphers) {
+	vector<Cipher> res;
+	vector<Cipher> tmp;
+	long N = ciphers.size();
+	long logN = log2(N);
+	res.push_back(ciphers[0]);
+	for (long i = 0; i < logN; ++i) {
+		long powi = (1 << i);
+		long powni = (1 << (logN - i));
+		long pownih = (1 << (logN - i - 1));
+		for (long j = 0; j < powi; ++j) {
+			tmp.push_back(ciphers[j * powni + pownih]);
+		}
+		tmp = bitReverse(tmp);
+		for (long j = 0; j < tmp.size(); ++j) {
+			res.push_back(tmp[j]);
+		}
+		tmp.clear();
+	}
+	return res;
+}
+
+vector<Cipher> SchemeAlgo::fftButterfly(vector<Cipher>& ciphers) {
+	vector<Cipher> fft = ciphers;
+	long N = ciphers.size();
+	long logN = log2(N);
+	for (long i = 0; i < logN; ++i) {
+		long powi = (1 << i);
+		long logNi = logN - i;
+		long pownih = (1 << (logNi - 1));
+		long powni = (1 << logNi);
+		for (long j = 0; j < powi; ++j) {
+			for (long k = 0; k < pownih; ++k) {
+				long s = j * powni + k;
+				long t = s + pownih;
+				Cipher as = scheme.add(fft[s], fft[t]);
+				Cipher at = scheme.sub(fft[s], fft[t]);
+				scheme.multByMonomialAndEqual(at, powi * k);
+				fft[s] = as;
+				fft[t] = at;
+			}
+		}
+	}
+	return bitReverse(fft);
+}
+
+vector<Cipher> SchemeAlgo::fftButterflyInv(vector<Cipher>& ciphers) {
+	vector<Cipher> fftInv = ciphers;
+	long N = ciphers.size();
+	long logN = log2(N);
+	for (long i = 0; i < logN; ++i) {
+		long powi = (1 << i);
+		long logNi = logN - i;
+		long pownih = (1 << (logNi - 1));
+		long powni = (1 << logNi);
+		for (long j = 0; j < powi; ++j) {
+			for (long k = 0; k < pownih; ++k) {
+				long s = j * powni + k;
+				long t = s + pownih;
+				Cipher as = scheme.add(fftInv[s], fftInv[t]);
+				Cipher at = scheme.sub(fftInv[s], fftInv[t]);
+				scheme.multByMonomialAndEqual(at, scheme.params.d - powi * k);
+				fftInv[s] = as;
+				fftInv[t] = at;
+			}
+		}
+	}
+	long bits = scheme.params.logp - logN;
+	for (long i = 0; i < N; ++i) {
+		scheme.leftShiftAndEqual(fftInv[i], bits);
+		scheme.modSwitchAndEqual(fftInv[i]);
+	}
+	return bitReverse(fftInv);
+}
+
