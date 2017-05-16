@@ -7,21 +7,21 @@
 #include "../czz/CZZ.h"
 #include "Params.h"
 
-void SchemeAlgo::powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg) {
-	c2k.reserve(deg + 1);
+void SchemeAlgo::powerOf2(vector<Cipher>& c2k, Cipher& c, const long& logDegree) {
+	c2k.reserve(logDegree + 1);
 	c2k.push_back(c);
-	for (long i = 1; i < deg + 1; ++i) {
+	for (long i = 1; i < logDegree + 1; ++i) {
 		Cipher c2 = scheme.square(c2k[i - 1]);
 		scheme.modSwitchAndEqual(c2);
 		c2k.push_back(c2);
 	}
 }
 
-void SchemeAlgo::prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const long& deg) {
-	cs2k.reserve(deg + 1);
+void SchemeAlgo::prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const long& logDegree) {
+	cs2k.reserve(logDegree + 1);
 	cs2k.push_back(cs);
 	long size, idx;
-	for (long i = 1; i < deg + 1; ++i) {
+	for (long i = 1; i < logDegree + 1; ++i) {
 		vector<Cipher> c2k;
 		idx = 0;
 		size = cs2k[i-1].size();
@@ -35,16 +35,16 @@ void SchemeAlgo::prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const l
 	}
 }
 
-void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, const long& r) {
-	c2k.reserve(r-1);
-	v2k.reserve(r-1);
+void SchemeAlgo::inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, const long& steps) {
+	c2k.reserve(steps-1);
+	v2k.reserve(steps-1);
 	c2k.push_back(c);
 
 	Cipher tmp = scheme.addConst(c, scheme.params.p);
 	scheme.modEmbedAndEqual(tmp);
 	v2k.push_back(tmp);
 
-	for (long i = 1; i < r-1; ++i) {
+	for (long i = 1; i < steps-1; ++i) {
 		tmp = scheme.square(c2k[i - 1]);
 		scheme.modSwitchAndEqual(tmp);
 		c2k.push_back(tmp);
@@ -86,7 +86,7 @@ vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, const bool& isForward
 	vector<Cipher> y1 = fftRaw(sub1, isForward);
 	vector<Cipher> y2 = fftRaw(sub2, isForward);
 
-	long shift = isForward ? (scheme.params.d / csize) : (scheme.params.d - scheme.params.d / csize);
+	long shift = isForward ? (scheme.params.M / csize) : (scheme.params.M - scheme.params.M / csize);
 
 	for (long i = 0; i < csizeh; ++i) {
 		scheme.multByMonomialAndEqual(y2[i], shift * i);
@@ -179,7 +179,7 @@ vector<Cipher> SchemeAlgo::fftButterflyInv(vector<Cipher>& ciphers) {
 				long t = s + pownih;
 				Cipher as = scheme.add(fftInv[s], fftInv[t]);
 				Cipher at = scheme.sub(fftInv[s], fftInv[t]);
-				scheme.multByMonomialAndEqual(at, scheme.params.d - powi * k);
+				scheme.multByMonomialAndEqual(at, scheme.params.M - powi * k);
 				fftInv[s] = as;
 				fftInv[t] = at;
 			}

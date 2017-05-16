@@ -8,14 +8,14 @@
 #include "Params.h"
 
 
-Params::Params(long logn, long logl, long logp, long L, double sigma, double rho, long h) : logn(logn), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
-	n = 1 << logn;
-	d = n << 1;
+Params::Params(long logN, long logl, long logp, long L, double sigma, double rho, long h) : logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
+	N = 1 << logN;
+	M = N << 1;
 	logq = logl + logp * L;
 	logP = logq;
 	logPq = logP + logq;
-	cksi.setLogp(logp);
-	cksi.precompute(logn + 2);
+	ksiPows.setLogp(logp);
+	ksiPows.precompute(logN + 2);
 	power(p, 2, logp);
 	power(q, 2, logq);
 	power(Pq, 2, logPq);

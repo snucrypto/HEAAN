@@ -19,14 +19,20 @@ public:
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey);
 
+	ZZ getqi(long& level);
+	ZZ getPqi(long& level);
+	long getLogqi(long& level);
+
 	void trueValue(CZZ& m, ZZ& qi);
 	void trueValue(ZZ& m, ZZ& qi);
 
 	void rlweInstance(ZZX& c0, ZZX& c1, ZZ& qi);
 	void rlweInstance(ZZX& c0, ZZX& c1);
 
-	vector<CZZ> conjugate(vector<CZZ>& vals);
-	vector<CZZ> conjugate(CZZ& val);
+	//-----------------------------------------
+
+	vector<CZZ> doubleConjugate(vector<CZZ>& vals);
+	vector<CZZ> doubleConjugate(CZZ& val);
 
 	Message encode(vector<CZZ>& vals);
 	Cipher encrypt(Message& msg, long& level);
@@ -34,8 +40,10 @@ public:
 
 	Message decrypt(Cipher& cipher);
 	vector<CZZ> decode(Message& msg);
-	vector<CZZ> deconjugate(vector<CZZ>& vals);
-//--------------------------------
+
+	vector<CZZ> deConjugate(vector<CZZ>& vals);
+
+	//-----------------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);
 	void addAndEqual(Cipher& cipher1, Cipher& cipher2);
@@ -76,11 +84,8 @@ public:
 
 	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
 	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
-//-----------------------------------------
 
-	ZZ getqi(long& level);
-	ZZ getPqi(long& level);
-	long getLogqi(long& level);
+	//-----------------------------------------
 
 };
 

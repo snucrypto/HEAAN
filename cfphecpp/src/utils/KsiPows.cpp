@@ -1,15 +1,16 @@
-#include "CKsi.h"
+#include "KsiPows.h"
+
 #include <cmath>
 
-CKsi::CKsi() {
+KsiPows::KsiPows() {
 	logp = 0;
 }
 
-void CKsi::setLogp(long logp) {
+void KsiPows::setLogp(long logp) {
 	this->logp = logp;
 }
 
-void CKsi::precompute(long logSize) {
+void KsiPows::precompute(long logSize) {
 	long i, j;
 	double angle;
 	long idx = pows.size();
@@ -51,7 +52,7 @@ void CKsi::precompute(long logSize) {
 	}
 }
 
-CKsi::~CKsi() {
+KsiPows::~KsiPows() {
 	// TODO Auto-generated destructor stub
 }
 

@@ -1,5 +1,5 @@
-#ifndef UTILS_CKSI_H_
-#define UTILS_CKSI_H_
+#ifndef UTILS_KSIPOWS_H_
+#define UTILS_KSIPOWS_H_
 
 #include <vector>
 
@@ -9,17 +9,17 @@
 using namespace std;
 using namespace NTL;
 
-class CKsi {
+class KsiPows {
 public:
 
 	long logp;
 	vector<vector<CZZ>> pows;
 
-	CKsi();
+	KsiPows();
 	void setLogp(long logp);
 
 	void precompute(long logSize);
-	virtual ~CKsi();
+	virtual ~KsiPows();
 };
 
-#endif /* UTILS_CKSI_H_ */
+#endif /* UTILS_KSIPOWS_H_ */

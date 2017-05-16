@@ -3,16 +3,16 @@
 
 #include <vector>
 
-#include "../utils/CKsi.h"
 #include "NTL/ZZ.h"
+#include "../utils/KsiPows.h"
 
 using namespace std;
 using namespace NTL;
 
 class Params {
 public:
-	long logn;
-	long n;
+	long logN;
+	long N;
 	long logl;
 	long logp;
 	long logP;
@@ -22,10 +22,10 @@ public:
 	double rho;
 	long h;
 
-	long d;
+	long M;
 	long logq;
 
-	CKsi cksi;
+	KsiPows ksiPows;
 
 	ZZ p;
 	ZZ q;
@@ -38,7 +38,7 @@ public:
 //	vector<ZZ> Bks;
 //	vector<ZZ> Bmult;
 
-	Params(long logn, long logl, long logp, long L, double sigma, double rho, long h);
+	Params(long logN, long logl, long logp, long L, double sigma, double rho, long h);
 };
 
 #endif /* SCHEME_PARAMS_H_ */
