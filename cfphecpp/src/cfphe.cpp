@@ -14,9 +14,9 @@ int main() {
 
 	/*
 	 * Params: logN, logp, L
-	 * Suggested: 13, 30, 5
+	 * Suggested: 13, 30, 5, 12
 	 */
-//	TestScheme::testOperations(13, 30, 4);
+//	TestScheme::testOperations(13, 30, 4, 8);
 
 //	----------------------------
 
@@ -25,7 +25,7 @@ int main() {
 	 * Suggested: 13, 30, 5, 4
 	 * Suggested: 15, 56, 11, 10
 	 */
-//	TestScheme::testPows(13, 30, 11, 10);
+//	TestScheme::testPow(13, 30, 11, 10);
 
 //	----------------------------
 
@@ -42,7 +42,7 @@ int main() {
 	 * Params: logN, logp, L, invSteps
 	 * Suggested: 13, 25, 6, 5
 	 */
-//	TestScheme::testInv(13, 30, 11, 6);
+	TestScheme::testInv(13, 30, 11, 6);
 
 //	----------------------------
 

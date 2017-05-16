@@ -5,7 +5,7 @@ class TestScheme {
 public:
 
 	static void testEncode(long logN, long logp, long L, long logSlots);
-	static void testOperations(long logN, long logp, long L);
+	static void testOperations(long logN, long logp, long L, long logSlots);
 	static void testPow(long logN, long logp, long L, long logPowDegree);
 	static void testProd(long logN, long logp, long L, long logProdDegree);
 	static void testInv(long logN, long logp, long L, long invSteps);

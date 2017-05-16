@@ -55,7 +55,7 @@ void TestScheme::testEncode(long logN, long logp, long L, long logSlots) {
 	cout << "!!! STOP TEST ENCODE !!!" << endl;
 }
 
-void TestScheme::testOperations(long logN, long logp, long L) {
+void TestScheme::testOperations(long logN, long logp, long L, long logSlots) {
 	cout << "!!! START TEST OPERATIONS !!!" << endl;
 
 	//----------------------------
@@ -71,11 +71,8 @@ void TestScheme::testOperations(long logN, long logp, long L) {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long slots = (1 << (logN-1));
+	long slots = (1 << (logSlots-1));
 	CZZ m1, m2, madd, mmult, mmulte, mmultms;
-
-	m1 = params.ksiPows.pows[4][1];
-	m2 = params.ksiPows.pows[4][2];
 
 	vector<CZZ> m1vec;
 	vector<CZZ> m2vec;
@@ -86,6 +83,8 @@ void TestScheme::testOperations(long logN, long logp, long L) {
 
 
 	for (long i = 0; i < slots; ++i) {
+		m1 = params.ksiPows.pows[5][i % 2];
+		m2 = params.ksiPows.pows[5][i % 3];
 		m1vec.push_back(m1);
 		m2vec.push_back(m2);
 		maddvec.push_back(m1vec[i] + m2vec[i]);
@@ -156,47 +155,65 @@ void TestScheme::testOperations(long logN, long logp, long L) {
 	vector<CZZ> dmultevec = scheme.deConjugate(dmulteconj);
 	vector<CZZ> dmultmsvec = scheme.deConjugate(dmultmsconj);
 
-	cout << "------------------" << endl;
-	cout << "m1:  " << m1vec[0].toString() << endl;
-	cout << "d1:  " << d1vec[0].toString() << endl;
-//	cout << "msg:  " << msg1.poly << endl;
-//	cout << "dmsg:  " << dmsg1.poly << endl;
-	cout << "------------------" << endl;
+	for (long i = 0; i < 4; ++i) {
+		cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "step: " << i << endl;
+		cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "m1[" << i << "]:  " << m1vec[i].toString() << endl;
+		cout << "d1[" << i << "]:  " << d1vec[i].toString() << endl;
+		cout << "e1[" << i << "]:  " << (m1vec[i]-d1vec[i]).toString() << endl;
+	//	cout << "msg:  " << msg1.poly << endl;
+	//	cout << "dmsg:  " << dmsg1.poly << endl;
+		cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
-	cout << "m2:  " << m2vec[0].toString() << endl;
-	cout << "d2:  " << d2vec[0].toString() << endl;
-//	cout << "msg2:  " << msg2.poly << endl;
-//	cout << "dmsg2:  " << dmsg2.poly << endl;
-	cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "m2[" << i << "]:  " << m2vec[i].toString() << endl;
+		cout << "d2[" << i << "]:  " << d2vec[i].toString() << endl;
+		cout << "e2[" << i << "]:  " << (m2vec[i]-d2vec[i]).toString() << endl;
+	//	cout << "msg2:  " << msg2.poly << endl;
+	//	cout << "dmsg2:  " << dmsg2.poly << endl;
+		cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
-	cout << "madd:  " << maddvec[0].toString() << endl;
-	cout << "dadd:  " << daddvec[0].toString() << endl;
-//	cout << "msgadd:  " << msgadd.poly << endl;
-//	cout << "dmsgadd:  " << dmsgadd.poly << endl;
-	cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "madd[" << i << "]:  " << maddvec[i].toString() << endl;
+		cout << "dadd[" << i << "]:  " << daddvec[i].toString() << endl;
+		cout << "eadd[" << i << "]:  " << (maddvec[i]-daddvec[i]).toString() << endl;
+	//	cout << "msgadd:  " << msgadd.poly << endl;
+	//	cout << "dmsgadd:  " << dmsgadd.poly << endl;
+		cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
-	cout << "mmult:  " << mmultvec[0].toString() << endl;
-	cout << "dmult:  " << dmultvec[0].toString() << endl;
-//	cout << "msgmult:  " << msgmult.poly << endl;
-//	cout << "dmsgmult:  " << dmsgmult.poly << endl;
-	cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "mmult[" << i << "]:  " << mmultvec[i].toString() << endl;
+		cout << "dmult[" << i << "]:  " << dmultvec[i].toString() << endl;
+		cout << "emult[" << i << "]:  " << (mmultvec[i]-dmultvec[i]).toString() << endl;
+	//	cout << "msgmult:  " << msgmult.poly << endl;
+	//	cout << "dmsgmult:  " << dmsgmult.poly << endl;
+		cout << "------------------" << endl;
 
-	cout << "------------------" << endl;
-	cout << "mmulte:  " << mmultevec[0].toString() << endl;
-	cout << "dmulte:  " << dmultevec[0].toString() << endl;
-//	cout << "msgmulte:  " << msgmulte.poly << endl;
-//	cout << "dmsgmulte:  " << dmsgmulte.poly << endl;
-	cout << "------------------" << endl;
+		cout << "------------------" << endl;
+		cout << "mmulte[" << i << "]:  " << mmultevec[i].toString() << endl;
+		cout << "dmulte[" << i << "]:  " << dmultevec[i].toString() << endl;
+		cout << "emulte[" << i << "]:  " << (mmultevec[i]-dmultevec[i]).toString() << endl;
 
-	cout << "------------------" << endl;
-	cout << "mmultms:  " << mmultmsvec[0].toString() << endl;
-	cout << "dmultms:  " << dmultmsvec[0].toString() << endl;
-//	cout << "msgmultms:  " << msgmultms.poly << endl;
-//	cout << "dmsgmultms:  " << dmsgmultms.poly << endl;
-	cout << "------------------" << endl;
+	//	cout << "msgmulte:  " << msgmulte.poly << endl;
+	//	cout << "dmsgmulte:  " << dmsgmulte.poly << endl;
+		cout << "------------------" << endl;
+
+		cout << "------------------" << endl;
+		cout << "mmultms[" << i << "]:  " << mmultmsvec[i].toString() << endl;
+		cout << "dmultms[" << i << "]:  " << dmultmsvec[i].toString() << endl;
+		cout << "emultms[" << i << "]:  " << (mmultmsvec[i]-dmultmsvec[i]).toString() << endl;
+
+	//	cout << "msgmultms:  " << msgmultms.poly << endl;
+	//	cout << "dmsgmultms:  " << dmsgmultms.poly << endl;
+		cout << "------------------" << endl;
+	}
+
 
 	cout << "!!! STOP TEST OPERATIONS !!!" << endl;
 }
@@ -220,7 +237,7 @@ void TestScheme::testPow(long logN, long logp, long L, long logPowDegree) {
 	vector<CZZ> m2k;
 	vector<CZZ> d2k;
 	vector<Cipher> c2k;
-	CZZ e, m, m2;
+	CZZ m, m2;
 
 	m = params.ksiPows.pows[logN][2];
 
@@ -247,11 +264,10 @@ void TestScheme::testPow(long logN, long logp, long L, long logPowDegree) {
 	}
 
 	for (long i = 0; i < logPowDegree + 1; ++i) {
-		e = m2k[i] - d2k[i];
 		cout << "------------------" << endl;
 		cout << "m: " << i << " " << m2k[i].toString() << endl;
 		cout << "d: " << i << " " << d2k[i].toString() << endl;
-		cout << "e: " << i << " " << e.toString() << endl;
+		cout << "e: " << i << " " << (m2k[i] - d2k[i]).toString() << endl;
 //		cout << "eBnds: " << i << " " << c2k[i].eBnd << endl;
 //		cout << "mBnds: " << i << " " << c2k[i].mBnd << endl;
 		cout << "------------------" << endl;
@@ -359,7 +375,7 @@ void TestScheme::testInv(long logN, long logp, long L, long invSteps) {
 	long error = 13;
 
 	ZZ halfp;
-	CZZ m, mbar, minv, e;
+	CZZ m, mbar, minv;
 	vector<CZZ> d2k;
 	vector<Cipher> c2k, v2k;
 
@@ -393,11 +409,10 @@ void TestScheme::testInv(long logN, long logp, long L, long invSteps) {
 	}
 
 	for (long i = 0; i < invSteps - 1; ++i) {
-		e = minv - d2k[i];
 		cout << "------------------" << endl;
 		cout << "minv:  " << i << " " << minv.toString() << endl;
 		cout << "ds:    " << i << " " << d2k[i].toString() << endl;
-		cout << "es:    " << i << " " << e.toString() << endl;
+		cout << "es:    " << i << " " << (minv - d2k[i]).toString() << endl;
 //		cout << "eBnds: " << i << " " << v2k[i].eBnd << endl;
 //		cout << "mBnds: " << i << " " << v2k[i].mBnd << endl;
 		cout << "------------------" << endl;
@@ -511,6 +526,8 @@ void TestScheme::testFFT(long logN, long logp, long L, long logFFTdim, long FFTd
 		cout << "----------------------" << endl;
 		cout << i << " step: mpx    = " << mpx[i].toString() << endl;
 		cout << i << " step: dpx    = " << dpx[i].toString() << endl;
+		cout << i << " step: epx    = " << (mpx[i]-dpx[i]).toString() << endl;
+
 
 		cout << "----------------------" << endl;
 	}
