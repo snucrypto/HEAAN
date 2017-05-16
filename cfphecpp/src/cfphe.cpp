@@ -42,7 +42,7 @@ int main() {
 	 * Params: logN, logp, L, invSteps
 	 * Suggested: 13, 25, 6, 5
 	 */
-	TestScheme::testInv(13, 30, 11, 6);
+//	TestScheme::testInv(13, 30, 11, 6);
 
 //	----------------------------
 
@@ -50,7 +50,7 @@ int main() {
 	 * Params: logN, logp, L, logFFTdim, FFTdeg
 	 * Suggested: 13, 30, 3, 4, 5
 	 */
-//	TestScheme::testFFT(13, 30, 3, 4, 5);
+	TestScheme::testFFT(13, 30, 3, 4, 5);
 
 //	----------------------------
 

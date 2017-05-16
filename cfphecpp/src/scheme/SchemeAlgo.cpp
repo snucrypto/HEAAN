@@ -161,7 +161,8 @@ vector<Cipher> SchemeAlgo::fftButterfly(vector<Cipher>& ciphers) {
 			}
 		}
 	}
-	return bitReverse(fft);
+	return fft;
+//	return bitReverse(fft);
 }
 
 vector<Cipher> SchemeAlgo::fftButterflyInv(vector<Cipher>& ciphers) {

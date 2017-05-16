@@ -49,6 +49,7 @@ void TestScheme::testEncode(long logN, long logp, long L, long logSlots) {
 		cout << "---------------------" << endl;
 		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
 		cout << "di: " << i << " : " << dvec[i].toString() << endl;
+		cout << "ei: " << i << " : " << (mvec[i]-dvec[i]).toString() << endl;
 		cout << "---------------------" << endl;
 	}
 
@@ -445,11 +446,12 @@ void TestScheme::testFFT(long logN, long logp, long L, long logFFTdim, long FFTd
 	vector<CZZ> mfft1, mfft2, mfftx;
 	vector<Cipher> cp1, cp2, cpx;
 	vector<Cipher> cfft1, cfft2;
+//	vector<Cipher> cfftbut1, cfftbut2;
 	vector<CZZ> dpx;
 
 	for (long i = 0; i < FFTdeg; ++i) {
-		mp1.push_back(params.ksiPows.pows[logN][i]);
-		mp2.push_back(params.ksiPows.pows[logN][i]);
+		mp1.push_back(params.ksiPows.pows[logN][i % 3]);
+		mp2.push_back(params.ksiPows.pows[logN][i % 2]);
 	}
 
 	for (long i = FFTdeg; i < FFTdim / 2; ++i) {
@@ -499,6 +501,19 @@ void TestScheme::testFFT(long logN, long logp, long L, long logFFTdim, long FFTd
 	cfft2 = algo.fft(cp2);
 	timeutils.stop("cfft 2");
 	cout << "------------------" << endl;
+
+
+//	cout << "------------------" << endl;
+//	timeutils.start("cfft but 1");
+//	cfftbut1 = algo.fftButterfly(cp1);
+//	timeutils.stop("cfft but 1");
+//	cout << "------------------" << endl;
+//
+//	cout << "------------------" << endl;
+//	timeutils.start("cfft but 2");
+//	cfftbut2 = algo.fftButterfly(cp2);
+//	timeutils.stop("cfft but 2");
+//	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("mul fft");
