@@ -201,7 +201,7 @@ void TestScheme::testOperations(long logN, long logp, long L) {
 	cout << "!!! STOP TEST OPERATIONS !!!" << endl;
 }
 
-void TestScheme::testPows(long logN, long logp, long L, long logDegree) {
+void TestScheme::testPow(long logN, long logp, long L, long logPowDegree) {
 	cout << "!!! START TEST POW !!!" << endl;
 
 	//----------------------------
@@ -225,7 +225,7 @@ void TestScheme::testPows(long logN, long logp, long L, long logDegree) {
 	m = params.ksiPows.pows[logN][2];
 
 	m2k.push_back(m);
-	for (long i = 0; i < logDegree; ++i) {
+	for (long i = 0; i < logPowDegree; ++i) {
 		m2 = (m2k[i] * m2k[i]) >> params.logp;
 		m2k.push_back(m2);
 	}
@@ -235,7 +235,7 @@ void TestScheme::testPows(long logN, long logp, long L, long logDegree) {
 
 	cout << "------------------" << endl;
 	timeutils.start("Power of 2");
-	algo.powerOf2(c2k, c, logDegree);
+	algo.powerOf2(c2k, c, logPowDegree);
 	timeutils.stop("Power of 2");
 	cout << "------------------" << endl;
 
@@ -246,7 +246,7 @@ void TestScheme::testPows(long logN, long logp, long L, long logDegree) {
 		d2k.push_back(dvec[0]);
 	}
 
-	for (long i = 0; i < logDegree + 1; ++i) {
+	for (long i = 0; i < logPowDegree + 1; ++i) {
 		e = m2k[i] - d2k[i];
 		cout << "------------------" << endl;
 		cout << "m: " << i << " " << m2k[i].toString() << endl;
@@ -261,7 +261,7 @@ void TestScheme::testPows(long logN, long logp, long L, long logDegree) {
 
 }
 
-void TestScheme::testProd(long logN, long logp, long L, long logDegree) {
+void TestScheme::testProd(long logN, long logp, long L, long logProdDegree) {
 	cout << "!!! START TEST PROD !!!" << endl;
 
 	//----------------------------
@@ -277,7 +277,7 @@ void TestScheme::testProd(long logN, long logp, long L, long logDegree) {
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	long degree = 1 << logDegree;
+	long degree = 1 << logProdDegree;
 
 	CZZ m, e;
 	vector<CZZ> ms;
@@ -296,7 +296,7 @@ void TestScheme::testProd(long logN, long logp, long L, long logDegree) {
 	}
 
 	ms2k.push_back(ms);
-	for (long i = 1; i < logDegree + 1; ++i) {
+	for (long i = 1; i < logProdDegree + 1; ++i) {
 		vector<CZZ> m2k;
 		long idx = 0;
 		long m2ksize = ms2k[i-1].size();
@@ -310,11 +310,11 @@ void TestScheme::testProd(long logN, long logp, long L, long logDegree) {
 
 	cout << "------------------" << endl;
 	timeutils.start("Prod 2");
-	algo.prod2(cs2k, cs, logDegree);
+	algo.prod2(cs2k, cs, logProdDegree);
 	timeutils.stop("Prod 2");
 	cout << "------------------" << endl;
 
-	for (long i = 0; i < logDegree + 1; ++i) {
+	for (long i = 0; i < logProdDegree + 1; ++i) {
 		vector<CZZ> d2k;
 		for (long j = 0; j < cs2k[i].size(); ++j) {
 			Message dmsg = scheme.decrypt(cs2k[i][j]);
@@ -325,7 +325,7 @@ void TestScheme::testProd(long logN, long logp, long L, long logDegree) {
 		ds2k.push_back(d2k);
 	}
 
-	for (long i = 0; i < logDegree + 1; ++i) {
+	for (long i = 0; i < logProdDegree + 1; ++i) {
 		for (long j = 0; j < cs2k[i].size(); ++j) {
 			e = ms2k[i][j] - ds2k[i][j];
 			cout << "------------------" << endl;
@@ -340,7 +340,7 @@ void TestScheme::testProd(long logN, long logp, long L, long logDegree) {
 	cout << "!!! END TEST PROD !!!" << endl;
 }
 
-void TestScheme::testInv(long logN, long logp, long L, long steps) {
+void TestScheme::testInv(long logN, long logp, long L, long invSteps) {
 	cout << "!!! START TEST INV !!!" << endl;
 
 	//----------------------------
@@ -381,7 +381,7 @@ void TestScheme::testInv(long logN, long logp, long L, long steps) {
 
 	cout << "------------------" << endl;
 	timeutils.start("Inverse");
-	algo.inverse(c2k, v2k, c, steps);
+	algo.inverse(c2k, v2k, c, invSteps);
 	timeutils.stop("Inverse");
 	cout << "------------------" << endl;
 
@@ -392,7 +392,7 @@ void TestScheme::testInv(long logN, long logp, long L, long steps) {
 		d2k.push_back(dvec[0]);
 	}
 
-	for (long i = 0; i < steps - 1; ++i) {
+	for (long i = 0; i < invSteps - 1; ++i) {
 		e = minv - d2k[i];
 		cout << "------------------" << endl;
 		cout << "minv:  " << i << " " << minv.toString() << endl;
