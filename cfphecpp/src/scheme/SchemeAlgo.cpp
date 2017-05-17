@@ -78,45 +78,28 @@ void SchemeAlgo::inverseExtended(vector<Cipher>& cres, vector<Cipher>& vres, Cip
 	}
 }
 
-void SchemeAlgo::exponentExtended(vector<Cipher>& res, Cipher& c, const long& degree) {
-	vector<Cipher> pows;
-	powerExtended(pows, c, degree);
+void SchemeAlgo::functionExtended(vector<Cipher>& res, Cipher& c, string& funcName, const long& degree) {
+	vector<Cipher> cpows;
+	powerExtended(cpows, c, degree);
 
-	Cipher exp = scheme.multByConst(pows[0], scheme.params.taylorPows.expPows[1]);
-	ZZ p2 = scheme.params.p * scheme.params.taylorPows.expPows[0];
-	scheme.addConstAndEqual(exp, p2);
-	res.push_back(exp);
+	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
+	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
 
-	for (int i = 1; i < degree; ++i) {
-		exp = scheme.multByConst(pows[i], scheme.params.taylorPows.expPows[i + 1]);
-		Cipher tmp = scheme.modEmbed(res[i-1], exp.level);
-		scheme.addAndEqual(exp, tmp);
-		res.push_back(exp);
-	}
-	for (int i = 0; i < res.size(); ++i) {
-		scheme.modSwitchAndEqual(res[i]);
-	}
-}
-
-void SchemeAlgo::sigmoidExtended(vector<Cipher>& res, Cipher& c, const long& degree) {
-	vector<Cipher> pows;
-	powerExtended(pows, c, degree);
-
-	Cipher sigmoid = scheme.multByConst(pows[0], scheme.params.taylorPows.sigmoidPows[1]);
-	ZZ p2 = scheme.params.p * scheme.params.taylorPows.sigmoidPows[0];
-	scheme.addConstAndEqual(sigmoid, p2);
-	res.push_back(sigmoid);
+	Cipher cn = scheme.multByConst(cpows[0], pows[1]);
+	ZZ p2 = scheme.params.p * pows[0];
+	scheme.addConstAndEqual(cn, p2);
+	res.push_back(cn);
 
 	long idx = 0;
-	for (int i = 1; i < degree; ++i) {
-		if(abs(scheme.params.taylorPows.sigmoidCoeffs[i + 1]) > 1e-17) {
-			sigmoid = scheme.multByConst(pows[i], scheme.params.taylorPows.sigmoidPows[i + 1]);
-			Cipher tmp = scheme.modEmbed(res[idx++], sigmoid.level);
-			scheme.addAndEqual(sigmoid, tmp);
-			res.push_back(sigmoid);
+	for (long i = 1; i < degree; ++i) {
+		if(abs(coeffs[i + 1]) > 1e-17) {
+			cn = scheme.multByConst(cpows[i], pows[i + 1]);
+			Cipher tmp = scheme.modEmbed(res[idx++], cn.level);
+			scheme.addAndEqual(cn, tmp);
+			res.push_back(cn);
 		}
 	}
-	for (int i = 0; i < res.size(); ++i) {
+	for (long i = 0; i < res.size(); ++i) {
 		scheme.modSwitchAndEqual(res[i]);
 	}
 }
@@ -160,43 +143,28 @@ Cipher SchemeAlgo::inverse(Cipher& c, const long& steps) {
 	return res;
 }
 
-Cipher SchemeAlgo::exponent(Cipher& c, const long& degree) {
-	vector<Cipher> pows;
-	powerExtended(pows, c, degree);
+Cipher SchemeAlgo::function(Cipher& c, string& funcName, const long& degree) {
+	vector<Cipher> cpows;
+	powerExtended(cpows, c, degree);
 
-	Cipher exp = scheme.multByConst(pows[0], scheme.params.taylorPows.expPows[1]);
-	ZZ p2 = scheme.params.p * scheme.params.taylorPows.expPows[0];
-	scheme.addConstAndEqual(exp, p2);
+	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
+	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
+
+	Cipher res = scheme.multByConst(cpows[0], pows[1]);
+	ZZ p2 = scheme.params.p * pows[0];
+	scheme.addConstAndEqual(res, p2);
+
 
 	for (int i = 1; i < degree; ++i) {
-		Cipher tmp = scheme.multByConst(pows[i], scheme.params.taylorPows.expPows[i + 1]);
-		scheme.modEmbedAndEqual(exp, tmp.level);
-		scheme.addAndEqual(exp, tmp);
-	}
-	scheme.modSwitchAndEqual(exp);
-	return exp;
-}
-
-Cipher SchemeAlgo::sigmoid(Cipher& c, const long& degree) {
-	vector<Cipher> pows;
-	powerExtended(pows, c, degree);
-
-	Cipher sigmoid = scheme.multByConst(pows[0], scheme.params.taylorPows.sigmoidPows[1]);
-	ZZ p2 = scheme.params.p * scheme.params.taylorPows.sigmoidPows[0];
-	scheme.addConstAndEqual(sigmoid, p2);
-
-	long idx = 0;
-	for (int i = 1; i < degree; ++i) {
-		if(abs(scheme.params.taylorPows.sigmoidCoeffs[i + 1]) > 1e-17) {
-			Cipher tmp = scheme.multByConst(pows[i], scheme.params.taylorPows.sigmoidPows[i + 1]);
-			scheme.modEmbedAndEqual(sigmoid, tmp.level);
-			scheme.addAndEqual(sigmoid, tmp);
+		if(abs(coeffs[i + 1]) > 1e-17) {
+			Cipher tmp = scheme.multByConst(cpows[i], pows[i + 1]);
+			scheme.modEmbedAndEqual(res, tmp.level);
+			scheme.addAndEqual(res, tmp);
 		}
 	}
-	scheme.modSwitchAndEqual(sigmoid);
-	return sigmoid;
+	scheme.modSwitchAndEqual(res);
+	return res;
 }
-
 vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, const bool& isForward) {
 	long csize = ciphers.size();
 

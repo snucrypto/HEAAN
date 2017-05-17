@@ -588,11 +588,11 @@ void TestScheme::testExponent(long logN, long logp, long L, long expDegree, long
 	vector<CZZ> mconj = scheme.doubleConjugate(mvec);
 	Message msg = scheme.encode(mconj);
 	Cipher c = scheme.encrypt(msg);
-
+	string expName = "Exponent";
 	cout << "------------------" << endl;
-	timeutils.start("Exponent");
-	Cipher cexp = algo.exponent(c, expDegree);
-	timeutils.stop("Exponent");
+	timeutils.start(EXPONENT);
+	Cipher cexp = algo.function(c, EXPONENT, expDegree);
+	timeutils.stop(EXPONENT);
 	cout << "----------------" << endl;
 
 	Message dmsg = scheme.decrypt(cexp);
@@ -659,10 +659,11 @@ void TestScheme::testExponentExtended(long logN, long logp, long L, long expDegr
 	Message msg = scheme.encode(mconj);
 	Cipher c = scheme.encrypt(msg);
 
+
 	cout << "------------------" << endl;
-	timeutils.start("Exponent");
-	algo.exponentExtended(cexp, c, expDegree);
-	timeutils.stop("Exponent");
+	timeutils.start(EXPONENT);
+	algo.functionExtended(cexp, c, EXPONENT, expDegree);
+	timeutils.stop(EXPONENT);
 	cout << "----------------" << endl;
 
 	for (long i = 0; i < cexp.size(); ++i) {
@@ -738,9 +739,9 @@ void TestScheme::testSigmoid(long logN, long logp, long L, long sigmoidDegree, l
 	Cipher c = scheme.encrypt(msg);
 
 	cout << "------------------" << endl;
-	timeutils.start("Sigmoid");
-	Cipher csigmoid = algo.sigmoid(c, sigmoidDegree);
-	timeutils.stop("Sigmoid");
+	timeutils.start(SIGMOID);
+	Cipher csigmoid = algo.function(c, SIGMOID, sigmoidDegree);
+	timeutils.stop(SIGMOID);
 	cout << "----------------" << endl;
 
 	Message dmsg = scheme.decrypt(csigmoid);
@@ -812,9 +813,9 @@ void TestScheme::testSigmoidExtended(long logN, long logp, long L, long sigmoidD
 	Cipher c = scheme.encrypt(msg);
 
 	cout << "------------------" << endl;
-	timeutils.start("Sigmoid");
-	algo.sigmoidExtended(csigmoid, c, sigmoidDegree);
-	timeutils.stop("Sigmoid");
+	timeutils.start(SIGMOID);
+	algo.functionExtended(csigmoid, c, SIGMOID, sigmoidDegree);
+	timeutils.stop(SIGMOID);
 	cout << "----------------" << endl;
 
 	for (long i = 0; i < csigmoid.size(); ++i) {

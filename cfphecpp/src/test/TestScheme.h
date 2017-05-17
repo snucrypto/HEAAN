@@ -1,6 +1,10 @@
 #ifndef TEST_TESTSCHEME_H_
 #define TEST_TESTSCHEME_H_
 
+#include <iostream>
+
+using namespace std;
+
 class TestScheme {
 public:
 
