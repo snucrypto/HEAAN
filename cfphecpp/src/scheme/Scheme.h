@@ -37,12 +37,15 @@ public:
 	Message encode(vector<CZZ>& vals);
 	Cipher encrypt(Message& msg, long& level);
 	Cipher encrypt(Message& msg);
+	Cipher fullEncrypt(vector<CZZ>& vals, long& level);
+	Cipher fullEncrypt(vector<CZZ>& vals);
+	Cipher fullEncrypt(CZZ& val, long& level);
+	Cipher fullEncrypt(CZZ& val);
 
 	Message decrypt(Cipher& cipher);
 	vector<CZZ> decode(Message& msg);
-
 	vector<CZZ> deConjugate(vector<CZZ>& vals);
-
+	vector<CZZ> fullDecrypt(Cipher& cipher);
 	//-----------------------------------------
 
 	Cipher add(Cipher& cipher1, Cipher& cipher2);

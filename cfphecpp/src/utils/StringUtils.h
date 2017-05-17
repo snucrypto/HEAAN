@@ -15,6 +15,7 @@
 class StringUtils {
 public:
 	static void show(vector<CZZ>& vals);
+	static void showcompare(vector<CZZ>& vals1, vector<CZZ>& vals2, string prefix);
 
 };
 

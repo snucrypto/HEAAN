@@ -107,6 +107,30 @@ Cipher Scheme::encrypt(Message& msg) {
 	return cipher;
 }
 
+Cipher Scheme::fullEncrypt(vector<CZZ>& vals, long& level) {
+	vector<CZZ> conj = doubleConjugate(vals);
+	Message msg = encode(conj);
+	return encrypt(msg, level);
+}
+
+Cipher Scheme::fullEncrypt(vector<CZZ>& vals) {
+	vector<CZZ> conj = doubleConjugate(vals);
+	Message msg = encode(conj);
+	return encrypt(msg);
+}
+
+Cipher Scheme::fullEncrypt(CZZ& val, long& level) {
+	vector<CZZ> conj = doubleConjugate(val);
+	Message msg = encode(conj);
+	return encrypt(msg, level);
+}
+
+Cipher Scheme::fullEncrypt(CZZ& val) {
+	vector<CZZ> conj = doubleConjugate(val);
+	Message msg = encode(conj);
+	return encrypt(msg);
+}
+
 Message Scheme::decrypt(Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
 	ZZX poly;
@@ -142,6 +166,13 @@ vector<CZZ> Scheme::deConjugate(vector<CZZ>& vals) {
 	}
 	return res;
 }
+
+vector<CZZ> Scheme::fullDecrypt(Cipher& cipher) {
+	Message msg = decrypt(cipher);
+	vector<CZZ> conj = decode(msg);
+	return deConjugate(conj);
+}
+
 //-----------------------------
 
 Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {

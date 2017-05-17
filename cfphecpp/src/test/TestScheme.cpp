@@ -35,27 +35,12 @@ void TestScheme::testEncode(long logN, long logp, long L, long logSlots) {
 
 	long mvecsize = (1 << logSlots);
 
-	CZZ m;
-	vector<CZZ> mvec;
-	for (long i = 0; i < mvecsize; ++i) {
-		m = params.ksiPows.pows[5][i % 3];
-		mvec.push_back(m);
-	}
+	vector<CZZ> mvec = EvaluatorUtils::evaluateRandomVals(mvecsize, logp);
 
-	vector<CZZ> mconj = scheme.doubleConjugate(mvec);
-	Message msg = scheme.encode(mconj);
-	Cipher cipher = scheme.encrypt(msg);
-	Message denc = scheme.decrypt(cipher);
-	vector<CZZ> dconj = scheme.decode(denc);
-	vector<CZZ> dvec = scheme.deConjugate(dconj);
+	Cipher cipher = scheme.fullEncrypt(mvec);
+	vector<CZZ> dvec = scheme.fullDecrypt(cipher);
 
-	for (long i = 0; i < mvecsize; ++i) {
-		cout << "---------------------" << endl;
-		cout << "mi: " << i << " : " << mvec[i].toString() << endl;
-		cout << "di: " << i << " : " << dvec[i].toString() << endl;
-		cout << "ei: " << i << " : " << (mvec[i]-dvec[i]).toString() << endl;
-		cout << "---------------------" << endl;
-	}
+	StringUtils::showcompare(mvec, dvec, "val");
 
 	cout << "!!! STOP TEST ENCODE !!!" << endl;
 }
@@ -77,166 +62,78 @@ void TestScheme::testOperations(long logN, long logp, long L, long logSlots) {
 	//----------------------------
 
 	long slots = (1 << (logSlots-1));
-	CZZ m1, m2, madd, mmult, mmulte, mmultms;
 
-	vector<CZZ> m1vec;
-	vector<CZZ> m2vec;
-	vector<CZZ> maddvec;
-	vector<CZZ> maddcvec;
-	vector<CZZ> mmultvec;
-	vector<CZZ> mmultevec;
-	vector<CZZ> mmultmsvec;
-	vector<CZZ> mmultcvec;
-
+	vector<CZZ> m1vec = EvaluatorUtils::evaluateRandomVals(slots, logp);
+	vector<CZZ> m2vec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 	ZZ cnst = ZZ(324024);
 
+	vector<CZZ> addvec, addcvec, multvec, multevec, multmsvec, multcvec;
+
+
 	for (long i = 0; i < slots; ++i) {
-		m1 = params.ksiPows.pows[5][i % 2];
-		m2 = params.ksiPows.pows[5][i % 3];
-		m1vec.push_back(m1);
-		m2vec.push_back(m2);
-		maddvec.push_back(m1vec[i] + m2vec[i]);
-		maddcvec.push_back(m1vec[i] + cnst);
-		mmultvec.push_back(m1vec[i] * m2vec[i]);
-		mmultevec.push_back(m1vec[i] * m2vec[i]);
-		mmultmsvec.push_back(m1vec[i] * m2vec[i] / params.p);
-		mmultcvec.push_back(m1vec[i] * cnst);
+		addvec.push_back(m1vec[i] + m2vec[i]);
+		addcvec.push_back(m1vec[i] + cnst);
+		multvec.push_back(m1vec[i] * m2vec[i]);
+		multevec.push_back(m1vec[i] * m2vec[i]);
+		multmsvec.push_back(m1vec[i] * m2vec[i] / params.p);
+		multcvec.push_back(m1vec[i] * cnst);
 	}
 
-	vector<CZZ> m1conj = scheme.doubleConjugate(m1vec);
-	vector<CZZ> m2conj = scheme.doubleConjugate(m2vec);
-
-	Message msg1 = scheme.encode(m1conj);
-	Message msg2 = scheme.encode(m2conj);
-
-	Cipher cipher1 = scheme.encrypt(msg1);
-	Cipher cipher2 = scheme.encrypt(msg2);
-	Cipher cmulte = scheme.encrypt(msg1);
+	Cipher c1 = scheme.fullEncrypt(m1vec);
+	Cipher c2 = scheme.fullEncrypt(m2vec);
+	Cipher cmulte = scheme.fullEncrypt(m1vec);
 
 	cout << "------------------" << endl;
 	timeutils.start("add");
-	Cipher cadd = scheme.add(cipher1, cipher2);
+	Cipher cadd = scheme.add(c1, c2);
 	timeutils.stop("add");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("add");
-	Cipher caddc = scheme.addConst(cipher1, cnst);
+	Cipher caddc = scheme.addConst(c1, cnst);
 	timeutils.stop("add");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("mult");
-	Cipher cmult = scheme.mult(cipher1, cipher2);
+	Cipher cmult = scheme.mult(c1, c2);
 	timeutils.stop("mult");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("mult and equal");
-	scheme.multAndEqual(cmulte, cipher2);
+	scheme.multAndEqual(cmulte, c2);
 	timeutils.stop("mult and equal");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("mult and mod switch");
-	Cipher cmultms = scheme.multAndModSwitch(cipher1, cipher2);
+	Cipher cmultms = scheme.multAndModSwitch(c1, c2);
 	timeutils.stop("mult and mod switch");
 	cout << "------------------" << endl;
 
 	cout << "------------------" << endl;
 	timeutils.start("mult cnst");
-	Cipher cmultc = scheme.multByConst(cipher1, cnst);
+	Cipher cmultc = scheme.multByConst(c1, cnst);
 	timeutils.stop("mult cnst");
 	cout << "------------------" << endl;
 
-	Message dmsg1 = scheme.decrypt(cipher1);
-	Message dmsg2 = scheme.decrypt(cipher2);
-	Message dmsgadd = scheme.decrypt(cadd);
-	Message dmsgaddc = scheme.decrypt(caddc);
-	Message dmsgmult = scheme.decrypt(cmult);
-	Message dmsgmulte = scheme.decrypt(cmulte);
-	Message dmsgmultms = scheme.decrypt(cmultms);
-	Message dmsgmultc = scheme.decrypt(cmultc);
+	vector<CZZ> d1vec = scheme.fullDecrypt(c1);
+	vector<CZZ> d2vec = scheme.fullDecrypt(c2);
+	vector<CZZ> daddvec = scheme.fullDecrypt(cadd);
+	vector<CZZ> daddcvec = scheme.fullDecrypt(caddc);
+	vector<CZZ> dmultvec = scheme.fullDecrypt(cmult);
+	vector<CZZ> dmultevec = scheme.fullDecrypt(cmulte);
+	vector<CZZ> dmultmsvec = scheme.fullDecrypt(cmultms);
+	vector<CZZ> dmultcvec = scheme.fullDecrypt(cmultc);
 
-	vector<CZZ> d1conj = scheme.decode(dmsg1);
-	vector<CZZ> d2conj = scheme.decode(dmsg2);
-	vector<CZZ> daddconj = scheme.decode(dmsgadd);
-	vector<CZZ> daddcconj = scheme.decode(dmsgaddc);
-	vector<CZZ> dmultconj = scheme.decode(dmsgmult);
-	vector<CZZ> dmulteconj = scheme.decode(dmsgmulte);
-	vector<CZZ> dmultmsconj = scheme.decode(dmsgmultms);
-	vector<CZZ> dmultcconj = scheme.decode(dmsgmultc);
-
-	vector<CZZ> d1vec = scheme.deConjugate(d1conj);
-	vector<CZZ> d2vec = scheme.deConjugate(d2conj);
-	vector<CZZ> daddvec = scheme.deConjugate(daddconj);
-	vector<CZZ> daddcvec = scheme.deConjugate(daddcconj);
-	vector<CZZ> dmultvec = scheme.deConjugate(dmultconj);
-	vector<CZZ> dmultevec = scheme.deConjugate(dmulteconj);
-	vector<CZZ> dmultmsvec = scheme.deConjugate(dmultmsconj);
-	vector<CZZ> dmultcvec = scheme.deConjugate(dmultcconj);
-
-	for (long i = 0; i < 4; ++i) {
-		cout << "------------------" << endl;
-		cout << "------------------" << endl;
-		cout << "------------------" << endl;
-		cout << "step: " << i << endl;
-		cout << "------------------" << endl;
-		cout << "------------------" << endl;
-		cout << "------------------" << endl;
-		cout << "------------------" << endl;
-		cout << "m1[" << i << "]:  " << m1vec[i].toString() << endl;
-		cout << "d1[" << i << "]:  " << d1vec[i].toString() << endl;
-		cout << "e1[" << i << "]:  " << (m1vec[i]-d1vec[i]).toString() << endl;
-		cout << "------------------" << endl;
-
-		cout << "------------------" << endl;
-		cout << "m2[" << i << "]:  " << m2vec[i].toString() << endl;
-		cout << "d2[" << i << "]:  " << d2vec[i].toString() << endl;
-		cout << "e2[" << i << "]:  " << (m2vec[i]-d2vec[i]).toString() << endl;
-		cout << "------------------" << endl;
-
-		cout << "------------------" << endl;
-		cout << "madd[" << i << "]:  " << maddvec[i].toString() << endl;
-		cout << "dadd[" << i << "]:  " << daddvec[i].toString() << endl;
-		cout << "eadd[" << i << "]:  " << (maddvec[i]-daddvec[i]).toString() << endl;
-		cout << "------------------" << endl;
-
-		cout << "------------------" << endl;
-		cout << "maddc[" << i << "]:  " << maddcvec[i].toString() << endl;
-		cout << "daddc[" << i << "]:  " << daddcvec[i].toString() << endl;
-		cout << "eaddc[" << i << "]:  " << (maddcvec[i]-daddcvec[i]).toString() << endl;
-		cout << "------------------" << endl;
-
-		cout << "------------------" << endl;
-		cout << "mmult[" << i << "]:  " << mmultvec[i].toString() << endl;
-		cout << "dmult[" << i << "]:  " << dmultvec[i].toString() << endl;
-		cout << "emult[" << i << "]:  " << (mmultvec[i]-dmultvec[i]).toString() << endl;
-		cout << "------------------" << endl;
-
-		cout << "------------------" << endl;
-		cout << "mmulte[" << i << "]:  " << mmultevec[i].toString() << endl;
-		cout << "dmulte[" << i << "]:  " << dmultevec[i].toString() << endl;
-		cout << "emulte[" << i << "]:  " << (mmultevec[i]-dmultevec[i]).toString() << endl;
-		cout << "------------------" << endl;
-
-		cout << "------------------" << endl;
-		cout << "mmultms[" << i << "]:  " << mmultmsvec[i].toString() << endl;
-		cout << "dmultms[" << i << "]:  " << dmultmsvec[i].toString() << endl;
-		cout << "emultms[" << i << "]:  " << (mmultmsvec[i]-dmultmsvec[i]).toString() << endl;
-		cout << "------------------" << endl;
-
-		cout << "------------------" << endl;
-		cout << "mmultc[" << i << "]:  " << mmultcvec[i].toString() << endl;
-		cout << "dmultc[" << i << "]:  " << dmultcvec[i].toString() << endl;
-		cout << "emultc[" << i << "]:  " << (mmultcvec[i]-dmultcvec[i]).toString() << endl;
-		cout << "------------------" << endl;
+	StringUtils::showcompare(m1vec, d1vec, "1vals");
+	StringUtils::showcompare(m2vec, d2vec, "2vals");
+	StringUtils::showcompare(addvec, daddvec, "add");
+	StringUtils::showcompare(multvec, dmultvec, "1vals");
+	StringUtils::showcompare(multcvec, dmultcvec, "1vals");
 }
-
-
-	cout << "!!! STOP TEST OPERATIONS !!!" << endl;
-}
-
 void TestScheme::testPowerOf2(long logN, long logp, long L, long logPowDegree) {
 	cout << "!!! START TEST POWER OF 2!!!" << endl;
 
@@ -507,9 +404,8 @@ void TestScheme::testInverseExtended(long logN, long logp, long L, long invSteps
 	minv.r = params.p * params.p / m.r;
 	halfp = params.p / 2;
 
-	vector<CZZ> mbarconj = scheme.doubleConjugate(mbar);
-	Message msgbar = scheme.encode(mbarconj);
-	Cipher c = scheme.encrypt(msgbar);
+
+	Cipher c = scheme.fullEncrypt(mbar);
 
 	cout << "------------------" << endl;
 	timeutils.start("Inverse");
@@ -518,9 +414,7 @@ void TestScheme::testInverseExtended(long logN, long logp, long L, long invSteps
 	cout << "------------------" << endl;
 
 	for (long i = 0; i < v2k.size(); ++i) {
-		Message dmsg = scheme.decrypt(v2k[i]);
-		vector<CZZ> dconj = scheme.decode(dmsg);
-		vector<CZZ> dvec = scheme.deConjugate(dconj);
+		vector<CZZ> dvec = scheme.fullDecrypt(v2k[i]);
 		d2k.push_back(dvec[0]);
 	}
 
@@ -554,40 +448,19 @@ void TestScheme::testExponent(long logN, long logp, long L, long expDegree, long
 	//----------------------------
 
 	vector<CZZ> mvec, mexpvec;
-
 	long slots = 1 << logSlots;
+
 	for (long i = 0; i < slots; ++i) {
 		double mr = (double)rand() / RAND_MAX;
 		double mi = (double)rand() / RAND_MAX;
-
-		double mrexp = exp(mr);
-		double mexpr = mrexp * cos(mi);
-		double mexpi = mrexp * sin(mi);
-
-		if(logp < 31) {
-			long p = (1 << logp);
-			ZZ pmr = to_ZZ(mr * p);
-			ZZ pmi = to_ZZ(mi * p);
-			mvec.push_back(CZZ(pmr, pmi));
-
-			ZZ pmexpr = to_ZZ(mexpr * p);
-			ZZ pmexpi = to_ZZ(mexpi * p);
-			mexpvec.push_back(CZZ(pmexpr, pmexpi));
-		} else {
-			long tmp = (1 << 30);
-			ZZ pmr = to_ZZ(mr * tmp) << (logp - 30);
-			ZZ pmi = to_ZZ(mi * tmp) << (logp - 30);
-			mvec.push_back(CZZ(pmr, pmi));
-
-			ZZ pmexpr = to_ZZ(mexpr * tmp) << (logp - 30);
-			ZZ pmexpi = to_ZZ(mexpi * tmp) << (logp - 30);
-			mexpvec.push_back(CZZ(pmexpr, pmexpi));
-		}
+		CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		CZZ mexp = EvaluatorUtils::evaluateExponent(mr, mi, logp);
+		mvec.push_back(m);
+		mexpvec.push_back(mexp);
 	}
 
-	vector<CZZ> mconj = scheme.doubleConjugate(mvec);
-	Message msg = scheme.encode(mconj);
-	Cipher c = scheme.encrypt(msg);
+	Cipher c = scheme.fullEncrypt(mvec);
+
 	string expName = "Exponent";
 	cout << "------------------" << endl;
 	timeutils.start(EXPONENT);
@@ -595,9 +468,7 @@ void TestScheme::testExponent(long logN, long logp, long L, long expDegree, long
 	timeutils.stop(EXPONENT);
 	cout << "----------------" << endl;
 
-	Message dmsg = scheme.decrypt(cexp);
-	vector<CZZ> dconj = scheme.decode(dmsg);
-	vector<CZZ> dexpvec = scheme.deConjugate(dconj);
+	vector<CZZ> dexpvec = scheme.fullDecrypt(cexp);
 
 	for (long i = 0; i < dexpvec.size(); ++i) {
 		cout << "------------------" << endl;
@@ -628,48 +499,22 @@ void TestScheme::testExponentExtended(long logN, long logp, long L, long expDegr
 	double mr = 0.284345;
 	double mi = 0.932432;
 
-	double mrexp = exp(mr);
-	double mexpr = mrexp * cos(mi);
-	double mexpi = mrexp * sin(mi);
+	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+	CZZ mexp = EvaluatorUtils::evaluateExponent(mr, mi, logp);
 
-	CZZ m, mexp;
-	if(logp < 31) {
-		long p = (1 << logp);
-		ZZ pmr = to_ZZ(mr * p);
-		ZZ pmi = to_ZZ(mi * p);
-		m = CZZ(pmr, pmi);
 
-		ZZ pmexpr = to_ZZ(mexpr * p);
-		ZZ pmexpi = to_ZZ(mexpi * p);
-		mexp = CZZ(pmexpr, pmexpi);
-	} else {
-		long tmp = (1 << 30);
-		ZZ pmr = to_ZZ(mr * tmp) << (logp - 30);
-		ZZ pmi = to_ZZ(mi * tmp) << (logp - 30);
-		m = CZZ(pmr, pmi);
+	Cipher c = scheme.fullEncrypt(m);
 
-		ZZ pmexpr = to_ZZ(mexpr * tmp) << (logp - 30);
-		ZZ pmexpi = to_ZZ(mexpi * tmp) << (logp - 30);
-		mexp = CZZ(pmexpr, pmexpi);
-	}
-
-	vector<CZZ> dexp;
 	vector<Cipher> cexp;
-	vector<CZZ> mconj = scheme.doubleConjugate(m);
-	Message msg = scheme.encode(mconj);
-	Cipher c = scheme.encrypt(msg);
-
-
 	cout << "------------------" << endl;
 	timeutils.start(EXPONENT);
 	algo.functionExtended(cexp, c, EXPONENT, expDegree);
 	timeutils.stop(EXPONENT);
 	cout << "----------------" << endl;
 
+	vector<CZZ> dexp;
 	for (long i = 0; i < cexp.size(); ++i) {
-		Message dmsg = scheme.decrypt(cexp[i]);
-		vector<CZZ> dconj = scheme.decode(dmsg);
-		vector<CZZ> dvec = scheme.deConjugate(dconj);
+		vector<CZZ> dvec = scheme.fullDecrypt(cexp[i]);
 		dexp.push_back(dvec[0]);
 	}
 
@@ -705,38 +550,14 @@ void TestScheme::testSigmoid(long logN, long logp, long L, long sigmoidDegree, l
 	for (long i = 0; i < slots; ++i) {
 		double mr = (double)rand() / RAND_MAX;
 		double mi = (double)rand() / RAND_MAX;
-
-		double mrexp = exp(mr);
-		double mexpr = mrexp * cos(mi);
-		double mexpi = mrexp * sin(mi);
-
-		double msigmoidr = (mexpr * (mexpr + 1) + (mexpi * mexpi)) / ((mexpr + 1) * (mexpr + 1) + (mexpi * mexpi));
-		double msigmoidi = mexpi / ((mexpr + 1) * (mexpr + 1) + (mexpi * mexpi));
-
-		if(logp < 31) {
-			long p = (1 << logp);
-			ZZ pmr = to_ZZ(mr * p);
-			ZZ pmi = to_ZZ(mi * p);
-			mvec.push_back(CZZ(pmr, pmi));
-
-			ZZ pmsigmoidr = to_ZZ(msigmoidr * p);
-			ZZ pmsigmoidi = to_ZZ(msigmoidi * p);
-			msigmoidvec.push_back(CZZ(pmsigmoidr, pmsigmoidi));
-		} else {
-			long tmp = (1 << 30);
-			ZZ pmr = to_ZZ(mr * tmp) << (logp - 30);
-			ZZ pmi = to_ZZ(mi * tmp) << (logp - 30);
-			mvec.push_back(CZZ(pmr, pmi));
-
-			ZZ pmsigmoidr = to_ZZ(msigmoidr * tmp) << (logp - 30);
-			ZZ pmsigmoidi = to_ZZ(msigmoidi * tmp) << (logp - 30);
-			msigmoidvec.push_back(CZZ(pmsigmoidr, pmsigmoidi));
-		}
+		CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		CZZ msigmoid = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
+		mvec.push_back(m);
+		msigmoidvec.push_back(msigmoid);
 	}
 
-	vector<CZZ> mconj = scheme.doubleConjugate(mvec);
-	Message msg = scheme.encode(mconj);
-	Cipher c = scheme.encrypt(msg);
+
+	Cipher c = scheme.fullEncrypt(mvec);
 
 	cout << "------------------" << endl;
 	timeutils.start(SIGMOID);
@@ -744,9 +565,7 @@ void TestScheme::testSigmoid(long logN, long logp, long L, long sigmoidDegree, l
 	timeutils.stop(SIGMOID);
 	cout << "----------------" << endl;
 
-	Message dmsg = scheme.decrypt(csigmoid);
-	vector<CZZ> dconj = scheme.decode(dmsg);
-	vector<CZZ> dsigmoidvec = scheme.deConjugate(dconj);
+	vector<CZZ> dsigmoidvec = scheme.fullDecrypt(csigmoid);
 
 	for (long i = 0; i < dsigmoidvec.size(); ++i) {
 		cout << "------------------" << endl;
@@ -777,51 +596,21 @@ void TestScheme::testSigmoidExtended(long logN, long logp, long L, long sigmoidD
 	double mr = 0.284345;
 	double mi = 0.932432;
 
-	double mrexp = exp(mr);
-	double mexpr = mrexp * cos(mi);
-	double mexpi = mrexp * sin(mi);
+	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+	CZZ msigmoid = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
 
+	Cipher c = scheme.fullEncrypt(m);
 
-	double msigmoidr = (mexpr * (mexpr + 1) + (mexpi * mexpi)) / ((mexpr + 1) * (mexpr + 1) + (mexpi * mexpi));
-	double msigmoidi = mexpi / ((mexpr + 1) * (mexpr + 1) + (mexpi * mexpi));
-
-	CZZ m, msigmoid;
-	if(logp < 31) {
-		long p = (1 << logp);
-		ZZ pmr = to_ZZ(mr * p);
-		ZZ pmi = to_ZZ(mi * p);
-		m = CZZ(pmr, pmi);
-
-		ZZ pmsigmoidr = to_ZZ(msigmoidr * p);
-		ZZ pmsigmoidi = to_ZZ(msigmoidi * p);
-		msigmoid = CZZ(pmsigmoidr, pmsigmoidi);
-	} else {
-		long tmp = (1 << 30);
-		ZZ pmr = to_ZZ(mr * tmp) << (logp - 30);
-		ZZ pmi = to_ZZ(mi * tmp) << (logp - 30);
-		m = CZZ(pmr, pmi);
-
-		ZZ pmsigmoidr = to_ZZ(msigmoidr * tmp) << (logp - 30);
-		ZZ pmsigmoidi = to_ZZ(msigmoidi * tmp) << (logp - 30);
-		msigmoid = CZZ(pmsigmoidr, pmsigmoidi);
-	}
-
-	vector<CZZ> dsigmoid;
 	vector<Cipher> csigmoid;
-	vector<CZZ> mconj = scheme.doubleConjugate(m);
-	Message msg = scheme.encode(mconj);
-	Cipher c = scheme.encrypt(msg);
-
 	cout << "------------------" << endl;
 	timeutils.start(SIGMOID);
 	algo.functionExtended(csigmoid, c, SIGMOID, sigmoidDegree);
 	timeutils.stop(SIGMOID);
 	cout << "----------------" << endl;
 
+	vector<CZZ> dsigmoid;
 	for (long i = 0; i < csigmoid.size(); ++i) {
-		Message dmsg = scheme.decrypt(csigmoid[i]);
-		vector<CZZ> dconj = scheme.decode(dmsg);
-		vector<CZZ> dvec = scheme.deConjugate(dconj);
+		vector<CZZ> dvec = scheme.fullDecrypt(csigmoid[i]);
 		dsigmoid.push_back(dvec[0]);
 	}
 

@@ -14,10 +14,13 @@ public:
 	static void testPowerOf2(long logN, long logp, long L, long logPowDegree);
 	static void testPowerOf2Extended(long logN, long logp, long L, long logPowDegree);
 
+	static void testPower(long logN, long logp, long L, long powDegree);
 	static void testPowerExtended(long logN, long logp, long L, long  powDegree);
 
+	static void testProd2(long logN, long logp, long L, long logProdDegree);
 	static void testProd2Extended(long logN, long logp, long L, long logProdDegree);
 
+	static void testInverse(long logN, long logp, long L, long invSteps);
 	static void testInverseExtended(long logN, long logp, long L, long invSteps);
 
 	static void testExponent(long logN, long logp, long L, long expSteps, long logSlots);

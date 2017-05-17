@@ -111,6 +111,57 @@ vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& vals) {
 	return res;
 }
 
+vector<CZZ> NumUtils::fftRaw(vector<CZZ>& vals, KsiPows& ksiPows, const bool& isForward) {
+	long valsSize = vals.size();
+	if (valsSize == 1) {
+		return vals;
+	}
+	long logValsSize = log2(valsSize);
+	long Nh = valsSize >> 1;
+	vector<CZZ> res, tmp, sub1, sub2;
+	for (long i = 0; i < valsSize; i = i + 2) {
+		sub1.push_back(vals[i]);
+		sub2.push_back(vals[i + 1]);
+	}
+	vector<CZZ> y1 = fftRaw(sub1, ksiPows, isForward);
+	vector<CZZ> y2 = fftRaw(sub2, ksiPows, isForward);
+	if (isForward) {
+		for (long i = 0; i < Nh; ++i) {
+			y2[i] *= ksiPows.pows[logValsSize][i];
+			y2[i] >>= ksiPows.logp;
+		}
+	} else {
+		for (long i = 0; i < Nh; ++i) {
+			y2[i] *= ksiPows.pows[logValsSize][valsSize - i];
+			y2[i] >>= ksiPows.logp;
+		}
+	}
+	for (long i = 0; i < Nh; ++i) {
+		CZZ sum = y1[i] + y2[i];
+		CZZ diff = y1[i] - y2[i];
+		res.push_back(sum);
+		tmp.push_back(diff);
+	}
+	for (long i = 0; i < Nh; ++i) {
+		res.push_back(tmp[i]);
+	}
+	return res;
+}
+
+vector<CZZ> NumUtils::fft(vector<CZZ>& vals, KsiPows& ksiPows) {
+	return fftRaw(vals, ksiPows, true);
+}
+
+vector<CZZ> NumUtils::fftInv(vector<CZZ>& vals, KsiPows& ksiPows) {
+	vector<CZZ> fftInv = fftRaw(vals, ksiPows, false);
+	long fftInvSize = fftInv.size();
+	long logFftInvSize = log2(fftInvSize);
+	for (long i = 0; i < fftInvSize; ++i) {
+		fftInv[i] >>= logFftInvSize;
+	}
+	return fftInv;
+}
+
 vector<CZZ> NumUtils::fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows) {
 	long valsSize = vals.size();
 	if(valsSize == 1) {
@@ -155,20 +206,6 @@ vector<CZZ> NumUtils::fftSpecialInv(vector<CZZ>& vals, KsiPows& ksiPows) {
 	for (long i = 0; i < fftInvSize; ++i) {
 		fftInv[i] *= ksiPows.pows[logFftInvSize + 1][2 * fftInvSize - i];
 		fftInv[i] >>= (ksiPows.logp + logFftInvSize);
-	}
-	return fftInv;
-}
-
-vector<CZZ> NumUtils::fft(vector<CZZ>& vals, KsiPows& ksiPows) {
-	return fftRaw(vals, ksiPows, true);
-}
-
-vector<CZZ> NumUtils::fftInv(vector<CZZ>& vals, KsiPows& ksiPows) {
-	vector<CZZ> fftInv = fftRaw(vals, ksiPows, false);
-	long fftInvSize = fftInv.size();
-	long logFftInvSize = log2(fftInvSize);
-	for (long i = 0; i < fftInvSize; ++i) {
-		fftInv[i] >>= logFftInvSize;
 	}
 	return fftInv;
 }
