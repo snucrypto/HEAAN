@@ -84,10 +84,12 @@ int main() {
 //	----------------------------
 
 	/*
-	 * Params: logN, logp, L, invSteps
+	 * Params: logN, logp, L, invSteps, logSlots
 	 * Suggested: 13, 30, 11, 10
 	 */
-	TestScheme::testExponent(13, 30, 11, 10, 5);
+//	TestScheme::testExponent(13, 30, 11, 10, 5);
+
+//	----------------------------
 
 	/*
 	 * Params: logN, logp, L, invSteps
@@ -95,7 +97,15 @@ int main() {
 	 */
 //	TestScheme::testExponentExtended(13, 30, 11, 10);
 
-	//	----------------------------
+//	----------------------------
+
+	/*
+	 * Params: logN, logp, L, invSteps, logSlots
+	 * Suggested: 13, 30, 11, 10
+	 */
+	TestScheme::testSigmoid(13, 30, 11, 10, 5);
+
+//	----------------------------
 
 	/*
 	 * Params: logN, logp, L, invSteps

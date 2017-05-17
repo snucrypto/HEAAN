@@ -682,6 +682,81 @@ void TestScheme::testExponentExtended(long logN, long logp, long L, long expDegr
 	cout << "!!! END TEST EXPONENT EXTENDED !!!" << endl;
 }
 
+void TestScheme::testSigmoid(long logN, long logp, long L, long sigmoidDegree, long logSlots) {
+	cout << "!!! START TEST SIGMOID !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logl = 2;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logN, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	vector<CZZ> mvec, msigmoidvec;
+
+	long slots = 1 << logSlots;
+	for (long i = 0; i < slots; ++i) {
+		double mr = (double)rand() / RAND_MAX;
+		double mi = (double)rand() / RAND_MAX;
+
+		double mrexp = exp(mr);
+		double mexpr = mrexp * cos(mi);
+		double mexpi = mrexp * sin(mi);
+
+		double msigmoidr = (mexpr * (mexpr + 1) + (mexpi * mexpi)) / ((mexpr + 1) * (mexpr + 1) + (mexpi * mexpi));
+		double msigmoidi = mexpi / ((mexpr + 1) * (mexpr + 1) + (mexpi * mexpi));
+
+		if(logp < 31) {
+			long p = (1 << logp);
+			ZZ pmr = to_ZZ(mr * p);
+			ZZ pmi = to_ZZ(mi * p);
+			mvec.push_back(CZZ(pmr, pmi));
+
+			ZZ pmsigmoidr = to_ZZ(msigmoidr * p);
+			ZZ pmsigmoidi = to_ZZ(msigmoidi * p);
+			msigmoidvec.push_back(CZZ(pmsigmoidr, pmsigmoidi));
+		} else {
+			long tmp = (1 << 30);
+			ZZ pmr = to_ZZ(mr * tmp) << (logp - 30);
+			ZZ pmi = to_ZZ(mi * tmp) << (logp - 30);
+			mvec.push_back(CZZ(pmr, pmi));
+
+			ZZ pmsigmoidr = to_ZZ(msigmoidr * tmp) << (logp - 30);
+			ZZ pmsigmoidi = to_ZZ(msigmoidi * tmp) << (logp - 30);
+			msigmoidvec.push_back(CZZ(pmsigmoidr, pmsigmoidi));
+		}
+	}
+
+	vector<CZZ> mconj = scheme.doubleConjugate(mvec);
+	Message msg = scheme.encode(mconj);
+	Cipher c = scheme.encrypt(msg);
+
+	cout << "------------------" << endl;
+	timeutils.start("Sigmoid");
+	Cipher csigmoid = algo.sigmoid(c, sigmoidDegree);
+	timeutils.stop("Sigmoid");
+	cout << "----------------" << endl;
+
+	Message dmsg = scheme.decrypt(csigmoid);
+	vector<CZZ> dconj = scheme.decode(dmsg);
+	vector<CZZ> dsigmoidvec = scheme.deConjugate(dconj);
+
+	for (long i = 0; i < dsigmoidvec.size(); ++i) {
+		cout << "------------------" << endl;
+		cout << "msigmoid:  " << i << " " << msigmoidvec[i].toString() << endl;
+		cout << "dsigmoid:  " << i << " " << dsigmoidvec[i].toString() << endl;
+		cout << "esigmoid:  " << i << " " << (msigmoidvec[i] - dsigmoidvec[i]).toString() << endl;
+	}
+
+	cout << "!!! END TEST SIGMOID !!!" << endl;
+}
+
 void TestScheme::testSigmoidExtended(long logN, long logp, long L, long sigmoidDegree) {
 	cout << "!!! START TEST SIGMOID EXTENDED !!!" << endl;
 

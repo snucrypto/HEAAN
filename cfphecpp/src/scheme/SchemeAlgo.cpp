@@ -193,6 +193,7 @@ Cipher SchemeAlgo::sigmoid(Cipher& c, const long& degree) {
 			scheme.addAndEqual(sigmoid, tmp);
 		}
 	}
+	scheme.modSwitchAndEqual(sigmoid);
 	return sigmoid;
 }
 

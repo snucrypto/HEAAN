@@ -19,8 +19,8 @@ public:
 	static void testExponent(long logN, long logp, long L, long expSteps, long logSlots);
 	static void testExponentExtended(long logN, long logp, long L, long expSteps);
 
-	static void testSigmoid(long logN, long logp, long L, long expSteps);
-	static void testSigmoidExtended(long logN, long logp, long L, long expSteps);
+	static void testSigmoid(long logN, long logp, long L, long sigmoidSteps, long logSlots);
+	static void testSigmoidExtended(long logN, long logp, long L, long sigmoidSteps);
 
 
 	static void testFFT(long logN, long logp, long L, long logFFTdim, long FFTdeg);
