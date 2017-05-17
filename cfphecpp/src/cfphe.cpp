@@ -81,8 +81,7 @@ int main() {
 	 * Params: logN, logp, L, invSteps
 	 * Suggested: 13, 25, 6, 5
 	 */
-	TestScheme::testInverseExtended(13, 30, 11, 6);
-
+	TestScheme::testInverseExtended(13, 25, 6, 5);
 	//-----------------------------------------
 
 	/*
