@@ -11,13 +11,18 @@ using namespace std;
 
 class TimeUtils {
 private:
+
 	struct timeval startTime, stopTime;
 	double timeElapsed;
 
 public:
-	TimeUtils();
+
 	void start(string msg);
 	void stop(string msg);
+
+	//-----------------------------------------
+
+	TimeUtils();
 };
 
 #endif /* POLYSCHEME_TIMEUTILS_H_ */

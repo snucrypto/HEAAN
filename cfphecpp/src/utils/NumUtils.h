@@ -42,6 +42,7 @@ public:
 	static vector<CZZ> fftButterfly(vector<CZZ>& vals, KsiPows& ksiPows);
 	static vector<CZZ> fftButterflyInv(vector<CZZ>& vals, KsiPows& ksiPows);
 
+	//-----------------------------------------
 
 };
 

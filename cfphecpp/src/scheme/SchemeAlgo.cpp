@@ -7,6 +7,15 @@
 #include "../czz/CZZ.h"
 #include "Params.h"
 
+Cipher SchemeAlgo::powerOf2(Cipher& c, const long& logDegree) {
+	Cipher res = c;
+	for (long i = 1; i < logDegree + 1; ++i) {
+		scheme.squareAndEqual(res);
+		scheme.modSwitchAndEqual(res);
+	}
+	return res;
+}
+
 void SchemeAlgo::powerOf2Extended(vector<Cipher>& res, Cipher& c, const long& logDegree) {
 	res.reserve(logDegree + 1);
 	Cipher c2 = c;
@@ -17,6 +26,8 @@ void SchemeAlgo::powerOf2Extended(vector<Cipher>& res, Cipher& c, const long& lo
 		res.push_back(c2);
 	}
 }
+
+//-----------------------------------------
 
 void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degree) {
 	long logDegree = log2(degree);
@@ -40,6 +51,23 @@ void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degre
 	}
 }
 
+//-----------------------------------------
+
+Cipher SchemeAlgo::prod2(vector<Cipher>& cs, const long& logDegree) {
+	vector<Cipher> res = cs;
+	vector<Cipher> tmp2;
+	for (long i = logDegree; i > 0; --i) {
+		long powi = (1 << i);
+		for (long j = 0; j < powi; j = j + 2) {
+			Cipher c2 = scheme.mult(res[j], res[j + 1]);
+			scheme.modSwitchAndEqual(c2);
+			tmp2.push_back(c2);
+		}
+		res = tmp2;
+	}
+	return res[0];
+}
+
 void SchemeAlgo::prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& cs, const long& logDegree) {
 	res.reserve(logDegree + 1);
 	res.push_back(cs);
@@ -56,6 +84,23 @@ void SchemeAlgo::prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& cs, 
 		}
 		res.push_back(c2k);
 	}
+}
+
+//-----------------------------------------
+
+Cipher SchemeAlgo::inverse(Cipher& c, const long& steps) {
+	Cipher tmp = scheme.addConst(c, scheme.params.p);
+	scheme.modEmbedAndEqual(tmp);
+	Cipher res = c;
+	for (long i = 1; i < steps-1; ++i) {
+		scheme.squareAndEqual(res);
+		scheme.modSwitchAndEqual(res);
+		scheme.addConstAndEqual(res, scheme.params.p);
+		scheme.multAndEqual(res, tmp);
+		scheme.modSwitchAndEqual(res, i + 2);
+		tmp = res;
+	}
+	return res;
 }
 
 void SchemeAlgo::inverseExtended(vector<Cipher>& cres, vector<Cipher>& vres, Cipher& c, const long& steps) {
@@ -76,6 +121,31 @@ void SchemeAlgo::inverseExtended(vector<Cipher>& cres, vector<Cipher>& vres, Cip
 		scheme.modSwitchAndEqual(tmp, i + 2);
 		vres.push_back(tmp);
 	}
+}
+
+//-----------------------------------------
+
+Cipher SchemeAlgo::function(Cipher& c, string& funcName, const long& degree) {
+	vector<Cipher> cpows;
+	powerExtended(cpows, c, degree);
+
+	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
+	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
+
+	Cipher res = scheme.multByConst(cpows[0], pows[1]);
+	ZZ p2 = scheme.params.p * pows[0];
+	scheme.addConstAndEqual(res, p2);
+
+
+	for (int i = 1; i < degree; ++i) {
+		if(abs(coeffs[i + 1]) > 1e-17) {
+			Cipher tmp = scheme.multByConst(cpows[i], pows[i + 1]);
+			scheme.modEmbedAndEqual(res, tmp.level);
+			scheme.addAndEqual(res, tmp);
+		}
+	}
+	scheme.modSwitchAndEqual(res);
+	return res;
 }
 
 void SchemeAlgo::functionExtended(vector<Cipher>& res, Cipher& c, string& funcName, const long& degree) {
@@ -104,67 +174,8 @@ void SchemeAlgo::functionExtended(vector<Cipher>& res, Cipher& c, string& funcNa
 	}
 }
 
-Cipher SchemeAlgo::powerOf2(Cipher& c, const long& logDegree) {
-	Cipher res = c;
-	for (long i = 1; i < logDegree + 1; ++i) {
-		scheme.squareAndEqual(res);
-		scheme.modSwitchAndEqual(res);
-	}
-	return res;
-}
+//-----------------------------------------
 
-Cipher SchemeAlgo::prod2(vector<Cipher>& cs, const long& logDegree) {
-	vector<Cipher> res = cs;
-	vector<Cipher> tmp2;
-	for (long i = logDegree; i > 0; --i) {
-		long powi = (1 << i);
-		for (long j = 0; j < powi; j = j + 2) {
-			Cipher c2 = scheme.mult(res[j], res[j + 1]);
-			scheme.modSwitchAndEqual(c2);
-			tmp2.push_back(c2);
-		}
-		res = tmp2;
-	}
-	return res[0];
-}
-
-Cipher SchemeAlgo::inverse(Cipher& c, const long& steps) {
-	Cipher tmp = scheme.addConst(c, scheme.params.p);
-	scheme.modEmbedAndEqual(tmp);
-	Cipher res = c;
-	for (long i = 1; i < steps-1; ++i) {
-		scheme.squareAndEqual(res);
-		scheme.modSwitchAndEqual(res);
-		scheme.addConstAndEqual(res, scheme.params.p);
-		scheme.multAndEqual(res, tmp);
-		scheme.modSwitchAndEqual(res, i + 2);
-		tmp = res;
-	}
-	return res;
-}
-
-Cipher SchemeAlgo::function(Cipher& c, string& funcName, const long& degree) {
-	vector<Cipher> cpows;
-	powerExtended(cpows, c, degree);
-
-	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
-	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
-
-	Cipher res = scheme.multByConst(cpows[0], pows[1]);
-	ZZ p2 = scheme.params.p * pows[0];
-	scheme.addConstAndEqual(res, p2);
-
-
-	for (int i = 1; i < degree; ++i) {
-		if(abs(coeffs[i + 1]) > 1e-17) {
-			Cipher tmp = scheme.multByConst(cpows[i], pows[i + 1]);
-			scheme.modEmbedAndEqual(res, tmp.level);
-			scheme.addAndEqual(res, tmp);
-		}
-	}
-	scheme.modSwitchAndEqual(res);
-	return res;
-}
 vector<Cipher> SchemeAlgo::fftRaw(vector<Cipher>& ciphers, const bool& isForward) {
 	long csize = ciphers.size();
 
@@ -219,80 +230,3 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers) {
 	}
 	return fftInv;
 }
-
-vector<Cipher> SchemeAlgo::bitReverse(vector<Cipher>& ciphers) {
-	vector<Cipher> res;
-	vector<Cipher> tmp;
-	long N = ciphers.size();
-	long logN = log2(N);
-	res.push_back(ciphers[0]);
-	for (long i = 0; i < logN; ++i) {
-		long powi = (1 << i);
-		long powni = (1 << (logN - i));
-		long pownih = (1 << (logN - i - 1));
-		for (long j = 0; j < powi; ++j) {
-			tmp.push_back(ciphers[j * powni + pownih]);
-		}
-		tmp = bitReverse(tmp);
-		for (long j = 0; j < tmp.size(); ++j) {
-			res.push_back(tmp[j]);
-		}
-		tmp.clear();
-	}
-	return res;
-}
-
-vector<Cipher> SchemeAlgo::fftButterfly(vector<Cipher>& ciphers) {
-	vector<Cipher> fft = ciphers;
-	long N = ciphers.size();
-	long logN = log2(N);
-	for (long i = 0; i < logN; ++i) {
-		long powi = (1 << i);
-		long logNi = logN - i;
-		long pownih = (1 << (logNi - 1));
-		long powni = (1 << logNi);
-		for (long j = 0; j < powi; ++j) {
-			for (long k = 0; k < pownih; ++k) {
-				long s = j * powni + k;
-				long t = s + pownih;
-				Cipher as = scheme.add(fft[s], fft[t]);
-				Cipher at = scheme.sub(fft[s], fft[t]);
-				scheme.multByMonomialAndEqual(at, powi * k);
-				fft[s] = as;
-				fft[t] = at;
-			}
-		}
-	}
-	return fft;
-//	return bitReverse(fft);
-}
-
-vector<Cipher> SchemeAlgo::fftButterflyInv(vector<Cipher>& ciphers) {
-	vector<Cipher> fftInv = ciphers;
-	long N = ciphers.size();
-	long logN = log2(N);
-	for (long i = 0; i < logN; ++i) {
-		long powi = (1 << i);
-		long logNi = logN - i;
-		long pownih = (1 << (logNi - 1));
-		long powni = (1 << logNi);
-		for (long j = 0; j < powi; ++j) {
-			for (long k = 0; k < pownih; ++k) {
-				long s = j * powni + k;
-				long t = s + pownih;
-				Cipher as = scheme.add(fftInv[s], fftInv[t]);
-				Cipher at = scheme.sub(fftInv[s], fftInv[t]);
-				scheme.multByMonomialAndEqual(at, scheme.params.M - powi * k);
-				fftInv[s] = as;
-				fftInv[t] = at;
-			}
-		}
-	}
-	long bits = scheme.params.logp - logN;
-	for (long i = 0; i < N; ++i) {
-		scheme.leftShiftAndEqual(fftInv[i], bits);
-		scheme.modSwitchAndEqual(fftInv[i]);
-	}
-	return bitReverse(fftInv);
-}
-

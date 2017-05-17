@@ -13,19 +13,16 @@ class TaylorPows {
 public:
 
 	long logp;
+
 	map<string, vector<double>> coeffsMap;
 	map<string, vector<ZZ>> powsMap;
 
-	vector<ZZ> expPows;
-	vector<double> expCoeffs;
-
-	vector<ZZ> sigmoidPows;
-	vector<double> sigmoidCoeffs;
-
 	void setLogp(long logp);
+	void insert(string& name, vector<double>& coeffs);
+
 	void precompute();
 
-	void insert(string& name, vector<double>& coeffs);
+	//-----------------------------------------
 
 	TaylorPows();
 };

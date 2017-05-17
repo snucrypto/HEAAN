@@ -7,19 +7,12 @@
 
 PubKey::PubKey(Params& params, SecKey& secretKey) {
 	ZZX e, s2;
-
-//	vector<CZZ> evec;
-//	NumUtils::sampleGauss(evec, params.N / 2, params.sigma);
-//	StringUtils::show(evec);
-//	evec = NumUtils::doubleConjugate(evec);
-//	evec = NumUtils::fftSpecialInv(evec, params.ksiPows);
-//	StringUtils::show(evec);
-
 	NumUtils::sampleUniform2(a, params.N, params.logq);
 	NumUtils::sampleGauss(e, params.N, params.sigma);
 	Ring2Utils::mult(b, secretKey.s, a, params.q, params.N);
 	Ring2Utils::sub(b, e, b, params.q, params.N);
 
+	//-----------------------------------------
 
 	Ring2Utils::mult(s2, secretKey.s, secretKey.s, params.q, params.N);
 	Ring2Utils::leftShiftAndEqual(s2, params.logP, params.logPq, params.N);

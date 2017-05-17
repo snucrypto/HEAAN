@@ -30,6 +30,8 @@ void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
 	addAndEqual(p1.ix, p2.ix, mod, degree);
 }
 
+//-----------------------------------------
+
 void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	res.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
@@ -54,6 +56,8 @@ void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
 	subAndEqual(p1.rx, p2.rx, mod, degree);
 	subAndEqual(p1.ix, p2.ix, mod, degree);
 }
+
+//-----------------------------------------
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	ZZ tmp1, tmp2;
@@ -127,6 +131,8 @@ void Ring2Utils::multAndEqual(CZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	multAndEqual(p1.ix, p2, mod, degree);
 }
 
+//-----------------------------------------
+
 void Ring2Utils::square(ZZX& res, ZZX& p, ZZ& mod, const long& degree) {
 	ZZ tmp1, tmp2;
 	res.SetLength(degree);
@@ -178,6 +184,8 @@ void Ring2Utils::squareAndEqual(CZZX& p, ZZ& mod, const long& degree) {
 	addAndEqual(p.ix, p.ix, mod, degree);
 }
 
+//-----------------------------------------
+
 void Ring2Utils::multByMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const long& degree) {
 	long shift = monomialDeg % (2 * degree);
 	if(shift == 0) {
@@ -228,6 +236,8 @@ void Ring2Utils::multByMonomialAndEqual(CZZX& p, const long& monomialDeg, const 
 	multByMonomialAndEqual(p.rx, monomialDeg, degree);
 	multByMonomialAndEqual(p.ix, monomialDeg, degree);
 }
+
+//-----------------------------------------
 
 void Ring2Utils::multByConst(ZZX& res, ZZX& p, const ZZ& cnst, ZZ& mod, const long& degree) {
 	res.SetLength(degree);
@@ -286,6 +296,8 @@ void Ring2Utils::multByConstAndEqual(CZZX& p, const CZZ& cnst, ZZ& mod, const lo
 	add(p.ix, tmp1, tmp3, mod, degree);
 }
 
+//-----------------------------------------
+
 void Ring2Utils::leftShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree) {
 	ZZ c;
 	res.SetLength(degree);
@@ -314,6 +326,8 @@ void Ring2Utils::leftShiftAndEqual(CZZX& p, const long& bits, const long& logMod
 	leftShiftAndEqual(p.rx, bits, logMod, degree);
 	leftShiftAndEqual(p.ix, bits, logMod, degree);
 }
+
+//-----------------------------------------
 
 void Ring2Utils::rightShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree) {
 	ZZ c;
@@ -372,6 +386,8 @@ void Ring2Utils::rightShiftAndEqual(CZZX& p, const long& bits, const long& degre
 	rightShiftAndEqual(p.ix, bits, degree);
 }
 
+//-----------------------------------------
+
 void Ring2Utils::truncate(ZZX& res, ZZX& p, const long& logMod, const long& degree) {
 	res.SetLength(degree);
 	res = p;
@@ -397,8 +413,6 @@ void Ring2Utils::truncateAndEqual(CZZX& p, const long& logMod, const long& degre
 	truncateAndEqual(p.rx, logMod, degree);
 	truncateAndEqual(p.ix, logMod, degree);
 }
-
-//---------------------------------
 
 void Ring2Utils::truncate(ZZ& c, const long& logMod) {
 	c = sign(c) * trunc_ZZ(c, logMod);

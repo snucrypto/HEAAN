@@ -8,12 +8,33 @@ void StringUtils::show(vector<CZZ>& vals) {
 	cout << "]" << endl;
 }
 
-void StringUtils::showcompare(vector<CZZ>& mvals, vector<CZZ>& dvals, string prefix) {
-	for (long i = 0; i < mvals.size(); ++i) {
+//-----------------------------------------
+
+void StringUtils::showcompare(CZZ& val1, CZZ& val2, string prefix) {
+	cout << "---------------------" << endl;
+	cout << "m" + prefix + ": " << val1.toString() << endl;
+	cout << "d" + prefix + ": " << val2.toString() << endl;
+	cout << "e" + prefix + ": " << (val1-val2).toString() << endl;
+	cout << "---------------------" << endl;
+}
+
+void StringUtils::showcompare(vector<CZZ>& vals1, vector<CZZ>& vals2, string prefix) {
+	for (long i = 0; i < vals1.size(); ++i) {
 		cout << "---------------------" << endl;
-		cout << "m" + prefix + "i: " << i << " : " << mvals[i].toString() << endl;
-		cout << "d" + prefix + "i: " << i << " : " << dvals[i].toString() << endl;
-		cout << "e" + prefix + "i: " << i << " : " << (mvals[i]-dvals[i]).toString() << endl;
+		cout << "m" + prefix + "i: " << i << " : " << vals1[i].toString() << endl;
+		cout << "d" + prefix + "i: " << i << " : " << vals2[i].toString() << endl;
+		cout << "e" + prefix + "i: " << i << " : " << (vals1[i]-vals2[i]).toString() << endl;
+		cout << "---------------------" << endl;
+	}
+
+}
+
+void StringUtils::showcompare(CZZ& val1, vector<CZZ>& vals2, string prefix) {
+	for (long i = 0; i < vals2.size(); ++i) {
+		cout << "---------------------" << endl;
+		cout << "m" + prefix + "i: " << i << " : " << val1.toString() << endl;
+		cout << "d" + prefix + "i: " << i << " : " << vals2[i].toString() << endl;
+		cout << "e" + prefix + "i: " << i << " : " << (val1-vals2[i]).toString() << endl;
 		cout << "---------------------" << endl;
 	}
 

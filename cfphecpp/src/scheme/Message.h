@@ -17,11 +17,10 @@ public:
 	long logSlots;
 	long level;
 
-	Message(ZZX& poly, long& logSlots, long& level) : poly(poly), logSlots(logSlots), level(level) {}
+	//-----------------------------------------
 
-	Message(ZZX& poly, long& logSlots) : poly(poly), logSlots(logSlots) {
-		level = 1;
-	}
+	Message(ZZX& poly, long& logSlots, long& level) : poly(poly), logSlots(logSlots), level(level) {}
+	Message(ZZX& poly, long& logSlots) : poly(poly), logSlots(logSlots) {level = 1;}
 
 };
 

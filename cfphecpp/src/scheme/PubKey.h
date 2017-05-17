@@ -18,6 +18,8 @@ public:
 	ZZX aStar;
 	ZZX bStar;
 
+	//-----------------------------------------
+
 	PubKey(Params& params, SecKey& secretKey);
 };
 

@@ -15,10 +15,12 @@ public:
 	long logp;
 	vector<vector<CZZ>> pows;
 
-	KsiPows();
 	void setLogp(long logp);
-
 	void precompute(long logSize);
+
+	//-----------------------------------------
+
+	KsiPows();
 };
 
 #endif /* UTILS_KSIPOWS_H_ */
