@@ -15,11 +15,18 @@ public:
 
 	//-----------------------------------------
 
-	void powerOf2(vector<Cipher>& c2k, Cipher& c, const long& deg);
-	void prod2(vector<vector<Cipher>>& cs2k, vector<Cipher>& cs, const long& deg);
-	void inverse(vector<Cipher>& c2k, vector<Cipher>& v2k, Cipher& c, const long& k);
-	void exp(Cipher& res, Cipher& c, const long& deg);
-	void sigmoid(Cipher& res, Cipher& c, const long& deg);
+	void powerOf2Extended(vector<Cipher>& res, Cipher& c, const long& logDegree);
+	void powerExtended(vector<Cipher>& res, Cipher& c, const long& degree);
+	void prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& cs, const long& logDegree);
+	void inverseExtended(vector<Cipher>& res, vector<Cipher>& v2k, Cipher& c, const long& steps);
+	void exponentExtended(vector<Cipher>& res, Cipher& c, const long& degree);
+	void sigmoidExtended(vector<Cipher>& res, Cipher& c, const long& degree);
+
+	Cipher powerOf2(Cipher& c, const long& logDegree);
+	Cipher prod2(vector<Cipher>& cs, const long& logDegree);
+	Cipher inverse(Cipher& c, const long& steps);
+	Cipher exponent(Cipher& c, const long& degree);
+	Cipher sigmoid(Cipher& c, const long& degree);
 
 	//-----------------------------------------
 

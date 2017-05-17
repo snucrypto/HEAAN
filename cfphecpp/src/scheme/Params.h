@@ -5,6 +5,7 @@
 
 #include "NTL/ZZ.h"
 #include "../utils/KsiPows.h"
+#include "../utils/TaylorPows.h"
 
 using namespace std;
 using namespace NTL;
@@ -26,6 +27,7 @@ public:
 	long logq;
 
 	KsiPows ksiPows;
+	TaylorPows taylorPows;
 
 	ZZ p;
 	ZZ q;

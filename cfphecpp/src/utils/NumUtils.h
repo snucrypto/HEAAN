@@ -23,6 +23,10 @@ public:
 
 	//-----------------------------------------
 
+	static vector<CZZ> doubleConjugate(vector<CZZ>& vals);
+
+	//-----------------------------------------
+
 	static vector<CZZ> fftSpecialRaw(vector<CZZ>& vals, KsiPows& ksiPows, const bool& isForward);
 	static vector<CZZ> fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows);
 	static vector<CZZ> fftSpecialInv(vector<CZZ>& vals, KsiPows& ksiPows);

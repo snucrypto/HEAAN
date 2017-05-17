@@ -11,17 +11,15 @@ void KsiPows::setLogp(long logp) {
 }
 
 void KsiPows::precompute(long logSize) {
-	long i, j;
 	double angle;
-	long idx = pows.size();
 
 	if(logp < 31) {
 		long p = (1 << logp);
-		for (i = idx; i < logSize; ++i) {
+		for (long i = 0; i < logSize; ++i) {
 			long ipow = (1 << i);
 			vector<CZZ> temp;
 
-			for (j = 0; j < ipow; ++j) {
+			for (long j = 0; j < ipow; ++j) {
 				angle = 2.0 * M_PI * j / ipow;
 				ZZ rx = to_ZZ(cos(angle) * p);
 				ZZ ix = to_ZZ(sin(angle) * p);
@@ -33,11 +31,11 @@ void KsiPows::precompute(long logSize) {
 		}
 	} else {
 		long tmp = (1 << 30);
-		for (i = idx; i < logSize; ++i) {
+		for (long i = 0; i < logSize; ++i) {
 			long ipow = (1 << i);
 			vector<CZZ> temp;
 
-			for (j = 0; j < ipow; ++j) {
+			for (long j = 0; j < ipow; ++j) {
 				angle = 2.0 * M_PI * j / ipow;
 				ZZ rx = to_ZZ((long)(cos(angle) * tmp));
 				rx <<= (logp - 30);
@@ -51,8 +49,3 @@ void KsiPows::precompute(long logSize) {
 		}
 	}
 }
-
-KsiPows::~KsiPows() {
-	// TODO Auto-generated destructor stub
-}
-

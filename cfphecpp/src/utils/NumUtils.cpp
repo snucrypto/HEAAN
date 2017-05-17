@@ -99,6 +99,18 @@ void NumUtils::sampleUniform2(ZZX& res, const long& dim, const long& logBnd) {
 	res.normalize();
 }
 
+vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& vals) {
+	vector<CZZ> res;
+	long vsize = vals.size();
+	for (long i = 0; i < vsize; ++i) {
+		res.push_back(vals[i]);
+	}
+	for (long i = 0; i < vsize; ++i) {
+		res.push_back(vals[vsize - i - 1].conjugate());
+	}
+	return res;
+}
+
 vector<CZZ> NumUtils::fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows) {
 	long valsSize = vals.size();
 	if(valsSize == 1) {

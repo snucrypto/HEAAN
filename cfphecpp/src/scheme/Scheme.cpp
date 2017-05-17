@@ -236,11 +236,14 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
 
-	ZZX cc00, cc01, cc10, cc11, mulC1, mulC0;
+	ZZX cc00, cc11, mulC1, mulC0;
+
+	ZZX add1, add2, mult;
+	Ring2Utils::add(add1, cipher1.c0, cipher1.c1, qi, params.N);
+	Ring2Utils::add(add2, cipher2.c0, cipher2.c1, qi, params.N);
+	Ring2Utils::mult(mult, add1, add2, qi, params.N);
 
 	Ring2Utils::mult(cc00, cipher1.c0, cipher2.c0, qi, params.N);
-	Ring2Utils::mult(cc01, cipher1.c0, cipher2.c1, qi, params.N);
-	Ring2Utils::mult(cc10, cipher1.c1, cipher2.c0, qi, params.N);
 	Ring2Utils::mult(cc11, cipher1.c1, cipher2.c1, qi, params.N);
 
 	Ring2Utils::mult(mulC1, cc11, publicKey.aStar, Pqi, params.N);
@@ -249,8 +252,9 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::rightShiftAndEqual(mulC1, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(mulC0, params.logP, params.N);
 
-	Ring2Utils::addAndEqual(mulC1, cc10, qi, params.N);
-	Ring2Utils::addAndEqual(mulC1, cc01, qi, params.N);
+	Ring2Utils::addAndEqual(mulC1, mult, qi, params.N);
+	Ring2Utils::subAndEqual(mulC1, cc00, qi, params.N);
+	Ring2Utils::subAndEqual(mulC1, cc11, qi, params.N);
 	Ring2Utils::addAndEqual(mulC0, cc00, qi, params.N);
 
 //	ZZ eBnd = cipher1.eBnd * (cipher2.mBnd + cipher2.eBnd) + cipher1.mBnd * cipher2.eBnd;

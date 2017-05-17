@@ -1,10 +1,19 @@
 #include "PubKey.h"
 
+#include "../czz/CZZ.h"
 #include "../utils/NumUtils.h"
 #include "../utils/Ring2Utils.h"
+#include "../utils/StringUtils.h"
 
 PubKey::PubKey(Params& params, SecKey& secretKey) {
 	ZZX e, s2;
+
+//	vector<CZZ> evec;
+//	NumUtils::sampleGauss(evec, params.N / 2, params.sigma);
+//	StringUtils::show(evec);
+//	evec = NumUtils::doubleConjugate(evec);
+//	evec = NumUtils::fftSpecialInv(evec, params.ksiPows);
+//	StringUtils::show(evec);
 
 	NumUtils::sampleUniform2(a, params.N, params.logq);
 	NumUtils::sampleGauss(e, params.N, params.sigma);

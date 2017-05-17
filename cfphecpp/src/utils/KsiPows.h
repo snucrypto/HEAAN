@@ -19,7 +19,6 @@ public:
 	void setLogp(long logp);
 
 	void precompute(long logSize);
-	virtual ~KsiPows();
 };
 
 #endif /* UTILS_KSIPOWS_H_ */
