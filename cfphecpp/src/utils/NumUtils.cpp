@@ -8,6 +8,8 @@ void NumUtils::sampleGauss(vector<CZZ>& res, const long& dim, const double& stde
 	static long const bignum = 0xfffffff;
 
 	res.clear();
+	res.reserve(dim);
+
 	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
 	for (long i = 0; i < dim; i++) {
 		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
@@ -49,6 +51,7 @@ void NumUtils::sampleGauss(ZZX& res, const long& dim, const double& stdev) {
 }
 
 void NumUtils::sampleZO(vector<CZZ>& res, const long& dim) {
+	res.reserve(dim);
 	ZZ temp;
 	long i;
 	for (i = 0; i < dim; ++i) {
@@ -102,6 +105,8 @@ void NumUtils::sampleUniform2(ZZX& res, const long& dim, const long& logBnd) {
 vector<CZZ> NumUtils::doubleConjugate(vector<CZZ>& vals) {
 	vector<CZZ> res;
 	long vsize = vals.size();
+	res.reserve(vsize * 2);
+
 	for (long i = 0; i < vsize; ++i) {
 		res.push_back(vals[i]);
 	}
@@ -117,8 +122,14 @@ vector<CZZ> NumUtils::fftRaw(vector<CZZ>& vals, KsiPows& ksiPows, const bool& is
 		return vals;
 	}
 	long logValsSize = log2(valsSize);
-	long Nh = valsSize >> 1;
+	long valsSizeh = valsSize >> 1;
 	vector<CZZ> res, tmp, sub1, sub2;
+
+	res.reserve(valsSize);
+	tmp.reserve(valsSizeh);
+	sub1.reserve(valsSizeh);
+	sub2.reserve(valsSizeh);
+
 	for (long i = 0; i < valsSize; i = i + 2) {
 		sub1.push_back(vals[i]);
 		sub2.push_back(vals[i + 1]);
@@ -126,23 +137,23 @@ vector<CZZ> NumUtils::fftRaw(vector<CZZ>& vals, KsiPows& ksiPows, const bool& is
 	vector<CZZ> y1 = fftRaw(sub1, ksiPows, isForward);
 	vector<CZZ> y2 = fftRaw(sub2, ksiPows, isForward);
 	if (isForward) {
-		for (long i = 0; i < Nh; ++i) {
+		for (long i = 0; i < valsSizeh; ++i) {
 			y2[i] *= ksiPows.pows[logValsSize][i];
 			y2[i] >>= ksiPows.logp;
 		}
 	} else {
-		for (long i = 0; i < Nh; ++i) {
+		for (long i = 0; i < valsSizeh; ++i) {
 			y2[i] *= ksiPows.pows[logValsSize][valsSize - i];
 			y2[i] >>= ksiPows.logp;
 		}
 	}
-	for (long i = 0; i < Nh; ++i) {
+	for (long i = 0; i < valsSizeh; ++i) {
 		CZZ sum = y1[i] + y2[i];
 		CZZ diff = y1[i] - y2[i];
 		res.push_back(sum);
 		tmp.push_back(diff);
 	}
-	for (long i = 0; i < Nh; ++i) {
+	for (long i = 0; i < valsSizeh; ++i) {
 		res.push_back(tmp[i]);
 	}
 	return res;
@@ -162,6 +173,9 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& vals, KsiPows& ksiPows) {
 	return fftInv;
 }
 
+vector<CZZ> NumUtils::fftInvSimple(vector<CZZ>& vals, KsiPows& ksiPows) {
+	return fftRaw(vals, ksiPows, false);
+}
 vector<CZZ> NumUtils::fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows) {
 	long valsSize = vals.size();
 	if(valsSize == 1) {
@@ -173,6 +187,11 @@ vector<CZZ> NumUtils::fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows) {
 	long valsSizeHalf = valsSize >> 1;
 
 	vector<CZZ> res, tmp, sub1, sub2;
+
+	res.reserve(valsSize);
+	tmp.reserve(valsSizeHalf);
+	sub1.reserve(valsSizeHalf);
+	sub2.reserve(valsSizeHalf);
 
 	for (i = 0; i < valsSize; i = i+2) {
 		sub1.push_back(vals[i]);

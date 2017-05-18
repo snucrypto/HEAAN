@@ -39,6 +39,7 @@ public:
 
 	vector<CZZ> doubleConjugate(vector<CZZ>& vals);
 	vector<CZZ> doubleConjugate(CZZ& val);
+	void doubleConjugateAndEqual(vector<CZZ>& vals);
 
 	//-----------------------------------------
 
@@ -56,6 +57,7 @@ public:
 	Message decrypt(Cipher& cipher);
 	vector<CZZ> decode(Message& msg);
 	vector<CZZ> deConjugate(vector<CZZ>& vals);
+
 	vector<CZZ> fullDecrypt(Cipher& cipher);
 	CZZ fullSimpleDecrypt(Cipher& cipher);
 	vector<CZZ> fullSimpleDecryptVec(vector<Cipher>& ciphers);

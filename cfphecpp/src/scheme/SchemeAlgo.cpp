@@ -30,6 +30,7 @@ void SchemeAlgo::powerOf2Extended(vector<Cipher>& res, Cipher& c, const long& lo
 //-----------------------------------------
 
 void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degree) {
+	res.reserve(degree);
 	long logDegree = log2(degree);
 	vector<Cipher> po2;
 	powerOf2Extended(po2, c, logDegree);
@@ -71,18 +72,16 @@ Cipher SchemeAlgo::prod2(vector<Cipher>& cs, const long& logDegree) {
 void SchemeAlgo::prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& cs, const long& logDegree) {
 	res.reserve(logDegree + 1);
 	res.push_back(cs);
-	long size, idx;
-	for (long i = 1; i < logDegree + 1; ++i) {
-		vector<Cipher> c2k;
-		idx = 0;
-		size = res[i-1].size();
-		while(idx < size) {
-			Cipher c2 = scheme.mult(res[i - 1][idx], res[i - 1][idx + 1]);
+	for (long i = 0; i < logDegree; ++i) {
+		vector<Cipher> ctmp;
+		long size = res[i].size();
+		ctmp.reserve(size / 2);
+		for (long j = 0; j < size; j = j + 2) {
+			Cipher c2 = scheme.mult(res[i][j], res[i][j + 1]);
 			scheme.modSwitchAndEqual(c2);
-			c2k.push_back(c2);
-			idx += 2;
+			ctmp.push_back(c2);
 		}
-		res.push_back(c2k);
+		res.push_back(ctmp);
 	}
 }
 
@@ -112,13 +111,13 @@ void SchemeAlgo::inverseExtended(vector<Cipher>& cres, vector<Cipher>& vres, Cip
 	scheme.modEmbedAndEqual(tmp);
 	vres.push_back(tmp);
 
-	for (long i = 1; i < steps-1; ++i) {
-		tmp = scheme.square(cres[i - 1]);
+	for (long i = 0; i < steps - 2; ++i) {
+		tmp = scheme.square(cres[i]);
 		scheme.modSwitchAndEqual(tmp);
 		cres.push_back(tmp);
 		scheme.addConstAndEqual(tmp, scheme.params.p);
-		scheme.multAndEqual(tmp, vres[i-1]);
-		scheme.modSwitchAndEqual(tmp, i + 2);
+		scheme.multAndEqual(tmp, vres[i]);
+		scheme.modSwitchAndEqual(tmp, i + 1);
 		vres.push_back(tmp);
 	}
 }
@@ -159,9 +158,8 @@ Cipher SchemeAlgo::functionSimple(Cipher& c, string& funcName, const long& degre
 	ZZ p2 = scheme.params.p * pows[0];
 	scheme.addConstAndEqual(res, p2);
 
-
 	for (int i = 1; i < degree; ++i) {
-		if(abs(coeffs[i + 1]) > 1e-17) {
+		if(abs(coeffs[i + 1]) > 1e-27) {
 			Cipher tmp = scheme.multByConst(cpows[i], pows[i + 1]);
 			scheme.modEmbedAndEqual(res, tmp.level);
 			scheme.addAndEqual(res, tmp);

@@ -14,7 +14,6 @@ public:
 
 	static CZZ evaluateVal(const double& xr, const double& xi, const long& logp);
 	static CZZ evaluateRandomVal(const long& logp);
-	static vector<CZZ> evaluateRandomVals(const long& size, const long& logp);
 
 	//-----------------------------------------
 
@@ -34,6 +33,12 @@ public:
 
 	//-----------------------------------------
 
+	static void evaluateRandomVals(vector<CZZ>& res, const long& size, const long& logp);
+	static void evaluateRandomValsAndProduct(vector<CZZ>& vals, CZZ& prod, const long& slots, const long& logp);
+	static void evaluateRandomValsAndExponents(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
+	static void evaluateRandomValsAndSigmoids(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
+
+	static void leftShift(vector<CZZ>& vals, const long& logp);
 };
 
 #endif /* UTILS_EVALUATORUTILS_H_ */

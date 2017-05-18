@@ -42,8 +42,10 @@ void TaylorPows::precompute() {
 	expCoeffs.push_back(1.0 / 720.0);
 	expCoeffs.push_back(1.0 / 5040.0);
 	expCoeffs.push_back(1.0 / 40320.0);
+	//-----------------------------------------
 	expCoeffs.push_back(1.0 / 362880.0);
 	expCoeffs.push_back(1.0 / 3628800.0);
+
 
 	sigmoidCoeffs.push_back(1.0 / 2.0);
 	sigmoidCoeffs.push_back(1.0 / 4.0);
@@ -54,6 +56,7 @@ void TaylorPows::precompute() {
 	sigmoidCoeffs.push_back(0.0);
 	sigmoidCoeffs.push_back(-17.0 / 80640.0);
 	sigmoidCoeffs.push_back(0.0);
+	//-----------------------------------------
 	sigmoidCoeffs.push_back(31.0 / 1451520.0);
 	sigmoidCoeffs.push_back(0.0);
 

@@ -67,6 +67,8 @@ void Scheme::rlweInstance(ZZX& c0, ZZX& c1) {
 vector<CZZ> Scheme::doubleConjugate(vector<CZZ>& vals) {
 	vector<CZZ> res;
 	long vsize = vals.size();
+	res.reserve(vsize * 2);
+
 	for (long i = 0; i < vsize; ++i) {
 		res.push_back(vals[i]);
 	}
@@ -81,6 +83,13 @@ vector<CZZ> Scheme::doubleConjugate(CZZ& val) {
 	res.push_back(val);
 	res.push_back(val.conjugate());
 	return res;
+}
+
+void Scheme::doubleConjugateAndEqual(vector<CZZ>& vals) {
+	long vsize = vals.size();
+	for (long i = 0; i < vsize; ++i) {
+		vals.push_back(vals[vsize - i - 1].conjugate());
+	}
 }
 
 Message Scheme::encode(vector<CZZ>& vals) {
@@ -200,7 +209,9 @@ CZZ Scheme::fullSimpleDecrypt(Cipher& cipher) {
 
 vector<CZZ> Scheme::fullSimpleDecryptVec(vector<Cipher>& ciphers) {
 	vector<CZZ> res;
-	for (int i = 0; i < ciphers.size(); ++i) {
+	long size = ciphers.size();
+	res.reserve(size);
+	for (int i = 0; i < size; ++i) {
 		Message msg = decrypt(ciphers[i]);
 		vector<CZZ> conj = decode(msg);
 		res.push_back(conj[0]);
