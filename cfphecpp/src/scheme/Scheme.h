@@ -17,7 +17,7 @@ public:
 	SecKey& secretKey;
 	PubKey& publicKey;
 
-	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey);
+	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey) : params(params), secretKey(secretKey), publicKey(publicKey) {};
 
 	//-----------------------------------------
 
@@ -40,27 +40,23 @@ public:
 	vector<CZZ> doubleConjugate(vector<CZZ>& vals);
 	vector<CZZ> doubleConjugate(CZZ& val);
 	void doubleConjugateAndEqual(vector<CZZ>& vals);
+	vector<CZZ> deConjugate(vector<CZZ>& vals);
 
 	//-----------------------------------------
 
 	Message encode(vector<CZZ>& vals);
-	Cipher encrypt(Message& msg, long& level);
-	Cipher encrypt(Message& msg);
-	Cipher fullEncrypt(vector<CZZ>& vals, long& level);
-	Cipher fullEncrypt(vector<CZZ>& vals);
-	Cipher fullEncrypt(CZZ& val, long& level);
-	Cipher fullEncrypt(CZZ& val);
-	vector<Cipher> fullSingleEncryptVec(vector<CZZ>& vals);
+	Cipher encrypt(Message& msg, long level = 1);
+	Cipher encryptFull(CZZ& val, long level = 1);
+	Cipher encryptFull(vector<CZZ>& vals, long level = 1);
+	vector<Cipher> encryptFullSingleVec(vector<CZZ>& vals);
 
 	//-----------------------------------------
 
 	Message decrypt(Cipher& cipher);
 	vector<CZZ> decode(Message& msg);
-	vector<CZZ> deConjugate(vector<CZZ>& vals);
-
-	vector<CZZ> fullDecrypt(Cipher& cipher);
-	CZZ fullSingleDecrypt(Cipher& cipher);
-	vector<CZZ> fullSingleDecryptVec(vector<Cipher>& ciphers);
+	vector<CZZ> decryptFull(Cipher& cipher);
+	CZZ decryptFullSingle(Cipher& cipher);
+	vector<CZZ> decryptFullSingleVec(vector<Cipher>& ciphers);
 
 	//-----------------------------------------
 

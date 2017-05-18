@@ -8,16 +8,16 @@ using namespace NTL;
 
 class Cipher {
 public:
+
 	ZZX c0;
 	ZZX c1;
-	long level;
+
 	long logSlots;
+	long level;
 
-	Cipher(ZZX c0, ZZX c1, long level, long logSlots);
+	//-----------------------------------------
 
-	//	ZZ eBnd;
-	//	ZZ mBnd;
-	//	Cipher(CZZX c0, CZZX c1, long level, ZZ eBnd, ZZ mBnd) : c0(c0), c1(c1), level(level), eBnd(eBnd), mBnd(mBnd) {}
+	Cipher(ZZX c0, ZZX c1, long logSlots, long level = 1) : c0(c0), c1(c1), logSlots(logSlots) , level(level) {}
 };
 
 #endif /* SCHEME_CIPHER_H_ */

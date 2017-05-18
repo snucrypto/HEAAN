@@ -13,14 +13,15 @@ using namespace NTL;
 
 class Message {
 public:
-	ZZX poly;
+
+	ZZX mx;
+
 	long logSlots;
 	long level;
 
 	//-----------------------------------------
 
-	Message(ZZX& poly, long& logSlots, long& level) : poly(poly), logSlots(logSlots), level(level) {}
-	Message(ZZX& poly, long& logSlots) : poly(poly), logSlots(logSlots) {level = 1;}
+	Message(ZZX& mx, long& logSlots, long level = 1) : mx(mx), logSlots(logSlots), level(level) {}
 
 };
 

@@ -13,10 +13,7 @@ void test() {
 	long logl = 3;
 	long logp = 30;
 	long L = 5;
-	double sigma = 3;
-	double rho = 0.5;
-	long h = 64;
-	Params params(logN, logl, logp, L, sigma, rho, h);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -45,7 +42,7 @@ int main() {
 	 * Suggested: 15, 2, 56, 11, 10, 3
 	 */
 
-	TestScheme::testPowerOf2Batch(15, 2, 40, 11, 10, 3);
+//	TestScheme::testPowerOf2Batch(15, 2, 40, 11, 10, 3);
 //	TestScheme::testPowerOf2Extended(15, 3, 56, 11, 10);
 
 	//-----------------------------------------
@@ -81,7 +78,7 @@ int main() {
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, expSteps, logSlots
+	 * Params: logN, logl, logp, L, degree, logSlots
 	 * Suggested: 13, 2, 35, 5, 8, 3
 	 * Suggested: 13, 37, 35, 4, 8, 3 (for lazy)
 	 */
@@ -92,7 +89,7 @@ int main() {
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, sigmoidSteps, logSlots
+	 * Params: logN, logl, logp, L, degree, logSlots
 	 * Suggested: 13, 1, 35, 5, 7, 3
 	 * Suggested: 13, 36, 35, 4, 7, 3 (for lazy)
 	 */
@@ -104,12 +101,13 @@ int main() {
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logp, L, logFFTdim, FFTdeg
-	 * Suggested: 14, 7, 50, 3, 4, 5
-	 * Suggested: 14, 7, 50, 2, 4, 5 (for lazy)
+	 * Params: logN, logp, L, logfftdim, logSlots
+	 * Suggested: 14, 7, 50, 3, 4, 3;
+	 * Suggested: 14, 7, 50, 2, 4 (for lazy)
 	 */
-//	TestScheme::testFFT(14, 1, 30, 3, 13, 5);
-//	TestScheme::testLazyFFT(13, 7, 50, 2, 4, 5);
+	TestScheme::testFFT(14, 5, 50, 3, 4);
+//	TestScheme::testFFTBatch(14, 5, 50, 3, 4, 3);
+//	TestScheme::testLazyFFT(13, 7, 50, 2, 4);
 
 	//-----------------------------------------
 

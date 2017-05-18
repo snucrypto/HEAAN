@@ -12,35 +12,31 @@ using namespace NTL;
 
 class Params {
 public:
-	long logN;
+	long M;
 	long N;
+	long L;
+	long logN;
 	long logl;
 	long logp;
+	long logq;
 	long logP;
 	long logPq;
-	long L;
+
 	double sigma;
 	double rho;
 	long h;
 
-	long M;
-	long logq;
+	ZZ p;
+	ZZ q;
+	ZZ Pq;
+
+	vector<ZZ> qi;
+	vector<ZZ> Pqi;
 
 	KsiPows ksiPows;
 	TaylorPows taylorPows;
 
-	ZZ p;
-	ZZ q;
-	ZZ Pq;
-	vector<ZZ> qi;
-	vector<ZZ> Pqi;
-
-//	ZZ Bclean;
-//	ZZ Bscale;
-//	vector<ZZ> Bks;
-//	vector<ZZ> Bmult;
-
-	Params(long logN, long logl, long logp, long L, double sigma, double rho, long h);
+	Params(long logN, long logl, long logp, long L, double sigma = 3.2, double rho = 0.5, long h = 64);
 };
 
 #endif /* SCHEME_PARAMS_H_ */

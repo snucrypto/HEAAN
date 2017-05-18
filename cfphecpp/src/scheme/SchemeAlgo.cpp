@@ -7,8 +7,8 @@
 #include "../czz/CZZ.h"
 #include "Params.h"
 
-Cipher SchemeAlgo::powerOf2(Cipher& c, const long& logDegree) {
-	Cipher res = c;
+Cipher SchemeAlgo::powerOf2(Cipher& cipher, const long& logDegree) {
+	Cipher res = cipher;
 	for (long i = 0; i < logDegree; ++i) {
 		scheme.squareAndEqual(res);
 		scheme.modSwitchAndEqual(res);
@@ -16,52 +16,52 @@ Cipher SchemeAlgo::powerOf2(Cipher& c, const long& logDegree) {
 	return res;
 }
 
-void SchemeAlgo::powerOf2Extended(vector<Cipher>& res, Cipher& c, const long& logDegree) {
+void SchemeAlgo::powerOf2Extended(vector<Cipher>& res, Cipher& cipher, const long& logDegree) {
 	res.reserve(logDegree + 1);
-	Cipher c2 = c;
-	res.push_back(c2);
+	Cipher cpow = cipher;
+	res.push_back(cpow);
 	for (long i = 1; i < logDegree + 1; ++i) {
-		scheme.squareAndEqual(c2);
-		scheme.modSwitchAndEqual(c2);
-		res.push_back(c2);
+		scheme.squareAndEqual(cpow);
+		scheme.modSwitchAndEqual(cpow);
+		res.push_back(cpow);
 	}
 }
 
 //-----------------------------------------
 
-Cipher SchemeAlgo::power(Cipher& c, const long& degree) {
+Cipher SchemeAlgo::power(Cipher& cipher, const long& degree) {
 	long logDegree = log2(degree);
 	long po2Degree = 1 << logDegree;
 
-	Cipher res = powerOf2(c, logDegree);
+	Cipher res = powerOf2(cipher, logDegree);
 	long remDegree = degree - po2Degree;
 	if(remDegree > 0) {
-		Cipher tmp = power(c, remDegree);
+		Cipher tmp = power(cipher, remDegree);
 		scheme.modEmbedAndEqual(tmp, res.level);
 		scheme.multModSwitchAndEqual(res, tmp);
 	}
 	return res;
 }
 
-void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degree) {
+void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& cipher, const long& degree) {
 	res.reserve(degree);
 	long logDegree = log2(degree);
-	vector<Cipher> po2;
-	powerOf2Extended(po2, c, logDegree);
+	vector<Cipher> cpows;
+	powerOf2Extended(cpows, cipher, logDegree);
 	for (long i = 0; i < logDegree; ++i) {
 		long powi = (1 << i);
-		res.push_back(po2[i]);
+		res.push_back(cpows[i]);
 		for (int j = 0; j < powi-1; ++j) {
-			Cipher tmp = scheme.modEmbed(res[j], po2[i].level);
-			scheme.multModSwitchAndEqual(tmp, po2[i]);
+			Cipher tmp = scheme.modEmbed(res[j], cpows[i].level);
+			scheme.multModSwitchAndEqual(tmp, cpows[i]);
 			res.push_back(tmp);
 		}
 	}
-	res.push_back(po2[logDegree]);
+	res.push_back(cpows[logDegree]);
 	long degree2 = (1 << logDegree);
 	for (int i = 0; i < (degree - degree2); ++i) {
-		Cipher tmp = scheme.modEmbed(res[i], po2[logDegree].level);
-		scheme.multModSwitchAndEqual(tmp, po2[logDegree]);
+		Cipher tmp = scheme.modEmbed(res[i], cpows[logDegree].level);
+		scheme.multModSwitchAndEqual(tmp, cpows[logDegree]);
 		res.push_back(tmp);
 	}
 }
@@ -71,15 +71,15 @@ void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degre
 Cipher SchemeAlgo::prod2(vector<Cipher>& ciphers, const long& logDegree) {
 	vector<Cipher> res = ciphers;
 	for (long i = logDegree; i > 0; --i) {
-		vector<Cipher> tmp;
+		vector<Cipher> cprodvec;
 		long powi = (1 << i);
-		tmp.reserve(powi / 2);
+		cprodvec.reserve(powi / 2);
 		for (long j = 0; j < powi; j = j + 2) {
-			Cipher cmult = scheme.mult(res[j], res[j + 1]);
-			scheme.modSwitchAndEqual(cmult);
-			tmp.push_back(cmult);
+			Cipher cprod = scheme.mult(res[j], res[j + 1]);
+			scheme.modSwitchAndEqual(cprod);
+			cprodvec.push_back(cprod);
 		}
-		res = tmp;
+		res = cprodvec;
 	}
 	return res[0];
 }
@@ -88,23 +88,23 @@ void SchemeAlgo::prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& ciph
 	res.reserve(logDegree + 1);
 	res.push_back(ciphers);
 	for (long i = 0; i < logDegree; ++i) {
-		vector<Cipher> ctmp;
+		vector<Cipher> cprodvec;
 		long size = res[i].size();
-		ctmp.reserve(size / 2);
+		cprodvec.reserve(size / 2);
 		for (long j = 0; j < size; j = j + 2) {
-			Cipher c2 = scheme.mult(res[i][j], res[i][j + 1]);
-			scheme.modSwitchAndEqual(c2);
-			ctmp.push_back(c2);
+			Cipher cprod = scheme.mult(res[i][j], res[i][j + 1]);
+			scheme.modSwitchAndEqual(cprod);
+			cprodvec.push_back(cprod);
 		}
-		res.push_back(ctmp);
+		res.push_back(cprodvec);
 	}
 }
 
 //-----------------------------------------
 
-Cipher SchemeAlgo::inverse(Cipher& c, const long& steps) {
-	Cipher cpow = c;
-	Cipher tmp = scheme.addConst(c, scheme.params.p);
+Cipher SchemeAlgo::inverse(Cipher& cipher, const long& steps) {
+	Cipher cpow = cipher;
+	Cipher tmp = scheme.addConst(cipher, scheme.params.p);
 	scheme.modEmbedAndEqual(tmp);
 	Cipher res = tmp;
 
@@ -120,10 +120,10 @@ Cipher SchemeAlgo::inverse(Cipher& c, const long& steps) {
 	return res;
 }
 
-void SchemeAlgo::inverseExtended(vector<Cipher>& res, Cipher& c, const long& steps) {
+void SchemeAlgo::inverseExtended(vector<Cipher>& res, Cipher& cipher, const long& steps) {
 	res.reserve(steps);
-	Cipher cpow = c;
-	Cipher tmp = scheme.addConst(c, scheme.params.p);
+	Cipher cpow = cipher;
+	Cipher tmp = scheme.addConst(cipher, scheme.params.p);
 	scheme.modEmbedAndEqual(tmp);
 	res.push_back(tmp);
 
@@ -140,69 +140,69 @@ void SchemeAlgo::inverseExtended(vector<Cipher>& res, Cipher& c, const long& ste
 
 //-----------------------------------------
 
-Cipher SchemeAlgo::function(Cipher& c, string& funcName, const long& degree) {
+Cipher SchemeAlgo::function(Cipher& cipher, string& funcName, const long& degree) {
 	vector<Cipher> cpows;
-	powerExtended(cpows, c, degree);
+	powerExtended(cpows, cipher, degree);
 
 	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
 	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
 
 	Cipher res = scheme.multByConst(cpows[0], pows[1]);
-	ZZ p2 = scheme.params.p * pows[0];
-	scheme.addConstAndEqual(res, p2);
+	ZZ a0 = scheme.params.p * pows[0];
+	scheme.addConstAndEqual(res, a0);
 
 
 	for (int i = 1; i < degree; ++i) {
 		if(abs(coeffs[i + 1]) > 1e-17) {
-			Cipher tmp = scheme.multByConst(cpows[i], pows[i + 1]);
-			scheme.modEmbedAndEqual(res, tmp.level);
-			scheme.addAndEqual(res, tmp);
+			Cipher aixi = scheme.multByConst(cpows[i], pows[i + 1]);
+			scheme.modEmbedAndEqual(res, aixi.level);
+			scheme.addAndEqual(res, aixi);
 		}
 	}
 	scheme.modSwitchAndEqual(res);
 	return res;
 }
 
-Cipher SchemeAlgo::functionLazy(Cipher& c, string& funcName, const long& degree) {
+Cipher SchemeAlgo::functionLazy(Cipher& cipher, string& funcName, const long& degree) {
 	vector<Cipher> cpows;
-	powerExtended(cpows, c, degree);
+	powerExtended(cpows, cipher, degree);
 
 	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
 	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
 
 	Cipher res = scheme.multByConst(cpows[0], pows[1]);
-	ZZ p2 = scheme.params.p * pows[0];
-	scheme.addConstAndEqual(res, p2);
+	ZZ a0 = scheme.params.p * pows[0];
+	scheme.addConstAndEqual(res, a0);
 
 	for (int i = 1; i < degree; ++i) {
 		if(abs(coeffs[i + 1]) > 1e-27) {
-			Cipher tmp = scheme.multByConst(cpows[i], pows[i + 1]);
-			scheme.modEmbedAndEqual(res, tmp.level);
-			scheme.addAndEqual(res, tmp);
+			Cipher aixi = scheme.multByConst(cpows[i], pows[i + 1]);
+			scheme.modEmbedAndEqual(res, aixi.level);
+			scheme.addAndEqual(res, aixi);
 		}
 	}
 	return res;
 }
 
-void SchemeAlgo::functionExtended(vector<Cipher>& res, Cipher& c, string& funcName, const long& degree) {
+void SchemeAlgo::functionExtended(vector<Cipher>& res, Cipher& cipher, string& funcName, const long& degree) {
 	vector<Cipher> cpows;
-	powerExtended(cpows, c, degree);
+	powerExtended(cpows, cipher, degree);
 
 	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
 	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
 
-	Cipher cn = scheme.multByConst(cpows[0], pows[1]);
-	ZZ p2 = scheme.params.p * pows[0];
-	scheme.addConstAndEqual(cn, p2);
-	res.push_back(cn);
+	Cipher aixi = scheme.multByConst(cpows[0], pows[1]);
+	ZZ a0 = scheme.params.p * pows[0];
+	scheme.addConstAndEqual(aixi, a0);
+	res.push_back(aixi);
 
 	long idx = 0;
 	for (long i = 1; i < degree; ++i) {
 		if(abs(coeffs[i + 1]) > 1e-17) {
-			cn = scheme.multByConst(cpows[i], pows[i + 1]);
-			Cipher tmp = scheme.modEmbed(res[idx++], cn.level);
-			scheme.addAndEqual(cn, tmp);
-			res.push_back(cn);
+			aixi = scheme.multByConst(cpows[i], pows[i + 1]);
+			Cipher tmp = scheme.modEmbed(res[idx++], aixi.level);
+			scheme.addAndEqual(aixi, tmp);
+			res.push_back(aixi);
 		}
 	}
 	for (long i = 0; i < res.size(); ++i) {

@@ -13,7 +13,6 @@ static double const Pi = 4.0 * atan(1.0);
 class EvaluatorUtils {
 public:
 
-
 	static CZZ evaluateVal(const double& xr, const double& xi, const long& logp);
 	static CZZ evaluateRandomVal(const long& logp);
 	static CZZ evaluateRandomCircleVal(const long& logp);
@@ -37,14 +36,14 @@ public:
 	//-----------------------------------------
 
 	static void evaluateRandomVals(vector<CZZ>& res, const long& size, const long& logp);
-
-
 	static void evaluateRandomCircleValsAndPows(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& degree, const long& logp);
 	static void evaluateRandomCircleValsAndPows2(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logDeg, const long& logp);
 	static void evaluateRandomCircleValsAndProduct(vector<vector<CZZ>>& vals, vector<CZZ>& fvals, const long& slots, const long& size, const long& logp);
 	static void evaluateRandomCircleBarValsAndInverses(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
 	static void evaluateRandomValsAndExponents(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
 	static void evaluateRandomValsAndSigmoids(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
+
+	//-----------------------------------------
 
 	static void leftShift(vector<CZZ>& vals, const long& logp);
 };

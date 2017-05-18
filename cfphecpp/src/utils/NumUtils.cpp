@@ -10,7 +10,6 @@ void NumUtils::sampleGauss(vector<CZZ>& res, const long& dim, const double& stde
 	res.clear();
 	res.reserve(dim);
 
-	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
 	for (long i = 0; i < dim; i++) {
 		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
 		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
@@ -19,7 +18,6 @@ void NumUtils::sampleGauss(vector<CZZ>& res, const long& dim, const double& stde
 
 		assert(rr < 8 * stdev); // sanity-check, no more than 8 standard deviations
 
-		// Generate two Gaussians RV's, rounded to integers
 		long xr = (long) floor(rr * cos(theta) + 0.5);
 		long xi = (long) floor(rr * sin(theta) + 0.5);
 		res.push_back(CZZ(xr, xi));
@@ -27,10 +25,10 @@ void NumUtils::sampleGauss(vector<CZZ>& res, const long& dim, const double& stde
 }
 
 void NumUtils::sampleGauss(ZZX& res, const long& dim, const double& stdev) {
-	static double const Pi = 4.0 * atan(1.0); // Pi=3.1415..
+	static double const Pi = 4.0 * atan(1.0);
 	static long const bignum = 0xfffffff;
 	res.SetLength(dim);
-	// Uses the Box-Muller method to get two Normal(0,stdev^2) variables
+
 	for (long i = 0; i < dim; i+=2) {
 		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
 		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
@@ -176,6 +174,7 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& vals, KsiPows& ksiPows) {
 vector<CZZ> NumUtils::fftInvLazy(vector<CZZ>& vals, KsiPows& ksiPows) {
 	return fftRaw(vals, ksiPows, false);
 }
+
 vector<CZZ> NumUtils::fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows) {
 	long valsSize = vals.size();
 	if(valsSize == 1) {
@@ -227,6 +226,31 @@ vector<CZZ> NumUtils::fftSpecialInv(vector<CZZ>& vals, KsiPows& ksiPows) {
 		fftInv[i] >>= (ksiPows.logp + logFftInvSize);
 	}
 	return fftInv;
+}
+
+vector<CZZ> NumUtils::fftFull(vector<CZZ>& vals1, vector<CZZ>& vals2, KsiPows& ksiPows) {
+	long size = vals1.size();
+	vector<CZZ> mfft1 = fft(vals1, ksiPows);
+	vector<CZZ> mfft2 = fft(vals2, ksiPows);
+
+	for (long i = 0; i < size; ++i) {
+		mfft1[i] *= mfft2[i];
+		mfft1[i] >>= ksiPows.logp;
+	}
+	return fftInv(mfft1, ksiPows);
+}
+
+
+vector<CZZ> NumUtils::fftFullLazy(vector<CZZ>& vals1, vector<CZZ>& vals2, KsiPows& ksiPows) {
+	long size = vals1.size();
+	vector<CZZ> mfft1 = fft(vals1, ksiPows);
+	vector<CZZ> mfft2 = fft(vals2, ksiPows);
+
+	for (long i = 0; i < size; ++i) {
+		mfft1[i] *= mfft2[i];
+		mfft1[i] >>= ksiPows.logp;
+	}
+	return fftInvLazy(mfft1, ksiPows);
 }
 
 vector<CZZ> NumUtils::bitReverse(vector<CZZ>& vals) {

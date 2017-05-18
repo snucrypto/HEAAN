@@ -32,6 +32,9 @@ public:
 	static vector<CZZ> fftInv(vector<CZZ>& vals, KsiPows& ksiPows);
 	static vector<CZZ> fftInvLazy(vector<CZZ>& vals, KsiPows& ksiPows);
 
+	static vector<CZZ> fftFull(vector<CZZ>& vals1, vector<CZZ>& vals2, KsiPows& ksiPows);
+	static vector<CZZ> fftFullLazy(vector<CZZ>& vals1, vector<CZZ>& vals2, KsiPows& ksiPows);
+
 	//-----------------------------------------
 
 	static vector<CZZ> fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows);

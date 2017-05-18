@@ -15,13 +15,13 @@ public:
 
 	//-----------------------------------------
 
-	Cipher powerOf2(Cipher& c, const long& logDegree);
-	void powerOf2Extended(vector<Cipher>& res, Cipher& c, const long& logDegree);
+	Cipher powerOf2(Cipher& cipher, const long& logDegree);
+	void powerOf2Extended(vector<Cipher>& res, Cipher& cipher, const long& logDegree);
 
 	//-----------------------------------------
 
-	Cipher power(Cipher& c, const long& degree);
-	void powerExtended(vector<Cipher>& res, Cipher& c, const long& degree);
+	Cipher power(Cipher& cipher, const long& degree);
+	void powerExtended(vector<Cipher>& res, Cipher& cipher, const long& degree);
 
 	//-----------------------------------------
 
@@ -30,14 +30,14 @@ public:
 
 	//-----------------------------------------
 
-	Cipher inverse(Cipher& c, const long& steps);
-	void inverseExtended(vector<Cipher>& res, Cipher& c, const long& steps);
+	Cipher inverse(Cipher& cipher, const long& steps);
+	void inverseExtended(vector<Cipher>& res, Cipher& cipher, const long& steps);
 
 	//-----------------------------------------
 
-	Cipher function(Cipher& c, string& funcName, const long& degree);
-	Cipher functionLazy(Cipher& c, string& funcName, const long& degree);
-	void functionExtended(vector<Cipher>& res, Cipher& c, string& funcName, const long& degree);
+	Cipher function(Cipher& cipher, string& funcName, const long& degree);
+	Cipher functionLazy(Cipher& cipher, string& funcName, const long& degree);
+	void functionExtended(vector<Cipher>& res, Cipher& cipher, string& funcName, const long& degree);
 
 	//-----------------------------------------
 

@@ -13,8 +13,6 @@
 using namespace std;
 using namespace NTL;
 
-Scheme::Scheme(Params& params, SecKey& secretKey, PubKey& publicKey): params(params), secretKey(secretKey), publicKey(publicKey) {};
-
 //-----------------------------------------
 
 ZZ Scheme::getqi(long& level) {
@@ -108,50 +106,31 @@ Message Scheme::encode(vector<CZZ>& vals) {
 	return res;
 }
 
-Cipher Scheme::encrypt(Message& msg, long& level) {
+Cipher Scheme::encrypt(Message& msg, long level) {
 	ZZX c0, c1;
 	ZZ qi = getqi(level);
 	rlweInstance(c0, c1, qi);
-	Ring2Utils::add(c0, msg.poly, c0, qi, params.N);
-//	Cipher cipher(c0, c1, 1, params.Bclean, msg.nu);
-	Cipher cipher(c0, c1, level, msg.logSlots);
+	Ring2Utils::add(c0, msg.mx, c0, qi, params.N);
+	Cipher cipher(c0, c1, msg.logSlots, level);
 	return cipher;
 }
 
-Cipher Scheme::encrypt(Message& msg) {
-	long level = 1;
-	Cipher cipher = encrypt(msg, level);
-	return cipher;
-}
-
-Cipher Scheme::fullEncrypt(vector<CZZ>& vals, long& level) {
+Cipher Scheme::encryptFull(vector<CZZ>& vals, long level) {
 	vector<CZZ> conj = doubleConjugate(vals);
 	Message msg = encode(conj);
 	return encrypt(msg, level);
 }
 
-Cipher Scheme::fullEncrypt(vector<CZZ>& vals) {
-	vector<CZZ> conj = doubleConjugate(vals);
-	Message msg = encode(conj);
-	return encrypt(msg);
-}
-
-Cipher Scheme::fullEncrypt(CZZ& val, long& level) {
+Cipher Scheme::encryptFull(CZZ& val, long level) {
 	vector<CZZ> conj = doubleConjugate(val);
 	Message msg = encode(conj);
 	return encrypt(msg, level);
 }
 
-Cipher Scheme::fullEncrypt(CZZ& val) {
-	vector<CZZ> conj = doubleConjugate(val);
-	Message msg = encode(conj);
-	return encrypt(msg);
-}
-
-vector<Cipher> Scheme::fullSingleEncryptVec(vector<CZZ>& vals) {
+vector<Cipher> Scheme::encryptFullSingleVec(vector<CZZ>& vals) {
 	vector<Cipher> res;
 	for (long i = 0; i < vals.size(); ++i) {
-		Cipher c = fullEncrypt(vals[i]);
+		Cipher c = encryptFull(vals[i]);
 		res.push_back(c);
 	}
 	return res;
@@ -177,7 +156,7 @@ vector<CZZ> Scheme::decode(Message& msg) {
 	long slots = (1 << msg.logSlots);
 	long gap = (params.N >> msg.logSlots);
 	for (long i = 0; i < slots; ++i) {
-		CZZ c(msg.poly.rep[idx], ZZ(0));
+		CZZ c(msg.mx.rep[idx], ZZ(0));
 		trueValue(c, qi);
 		fftinv.push_back(c);
 		idx += gap;
@@ -195,19 +174,19 @@ vector<CZZ> Scheme::deConjugate(vector<CZZ>& vals) {
 	return res;
 }
 
-vector<CZZ> Scheme::fullDecrypt(Cipher& cipher) {
+vector<CZZ> Scheme::decryptFull(Cipher& cipher) {
 	Message msg = decrypt(cipher);
 	vector<CZZ> conj = decode(msg);
 	return deConjugate(conj);
 }
 
-CZZ Scheme::fullSingleDecrypt(Cipher& cipher) {
+CZZ Scheme::decryptFullSingle(Cipher& cipher) {
 	Message msg = decrypt(cipher);
 	vector<CZZ> conj = decode(msg);
 	return conj[0];
 }
 
-vector<CZZ> Scheme::fullSingleDecryptVec(vector<Cipher>& ciphers) {
+vector<CZZ> Scheme::decryptFullSingleVec(vector<Cipher>& ciphers) {
 	vector<CZZ> res;
 	long size = ciphers.size();
 	res.reserve(size);
@@ -228,7 +207,7 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(c0, cipher1.c0, cipher2.c0, qi, params.N);
 	Ring2Utils::add(c1, cipher1.c1, cipher2.c1, qi, params.N);
 
-	Cipher res(c0, c1, cipher1.level, cipher1.logSlots);
+	Cipher res(c0, c1, cipher1.logSlots, cipher1.level);
 	return res;
 }
 
@@ -247,7 +226,7 @@ Cipher Scheme::addConst(Cipher& cipher, ZZ& cnst) {
 
 	AddMod(c0.rep[0], cipher.c0.rep[0], cnst, qi);
 	c0.normalize();
-	Cipher newCipher(c0, c1, cipher.level, cipher.logSlots);
+	Cipher newCipher(c0, c1, cipher.logSlots, cipher.level);
 	return newCipher;
 }
 
@@ -279,7 +258,7 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::sub(c0, cipher1.c0, cipher2.c0, qi, params.N);
 	Ring2Utils::sub(c1, cipher1.c1, cipher2.c1, qi, params.N);
 
-	Cipher res(c0, c1, cipher1.level, cipher1.logSlots);
+	Cipher res(c0, c1, cipher1.logSlots, cipher1.level);
 	return res;
 }
 
@@ -316,7 +295,7 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::subAndEqual(mulC1, cc11, qi, params.N);
 	Ring2Utils::addAndEqual(mulC0, cc00, qi, params.N);
 
-	Cipher cipher(mulC0, mulC1, cipher1.level, cipher1.logSlots);
+	Cipher cipher(mulC0, mulC1, cipher1.logSlots, cipher1.level);
 	return cipher;
 }
 
@@ -367,7 +346,7 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::addAndEqual(mulC1, cc10, qi, params.N);
 	Ring2Utils::addAndEqual(mulC0, cc00, qi, params.N);
 
-	Cipher c(mulC0, mulC1, cipher.level, cipher.logSlots);
+	Cipher c(mulC0, mulC1, cipher.logSlots, cipher.level);
 	return c;
 }
 
@@ -403,7 +382,7 @@ Cipher Scheme::multByConst(Cipher& cipher, ZZ& cnst) {
 	Ring2Utils::multByConst(c0, cipher.c0, cnst, qi, params.N);
 	Ring2Utils::multByConst(c1, cipher.c1, cnst, qi, params.N);
 
-	Cipher newCipher(c0, c1, cipher.level, cipher.logSlots);
+	Cipher newCipher(c0, c1, cipher.logSlots, cipher.level);
 	return newCipher;
 }
 
@@ -421,7 +400,7 @@ Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
 	Ring2Utils::multByMonomial(c0, cipher.c0, degree, params.N);
 	Ring2Utils::multByMonomial(c1, cipher.c1, degree, params.N);
 
-	Cipher res(c0, c1, cipher.level, cipher.logSlots);
+	Cipher res(c0, c1, cipher.logSlots, cipher.level);
 	return res;
 }
 
@@ -439,7 +418,7 @@ Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
 	Ring2Utils::leftShift(c0, cipher.c0, bits, logqi, params.N);
 	Ring2Utils::leftShift(c1, cipher.c1, bits, logqi, params.N);
 
-	Cipher newCipher(c0, c1, cipher.level, cipher.logSlots);
+	Cipher newCipher(c0, c1, cipher.logSlots, cipher.level);
 	return newCipher;
 }
 
@@ -458,7 +437,7 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	Ring2Utils::rightShift(c0, cipher.c0, logdf, params.N);
 	Ring2Utils::rightShift(c1, cipher.c1, logdf, params.N);
 
-	Cipher newCipher(c0, c1, newLevel, cipher.logSlots);
+	Cipher newCipher(c0, c1, cipher.logSlots, newLevel);
 	return newCipher;
 }
 
@@ -487,7 +466,7 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	Ring2Utils::truncate(c0, cipher.c0, newLogqi, params.N);
 	Ring2Utils::truncate(c1, cipher.c1, newLogqi, params.N);
 
-	Cipher newCipher(c0, c1, newLevel, cipher.logSlots);
+	Cipher newCipher(c0, c1, cipher.logSlots, newLevel);
 	return newCipher;
 }
 

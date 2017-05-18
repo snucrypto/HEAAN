@@ -27,19 +27,20 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
+	long slots = (1 << logSlots);
 
-	long mvecsize = (1 << logSlots);
-	vector<CZZ> mvec, dvec;
-	EvaluatorUtils::evaluateRandomVals(mvec, mvecsize, logp);
+	vector<CZZ> mvec;
+	EvaluatorUtils::evaluateRandomVals(mvec, slots, logp);
 
-	Cipher cipher = scheme.fullEncrypt(mvec);
-	dvec = scheme.fullDecrypt(cipher);
+	Cipher cipher = scheme.encryptFull(mvec);
+
+	vector<CZZ> dvec = scheme.decryptFull(cipher);
 
 	StringUtils::showcompare(mvec, dvec, "val");
 
@@ -53,25 +54,24 @@ void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
+	long slots = 1 << logSlots;
 
 	vector<CZZ> mvec, mpow;
-
-	long slots = 1 << logSlots;
 	EvaluatorUtils::evaluateRandomCircleValsAndPows2(mvec, mpow, slots, logDegree, logp);
 
-	Cipher c = scheme.fullEncrypt(mvec);
+	Cipher cipher = scheme.encryptFull(mvec);
 
 	timeutils.start("Power of 2");
-	Cipher cpow = algo.powerOf2(c, logDegree);
+	Cipher cpow = algo.powerOf2(cipher, logDegree);
 	timeutils.stop("Power of 2");
 
-	vector<CZZ> dpow = scheme.fullDecrypt(cpow);
+	vector<CZZ> dpow = scheme.decryptFull(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow");
 
@@ -83,7 +83,7 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -94,19 +94,20 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 	double mr = cos(angle * 2 * Pi);
 	double mi = sin(angle * 2 * Pi);
 
-	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	vector<CZZ> mpow = EvaluatorUtils::evaluatePow2vec(mr, mi, logDegree, logp);
 
-	Cipher c = scheme.fullEncrypt(m);
+	Cipher cipher = scheme.encryptFull(mval);
 
 	vector<Cipher> cpow;
 	timeutils.start("Power of 2");
-	algo.powerOf2Extended(cpow, c, logDegree);
+	algo.powerOf2Extended(cpow, cipher, logDegree);
 	timeutils.stop("Power of 2");
 
-	vector<CZZ> dpow = scheme.fullSingleDecryptVec(cpow);
+	vector<CZZ> dpow = scheme.decryptFullSingleVec(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow2");
+
 	cout << "!!! END TEST POWER OF 2 EXTENDED !!!" << endl;
 }
 
@@ -117,25 +118,24 @@ void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long de
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-
 	long slots = 1 << logSlots;
 
 	vector<CZZ> mvec, mpow;
 	EvaluatorUtils::evaluateRandomCircleValsAndPows(mvec, mpow, slots, degree, logp);
 
-	Cipher c = scheme.fullEncrypt(mvec);
+	Cipher cipher = scheme.encryptFull(mvec);
 
 	timeutils.start("Power");
-	Cipher cpow = algo.power(c, degree);
+	Cipher cpow = algo.power(cipher, degree);
 	timeutils.stop("Power");
 
-	vector<CZZ> dpow = scheme.fullDecrypt(cpow);
+	vector<CZZ> dpow = scheme.decryptFull(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow");
 
@@ -148,7 +148,7 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -159,22 +159,21 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 	double mr = cos(angle * 2 * Pi);
 	double mi = sin(angle * 2 * Pi);
 
-	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	vector<CZZ> mpow = EvaluatorUtils::evaluatePowvec(mr, mi, degree, logp);
 
-	Cipher c = scheme.fullEncrypt(m);
+	Cipher cipher = scheme.encryptFull(mval);
 
 	vector<Cipher> cpow;
 	timeutils.start("Power");
-	algo.powerExtended(cpow, c, degree);
+	algo.powerExtended(cpow, cipher, degree);
 	timeutils.stop("Power");
 
-	vector<CZZ> dpow = scheme.fullSingleDecryptVec(cpow);
+	vector<CZZ> dpow = scheme.decryptFullSingleVec(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow");
 
 	cout << "!!! END TEST POWER EXTENDED !!!" << endl;
-
 }
 
 //-----------------------------------------
@@ -184,13 +183,12 @@ void TestScheme::testProd2Batch(long logN, long logl, long logp, long L, long lo
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-
 	long slots = 1 << logSlots;
 	long degree = 1 << logDegree;
 
@@ -201,14 +199,15 @@ void TestScheme::testProd2Batch(long logN, long logl, long logp, long L, long lo
 	EvaluatorUtils::evaluateRandomCircleValsAndProduct(mvec, pvec, slots, degree, logp);
 
 	for (long i = 0; i < degree; ++i) {
-		Cipher c = scheme.fullEncrypt(mvec[i]);
-		cvec.push_back(c);
+		Cipher cipher = scheme.encryptFull(mvec[i]);
+		cvec.push_back(cipher);
 	}
+
 	timeutils.start("Prod 2");
 	Cipher cprod = algo.prod2(cvec, logDegree);
 	timeutils.stop("Prod 2");
 
-	vector<CZZ> dvec = scheme.fullDecrypt(cprod);
+	vector<CZZ> dvec = scheme.decryptFull(cprod);
 
 	StringUtils::showcompare(pvec, dvec, "prod");
 
@@ -222,26 +221,25 @@ void TestScheme::testInverseBatch(long logN, long logl, long logp, long L, long 
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-
 	long slots = 1 << logSlots;
 
 	vector<CZZ> mvec, minv;
 
 	EvaluatorUtils::evaluateRandomCircleBarValsAndInverses(mvec, minv, slots, logp);
 
-	Cipher c = scheme.fullEncrypt(mvec);
+	Cipher cipher = scheme.encryptFull(mvec);
 
 	timeutils.start("Inverse");
-	Cipher cinv = algo.inverse(c, invSteps);
+	Cipher cinv = algo.inverse(cipher, invSteps);
 	timeutils.stop("Inverse");
 
-	vector<CZZ> dinv = scheme.fullDecrypt(cinv);
+	vector<CZZ> dinv = scheme.decryptFull(cinv);
 
 	StringUtils::showcompare(minv, dinv, "inv");
 
@@ -253,7 +251,7 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -267,14 +265,14 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 	CZZ mbar = EvaluatorUtils::evaluateVal(1 - mr, -mi, logp);
 	CZZ minv = EvaluatorUtils::evaluateInverse(mr, mi, logp);
 
-	Cipher c = scheme.fullEncrypt(mbar);
+	Cipher cipher = scheme.encryptFull(mbar);
 
 	vector<Cipher> cinv;
 	timeutils.start("Inverse extended");
-	algo.inverseExtended(cinv, c, invSteps);
+	algo.inverseExtended(cinv, cipher, invSteps);
 	timeutils.stop("Inverse extended");
 
-	vector<CZZ> dinv = scheme.fullSingleDecryptVec(cinv);
+	vector<CZZ> dinv = scheme.decryptFullSingleVec(cinv);
 
 	StringUtils::showcompare(minv, dinv, "inv");
 
@@ -283,74 +281,71 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 
 //-----------------------------------------
 
-void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long expDegree, long logSlots) {
+void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
 	cout << "!!! START TEST EXPONENT !!!" << endl;
 
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-
 	long slots = 1 << logSlots;
 
-	vector<CZZ> mvec, fvec;
+	vector<CZZ> mvec, mexp;
+	EvaluatorUtils::evaluateRandomValsAndExponents(mvec, mexp, slots, logp);
 
-	EvaluatorUtils::evaluateRandomValsAndExponents(mvec, fvec, slots, logp);
-
-	Cipher c = scheme.fullEncrypt(mvec);
+	Cipher cipher = scheme.encryptFull(mvec);
 
 	timeutils.start(EXPONENT);
-	Cipher cexp = algo.function(c, EXPONENT, expDegree);
+	Cipher cexp = algo.function(cipher, EXPONENT, degree);
 	timeutils.stop(EXPONENT);
 
-	vector<CZZ> dvec = scheme.fullDecrypt(cexp);
+	vector<CZZ> dexp = scheme.decryptFull(cexp);
 
-	StringUtils::showcompare(fvec, dvec, EXPONENT);
+	StringUtils::showcompare(mexp, dexp, EXPONENT);
 
 	cout << "!!! END TEST EXPONENT !!!" << endl;
 }
 
-void TestScheme::testLazyExponentBatch(long logN, long logl, long logp, long L, long expDegree, long logSlots) {
-	cout << "!!! START TEST EXPONENT SIMPLE !!!" << endl;
+void TestScheme::testLazyExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
+	cout << "!!! START TEST EXPONENT LAZY !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//----------------------------
-
 	long slots = 1 << logSlots;
 
-	vector<CZZ> mvec, fvec;
-	EvaluatorUtils::evaluateRandomValsAndExponents(mvec, fvec, slots, logp);
-	EvaluatorUtils::leftShift(fvec, logp);
+	vector<CZZ> mvec, mexp;
+	EvaluatorUtils::evaluateRandomValsAndExponents(mvec, mexp, slots, logp);
+	EvaluatorUtils::leftShift(mexp, logp);
 
-	Cipher c = scheme.fullEncrypt(mvec);
+	Cipher cipher = scheme.encryptFull(mvec);
 
 	timeutils.start(EXPONENT);
-	Cipher cexp = algo.functionLazy(c, EXPONENT, expDegree);
+	Cipher cexp = algo.functionLazy(cipher, EXPONENT, degree);
 	timeutils.stop(EXPONENT);
 
-	vector<CZZ> dvec = scheme.fullDecrypt(cexp);
+	vector<CZZ> dexp = scheme.decryptFull(cexp);
 
-	StringUtils::showcompare(fvec, dvec, EXPONENT);
+	StringUtils::showcompare(mexp, dexp, EXPONENT);
 
-	cout << "!!! END TEST EXPONENT SIMPLE !!!" << endl;
+	cout << "!!! END TEST EXPONENT LAZY !!!" << endl;
 }
 
-void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, long expDegree) {
+void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, long degree) {
 	cout << "!!! START TEST EXPONENT EXTENDED !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -361,16 +356,18 @@ void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, l
 	double mr = (double)arc4random() / RAND_MAX;
 	double mi = (double)arc4random() / RAND_MAX;
 
-	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ mexp = EvaluatorUtils::evaluateExponent(mr, mi, logp);
 
-	Cipher c = scheme.fullEncrypt(m);
+	Cipher cipher = scheme.encryptFull(mval);
 
 	vector<Cipher> cexp;
+
 	timeutils.start(EXPONENT);
-	algo.functionExtended(cexp, c, EXPONENT, expDegree);
+	algo.functionExtended(cexp, cipher, EXPONENT, degree);
 	timeutils.stop(EXPONENT);
-	vector<CZZ> dexp = scheme.fullSingleDecryptVec(cexp);
+
+	vector<CZZ> dexp = scheme.decryptFullSingleVec(cexp);
 
 	StringUtils::showcompare(mexp, dexp, EXPONENT);
 
@@ -379,74 +376,71 @@ void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, l
 
 //-----------------------------------------
 
-void TestScheme::testSigmoidBatch(long logN, long logl, long logp, long L, long sigmoidDegree, long logSlots) {
+void TestScheme::testSigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
 	cout << "!!! START TEST SIGMOID !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//----------------------------
-
-	vector<CZZ> mvec, fvec;
-
 	long slots = 1 << logSlots;
 
-	EvaluatorUtils::evaluateRandomValsAndSigmoids(mvec, fvec, slots, logp);
+	vector<CZZ> mvec, msig;
+	EvaluatorUtils::evaluateRandomValsAndSigmoids(mvec, msig, slots, logp);
 
-	Cipher c = scheme.fullEncrypt(mvec);
+	Cipher cipher = scheme.encryptFull(mvec);
 
 	timeutils.start(SIGMOID);
-	Cipher csigmoid = algo.function(c, SIGMOID, sigmoidDegree);
+	Cipher csig = algo.function(cipher, SIGMOID, degree);
 	timeutils.stop(SIGMOID);
 
-	vector<CZZ> dvec = scheme.fullDecrypt(csigmoid);
+	vector<CZZ> dsig = scheme.decryptFull(csig);
 
-	StringUtils::showcompare(fvec, dvec, SIGMOID);
+	StringUtils::showcompare(msig, dsig, SIGMOID);
 
 	cout << "!!! END TEST SIGMOID !!!" << endl;
 }
 
-void TestScheme::testLazySigmoidBatch(long logN, long logl, long logp, long L, long sigmoidDegree, long logSlots) {
-	cout << "!!! START TEST SIGMOID SIMPLE !!!" << endl;
+void TestScheme::testLazySigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
+	cout << "!!! START TEST SIGMOID LAZY !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//----------------------------
-
-	vector<CZZ> mvec, fvec;
-
 	long slots = 1 << logSlots;
-	EvaluatorUtils::evaluateRandomValsAndSigmoids(mvec, fvec, slots, logp);
-	EvaluatorUtils::leftShift(fvec, logp);
 
-	Cipher c = scheme.fullEncrypt(mvec);
+	vector<CZZ> mvec, msig;
+	EvaluatorUtils::evaluateRandomValsAndSigmoids(mvec, msig, slots, logp);
+	EvaluatorUtils::leftShift(msig, logp);
+
+	Cipher cipher = scheme.encryptFull(mvec);
 
 	timeutils.start(SIGMOID);
-	Cipher csigmoid = algo.functionLazy(c, SIGMOID, sigmoidDegree);
+	Cipher csig = algo.functionLazy(cipher, SIGMOID, degree);
 	timeutils.stop(SIGMOID);
 
-	vector<CZZ> dvec = scheme.fullDecrypt(csigmoid);
+	vector<CZZ> dsig = scheme.decryptFull(csig);
 
-	StringUtils::showcompare(fvec, dvec, SIGMOID);
+	StringUtils::showcompare(msig, dsig, SIGMOID);
 
-	cout << "!!! END TEST SIGMOID SIMPLE !!!" << endl;
+	cout << "!!! END TEST SIGMOID LAZY !!!" << endl;
 }
 
-void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, long sigmoidDegree) {
+void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, long degree) {
 	cout << "!!! START TEST SIGMOID EXTENDED !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
@@ -456,156 +450,190 @@ void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, lo
 	double mr = (double)arc4random() / RAND_MAX;
 	double mi = (double)arc4random() / RAND_MAX;
 
-	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
-	CZZ msigmoid = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
+	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
+	CZZ msig = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
 
-	Cipher c = scheme.fullEncrypt(m);
+	Cipher c = scheme.encryptFull(mval);
 
-	vector<Cipher> csigmoid;
+	vector<Cipher> csig;
 
 	timeutils.start(SIGMOID);
-	algo.functionExtended(csigmoid, c, SIGMOID, sigmoidDegree);
+	algo.functionExtended(csig, c, SIGMOID, degree);
 	timeutils.stop(SIGMOID);
 
-	vector<CZZ> dsigmoid = scheme.fullSingleDecryptVec(csigmoid);
+	vector<CZZ> dsig = scheme.decryptFullSingleVec(csig);
 
-	StringUtils::showcompare(msigmoid, dsigmoid, SIGMOID);
+	StringUtils::showcompare(msig, dsig, SIGMOID);
 
 	cout << "!!! END TEST SIGMOID EXTENDED !!!" << endl;
 }
 
 //-----------------------------------------
 
-void TestScheme::testFFT(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg) {
+void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim) {
 	cout << "!!! START TEST FFT !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//----------------------------
+	long fftdim = 1 << logfftdim;
 
-	long FFTdim = 1 << logFFTdim;
+	vector<CZZ> mvec1, mvec2;
+	EvaluatorUtils::evaluateRandomVals(mvec1, fftdim, logp);
+	EvaluatorUtils::evaluateRandomVals(mvec2, fftdim, logp);
 
-	vector<CZZ> mp1, mp2, mfft1, mfft2, mfftx;
-	vector<Cipher> cfft1, cfft2;
+	vector<CZZ> mvecp = NumUtils::fftFull(mvec1, mvec2, params.ksiPows);
 
-	EvaluatorUtils::evaluateRandomVals(mp1, FFTdeg, logp);
-	EvaluatorUtils::evaluateRandomVals(mp2, FFTdeg, logp);
-
-	CZZ zero;
-	for (long i = FFTdeg; i < FFTdim / 2; ++i) {
-		mp1.push_back(zero);
-		mp2.push_back(zero);
-	}
-
-	mp1 = scheme.doubleConjugate(mp1);
-	mp2 = scheme.doubleConjugate(mp2);
-
-	mfft1 = NumUtils::fft(mp1, params.ksiPows);
-	mfft2 = NumUtils::fft(mp2, params.ksiPows);
-
-	for (long i = 0; i < FFTdim; ++i) {
-		CZZ tmp = (mfft1[i] * mfft2[i]) >> params.logp;
-		mfftx.push_back(tmp);
-	}
-
-	vector<CZZ> mpx = NumUtils::fftInv(mfftx, params.ksiPows);
-
-	vector<Cipher> cp1 = scheme.fullSingleEncryptVec(mp1);
-	vector<Cipher> cp2 = scheme.fullSingleEncryptVec(mp2);
+	vector<Cipher> cvec1 = scheme.encryptFullSingleVec(mvec1);
+	vector<Cipher> cvec2 = scheme.encryptFullSingleVec(mvec2);
 
 	timeutils.start("cfft 1");
-	cfft1 = algo.fft(cp1);
+	vector<Cipher> cfft1 = algo.fft(cvec1);
 	timeutils.stop("cfft 1");
 
 	timeutils.start("cfft 2");
-	cfft2 = algo.fft(cp2);
+	vector<Cipher> cfft2 = algo.fft(cvec2);
 	timeutils.stop("cfft 2");
 
-	timeutils.start("mul fft");
-	for (long i = 0; i < FFTdim; ++i) {
+	timeutils.start("cfft mult");
+	for (long i = 0; i < fftdim; ++i) {
 		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
 	}
-	timeutils.stop("mul fft");
+	timeutils.stop("cfft mult");
 
-	timeutils.start("cfftx inv");
-	vector<Cipher> cpx = algo.fftInv(cfft1);
-	timeutils.stop("cfftx inv");
+	timeutils.start("cfft inv");
+	vector<Cipher> cvecp = algo.fftInv(cfft1);
+	timeutils.stop("cfft inv");
 
-	vector<CZZ> dpx = scheme.fullSingleDecryptVec(cpx);
+	vector<CZZ> dvecp = scheme.decryptFullSingleVec(cvecp);
 
-//	StringUtils::showcompare(mpx, dpx, "fft");
+	StringUtils::showcompare(mvecp, dvecp, "fft");
 
 	cout << "!!! END TEST FFT !!!" << endl;
 }
 
-void TestScheme::testLazyFFT(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg) {
-	cout << "!!! START TEST FFT SIMPLE !!!" << endl;
+void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logfftdim, long logSlots) {
+	cout << "!!! START TEST FFT BATCH !!!" << endl;
 
 	//----------------------------
 	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//----------------------------
+	long fftdim = 1 << logfftdim;
+	long slots = 1 << logSlots;
 
-	long FFTdim = 1 << logFFTdim;
-
-	vector<CZZ> mp1, mp2, mfft1, mfft2, mfftx;
-	vector<Cipher> cfft1, cfft2;
-
-	EvaluatorUtils::evaluateRandomVals(mp1, FFTdeg, logp);
-	EvaluatorUtils::evaluateRandomVals(mp2, FFTdeg, logp);
-
-	CZZ zero;
-	for (long i = FFTdeg; i < FFTdim / 2; ++i) {
-		mp1.push_back(zero);
-		mp2.push_back(zero);
+	vector<vector<CZZ>> mvec1, mvec2, mvecp, dvecp;
+	for (long i = 0; i < slots; ++i) {
+		vector<CZZ> tmp1, tmp2;
+		EvaluatorUtils::evaluateRandomVals(tmp1, fftdim, logp);
+		EvaluatorUtils::evaluateRandomVals(tmp2, fftdim, logp);
+		mvec1.push_back(tmp1);
+		mvec2.push_back(tmp2);
 	}
 
-	mp1 = scheme.doubleConjugate(mp1);
-	mp2 = scheme.doubleConjugate(mp2);
-
-	mfft1 = NumUtils::fft(mp1, params.ksiPows);
-	mfft2 = NumUtils::fft(mp2, params.ksiPows);
-
-	for (long i = 0; i < FFTdim; ++i) {
-		CZZ tmp = (mfft1[i] * mfft2[i]) >> params.logp;
-		mfftx.push_back(tmp);
+	for (long i = 0; i < slots; ++i) {
+		vector<CZZ> tmp = NumUtils::fftFull(mvec1[i], mvec2[i], params.ksiPows);
+		mvecp.push_back(tmp);
 	}
 
-	vector<CZZ> mpx = NumUtils::fftInvLazy(mfftx, params.ksiPows);
+	vector<Cipher> cvec1, cvec2;
+	for (long j = 0; j < fftdim; ++j) {
+		vector<CZZ> mvals1, mvals2;
+		for (long i = 0; i < slots; ++i) {
+			mvals1.push_back(mvec1[i][j]);
+			mvals2.push_back(mvec2[i][j]);
+		}
+		Cipher cipher1 = scheme.encryptFull(mvals1);
+		Cipher cipher2 = scheme.encryptFull(mvals2);
 
-	vector<Cipher> cp1 = scheme.fullSingleEncryptVec(mp1);
-	vector<Cipher> cp2 = scheme.fullSingleEncryptVec(mp2);
+		cvec1.push_back(cipher1);
+		cvec2.push_back(cipher2);
+	}
 
 	timeutils.start("cfft 1");
-	cfft1 = algo.fft(cp1);
+	vector<Cipher> cfft1 = algo.fft(cvec1);
 	timeutils.stop("cfft 1");
 
 	timeutils.start("cfft 2");
-	cfft2 = algo.fft(cp2);
+	vector<Cipher> cfft2 = algo.fft(cvec2);
 	timeutils.stop("cfft 2");
 
-	timeutils.start("mul fft");
-	for (long i = 0; i < FFTdim; ++i) {
+	timeutils.start("cfft mult");
+	for (long i = 0; i < fftdim; ++i) {
 		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
 	}
-	timeutils.stop("mul fft");
+	timeutils.stop("cfft mult");
 
-	timeutils.start("cfftx inv");
-	vector<Cipher> cpx = algo.fftInvLazy(cfft1);
-	timeutils.stop("cfftx inv");
+	timeutils.start("cfft inv");
+	vector<Cipher> cvecp = algo.fftInv(cfft1);
+	timeutils.stop("cfft inv");
 
-	vector<CZZ> dpx = scheme.fullSingleDecryptVec(cpx);
+	for (long j = 0; j < fftdim; ++j) {
+		vector<CZZ> tmp = scheme.decryptFull(cvecp[j]);
+		dvecp.push_back(tmp);
+	}
 
-	StringUtils::showcompare(mpx, dpx, "fft");
+	for (long i = 0; i < slots; ++i) {
+		for (long j = 0; j < fftdim; ++j) {
+			StringUtils::showcompare(mvecp[i][j], dvecp[j][i], "fft");
+		}
+	}
 
-	cout << "!!! END TEST FFT SIMPLE !!!" << endl;
+	cout << "!!! END TEST FFT BATCH !!!" << endl;
+}
+
+void TestScheme::testLazyFFT(long logN, long logl, long logp, long L, long logfftdim) {
+	cout << "!!! START TEST FFT LAZY !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+	long fftdim = 1 << logfftdim;
+
+	vector<CZZ> mvec1, mvec2;
+	EvaluatorUtils::evaluateRandomVals(mvec1, fftdim, logp);
+	EvaluatorUtils::evaluateRandomVals(mvec2, fftdim, logp);
+
+	vector<CZZ> mvecp = NumUtils::fftFullLazy(mvec1, mvec2, params.ksiPows);
+
+	vector<Cipher> cvec1 = scheme.encryptFullSingleVec(mvec1);
+	vector<Cipher> cvec2 = scheme.encryptFullSingleVec(mvec2);
+
+	timeutils.start("cfft 1");
+	vector<Cipher> cfft1 = algo.fft(cvec1);
+	timeutils.stop("cfft 1");
+
+	timeutils.start("cfft 2");
+	vector<Cipher> cfft2 = algo.fft(cvec2);
+	timeutils.stop("cfft 2");
+
+	timeutils.start("cfft mult");
+	for (long i = 0; i < fftdim; ++i) {
+		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
+	}
+	timeutils.stop("cfft mult");
+
+	timeutils.start("cfft inv");
+	vector<Cipher> cvecp = algo.fftInvLazy(cfft1);
+	timeutils.stop("cfft inv");
+
+	vector<CZZ> dvecp = scheme.decryptFullSingleVec(cvecp);
+
+	StringUtils::showcompare(mvecp, dvecp, "fft");
+
+	cout << "!!! END TEST FFT LAZY !!!" << endl;
 }

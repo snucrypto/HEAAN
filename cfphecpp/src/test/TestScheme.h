@@ -14,17 +14,17 @@ public:
 
 	//-----------------------------------------
 
-	static void testPowerOf2Batch(long logN, long logl, long logp, long L, long logPowDegree, long logSlots);
-	static void testPowerOf2Extended(long logN, long logl, long logp, long L, long logPowDegree);
+	static void testPowerOf2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots);
+	static void testPowerOf2Extended(long logN, long logl, long logp, long L, long logDegree);
 
 	//-----------------------------------------
 
-	static void testPowerBatch(long logN, long logl, long logp, long L, long powDegree, long logSlots);
-	static void testPowerExtended(long logN, long logl, long logp, long L, long  powDegree);
+	static void testPowerBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
+	static void testPowerExtended(long logN, long logl, long logp, long L, long  degree);
 
 	//-----------------------------------------
 
-	static void testProd2Batch(long logN, long logl, long logp, long L, long logProdDegree, long logSlots);
+	static void testProd2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots);
 
 	//-----------------------------------------
 
@@ -33,19 +33,20 @@ public:
 
 	//-----------------------------------------
 
-	static void testExponentBatch(long logN, long logl, long logp, long L, long expSteps, long logSlots);
-	static void testLazyExponentBatch(long logN, long logl, long logp, long L, long expSteps, long logSlots);
-	static void testExponentExtended(long logN, long logl, long logp, long L, long expSteps);
+	static void testExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
+	static void testLazyExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
+	static void testExponentExtended(long logN, long logl, long logp, long L, long degree);
 
 	//-----------------------------------------
 
-	static void testSigmoidBatch(long logN, long logl, long logp, long L, long sigmoidSteps, long logSlots);
-	static void testSigmoidExtended(long logN, long logl, long logp, long L, long sigmoidSteps);
-	static void testLazySigmoidBatch(long logN, long logl, long logp, long L, long sigmoidSteps, long logSlots);
+	static void testSigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
+	static void testSigmoidExtended(long logN, long logl, long logp, long L, long degree);
+	static void testLazySigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
 	//-----------------------------------------
 
-	static void testFFT(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg);
-	static void testLazyFFT(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg);
+	static void testFFT(long logN, long logl, long logp, long L, long logfftdim);
+	static void testFFTBatch(long logN, long logl, long logp, long L, long logfftdim, long logSlots);
+	static void testLazyFFT(long logN, long logl, long logp, long L, long logfftdim);
 };
 
 #endif /* TEST_TESTSCHEME_H_ */
