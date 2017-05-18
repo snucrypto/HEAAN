@@ -24,13 +24,13 @@ public:
 
 	//-----------------------------------------
 
-	Cipher prod2(vector<Cipher>& cs, const long& logDegree);
-	void prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& cs, const long& logDegree);
+	Cipher prod2(vector<Cipher>& ciphers, const long& logDegree);
+	void prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& ciphers, const long& logDegree);
 
 	//-----------------------------------------
 
 	Cipher inverse(Cipher& c, const long& steps);
-	void inverseExtended(vector<Cipher>& res, vector<Cipher>& v2k, Cipher& c, const long& steps);
+	void inverseExtended(vector<Cipher>& res, Cipher& c, const long& steps);
 
 	//-----------------------------------------
 

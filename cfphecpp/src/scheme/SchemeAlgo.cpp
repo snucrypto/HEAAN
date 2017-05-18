@@ -54,8 +54,8 @@ void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degre
 
 //-----------------------------------------
 
-Cipher SchemeAlgo::prod2(vector<Cipher>& cs, const long& logDegree) {
-	vector<Cipher> res = cs;
+Cipher SchemeAlgo::prod2(vector<Cipher>& ciphers, const long& logDegree) {
+	vector<Cipher> res = ciphers;
 	vector<Cipher> tmp2;
 	for (long i = logDegree; i > 0; --i) {
 		long powi = (1 << i);
@@ -69,9 +69,9 @@ Cipher SchemeAlgo::prod2(vector<Cipher>& cs, const long& logDegree) {
 	return res[0];
 }
 
-void SchemeAlgo::prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& cs, const long& logDegree) {
+void SchemeAlgo::prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& ciphers, const long& logDegree) {
 	res.reserve(logDegree + 1);
-	res.push_back(cs);
+	res.push_back(ciphers);
 	for (long i = 0; i < logDegree; ++i) {
 		vector<Cipher> ctmp;
 		long size = res[i].size();
@@ -88,37 +88,37 @@ void SchemeAlgo::prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& cs, 
 //-----------------------------------------
 
 Cipher SchemeAlgo::inverse(Cipher& c, const long& steps) {
+	Cipher cpow = c;
 	Cipher tmp = scheme.addConst(c, scheme.params.p);
 	scheme.modEmbedAndEqual(tmp);
-	Cipher res = c;
-	for (long i = 1; i < steps-1; ++i) {
-		scheme.squareAndEqual(res);
-		scheme.modSwitchAndEqual(res);
+	Cipher res = tmp;
+	for (long i = 0; i < steps - 1; ++i) {
+		scheme.squareAndEqual(cpow);
+		scheme.modSwitchAndEqual(cpow);
+		res = cpow;
 		scheme.addConstAndEqual(res, scheme.params.p);
 		scheme.multAndEqual(res, tmp);
-		scheme.modSwitchAndEqual(res, i + 2);
+		scheme.modSwitchAndEqual(res, i + 3);
 		tmp = res;
 	}
 	return res;
 }
 
-void SchemeAlgo::inverseExtended(vector<Cipher>& cres, vector<Cipher>& vres, Cipher& c, const long& steps) {
-	cres.reserve(steps-1);
-	vres.reserve(steps-1);
-	cres.push_back(c);
-
+void SchemeAlgo::inverseExtended(vector<Cipher>& res, Cipher& c, const long& steps) {
+	res.reserve(steps);
+	Cipher cpow = c;
 	Cipher tmp = scheme.addConst(c, scheme.params.p);
 	scheme.modEmbedAndEqual(tmp);
-	vres.push_back(tmp);
+	res.push_back(tmp);
 
-	for (long i = 0; i < steps - 2; ++i) {
-		tmp = scheme.square(cres[i]);
-		scheme.modSwitchAndEqual(tmp);
-		cres.push_back(tmp);
+	for (long i = 0; i < steps - 1; ++i) {
+		scheme.squareAndEqual(cpow);
+		scheme.modSwitchAndEqual(cpow);
+		tmp = cpow;
 		scheme.addConstAndEqual(tmp, scheme.params.p);
-		scheme.multAndEqual(tmp, vres[i]);
-		scheme.modSwitchAndEqual(tmp, i + 1);
-		vres.push_back(tmp);
+		scheme.multAndEqual(tmp, res[i]);
+		scheme.modSwitchAndEqual(tmp, i + 3);
+		res.push_back(tmp);
 	}
 }
 

@@ -242,26 +242,19 @@ void TestScheme::testInverse(long logN, long logl, long logp, long L, long invSt
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	long error = 13;
+	double mi = (double)rand() / RAND_MAX;
+	double mr = sqrt(1 -mi * mi);
 
-	ZZ halfp;
-	CZZ m, mbar, minv;
-	vector<Cipher> cpow, cinv;
+	CZZ m = EvaluatorUtils::evaluateVal(1 - mr, mi, logp);
+	CZZ minv = EvaluatorUtils::evaluateInverse(mr, mi, logp);
 
-	mbar.r = RandomBits_ZZ(error);
-	m.r = 1;
-	m.r <<= params.logp;
-	m.r -= mbar.r;
-	minv.r = params.p * params.p / m.r;
-	halfp = params.p / 2;
-
-	Cipher c = scheme.fullEncrypt(mbar);
+	Cipher c = scheme.fullEncrypt(m);
 
 	timeutils.start("Inverse");
-	algo.inverseExtended(cpow, cinv, c, invSteps);
+	Cipher cinv = algo.inverse(c, invSteps);
 	timeutils.stop("Inverse");
 
-	vector<CZZ> dinv = scheme.fullSimpleDecryptVec(cinv);
+	CZZ dinv = scheme.fullSimpleDecrypt(cinv);
 
 	StringUtils::showcompare(minv, dinv, "inv");
 
@@ -280,23 +273,17 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	long error = 13;
+	double mi = (double)rand() / RAND_MAX;
+	double mr = (double)rand() / RAND_MAX;
 
-	ZZ halfp;
-	CZZ m, mbar, minv;
-	vector<Cipher> cpow, cinv;
+	CZZ m = EvaluatorUtils::evaluateVal(1 - mr, mi, logp);
+	CZZ minv = EvaluatorUtils::evaluateInverse(mr, mi, logp);
 
-	mbar.r = RandomBits_ZZ(error);
-	m.r = 1;
-	m.r <<= params.logp;
-	m.r -= mbar.r;
-	minv.r = params.p * params.p / m.r;
-	halfp = params.p / 2;
+	Cipher c = scheme.fullEncrypt(m);
 
-	Cipher c = scheme.fullEncrypt(mbar);
-
+	vector<Cipher> cinv;
 	timeutils.start("Inverse extended");
-	algo.inverseExtended(cpow, cinv, c, invSteps);
+	algo.inverseExtended(cinv, c, invSteps);
 	timeutils.stop("Inverse extended");
 
 	vector<CZZ> dinv = scheme.fullSimpleDecryptVec(cinv);

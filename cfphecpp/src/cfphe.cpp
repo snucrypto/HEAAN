@@ -75,10 +75,10 @@ int main() {
 	 * Suggested: 14, 32, 6, 5
 	 */
 
-//	TestScheme::testInverse(13, 1, 25, 6, 5);
-//	TestScheme::testInverse(13, 25, 6, 5);
-//	TestScheme::testInverseExtended(13, 25, 6, 5);
-//	TestScheme::testInverseExtended(13, 25, 6, 5);
+	TestScheme::testInverse(13, 5, 25, 7, 6);
+//	TestScheme::testInverse(13, 2,  25, 7, 6);
+//	TestScheme::testInverseExtended(13, 5, 25, 7, 6);
+//	TestScheme::testInverseExtended(13, 2, 25, 7, 6);
 	//-----------------------------------------
 
 	/*
