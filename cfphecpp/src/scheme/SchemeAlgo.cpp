@@ -148,6 +148,28 @@ Cipher SchemeAlgo::function(Cipher& c, string& funcName, const long& degree) {
 	return res;
 }
 
+Cipher SchemeAlgo::functionSimple(Cipher& c, string& funcName, const long& degree) {
+	vector<Cipher> cpows;
+	powerExtended(cpows, c, degree);
+
+	vector<ZZ> pows = scheme.params.taylorPows.powsMap.at(funcName);
+	vector<double> coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
+
+	Cipher res = scheme.multByConst(cpows[0], pows[1]);
+	ZZ p2 = scheme.params.p * pows[0];
+	scheme.addConstAndEqual(res, p2);
+
+
+	for (int i = 1; i < degree; ++i) {
+		if(abs(coeffs[i + 1]) > 1e-17) {
+			Cipher tmp = scheme.multByConst(cpows[i], pows[i + 1]);
+			scheme.modEmbedAndEqual(res, tmp.level);
+			scheme.addAndEqual(res, tmp);
+		}
+	}
+	return res;
+}
+
 void SchemeAlgo::functionExtended(vector<Cipher>& res, Cipher& c, string& funcName, const long& degree) {
 	vector<Cipher> cpows;
 	powerExtended(cpows, c, degree);
@@ -229,4 +251,8 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers) {
 		scheme.modSwitchAndEqual(fftInv[i]);
 	}
 	return fftInv;
+}
+
+vector<Cipher> SchemeAlgo::fftInvSimple(vector<Cipher>& ciphers) {
+	return fftRaw(ciphers, false);
 }

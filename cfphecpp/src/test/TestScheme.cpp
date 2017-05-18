@@ -338,7 +338,7 @@ void TestScheme::testProd2Extended(long logN, long logp, long L, long logProdDeg
 	}
 
 	for (long i = 0; i < logProdDegree + 1; ++i) {
-		StringUtils::showcompare(ms2k[i], ds2k[i], "pow");
+//		StringUtils::showcompare(ms2k[i], ds2k[i], "pow");
 	}
 	cout << "!!! END TEST PROD 2 EXTENDED !!!" << endl;
 }
@@ -472,6 +472,47 @@ void TestScheme::testExponent(long logN, long logp, long L, long expDegree, long
 	cout << "!!! END TEST EXPONENT !!!" << endl;
 }
 
+void TestScheme::testExponentSimple(long logN, long logp, long L, long expDegree, long logSlots) {
+	cout << "!!! START TEST EXPONENT SIMPLE !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logl = 2;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logN, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	long slots = 1 << logSlots;
+
+	vector<CZZ> mvec, mexpvec;
+	for (long i = 0; i < slots; ++i) {
+		double mr = (double)rand() / RAND_MAX;
+		double mi = (double)rand() / RAND_MAX;
+		CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		CZZ mexp = EvaluatorUtils::evaluateExponent(mr, mi, logp);
+		mvec.push_back(m);
+		mexpvec.push_back(mexp << logp);
+	}
+
+	Cipher c = scheme.fullEncrypt(mvec);
+
+	timeutils.start(EXPONENT);
+	Cipher cexp = algo.functionSimple(c, EXPONENT, expDegree);
+	timeutils.stop(EXPONENT);
+
+	vector<CZZ> dexpvec = scheme.fullDecrypt(cexp);
+
+	StringUtils::showcompare(mexpvec, dexpvec, "expsimple");
+
+	cout << "!!! END TEST EXPONENT SIMPLE !!!" << endl;
+}
+
 void TestScheme::testExponentExtended(long logN, long logp, long L, long expDegree) {
 	cout << "!!! START TEST EXPONENT EXTENDED !!!" << endl;
 
@@ -550,6 +591,47 @@ void TestScheme::testSigmoid(long logN, long logp, long L, long sigmoidDegree, l
 	StringUtils::showcompare(msigmoidvec, dsigmoidvec, "sigmoid");
 
 	cout << "!!! END TEST SIGMOID !!!" << endl;
+}
+
+void TestScheme::testSigmoidSimple(long logN, long logp, long L, long sigmoidDegree, long logSlots) {
+	cout << "!!! START TEST SIGMOID SIMPLE !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logl = 2;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logN, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	vector<CZZ> mvec, msigmoidvec;
+
+	long slots = 1 << logSlots;
+	for (long i = 0; i < slots; ++i) {
+		double mr = (double)rand() / RAND_MAX;
+		double mi = (double)rand() / RAND_MAX;
+		CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		CZZ msigmoid = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
+		mvec.push_back(m);
+		msigmoidvec.push_back(msigmoid << logp);
+	}
+
+	Cipher c = scheme.fullEncrypt(mvec);
+
+	timeutils.start(SIGMOID);
+	Cipher csigmoid = algo.functionSimple(c, SIGMOID, sigmoidDegree);
+	timeutils.stop(SIGMOID);
+
+	vector<CZZ> dsigmoidvec = scheme.fullDecrypt(csigmoid);
+
+	StringUtils::showcompare(msigmoidvec, dsigmoidvec, "sigmoidsimple");
+
+	cout << "!!! END TEST SIGMOID SIMPLE !!!" << endl;
 }
 
 void TestScheme::testSigmoidExtended(long logN, long logp, long L, long sigmoidDegree) {
@@ -657,7 +739,78 @@ void TestScheme::testFFT(long logN, long logp, long L, long logFFTdim, long FFTd
 
 	vector<CZZ> dpx = scheme.fullSimpleDecryptVec(cpx);
 
-	StringUtils::showcompare(mpx, dpx, "fft");
+//	StringUtils::showcompare(mpx, dpx, "fft");
 
 	cout << "!!! END TEST FFT !!!" << endl;
+}
+
+void TestScheme::testFFTsimple(long logN, long logp, long L, long logFFTdim, long FFTdeg) {
+	cout << "!!! START TEST FFT SIMPLE !!!" << endl;
+
+	//----------------------------
+	TimeUtils timeutils;
+	long logl = 5;
+	double sigma = 3;
+	double rho = 0.5;
+	long h = 64;
+	Params params(logN, logl, logp, L, sigma, rho, h);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//----------------------------
+
+	long FFTdim = 1 << logFFTdim;
+
+	vector<CZZ> mfft1, mfft2, mfftx;
+	vector<Cipher> cfft1, cfft2;
+
+	vector<CZZ> mp1 = EvaluatorUtils::evaluateRandomVals(FFTdeg, logp);
+	vector<CZZ> mp2 = EvaluatorUtils::evaluateRandomVals(FFTdeg, logp);
+
+	CZZ zero;
+	for (long i = FFTdeg; i < FFTdim / 2; ++i) {
+		mp1.push_back(zero);
+		mp2.push_back(zero);
+	}
+
+	mp1 = scheme.doubleConjugate(mp1);
+	mp2 = scheme.doubleConjugate(mp2);
+
+	mfft1 = NumUtils::fft(mp1, params.ksiPows);
+	mfft2 = NumUtils::fft(mp2, params.ksiPows);
+
+	for (long i = 0; i < FFTdim; ++i) {
+		CZZ tmp = (mfft1[i] * mfft2[i]) >> params.logp;
+		mfftx.push_back(tmp);
+	}
+
+	vector<CZZ> mpx = NumUtils::fftInv(mfftx, params.ksiPows);
+
+	vector<Cipher> cp1 = scheme.fullSimpleEncryptVec(mp1);
+	vector<Cipher> cp2 = scheme.fullSimpleEncryptVec(mp2);
+
+	timeutils.start("cfft 1");
+	cfft1 = algo.fft(cp1);
+	timeutils.stop("cfft 1");
+
+	timeutils.start("cfft 2");
+	cfft2 = algo.fft(cp2);
+	timeutils.stop("cfft 2");
+
+	timeutils.start("mul fft");
+	for (long i = 0; i < FFTdim; ++i) {
+		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
+	}
+	timeutils.stop("mul fft");
+
+	timeutils.start("cfftx inv");
+	vector<Cipher> cpx = algo.fftInvSimple(cfft1);
+	timeutils.stop("cfftx inv");
+
+	vector<CZZ> dpx = scheme.fullSimpleDecryptVec(cpx);
+
+//	StringUtils::showcompare(mpx, dpx, "fft");
+
+	cout << "!!! END TEST FFT SIMPLE !!!" << endl;
 }

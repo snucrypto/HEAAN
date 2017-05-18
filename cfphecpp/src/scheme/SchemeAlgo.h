@@ -35,6 +35,7 @@ public:
 	//-----------------------------------------
 
 	Cipher function(Cipher& c, string& funcName, const long& degree);
+	Cipher functionSimple(Cipher& c, string& funcName, const long& degree);
 	void functionExtended(vector<Cipher>& res, Cipher& c, string& funcName, const long& degree);
 
 	//-----------------------------------------
@@ -42,6 +43,7 @@ public:
 	vector<Cipher> fftRaw(vector<Cipher>& ciphers, const bool& isForward);
 	vector<Cipher> fft(vector<Cipher>& ciphers);
 	vector<Cipher> fftInv(vector<Cipher>& ciphers);
+	vector<Cipher> fftInvSimple(vector<Cipher>& ciphers);
 
 	//-----------------------------------------
 
