@@ -20,6 +20,7 @@ public:
 
 	static void showcompare(CZZ& val1, CZZ& val2, string prefix);
 	static void showcompare(vector<CZZ>& vals1, vector<CZZ>& vals2, string prefix);
+	static void showcompare(vector<CZZ>& vals1, CZZ& val2, string prefix);
 	static void showcompare(CZZ& val1, vector<CZZ>& vals2, string prefix);
 
 };

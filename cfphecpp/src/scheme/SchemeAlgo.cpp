@@ -56,15 +56,16 @@ void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degre
 
 Cipher SchemeAlgo::prod2(vector<Cipher>& ciphers, const long& logDegree) {
 	vector<Cipher> res = ciphers;
-	vector<Cipher> tmp2;
 	for (long i = logDegree; i > 0; --i) {
+		vector<Cipher> tmp;
 		long powi = (1 << i);
+		tmp.reserve(powi / 2);
 		for (long j = 0; j < powi; j = j + 2) {
-			Cipher c2 = scheme.mult(res[j], res[j + 1]);
-			scheme.modSwitchAndEqual(c2);
-			tmp2.push_back(c2);
+			Cipher cmult = scheme.mult(res[j], res[j + 1]);
+			scheme.modSwitchAndEqual(cmult);
+			tmp.push_back(cmult);
 		}
-		res = tmp2;
+		res = tmp;
 	}
 	return res[0];
 }
@@ -92,14 +93,15 @@ Cipher SchemeAlgo::inverse(Cipher& c, const long& steps) {
 	Cipher tmp = scheme.addConst(c, scheme.params.p);
 	scheme.modEmbedAndEqual(tmp);
 	Cipher res = tmp;
+
 	for (long i = 0; i < steps - 1; ++i) {
 		scheme.squareAndEqual(cpow);
 		scheme.modSwitchAndEqual(cpow);
-		res = cpow;
-		scheme.addConstAndEqual(res, scheme.params.p);
-		scheme.multAndEqual(res, tmp);
-		scheme.modSwitchAndEqual(res, i + 3);
-		tmp = res;
+		tmp = cpow;
+		scheme.addConstAndEqual(tmp, scheme.params.p);
+		scheme.multAndEqual(tmp, res);
+		scheme.modSwitchAndEqual(tmp, i + 3);
+		res = tmp;
 	}
 	return res;
 }

@@ -65,18 +65,18 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 4
 	 * Suggested: 15, 2, 56, 11, 10
 	 */
-//	TestScheme::testProd2Extended(15, 56, 5, 4);
+//	TestScheme::testProd2(13, 4, 30, 5, 4);
 
 	//-----------------------------------------
 
 	/*
 	 * Params: logN, logl, logp, L, invSteps
-	 * Suggested: 13, 2, 25, 7, 6
-	 * Suggested: 14, 2, 32, 7, 6
+	 * Suggested: 13, 3, 25, 10, 8
+	 * Suggested: 14, 3, 32, 10, 8
 	 */
 
-//	TestScheme::testInverse(13, 5, 25, 7, 6);
-	TestScheme::testInverseExtended(13, 5, 25, 7, 6);
+	TestScheme::testInverseBatch(13, 3, 25, 10, 8, 3);
+//	TestScheme::testInverseExtended(13, 3, 25, 10, 8);
 	//-----------------------------------------
 
 	/*

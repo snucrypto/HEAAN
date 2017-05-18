@@ -60,8 +60,9 @@ void TestScheme::testPowerOf2(long logN, long logl, long logp, long L, long logP
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double mr = (double)rand() / RAND_MAX;
-	double mi = sqrt(1 - mr * mr);
+	double angle = (double)arc4random() / RAND_MAX;
+	double mr = cos(angle * 2 * Pi);
+	double mi = sin(angle * 2 * Pi);
 
 	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ mpow = EvaluatorUtils::evaluatePow2(mr, mi, logPowDegree, logp);
@@ -91,8 +92,9 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double mr = (double)rand() / RAND_MAX;
-	double mi = sqrt(1 - mr * mr);
+	double angle = (double)arc4random() / RAND_MAX;
+	double mr = cos(angle * 2 * Pi);
+	double mi = sin(angle * 2 * Pi);
 
 	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	vector<CZZ> mpow = EvaluatorUtils::evaluatePow2vec(mr, mi, logPowDegree, logp);
@@ -124,8 +126,9 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double mr = (double)rand() / RAND_MAX;
-	double mi = sqrt(1 - mr * mr);
+	double angle = (double)arc4random() / RAND_MAX;
+	double mr = cos(angle * 2 * Pi);
+	double mi = sin(angle * 2 * Pi);
 
 	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	vector<CZZ> mpow = EvaluatorUtils::evaluatePowvec(mr, mi, powDegree, logp);
@@ -164,7 +167,7 @@ void TestScheme::testProd2(long logN, long logl, long logp, long L, long logProd
 	vector<CZZ> mvec;
 	CZZ mprod;
 
-	EvaluatorUtils::evaluateRandomValsAndProduct(mvec, mprod, prodDegree, logp);
+	EvaluatorUtils::evaluateRandomCircleValsAndProduct(mvec, mprod, prodDegree, logp);
 
 	vector<Cipher> cvec = scheme.fullSimpleEncryptVec(mvec);
 
@@ -178,59 +181,10 @@ void TestScheme::testProd2(long logN, long logl, long logp, long L, long logProd
 
 	cout << "!!! END TEST PROD 2 !!!" << endl;
 }
-//-----------------------------------------
-
-void TestScheme::testProd2Extended(long logN, long logl, long logp, long L, long logProdDegree) {
-	cout << "!!! START TEST PROD 2 EXTENDED !!!" << endl;
-
-	//-----------------------------------------
-	TimeUtils timeutils;
-	Params params(logN, logl, logp, L, 3, 0.5, 64);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
-	SchemeAlgo algo(scheme);
-	//-----------------------------------------
-
-	long degree = 1 << logProdDegree;
-
-	vector<vector<CZZ>> ms2k;
-	vector<vector<CZZ>> ds2k;
-	vector<vector<Cipher>> cs2k;
-
-	vector<CZZ> ms;
-	EvaluatorUtils::evaluateRandomVals(ms, degree, logp);
-	vector<Cipher> cs = scheme.fullSimpleEncryptVec(ms);
-
-	ms2k.push_back(ms);
-	for (long i = 0; i < logProdDegree; ++i) {
-		vector<CZZ> m2k;
-		long size = ms2k[i].size();
-		for (long j = 0; j < size; j = j + 2) {
-			CZZ m2 = (ms2k[i][j] * ms2k[i][j+1]) >> params.logp;
-			m2k.push_back(m2);
-		}
-		ms2k.push_back(m2k);
-	}
-
-	timeutils.start("Prod 2");
-	algo.prod2Extended(cs2k, cs, logProdDegree);
-	timeutils.stop("Prod 2");
-
-	for (long i = 0; i < logProdDegree + 1; ++i) {
-		vector<CZZ> d2k = scheme.fullSimpleDecryptVec(cs2k[i]);
-		ds2k.push_back(d2k);
-	}
-
-	for (long i = 0; i < logProdDegree + 1; ++i) {
-//		StringUtils::showcompare(ms2k[i], ds2k[i], "pow");
-	}
-	cout << "!!! END TEST PROD 2 EXTENDED !!!" << endl;
-}
 
 //-----------------------------------------
 
-void TestScheme::testInverse(long logN, long logl, long logp, long L, long invSteps) {
+void TestScheme::testInverseBatch(long logN, long logl, long logp, long L, long invSteps, long logSlots) {
 	cout << "!!! START TEST INVERSE !!!" << endl;
 
 	//-----------------------------------------
@@ -242,19 +196,19 @@ void TestScheme::testInverse(long logN, long logl, long logp, long L, long invSt
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double mi = (double)rand() / RAND_MAX;
-	double mr = sqrt(1 -mi * mi);
+	long slots = 1 << logSlots;
 
-	CZZ m = EvaluatorUtils::evaluateVal(1 - mr, mi, logp);
-	CZZ minv = EvaluatorUtils::evaluateInverse(mr, mi, logp);
+	vector<CZZ> mvec, minv;
 
-	Cipher c = scheme.fullEncrypt(m);
+	EvaluatorUtils::evaluateRandomCircleBarValsAndInverses(mvec, minv, slots, logp);
+
+	Cipher c = scheme.fullEncrypt(mvec);
 
 	timeutils.start("Inverse");
 	Cipher cinv = algo.inverse(c, invSteps);
 	timeutils.stop("Inverse");
 
-	CZZ dinv = scheme.fullSimpleDecrypt(cinv);
+	vector<CZZ> dinv = scheme.fullDecrypt(cinv);
 
 	StringUtils::showcompare(minv, dinv, "inv");
 
@@ -273,13 +227,14 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double mi = (double)rand() / RAND_MAX;
-	double mr = (double)rand() / RAND_MAX;
+	double angle = (double)arc4random() / RAND_MAX / 50;
+	double mr = cos(angle * 2 * Pi);
+	double mi = sin(angle * 2 * Pi);
 
-	CZZ m = EvaluatorUtils::evaluateVal(1 - mr, mi, logp);
+	CZZ mbar = EvaluatorUtils::evaluateVal(1 - mr, -mi, logp);
 	CZZ minv = EvaluatorUtils::evaluateInverse(mr, mi, logp);
 
-	Cipher c = scheme.fullEncrypt(m);
+	Cipher c = scheme.fullEncrypt(mbar);
 
 	vector<Cipher> cinv;
 	timeutils.start("Inverse extended");
@@ -326,7 +281,7 @@ void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long
 	cout << "!!! END TEST EXPONENT !!!" << endl;
 }
 
-void TestScheme::testExponentSimpleBatch(long logN, long logl, long logp, long L, long expDegree, long logSlots) {
+void TestScheme::testLazyExponentBatch(long logN, long logl, long logp, long L, long expDegree, long logSlots) {
 	cout << "!!! START TEST EXPONENT SIMPLE !!!" << endl;
 
 	//----------------------------
@@ -370,8 +325,8 @@ void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, l
 
 	//----------------------------
 
-	double mr = (double)rand() / RAND_MAX;
-	double mi = (double)rand() / RAND_MAX;
+	double mr = (double)arc4random() / RAND_MAX;
+	double mi = (double)arc4random() / RAND_MAX;
 
 	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ mexp = EvaluatorUtils::evaluateExponent(mr, mi, logp);
@@ -422,7 +377,7 @@ void TestScheme::testSigmoidBatch(long logN, long logl, long logp, long L, long 
 	cout << "!!! END TEST SIGMOID !!!" << endl;
 }
 
-void TestScheme::testSigmoidSimpleBatch(long logN, long logl, long logp, long L, long sigmoidDegree, long logSlots) {
+void TestScheme::testLazySigmoidBatch(long logN, long logl, long logp, long L, long sigmoidDegree, long logSlots) {
 	cout << "!!! START TEST SIGMOID SIMPLE !!!" << endl;
 
 	//----------------------------
@@ -465,8 +420,8 @@ void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, lo
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	double mr = (double)rand() / RAND_MAX;
-	double mi = (double)rand() / RAND_MAX;
+	double mr = (double)arc4random() / RAND_MAX;
+	double mi = (double)arc4random() / RAND_MAX;
 
 	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ msigmoid = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
@@ -555,7 +510,7 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logFFTdim
 	cout << "!!! END TEST FFT !!!" << endl;
 }
 
-void TestScheme::testFFTsimple(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg) {
+void TestScheme::testLazyFFT(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg) {
 	cout << "!!! START TEST FFT SIMPLE !!!" << endl;
 
 	//----------------------------

@@ -15,17 +15,22 @@ CZZ EvaluatorUtils::evaluateVal(const double& xr, const double& xi, const long& 
 }
 
 CZZ EvaluatorUtils::evaluateRandomVal(const long& logp) {
-	double mr = (double)rand() / RAND_MAX;
-	double mi = (double)rand() / RAND_MAX;
+	double mr = (double)arc4random() / RAND_MAX;
+	double mi = (double)arc4random() / RAND_MAX;
+	return evaluateVal(mr, mi, logp);
+}
+
+CZZ EvaluatorUtils::evaluateRandomCircleVal(const long& logp) {
+	double angle = (double)arc4random() / RAND_MAX;
+	double mr = cos(angle * 2 * Pi);
+	double mi = sin(angle * 2 * Pi);
 	return evaluateVal(mr, mi, logp);
 }
 
 void EvaluatorUtils::evaluateRandomVals(vector<CZZ>& res, const long& size, const long& logp) {
 	res.reserve(size);
 	for (long i = 0; i < size; ++i) {
-		double mr = (double)rand() / RAND_MAX;
-		double mi = (double)rand() / RAND_MAX;
-		CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		CZZ m = EvaluatorUtils::evaluateRandomVal(logp);
 		res.push_back(m);
 	}
 }
@@ -95,19 +100,33 @@ CZZ EvaluatorUtils::evaluateSigmoid(const double& xr, const double& xi, const lo
 	return evaluateVal(xsigmoidr, xsigmoidi, logp);
 }
 
-void EvaluatorUtils::evaluateRandomValsAndProduct(vector<CZZ>& vals, CZZ& prod, const long& size, const long& logp) {
+void EvaluatorUtils::evaluateRandomCircleValsAndProduct(vector<CZZ>& vals, CZZ& prod, const long& size, const long& logp) {
 	vals.reserve(size);
 	for (long i = 0; i < size; ++i) {
-		double mr = (double)rand() / RAND_MAX;
-		double mi = (double)rand() / RAND_MAX;
-		CZZ m = evaluateVal(mr, mi, logp);
-		CZZ fm = evaluateExponent(mr, mi, logp);
+		CZZ m = evaluateRandomCircleVal(logp);
 		vals.push_back(m);
 	}
 	prod = vals[0];
 	for (long i = 1; i < size; ++i) {
 		prod *= vals[i];
-		prod <<= logp;
+		prod >>= logp;
+	}
+}
+
+void EvaluatorUtils::evaluateRandomCircleBarValsAndInverses(vector<CZZ>& vals, vector<CZZ>& fvals, const long& size, const long& logp) {
+	vals.reserve(size);
+	fvals.reserve(size);
+	for (long i = 0; i < size; ++i) {
+		double angle = (double)arc4random() / RAND_MAX / 50;
+
+		double mr = cos(angle * 2 * Pi);
+		double mi = sin(angle * 2 * Pi);
+
+		CZZ mbar = EvaluatorUtils::evaluateVal(1 - mr, -mi, logp);
+		CZZ minv = EvaluatorUtils::evaluateInverse(mr, mi, logp);
+
+		vals.push_back(mbar);
+		fvals.push_back(minv);
 	}
 }
 
@@ -115,8 +134,8 @@ void EvaluatorUtils::evaluateRandomValsAndExponents(vector<CZZ>& vals, vector<CZ
 	vals.reserve(size);
 	fvals.reserve(size);
 	for (long i = 0; i < size; ++i) {
-		double mr = (double)rand() / RAND_MAX;
-		double mi = (double)rand() / RAND_MAX;
+		double mr = (double)arc4random() / RAND_MAX;
+		double mi = (double)arc4random() / RAND_MAX;
 		CZZ m = evaluateVal(mr, mi, logp);
 		CZZ fm = evaluateExponent(mr, mi, logp);
 		vals.push_back(m);
@@ -128,8 +147,8 @@ void EvaluatorUtils::evaluateRandomValsAndSigmoids(vector<CZZ>& vals, vector<CZZ
 	vals.reserve(size);
 	fvals.reserve(size);
 	for (long i = 0; i < size; ++i) {
-		double mr = (double)rand() / RAND_MAX;
-		double mi = (double)rand() / RAND_MAX;
+		double mr = (double)arc4random() / RAND_MAX;
+		double mi = (double)arc4random() / RAND_MAX;
 		CZZ m = evaluateVal(mr, mi, logp);
 		CZZ fm = evaluateSigmoid(mr, mi, logp);
 		vals.push_back(m);

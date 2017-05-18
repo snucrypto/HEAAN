@@ -25,29 +25,28 @@ public:
 	//-----------------------------------------
 
 	static void testProd2(long logN, long logl, long logp, long L, long logProdDegree);
-	static void testProd2Extended(long logN, long logl, long logp, long L, long logProdDegree);
 
 	//-----------------------------------------
 
-	static void testInverse(long logN, long logl, long logp, long L, long invSteps);
+	static void testInverseBatch(long logN, long logl, long logp, long L, long invSteps, long logSlots);
 	static void testInverseExtended(long logN, long logl, long logp, long L, long invSteps);
 
 	//-----------------------------------------
 
 	static void testExponentBatch(long logN, long logl, long logp, long L, long expSteps, long logSlots);
-	static void testExponentSimpleBatch(long logN, long logl, long logp, long L, long expSteps, long logSlots);
+	static void testLazyExponentBatch(long logN, long logl, long logp, long L, long expSteps, long logSlots);
 	static void testExponentExtended(long logN, long logl, long logp, long L, long expSteps);
 
 	//-----------------------------------------
 
 	static void testSigmoidBatch(long logN, long logl, long logp, long L, long sigmoidSteps, long logSlots);
-	static void testSigmoidSimpleBatch(long logN, long logl, long logp, long L, long sigmoidSteps, long logSlots);
 	static void testSigmoidExtended(long logN, long logl, long logp, long L, long sigmoidSteps);
 
+	static void testLazySigmoidBatch(long logN, long logl, long logp, long L, long sigmoidSteps, long logSlots);
 	//-----------------------------------------
 
 	static void testFFT(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg);
-	static void testFFTsimple(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg);
+	static void testLazyFFT(long logN, long logl, long logp, long L, long logFFTdim, long FFTdeg);
 };
 
 #endif /* TEST_TESTSCHEME_H_ */
