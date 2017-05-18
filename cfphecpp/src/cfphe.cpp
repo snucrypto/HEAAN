@@ -45,8 +45,8 @@ int main() {
 	 * Suggested: 15, 2, 56, 11, 10, 3
 	 */
 
-//	TestScheme::testPowerOf2Batch(13, 2, 30, 5, 4, 3);
-//	TestScheme::testPowerOf2Extended(15, 2, 56, 11, 10);
+	TestScheme::testPowerOf2Batch(15, 2, 40, 11, 10, 3);
+//	TestScheme::testPowerOf2Extended(15, 3, 56, 11, 10);
 
 	//-----------------------------------------
 
@@ -56,7 +56,7 @@ int main() {
 	 * Suggested: 15, 2, 56, 11, 903, 3
 	 */
 
-//	TestScheme::testPowerBatch(13, 4, 30, 5, 13, 3);
+//	TestScheme::testPowerBatch(15, 4, 56, 11, 1024, 3);
 //	TestScheme::testPowerExtended(13, 4, 30, 5, 13);
 
 	//-----------------------------------------
@@ -66,7 +66,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 4, 3
 	 * Suggested: 15, 2, 56, 11, 10, 3
 	 */
-	TestScheme::testProd2Batch(13, 4, 30, 5, 4, 3);
+//	TestScheme::testProd2Batch(13, 4, 30, 5, 4, 3);
 
 	//-----------------------------------------
 
@@ -85,7 +85,7 @@ int main() {
 	 * Suggested: 13, 2, 35, 5, 8, 3
 	 * Suggested: 13, 37, 35, 4, 8, 3 (for lazy)
 	 */
-//	TestScheme::testExponentBatch(13, 2, 35, 5, 8, 3);
+//	TestScheme::testExponentBatch(13, 2, 35, 6, 10, 3);
 //	TestScheme::testLazyExponentBatch(13, 37, 35, 4, 8, 3);
 //	TestScheme::testExponentExtended(13, 2, 25, 6, 10);
 

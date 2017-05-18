@@ -9,7 +9,7 @@
 
 Cipher SchemeAlgo::powerOf2(Cipher& c, const long& logDegree) {
 	Cipher res = c;
-	for (long i = 1; i < logDegree + 1; ++i) {
+	for (long i = 0; i < logDegree; ++i) {
 		scheme.squareAndEqual(res);
 		scheme.modSwitchAndEqual(res);
 	}

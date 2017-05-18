@@ -71,7 +71,7 @@ void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long
 	Cipher cpow = algo.powerOf2(c, logDegree);
 	timeutils.stop("Power of 2");
 
-	CZZ dpow = scheme.fullSingleDecrypt(cpow);
+	vector<CZZ> dpow = scheme.fullDecrypt(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow");
 
