@@ -15,8 +15,7 @@ public:
 	ZZX rx;
 	ZZX ix;
 
-	CZZX(ZZX rx, ZZX ix) : rx(rx), ix(ix) {};
-	CZZX() : rx(ZZX::zero()), ix(ZZX::zero()) {};
+	CZZX(ZZX rx = ZZX::zero(), ZZX ix = ZZX::zero()) : rx(rx), ix(ix) {};
 
 	CZZX operator+(const CZZX& o);
 	void operator+=(const CZZX& o);

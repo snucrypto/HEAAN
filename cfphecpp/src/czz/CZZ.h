@@ -12,8 +12,7 @@ public:
 	ZZ i;
 
 	CZZ(long r, long i) : r(ZZ(r)), i(ZZ(i)) {};
-	CZZ(ZZ r, ZZ i) : r(r), i(i) {};
-	CZZ() : r(ZZ::zero()), i(ZZ::zero()) {};
+	CZZ(ZZ r = ZZ::zero(), ZZ i = ZZ::zero()) : r(r), i(i) {};
 
 	CZZ operator-();
 	CZZ operator+(const CZZ& o);

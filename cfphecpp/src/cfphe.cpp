@@ -105,7 +105,7 @@ int main() {
 	 * Suggested: 14, 7, 50, 3, 4, 3;
 	 * Suggested: 14, 7, 50, 2, 4 (for lazy)
 	 */
-	TestScheme::testFFT(14, 5, 50, 3, 4);
+//	TestScheme::testFFT(14, 5, 50, 3, 4);
 //	TestScheme::testFFTBatch(14, 5, 50, 3, 4, 3);
 //	TestScheme::testLazyFFT(13, 7, 50, 2, 4);
 
