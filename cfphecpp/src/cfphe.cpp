@@ -33,16 +33,16 @@ int main() {
 
 	/*
 	 * Params: logN, logl, logp, L, logSlots
-	 * Suggested: 13, 30, 5, 12
+	 * Suggested: 13, 2, 30, 5, 12
 	 */
-//	TestScheme::testEncode(13, 30, 4, 12);
+//	TestScheme::testEncode(13, 2, 30, 4, 12);
 
 	//-----------------------------------------
 
 	/*
 	 * Params: logN, logl, logp, L, logPowsDegree
-	 * Suggested: 13, 30, 5, 4
-	 * Suggested: 15, 56, 11, 10
+	 * Suggested: 13, 2, 30, 5, 4
+	 * Suggested: 15, 2, 56, 11, 10
 	 */
 
 //	TestScheme::testPowerOf2(13, 30, 5, 4);
@@ -52,8 +52,8 @@ int main() {
 
 	/*
 	 * Params: logN, logl, logp, L, powDegree
-	 * Suggested: 13, 30, 5, 13
-	 * Suggested: 15, 56, 11, 903
+	 * Suggested: 13, 2, 30, 5, 13
+	 * Suggested: 15, 2, 56, 11, 903
 	 */
 
 //	TestScheme::testPowerExtended(13, 30, 5, 13);
@@ -62,8 +62,8 @@ int main() {
 
 	/*
 	 * Params: logN, logl, logp, L, logProdDegree
-	 * Suggested: 13, 30, 5, 4
-	 * Suggested: 15, 56, 11, 10
+	 * Suggested: 13, 2, 30, 5, 4
+	 * Suggested: 15, 2, 56, 11, 10
 	 */
 //	TestScheme::testProd2Extended(15, 56, 5, 4);
 
@@ -71,44 +71,43 @@ int main() {
 
 	/*
 	 * Params: logN, logl, logp, L, invSteps
-	 * Suggested: 13, 25, 6, 5
-	 * Suggested: 14, 32, 6, 5
+	 * Suggested: 13, 2, 25, 7, 6
+	 * Suggested: 14, 2, 32, 7, 6
 	 */
 
-	TestScheme::testInverse(13, 5, 25, 7, 6);
-//	TestScheme::testInverse(13, 2,  25, 7, 6);
-//	TestScheme::testInverseExtended(13, 5, 25, 7, 6);
-//	TestScheme::testInverseExtended(13, 2, 25, 7, 6);
+//	TestScheme::testInverse(13, 5, 25, 7, 6);
+	TestScheme::testInverseExtended(13, 5, 25, 7, 6);
 	//-----------------------------------------
 
 	/*
 	 * Params: logN, logl, logp, L, expSteps, logSlots
-	 * Suggested: 13, 25, 6, 10, 5
+	 * Suggested: 13, 2, 35, 5, 8, 3
+	 * Suggested: 13, 37, 35, 4, 8, 3 (for simple)
 	 */
 //	TestScheme::testExponentBatch(13, 2, 35, 5, 8, 3);
 //	TestScheme::testExponentSimpleBatch(13, 37, 35, 4, 8, 3);
-//	TestScheme::testExponentExtended(13, 25, 6, 10);
+//	TestScheme::testExponentExtended(13, 2, 25, 6, 10);
 
 	//-----------------------------------------
 
 	/*
 	 * Params: logN, logl, logp, L, sigmoidSteps, logSlots
-	 * Suggested: 13, 25, 6, 9, 5
+	 * Suggested: 13, 1, 35, 5, 7, 3
+	 * Suggested: 13, 36, 35, 4, 7, 3 (for simple)
 	 */
 
-//	TestScheme::testSigmoidBatch(13, 1, 25, 5, 7, 3);
+//	TestScheme::testSigmoidBatch(13, 1, 35, 5, 7, 3);
 //	TestScheme::testSigmoidSimpleBatch(13, 36, 35, 4, 7, 3);
-//	TestScheme::testSigmoidSimpleBatch(14, 36, 35, 5, 9, 3);
-//	TestScheme::testSigmoidExtended(13, 25, 6, 10);
+//	TestScheme::testSigmoidExtended(13, 1, 35, 5, 7);
 
 	//-----------------------------------------
 
 	/*
 	 * Params: logN, logp, L, logFFTdim, FFTdeg
-	 * Suggested: 13, 30, 3, 4, 5
-	 * Suggested: 14, 13, 3, 13, 5
+	 * Suggested: 14, 7, 50, 3, 4, 5
+	 * Suggested: 14, 7, 50, 2, 4, 5 (for simple)
 	 */
-//	TestScheme::testFFT(14, 1, 13, 3, 13, 10);
+//	TestScheme::testFFT(14, 1, 30, 3, 13, 5);
 //	TestScheme::testFFTsimple(13, 7, 50, 2, 4, 5);
 
 	//-----------------------------------------
