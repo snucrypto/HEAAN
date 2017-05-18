@@ -44,7 +44,7 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 
 	StringUtils::showcompare(mvec, dvec, "val");
 
-	cout << "!!! STOP TEST ENCODE BATCH !!!" << endl;
+	cout << "!!! END TEST ENCODE BATCH !!!" << endl;
 }
 
 //-----------------------------------------
@@ -79,7 +79,7 @@ void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long
 }
 
 void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, long logDegree) {
-	cout << "!!! END TEST POWER OF 2 EXTENDED !!!" << endl;
+	cout << "!!! START TEST POWER OF 2 EXTENDED !!!" << endl;
 
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -114,7 +114,7 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 //-----------------------------------------
 
 void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
-	cout << "!!! END TEST POWER BATCH !!!" << endl;
+	cout << "!!! START TEST POWER BATCH !!!" << endl;
 
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -140,7 +140,6 @@ void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long de
 	StringUtils::showcompare(mpow, dpow, "pow");
 
 	cout << "!!! END TEST POWER BATCH !!!" << endl;
-
 }
 
 void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long degree) {
