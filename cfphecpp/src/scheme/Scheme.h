@@ -50,7 +50,7 @@ public:
 	Cipher fullEncrypt(vector<CZZ>& vals);
 	Cipher fullEncrypt(CZZ& val, long& level);
 	Cipher fullEncrypt(CZZ& val);
-	vector<Cipher> fullSimpleEncryptVec(vector<CZZ>& vals);
+	vector<Cipher> fullSingleEncryptVec(vector<CZZ>& vals);
 
 	//-----------------------------------------
 
@@ -59,8 +59,8 @@ public:
 	vector<CZZ> deConjugate(vector<CZZ>& vals);
 
 	vector<CZZ> fullDecrypt(Cipher& cipher);
-	CZZ fullSimpleDecrypt(Cipher& cipher);
-	vector<CZZ> fullSimpleDecryptVec(vector<Cipher>& ciphers);
+	CZZ fullSingleDecrypt(Cipher& cipher);
+	vector<CZZ> fullSingleDecryptVec(vector<Cipher>& ciphers);
 
 	//-----------------------------------------
 

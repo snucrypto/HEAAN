@@ -23,7 +23,7 @@
 //-----------------------------------------
 
 void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long logSlots) {
-	cout << "!!! START TEST ENCODE !!!" << endl;
+	cout << "!!! START TEST ENCODE BATCH !!!" << endl;
 
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -43,13 +43,13 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 
 	StringUtils::showcompare(mvec, dvec, "val");
 
-	cout << "!!! STOP TEST ENCODE !!!" << endl;
+	cout << "!!! STOP TEST ENCODE BATCH !!!" << endl;
 }
 
 //-----------------------------------------
 
-void TestScheme::testPowerOf2(long logN, long logl, long logp, long L, long logPowDegree) {
-	cout << "!!! START TEST POWER OF 2 !!!" << endl;
+void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots) {
+	cout << "!!! START TEST POWER OF 2 BATCH !!!" << endl;
 
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -60,27 +60,25 @@ void TestScheme::testPowerOf2(long logN, long logl, long logp, long L, long logP
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double angle = (double)arc4random() / RAND_MAX;
-	double mr = cos(angle * 2 * Pi);
-	double mi = sin(angle * 2 * Pi);
+	vector<CZZ> mvec, mpow;
 
-	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
-	CZZ mpow = EvaluatorUtils::evaluatePow2(mr, mi, logPowDegree, logp);
+	long slots = 1 << logSlots;
+	EvaluatorUtils::evaluateRandomCircleValsAndPows2(mvec, mpow, slots, logDegree, logp);
 
-	Cipher c = scheme.fullEncrypt(m);
+	Cipher c = scheme.fullEncrypt(mvec);
 
 	timeutils.start("Power of 2");
-	Cipher cpow = algo.powerOf2(c, logPowDegree);
+	Cipher cpow = algo.powerOf2(c, logDegree);
 	timeutils.stop("Power of 2");
 
-	CZZ dpow = scheme.fullSimpleDecrypt(cpow);
+	CZZ dpow = scheme.fullSingleDecrypt(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow");
 
-	cout << "!!! END TEST POWER OF 2 !!!" << endl;
+	cout << "!!! END TEST POWER OF 2 BATCH !!!" << endl;
 }
 
-void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, long logPowDegree) {
+void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, long logDegree) {
 	cout << "!!! END TEST POWER OF 2 EXTENDED !!!" << endl;
 
 	//-----------------------------------------
@@ -97,16 +95,16 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 	double mi = sin(angle * 2 * Pi);
 
 	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
-	vector<CZZ> mpow = EvaluatorUtils::evaluatePow2vec(mr, mi, logPowDegree, logp);
+	vector<CZZ> mpow = EvaluatorUtils::evaluatePow2vec(mr, mi, logDegree, logp);
 
 	Cipher c = scheme.fullEncrypt(m);
 
 	vector<Cipher> cpow;
 	timeutils.start("Power of 2");
-	algo.powerOf2Extended(cpow, c, logPowDegree);
+	algo.powerOf2Extended(cpow, c, logDegree);
 	timeutils.stop("Power of 2");
 
-	vector<CZZ> dpow = scheme.fullSimpleDecryptVec(cpow);
+	vector<CZZ> dpow = scheme.fullSingleDecryptVec(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow2");
 	cout << "!!! END TEST POWER OF 2 EXTENDED !!!" << endl;
@@ -114,7 +112,38 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 
 //-----------------------------------------
 
-void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long powDegree) {
+void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
+	cout << "!!! END TEST POWER BATCH !!!" << endl;
+
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L, 3, 0.5, 64);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+
+	long slots = 1 << logSlots;
+
+	vector<CZZ> mvec, mpow;
+	EvaluatorUtils::evaluateRandomCircleValsAndPows(mvec, mpow, slots, degree, logp);
+
+	Cipher c = scheme.fullEncrypt(mvec);
+
+	timeutils.start("Power");
+	Cipher cpow = algo.power(c, degree);
+	timeutils.stop("Power");
+
+	vector<CZZ> dpow = scheme.fullDecrypt(cpow);
+
+	StringUtils::showcompare(mpow, dpow, "pow");
+
+	cout << "!!! END TEST POWER BATCH !!!" << endl;
+
+}
+
+void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long degree) {
 	cout << "!!! END TEST POWER EXTENDED !!!" << endl;
 
 	//-----------------------------------------
@@ -131,16 +160,16 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 	double mi = sin(angle * 2 * Pi);
 
 	CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
-	vector<CZZ> mpow = EvaluatorUtils::evaluatePowvec(mr, mi, powDegree, logp);
+	vector<CZZ> mpow = EvaluatorUtils::evaluatePowvec(mr, mi, degree, logp);
 
 	Cipher c = scheme.fullEncrypt(m);
 
 	vector<Cipher> cpow;
 	timeutils.start("Power");
-	algo.powerExtended(cpow, c, powDegree);
+	algo.powerExtended(cpow, c, degree);
 	timeutils.stop("Power");
 
-	vector<CZZ> dpow = scheme.fullSimpleDecryptVec(cpow);
+	vector<CZZ> dpow = scheme.fullSingleDecryptVec(cpow);
 
 	StringUtils::showcompare(mpow, dpow, "pow");
 
@@ -150,8 +179,8 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 
 //-----------------------------------------
 
-void TestScheme::testProd2(long logN, long logl, long logp, long L, long logProdDegree) {
-	cout << "!!! START TEST PROD 2 !!!" << endl;
+void TestScheme::testProd2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots) {
+	cout << "!!! START TEST PROD 2 BATCH !!!" << endl;
 
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -162,24 +191,28 @@ void TestScheme::testProd2(long logN, long logl, long logp, long L, long logProd
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	long prodDegree = 1 << logProdDegree;
+	long slots = 1 << logSlots;
+	long degree = 1 << logDegree;
 
-	vector<CZZ> mvec;
-	CZZ mprod;
+	vector<Cipher> cvec;
+	vector<vector<CZZ>> mvec;
+	vector<CZZ> pvec;
 
-	EvaluatorUtils::evaluateRandomCircleValsAndProduct(mvec, mprod, prodDegree, logp);
+	EvaluatorUtils::evaluateRandomCircleValsAndProduct(mvec, pvec, slots, degree, logp);
 
-	vector<Cipher> cvec = scheme.fullSimpleEncryptVec(mvec);
-
+	for (long i = 0; i < degree; ++i) {
+		Cipher c = scheme.fullEncrypt(mvec[i]);
+		cvec.push_back(c);
+	}
 	timeutils.start("Prod 2");
-	Cipher cprod = algo.prod2(cvec, logProdDegree);
+	Cipher cprod = algo.prod2(cvec, logDegree);
 	timeutils.stop("Prod 2");
 
-	CZZ dprod = scheme.fullSimpleDecrypt(cprod);
+	vector<CZZ> dvec = scheme.fullDecrypt(cprod);
 
-	StringUtils::showcompare(mprod, dprod, "prod");
+	StringUtils::showcompare(pvec, dvec, "prod");
 
-	cout << "!!! END TEST PROD 2 !!!" << endl;
+	cout << "!!! END TEST PROD 2 BATCH !!!" << endl;
 }
 
 //-----------------------------------------
@@ -241,7 +274,7 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 	algo.inverseExtended(cinv, c, invSteps);
 	timeutils.stop("Inverse extended");
 
-	vector<CZZ> dinv = scheme.fullSimpleDecryptVec(cinv);
+	vector<CZZ> dinv = scheme.fullSingleDecryptVec(cinv);
 
 	StringUtils::showcompare(minv, dinv, "inv");
 
@@ -302,7 +335,7 @@ void TestScheme::testLazyExponentBatch(long logN, long logl, long logp, long L, 
 	Cipher c = scheme.fullEncrypt(mvec);
 
 	timeutils.start(EXPONENT);
-	Cipher cexp = algo.functionSimple(c, EXPONENT, expDegree);
+	Cipher cexp = algo.functionLazy(c, EXPONENT, expDegree);
 	timeutils.stop(EXPONENT);
 
 	vector<CZZ> dvec = scheme.fullDecrypt(cexp);
@@ -337,7 +370,7 @@ void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, l
 	timeutils.start(EXPONENT);
 	algo.functionExtended(cexp, c, EXPONENT, expDegree);
 	timeutils.stop(EXPONENT);
-	vector<CZZ> dexp = scheme.fullSimpleDecryptVec(cexp);
+	vector<CZZ> dexp = scheme.fullSingleDecryptVec(cexp);
 
 	StringUtils::showcompare(mexp, dexp, EXPONENT);
 
@@ -398,7 +431,7 @@ void TestScheme::testLazySigmoidBatch(long logN, long logl, long logp, long L, l
 	Cipher c = scheme.fullEncrypt(mvec);
 
 	timeutils.start(SIGMOID);
-	Cipher csigmoid = algo.functionSimple(c, SIGMOID, sigmoidDegree);
+	Cipher csigmoid = algo.functionLazy(c, SIGMOID, sigmoidDegree);
 	timeutils.stop(SIGMOID);
 
 	vector<CZZ> dvec = scheme.fullDecrypt(csigmoid);
@@ -434,7 +467,7 @@ void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, lo
 	algo.functionExtended(csigmoid, c, SIGMOID, sigmoidDegree);
 	timeutils.stop(SIGMOID);
 
-	vector<CZZ> dsigmoid = scheme.fullSimpleDecryptVec(csigmoid);
+	vector<CZZ> dsigmoid = scheme.fullSingleDecryptVec(csigmoid);
 
 	StringUtils::showcompare(msigmoid, dsigmoid, SIGMOID);
 
@@ -482,8 +515,8 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logFFTdim
 
 	vector<CZZ> mpx = NumUtils::fftInv(mfftx, params.ksiPows);
 
-	vector<Cipher> cp1 = scheme.fullSimpleEncryptVec(mp1);
-	vector<Cipher> cp2 = scheme.fullSimpleEncryptVec(mp2);
+	vector<Cipher> cp1 = scheme.fullSingleEncryptVec(mp1);
+	vector<Cipher> cp2 = scheme.fullSingleEncryptVec(mp2);
 
 	timeutils.start("cfft 1");
 	cfft1 = algo.fft(cp1);
@@ -503,7 +536,7 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logFFTdim
 	vector<Cipher> cpx = algo.fftInv(cfft1);
 	timeutils.stop("cfftx inv");
 
-	vector<CZZ> dpx = scheme.fullSimpleDecryptVec(cpx);
+	vector<CZZ> dpx = scheme.fullSingleDecryptVec(cpx);
 
 //	StringUtils::showcompare(mpx, dpx, "fft");
 
@@ -547,10 +580,10 @@ void TestScheme::testLazyFFT(long logN, long logl, long logp, long L, long logFF
 		mfftx.push_back(tmp);
 	}
 
-	vector<CZZ> mpx = NumUtils::fftInvSimple(mfftx, params.ksiPows);
+	vector<CZZ> mpx = NumUtils::fftInvLazy(mfftx, params.ksiPows);
 
-	vector<Cipher> cp1 = scheme.fullSimpleEncryptVec(mp1);
-	vector<Cipher> cp2 = scheme.fullSimpleEncryptVec(mp2);
+	vector<Cipher> cp1 = scheme.fullSingleEncryptVec(mp1);
+	vector<Cipher> cp2 = scheme.fullSingleEncryptVec(mp2);
 
 	timeutils.start("cfft 1");
 	cfft1 = algo.fft(cp1);
@@ -567,10 +600,10 @@ void TestScheme::testLazyFFT(long logN, long logl, long logp, long L, long logFF
 	timeutils.stop("mul fft");
 
 	timeutils.start("cfftx inv");
-	vector<Cipher> cpx = algo.fftInvSimple(cfft1);
+	vector<Cipher> cpx = algo.fftInvLazy(cfft1);
 	timeutils.stop("cfftx inv");
 
-	vector<CZZ> dpx = scheme.fullSimpleDecryptVec(cpx);
+	vector<CZZ> dpx = scheme.fullSingleDecryptVec(cpx);
 
 	StringUtils::showcompare(mpx, dpx, "fft");
 

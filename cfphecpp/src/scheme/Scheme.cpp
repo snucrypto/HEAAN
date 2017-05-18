@@ -148,7 +148,7 @@ Cipher Scheme::fullEncrypt(CZZ& val) {
 	return encrypt(msg);
 }
 
-vector<Cipher> Scheme::fullSimpleEncryptVec(vector<CZZ>& vals) {
+vector<Cipher> Scheme::fullSingleEncryptVec(vector<CZZ>& vals) {
 	vector<Cipher> res;
 	for (long i = 0; i < vals.size(); ++i) {
 		Cipher c = fullEncrypt(vals[i]);
@@ -201,13 +201,13 @@ vector<CZZ> Scheme::fullDecrypt(Cipher& cipher) {
 	return deConjugate(conj);
 }
 
-CZZ Scheme::fullSimpleDecrypt(Cipher& cipher) {
+CZZ Scheme::fullSingleDecrypt(Cipher& cipher) {
 	Message msg = decrypt(cipher);
 	vector<CZZ> conj = decode(msg);
 	return conj[0];
 }
 
-vector<CZZ> Scheme::fullSimpleDecryptVec(vector<Cipher>& ciphers) {
+vector<CZZ> Scheme::fullSingleDecryptVec(vector<Cipher>& ciphers) {
 	vector<CZZ> res;
 	long size = ciphers.size();
 	res.reserve(size);

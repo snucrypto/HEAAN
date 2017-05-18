@@ -29,6 +29,20 @@ void SchemeAlgo::powerOf2Extended(vector<Cipher>& res, Cipher& c, const long& lo
 
 //-----------------------------------------
 
+Cipher SchemeAlgo::power(Cipher& c, const long& degree) {
+	long logDegree = log2(degree);
+	long po2Degree = 1 << logDegree;
+
+	Cipher res = powerOf2(c, logDegree);
+	long remDegree = degree - po2Degree;
+	if(remDegree > 0) {
+		Cipher tmp = power(c, remDegree);
+		scheme.modEmbedAndEqual(tmp, res.level);
+		scheme.multModSwitchAndEqual(res, tmp);
+	}
+	return res;
+}
+
 void SchemeAlgo::powerExtended(vector<Cipher>& res, Cipher& c, const long& degree) {
 	res.reserve(degree);
 	long logDegree = log2(degree);
@@ -149,7 +163,7 @@ Cipher SchemeAlgo::function(Cipher& c, string& funcName, const long& degree) {
 	return res;
 }
 
-Cipher SchemeAlgo::functionSimple(Cipher& c, string& funcName, const long& degree) {
+Cipher SchemeAlgo::functionLazy(Cipher& c, string& funcName, const long& degree) {
 	vector<Cipher> cpows;
 	powerExtended(cpows, c, degree);
 
@@ -253,6 +267,6 @@ vector<Cipher> SchemeAlgo::fftInv(vector<Cipher>& ciphers) {
 	return fftInv;
 }
 
-vector<Cipher> SchemeAlgo::fftInvSimple(vector<Cipher>& ciphers) {
+vector<Cipher> SchemeAlgo::fftInvLazy(vector<Cipher>& ciphers) {
 	return fftRaw(ciphers, false);
 }

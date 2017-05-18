@@ -36,10 +36,14 @@ void EvaluatorUtils::evaluateRandomVals(vector<CZZ>& res, const long& size, cons
 }
 
 CZZ EvaluatorUtils::evaluatePow(const double& xr, const double& xi, const long& degree, const long& logp) {
-	CZZ m = evaluateVal(xr, xi, logp);
-	CZZ res = m;
-	for (int i = 0; i < degree; ++i) {
-		res = (res * m) >> logp;
+	long logDegree = log2(degree);
+	long po2Degree = 1 << logDegree;
+	CZZ res = evaluatePow2(xr, xi, logDegree, logp);
+	long remDegree = degree - po2Degree;
+	if(remDegree > 0) {
+		CZZ tmp = evaluatePow(xr, xi, remDegree, logp);
+		res *= tmp;
+		res >>= logp;
 	}
 	return res;
 }
@@ -100,16 +104,52 @@ CZZ EvaluatorUtils::evaluateSigmoid(const double& xr, const double& xi, const lo
 	return evaluateVal(xsigmoidr, xsigmoidi, logp);
 }
 
-void EvaluatorUtils::evaluateRandomCircleValsAndProduct(vector<CZZ>& vals, CZZ& prod, const long& size, const long& logp) {
+void EvaluatorUtils::evaluateRandomCircleValsAndPows(vector<CZZ>& vals, vector<CZZ>& fvals, const long& size, const long& degree, const long& logp) {
+	for (long i = 0; i < size; ++i) {
+		double angle = (double)arc4random() / RAND_MAX;
+		double mr = cos(angle * 2 * Pi);
+		double mi = sin(angle * 2 * Pi);
+
+		CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		CZZ mpow = EvaluatorUtils::evaluatePow(mr, mi, degree, logp);
+
+		vals.push_back(m);
+		fvals.push_back(mpow);
+	}
+}
+
+void EvaluatorUtils::evaluateRandomCircleValsAndPows2(vector<CZZ>& vals, vector<CZZ>& fvals, const long& size, const long& logDegree, const long& logp) {
+	for (long i = 0; i < size; ++i) {
+		double angle = (double)arc4random() / RAND_MAX;
+		double mr = cos(angle * 2 * Pi);
+		double mi = sin(angle * 2 * Pi);
+
+		CZZ m = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		CZZ mpow = EvaluatorUtils::evaluatePow2(mr, mi, logDegree, logp);
+
+		vals.push_back(m);
+		fvals.push_back(mpow);
+	}
+}
+
+void EvaluatorUtils::evaluateRandomCircleValsAndProduct(vector<vector<CZZ>>& vals, vector<CZZ>& fvals, const long& slots, const long& size, const long& logp) {
 	vals.reserve(size);
 	for (long i = 0; i < size; ++i) {
-		CZZ m = evaluateRandomCircleVal(logp);
-		vals.push_back(m);
+		vector<CZZ> tmp;
+		for (long j = 0; j < slots; ++j) {
+			CZZ m = evaluateRandomCircleVal(logp);
+			tmp.push_back(m);
+		}
+		vals.push_back(tmp);
 	}
-	prod = vals[0];
-	for (long i = 1; i < size; ++i) {
-		prod *= vals[i];
-		prod >>= logp;
+
+	for (long j = 0; j < slots; ++j) {
+		CZZ prod = vals[0][j];
+		for (long i = 1; i < size; ++i) {
+			prod *= vals[i][j];
+			prod >>= logp;
+		}
+		fvals.push_back(prod);
 	}
 }
 

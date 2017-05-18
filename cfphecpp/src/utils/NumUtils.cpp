@@ -173,7 +173,7 @@ vector<CZZ> NumUtils::fftInv(vector<CZZ>& vals, KsiPows& ksiPows) {
 	return fftInv;
 }
 
-vector<CZZ> NumUtils::fftInvSimple(vector<CZZ>& vals, KsiPows& ksiPows) {
+vector<CZZ> NumUtils::fftInvLazy(vector<CZZ>& vals, KsiPows& ksiPows) {
 	return fftRaw(vals, ksiPows, false);
 }
 vector<CZZ> NumUtils::fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows) {

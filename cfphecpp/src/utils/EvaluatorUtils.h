@@ -37,7 +37,11 @@ public:
 	//-----------------------------------------
 
 	static void evaluateRandomVals(vector<CZZ>& res, const long& size, const long& logp);
-	static void evaluateRandomCircleValsAndProduct(vector<CZZ>& vals, CZZ& prod, const long& slots, const long& logp);
+
+
+	static void evaluateRandomCircleValsAndPows(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& degree, const long& logp);
+	static void evaluateRandomCircleValsAndPows2(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logDeg, const long& logp);
+	static void evaluateRandomCircleValsAndProduct(vector<vector<CZZ>>& vals, vector<CZZ>& fvals, const long& slots, const long& size, const long& logp);
 	static void evaluateRandomCircleBarValsAndInverses(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
 	static void evaluateRandomValsAndExponents(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
 	static void evaluateRandomValsAndSigmoids(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);

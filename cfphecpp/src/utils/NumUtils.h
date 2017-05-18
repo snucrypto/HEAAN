@@ -30,7 +30,7 @@ public:
 	static vector<CZZ> fftRaw(vector<CZZ>& vals, KsiPows& ksiPows, const bool& isForward);
 	static vector<CZZ> fft(vector<CZZ>& vals, KsiPows& ksiPows);
 	static vector<CZZ> fftInv(vector<CZZ>& vals, KsiPows& ksiPows);
-	static vector<CZZ> fftInvSimple(vector<CZZ>& vals, KsiPows& ksiPows);
+	static vector<CZZ> fftInvLazy(vector<CZZ>& vals, KsiPows& ksiPows);
 
 	//-----------------------------------------
 

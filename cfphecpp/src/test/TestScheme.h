@@ -14,17 +14,17 @@ public:
 
 	//-----------------------------------------
 
-	static void testPowerOf2(long logN, long logl, long logp, long L, long logPowDegree);
+	static void testPowerOf2Batch(long logN, long logl, long logp, long L, long logPowDegree, long logSlots);
 	static void testPowerOf2Extended(long logN, long logl, long logp, long L, long logPowDegree);
 
 	//-----------------------------------------
 
-	static void testPower(long logN, long logl, long logp, long L, long powDegree);
+	static void testPowerBatch(long logN, long logl, long logp, long L, long powDegree, long logSlots);
 	static void testPowerExtended(long logN, long logl, long logp, long L, long  powDegree);
 
 	//-----------------------------------------
 
-	static void testProd2(long logN, long logl, long logp, long L, long logProdDegree);
+	static void testProd2Batch(long logN, long logl, long logp, long L, long logProdDegree, long logSlots);
 
 	//-----------------------------------------
 
@@ -41,7 +41,6 @@ public:
 
 	static void testSigmoidBatch(long logN, long logl, long logp, long L, long sigmoidSteps, long logSlots);
 	static void testSigmoidExtended(long logN, long logl, long logp, long L, long sigmoidSteps);
-
 	static void testLazySigmoidBatch(long logN, long logl, long logp, long L, long sigmoidSteps, long logSlots);
 	//-----------------------------------------
 
