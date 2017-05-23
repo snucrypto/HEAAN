@@ -1,6 +1,5 @@
 #include "TaylorPows.h"
 
-#include <initializer_list>
 #include <utility>
 
 TaylorPows::TaylorPows() {

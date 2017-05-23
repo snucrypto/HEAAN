@@ -45,15 +45,10 @@ void Scheme::trueValue(ZZ& m, ZZ& qi) {
 //-----------------------------------------
 
 void Scheme::rlweInstance(ZZX& b, ZZX& a, ZZ& qi) {
-	ZZX v, e;
+	ZZX v;
 	NumUtils::sampleZO(v, params.N);
 	Ring2Utils::mult(b, v, publicKey.b, qi, params.N);
-//	NumUtils::sampleGauss(e, params.N, params.sigma);
-//	Ring2Utils::add(b, e, b, qi, params.N);
-
 	Ring2Utils::mult(a, v, publicKey.a, qi, params.N);
-//	NumUtils::sampleGauss(e, params.N, params.sigma);
-//	Ring2Utils::add(a, e, a, qi, params.N);
 }
 
 void Scheme::rlweInstance(ZZX& b, ZZX& a) {
@@ -81,7 +76,7 @@ CZZ* Scheme::groupidx(CZZ& val) {
 }
 
 CZZ* Scheme::degroupidx(CZZ*& vals, long dslots) {
-	long slots = dslots / 2;
+	long slots = dslots >> 1;
 	long logslots = log2(slots);
 	CZZ* res = new CZZ[slots];
 	for (long i = 0; i < slots; ++i) {
@@ -489,21 +484,21 @@ Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
 
-	ZZX brot, arot, aastar, abstar;
+	ZZX brot, arot, ares, bres;
 
 	long pow = (1 << logPow);
 
 	Ring2Utils::inpower(brot, cipher.b, params.group3pows[params.logNh][pow], params.N);
 	Ring2Utils::inpower(arot, cipher.a, params.group3pows[params.logNh][pow], params.N);
 
-	Ring2Utils::mult(aastar, publicKey.aKeySwitch[logPow], arot, Pqi, params.N);
-	Ring2Utils::mult(abstar, publicKey.bKeySwitch[logPow], arot, Pqi, params.N);
+	Ring2Utils::mult(ares, publicKey.aKeySwitch[logPow], arot, Pqi, params.N);
+	Ring2Utils::mult(bres, publicKey.bKeySwitch[logPow], arot, Pqi, params.N);
 
-	Ring2Utils::rightShiftAndEqual(aastar, params.logP, params.N);
-	Ring2Utils::rightShiftAndEqual(abstar, params.logP, params.N);
+	Ring2Utils::rightShiftAndEqual(ares, params.logP, params.N);
+	Ring2Utils::rightShiftAndEqual(bres, params.logP, params.N);
 
-	Ring2Utils::addAndEqual(abstar, brot, qi, params.N);
-	return Cipher(abstar, aastar, cipher.slots, cipher.level);
+	Ring2Utils::addAndEqual(bres, brot, qi, params.N);
+	return Cipher(bres, ares, cipher.slots, cipher.level);
 }
 
 void Scheme::rotate2AndEqual(Cipher& cipher, long& logPow) {
@@ -530,6 +525,7 @@ void Scheme::rotate2AndEqual(Cipher& cipher, long& logPow) {
 }
 
 Cipher Scheme::rotate(Cipher& cipher, long& steps) {
+	steps %= params.Nh;
 	Cipher res = cipher;
 	long logsteps = log2(steps);
 	for (long i = 0; i < logsteps + 1; ++i) {
@@ -541,6 +537,7 @@ Cipher Scheme::rotate(Cipher& cipher, long& steps) {
 }
 
 void Scheme::rotateAndEqual(Cipher& cipher, long& steps) {
+	steps %= params.Nh;
 	long logsteps = log2(steps);
 	for (long i = 0; i < logsteps; ++i) {
 		if(bit(steps, i)) {

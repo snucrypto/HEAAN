@@ -1,20 +1,17 @@
 #include "TestScheme.h"
 
-#include <NTL/ZZ.h>
+#include <cmath>
 #include <cstdlib>
-#include <string>
-#include <vector>
+#include <iostream>
 
 #include "../czz/CZZ.h"
 #include "../scheme/Cipher.h"
-#include "../scheme/Message.h"
 #include "../scheme/Params.h"
 #include "../scheme/PubKey.h"
 #include "../scheme/Scheme.h"
 #include "../scheme/SchemeAlgo.h"
 #include "../scheme/SecKey.h"
 #include "../utils/EvaluatorUtils.h"
-#include "../utils/KsiPows.h"
 #include "../utils/NumUtils.h"
 #include "../utils/StringUtils.h"
 #include "../utils/TaylorPows.h"
@@ -37,9 +34,13 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 
+	timeutils.start("Encrypt");
 	Cipher cipher = scheme.encryptFull(mvec, slots);
+	timeutils.stop("Encrypt");
 
+	timeutils.start("Decrypt");
 	CZZ* dvec = scheme.decryptFull(cipher);
+	timeutils.stop("Decrypt");
 
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 
@@ -66,7 +67,10 @@ void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlo
 
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
+
+	timeutils.start("Rotate 2");
 	Cipher rot = scheme.rotate2(cipher, rotlogSlots);
+	timeutils.stop("Rotate 2");
 
 	CZZ* dvec = scheme.decryptFull(rot);
 
@@ -93,7 +97,10 @@ void TestScheme::testRotate(long logN, long logl, long logp, long L, long rotSlo
 
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
+
+	timeutils.start("Rotate");
 	Cipher rot = scheme.rotate(cipher, rotSlots);
+	timeutils.stop("Rotate");
 
 	CZZ* dvec = scheme.decryptFull(rot);
 

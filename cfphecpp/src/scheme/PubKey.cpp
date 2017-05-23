@@ -1,9 +1,7 @@
 #include "PubKey.h"
 
-#include "../czz/CZZ.h"
 #include "../utils/NumUtils.h"
 #include "../utils/Ring2Utils.h"
-#include "../utils/StringUtils.h"
 
 PubKey::PubKey(Params& params, SecKey& secretKey) : aKeySwitch(), bKeySwitch() {
 	ZZX e, s2;
@@ -17,11 +15,11 @@ PubKey::PubKey(Params& params, SecKey& secretKey) : aKeySwitch(), bKeySwitch() {
 
 	aKeySwitch = new ZZX[params.logNh];
 	bKeySwitch = new ZZX[params.logNh];
+
 	for (long i = 0; i < params.logNh; ++i) {
 		ZZX spow;
 		long ipow = (1 << i);
 		Ring2Utils::inpower(spow, secretKey.s, params.group3pows[params.logNh][ipow], params.N);
-
 		Ring2Utils::leftShiftAndEqual(spow, params.logP, params.logPq, params.N);
 		NumUtils::sampleUniform2(aKeySwitch[i], params.N, params.logPq);
 		NumUtils::sampleGauss(e, params.N, params.sigma);

@@ -1,12 +1,7 @@
 #ifndef SCHEME_MESSAGE_H_
 #define SCHEME_MESSAGE_H_
 
-#include <NTL/ZZ.h>
-#include <cmath>
-#include <vector>
-
-#include "../czz/CZZ.h"
-#include "../utils/NumUtils.h"
+#include <NTL/ZZX.h>
 
 using namespace std;
 using namespace NTL;

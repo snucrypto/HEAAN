@@ -3,7 +3,6 @@
 
 #include <NTL/ZZ.h>
 #include <iostream>
-#include <vector>
 #include <map>
 
 using namespace std;

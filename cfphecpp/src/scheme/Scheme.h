@@ -133,6 +133,8 @@ public:
 	Cipher rotate(Cipher& cipher, long& steps);
 	void rotateAndEqual(Cipher& cipher, long& steps);
 
+	//-----------------------------------------
+
 };
 
 #endif /* SCHEME_SCHEME_H_ */

@@ -1,8 +1,5 @@
 #include "Ring2Utils.h"
 
-#include <cassert>
-#include <cmath>
-
 //---------------------------------
 
 void Ring2Utils::add(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {

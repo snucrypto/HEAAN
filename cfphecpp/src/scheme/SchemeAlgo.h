@@ -1,11 +1,10 @@
 #ifndef SCHEME_SCHEMEALGO_H_
 #define SCHEME_SCHEMEALGO_H_
 
+#include <iostream>
+
 #include "Cipher.h"
 #include "Scheme.h"
-
-#include "../utils/KsiPows.h"
-#include "../utils/TimeUtils.h"
 
 class SchemeAlgo {
 public:

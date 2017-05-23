@@ -33,7 +33,7 @@ int main() {
 	 * Params: logN, logl, logp, L, logSlots
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
-//	TestScheme::testEncodeBatch(13, 5, 30, 4, 12);
+	TestScheme::testEncodeBatch(13, 5, 30, 4, 12);
 
 	//-----------------------------------------
 
@@ -41,8 +41,8 @@ int main() {
 	 * Params: logN, logl, logp, L, rotlogSlots, logSlots
 	 * Suggested: 13, 2, 30, 5, 0, 3
 	 */
-//	TestScheme::testRotate2(13, 5, 30, 4, 2, 3);
-//	TestScheme::testRotate(13, 5, 30, 4, 3, 11);
+//	TestScheme::testRotate2(13, 5, 30, 4, 2, 12);
+//	TestScheme::testRotate(13, 5, 30, 4, 17, 8);
 
 	//-----------------------------------------
 
@@ -123,7 +123,7 @@ int main() {
 	 * Suggested: 14, 7, 50, 2, 4 (for lazy)
 	 */
 //	TestScheme::testFFT(14, 5, 50, 3, 4);
-	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
+//	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testLazyFFT(13, 51, 50, 2, 4);
 
 	//-----------------------------------------

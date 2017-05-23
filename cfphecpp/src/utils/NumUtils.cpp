@@ -33,13 +33,7 @@ void NumUtils::sampleZO(ZZX& res, const long& size) {
 	long i;
 	for (i = 0; i < size; ++i) {
 		RandomBits(temp, 2);
-		if(temp == 0) {
-			res.rep[i] = ZZ(1);
-		} else if (temp == 1) {
-			res.rep[i] = ZZ(-1);
-		} else {
-			res.rep[i] = ZZ(0);
-		}
+		res.rep[i] = (temp == 0) ? ZZ(1) : (temp == 1) ? ZZ(-1) : ZZ(0);
 	}
 	res.normalize();
 }
@@ -52,47 +46,6 @@ void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& logBnd) {
 		res.rep[i] = tmp;
 	}
 	res.normalize();
-}
-
-CZZ* NumUtils::sampleGauss(const long& size, const double& stdev) {
-	static double const Pi = 4.0 * atan(1.0); // Pi=3.1415..
-	static long const bignum = 0xfffffff;
-	CZZ* res = new CZZ[size];
-	for (long i = 0; i < size; i++) {
-		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
-		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
-		double theta=2 * Pi * r1;
-		double rr= sqrt(-2.0 * log(r2)) * stdev;
-
-		assert(rr < 8 * stdev); // sanity-check, no more than 8 standard deviations
-
-		long xr = (long) floor(rr * cos(theta) + 0.5);
-		long xi = (long) floor(rr * sin(theta) + 0.5);
-		res[i] = CZZ(xr, xi);
-	}
-	return res;
-}
-
-CZZ* NumUtils::sampleZO(const long& size) {
-	CZZ* res = new CZZ[size];
-	ZZ temp;
-	for (long i = 0; i < size; ++i) {
-		RandomBits(temp, 2);
-		res[i] = temp == 0 ? CZZ(1, 0) : temp == 1 ? CZZ(-1, 0) : CZZ(0,0);
-	}
-	return res;
-}
-
-
-CZZ* NumUtils::sampleUniform2(const long& size, const long& logBnd) {
-	CZZ* res = new CZZ[size];
-	ZZ tmpr, tmpi;
-	for (long i = 0; i < size; i++) {
-		RandomBits(tmpr, logBnd);
-		RandomBits(tmpi, logBnd);
-		res[i] = CZZ(tmpr, tmpi);
-	}
-	return res;
 }
 
 CZZ* NumUtils::fftRaw(CZZ*& vals, const long& size, KsiPows& ksiPows, const bool& isForward) {
@@ -210,78 +163,4 @@ CZZ* NumUtils::fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, KsiPows& 
 		mfft1[i] >>= ksiPows.logp;
 	}
 	return fftInvLazy(mfft1, size, ksiPows);
-}
-
-vector<CZZ> NumUtils::bitReverse(vector<CZZ>& vals) {
-	vector<CZZ> res;
-	vector<CZZ> tmp;
-	long valsSize = vals.size();
-	long logValsSize = log2(valsSize);
-	res.push_back(vals[0]);
-	for (long i = 0; i < logValsSize; ++i) {
-		long powi = (1 << i);
-		long powni = (1 << (logValsSize - i));
-		long powniHalf = (1 << (logValsSize - i - 1));
-		for (long j = 0; j < powi; ++j) {
-			tmp.push_back(vals[j * powni + powniHalf]);
-		}
-		tmp = bitReverse(tmp);
-		for (long j = 0; j < tmp.size(); ++j) {
-			res.push_back(tmp[j]);
-		}
-		tmp.clear();
-	}
-	return res;
-}
-
-vector<CZZ> NumUtils::fftButterfly(vector<CZZ>& vals, KsiPows& ksiPows) {
-	vector<CZZ> fft = vals;
-	long valsSize = vals.size();
-	CZZ as, at, w;
-	long logValsSize = log2(valsSize);
-	for (long i = 0; i < logValsSize; ++i) {
-		long powi = (1 << i);
-		long logPowni = logValsSize - i;
-		long powniHalf = (1 << (logPowni - 1));
-		long powni = (1 << logPowni);
-		for (long j = 0; j < powi; ++j) {
-			for (long k = 0; k < powniHalf; ++k) {
-				long s = j * powni + k;
-				long t = s + powniHalf;
-				as = fft[s] + fft[t];
-				at = ((ksiPows.pows[logPowni][k] * (fft[s] - fft[t])) >> ksiPows.logp);
-				fft[s] = as;
-				fft[t] = at;
-			}
-		}
-	}
-
-	return bitReverse(fft);
-}
-
-vector<CZZ> NumUtils::fftButterflyInv(vector<CZZ>& vals, KsiPows& ksiPows) {
-	vector<CZZ> fftInv = vals;
-	long valsSize = vals.size();
-	CZZ as, at;
-	long logValsSize = log2(valsSize);
-	for (long i = 0; i < logValsSize; ++i) {
-		long powi = (1 << i);
-		long logPowni = logValsSize - i;
-		long pownih = (1 << (logPowni - 1));
-		long powni = (1 << logPowni);
-		for (long j = 0; j < powi; ++j) {
-			for (long k = 0; k < pownih; ++k) {
-				long s = j * powni + k;
-				long t = s + pownih;
-				as = fftInv[s] + fftInv[t];
-				at = ((ksiPows.pows[logPowni][powni - k] * (fftInv[s] - fftInv[t])) >> ksiPows.logp);
-				fftInv[s] = as;
-				fftInv[t] = at;
-			}
-		}
-	}
-	for (long i = 0; i < valsSize; ++i) {
-		fftInv[i] >>= logValsSize;
-	}
-	return bitReverse(fftInv);
 }

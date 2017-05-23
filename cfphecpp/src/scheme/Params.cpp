@@ -1,12 +1,4 @@
-/*
- * FPHEParams.cpp
- *
- *  Created on: May 15, 2016
- *      Author: kimandrik
- */
-
 #include "Params.h"
-
 
 Params::Params(long logN, long logl, long logp, long L, double sigma, double rho, long h) :
 			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h), qi(), Pqi(), group3pows(), group3powsInv() {
@@ -33,12 +25,8 @@ Params::Params(long logN, long logl, long logp, long L, double sigma, double rho
 		power(Pqi[i], 2, logql + logP);
 	}
 
-//	group3pows = new long[Nh];
-//	group3powsInv = new long[Nh];
-
 	group3pows = new long*[logN];
 	group3powsInv = new long*[logN];
-
 
 	for (long i = 0; i < logN; ++i) {
 		long ipow = 1 << i;
@@ -54,17 +42,8 @@ Params::Params(long logN, long logl, long logp, long L, double sigma, double rho
 		}
 	}
 
-//	long val = 1;
-//	for (long i = 0; i < Nh; ++i) {
-//		group3pows[i] = val;
-//		group3powsInv[i] = M - group3pows[i];
-//		val *=3;
-//		val %=M;
-//	}
-
 	ksiPows.setLogp(logp);
 	ksiPows.precompute(logN + 2);
 	taylorPows.setLogp(logp);
 	taylorPows.precompute();
-
 }

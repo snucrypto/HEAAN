@@ -3,8 +3,6 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "NumUtils.h"
-
 CZZ EvaluatorUtils::evaluateVal(const double& xr, const double& xi, const long& logp) {
 	if(logp < 31) {
 		long p = 1 << logp;
@@ -20,10 +18,7 @@ CZZ EvaluatorUtils::evaluateVal(const double& xr, const double& xi, const long& 
 }
 
 CZZ EvaluatorUtils::evaluateRandomVal(const long& logp) {
-	ZZ tmpr, tmpi;
-	RandomBits(tmpr, logp);
-	RandomBits(tmpi, logp);
-	return CZZ(tmpr, tmpi);
+	return CZZ(RandomBits_ZZ(logp), RandomBits_ZZ(logp));
 }
 
 CZZ EvaluatorUtils::evaluateRandomCircleVal(const long& logp) {
@@ -34,7 +29,11 @@ CZZ EvaluatorUtils::evaluateRandomCircleVal(const long& logp) {
 }
 
 CZZ* EvaluatorUtils::evaluateRandomVals(const long& size, const long& logp) {
-	return NumUtils::sampleUniform2(size, logp);
+	CZZ* res = new CZZ[size];
+	for (long i = 0; i < size; i++) {
+		res[i] = CZZ(RandomBits_ZZ(logp), RandomBits_ZZ(logp));
+	}
+	return res;
 }
 
 CZZ EvaluatorUtils::evaluatePow(const double& xr, const double& xi, const long& degree, const long& logp) {

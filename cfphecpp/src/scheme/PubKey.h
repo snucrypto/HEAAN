@@ -2,9 +2,7 @@
 #define SCHEME_PUBKEY_H_
 
 #include <NTL/ZZX.h>
-#include <vector>
 
-#include "Params.h"
 #include "SecKey.h"
 
 using namespace std;

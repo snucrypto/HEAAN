@@ -11,7 +11,6 @@ void KsiPows::setLogp(long logp) {
 }
 
 void KsiPows::precompute(long logSize) {
-
 	pows = new CZZ*[logSize];
 	if(logp < 31) {
 		long p = (1 << logp);
@@ -21,9 +20,7 @@ void KsiPows::precompute(long logSize) {
 
 			for (long j = 0; j < ipow; ++j) {
 				double angle = 2.0 * M_PI * j / ipow;
-				ZZ rx = to_ZZ(cos(angle) * p);
-				ZZ ix = to_ZZ(sin(angle) * p);
-				temp[j] = CZZ(rx, ix);
+				temp[j] = CZZ(to_ZZ(cos(angle) * p), to_ZZ(sin(angle) * p));
 			}
 			temp[ipow] = temp[0];
 			pows[i] = temp;
@@ -35,10 +32,8 @@ void KsiPows::precompute(long logSize) {
 			CZZ* temp = new CZZ[ipow + 1];
 			for (long j = 0; j < ipow; ++j) {
 				double angle = 2.0 * M_PI * j / ipow;
-				ZZ rx = to_ZZ((long)(cos(angle) * tmp));
-				rx <<= (logp - 30);
-				ZZ ix = to_ZZ((long)(sin(angle) * tmp));
-				ix <<= (logp - 30);
+				ZZ rx = to_ZZ((long)(cos(angle) * tmp)) << (logp - 30);
+				ZZ ix = to_ZZ((long)(sin(angle) * tmp)) << (logp - 30);
 				temp[j] = CZZ(rx, ix);
 			}
 			temp[ipow] = temp[0];

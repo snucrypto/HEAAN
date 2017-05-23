@@ -1,9 +1,8 @@
 #ifndef SCHEME_PARAMS_H_
 #define SCHEME_PARAMS_H_
 
-#include <vector>
+#include <NTL/ZZ.h>
 
-#include "NTL/ZZ.h"
 #include "../utils/KsiPows.h"
 #include "../utils/TaylorPows.h"
 
@@ -15,7 +14,6 @@ public:
 	long M;
 	long N;
 	long Nh;
-	long L;
 	long logN;
 	long logNh;
 	long logl;
@@ -24,6 +22,7 @@ public:
 	long logP;
 	long logPq;
 
+	long L;
 	double sigma;
 	double rho;
 	long h;
