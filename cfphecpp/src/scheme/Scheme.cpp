@@ -67,12 +67,8 @@ CZZ* Scheme::groupidx(CZZ*& vals, long slots) {
 	long idx = 0;
 	long gap = params.Nh / slots;
 	for (long i = 0; i < slots; ++i) {
-
-//		res[i] = vals[i];
-//		res[2 * slots - i - 1] = vals[i].conjugate();
-
 		res[(params.group3pows[idx] - 1) / gap / 2] = vals[i];
-		res[(params.group3powsInv[idx] - 1) / gap /2] = vals[i].conjugate();
+		res[(params.group3powsInv[idx] - 1) / gap / 2] = vals[i].conjugate();
 		idx += gap;
 	}
 	return res;
@@ -499,13 +495,14 @@ Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
 
 	ZZX brot, arot, aastar, abstar;
 
-	long pow = (1 << logPow);
+	long logPow2 = logPow + params.logN - log2(cipher.slots);
+	long pow = (1 << logPow2);
 
 	Ring2Utils::inpower(brot, cipher.b, params.group3pows[pow], params.N);
 	Ring2Utils::inpower(arot, cipher.a, params.group3pows[pow], params.N);
 
-	Ring2Utils::mult(aastar, publicKey.aKeySwitch[logPow], arot, Pqi, params.N);
-	Ring2Utils::mult(abstar, publicKey.bKeySwitch[logPow], arot, Pqi, params.N);
+	Ring2Utils::mult(aastar, publicKey.aKeySwitch[logPow2], arot, Pqi, params.N);
+	Ring2Utils::mult(abstar, publicKey.bKeySwitch[logPow2], arot, Pqi, params.N);
 
 	Ring2Utils::rightShiftAndEqual(aastar, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(abstar, params.logP, params.N);
@@ -537,10 +534,22 @@ void Scheme::rotate2AndEqual(Cipher& cipher, long& logPow) {
 	cipher.a = aastar;
 }
 
-//Cipher Scheme::rotate(Cipher& cipher, long& steps) {
-//
-//}
-//
-//void Scheme::rotateAndEqual(Cipher& cipher, long& steps) {
-//
-//}
+Cipher Scheme::rotate(Cipher& cipher, long& steps) {
+	Cipher res = cipher;
+	long logsteps = log2(steps);
+	for (long i = 0; i < logsteps + 1; ++i) {
+		if(bit(steps, i)) {
+			res = rotate2(res, i);
+		}
+	}
+	return res;
+}
+
+void Scheme::rotateAndEqual(Cipher& cipher, long& steps) {
+	long logsteps = log2(steps);
+	for (long i = 0; i < logsteps; ++i) {
+		if(bit(steps, i)) {
+			rotate2AndEqual(cipher, i);
+		}
+	}
+}

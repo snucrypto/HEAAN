@@ -49,7 +49,7 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 //-----------------------------------------
 
 void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
-	cout << "!!! START TEST ROTATE !!!" << endl;
+	cout << "!!! START TEST ROTATE 2 !!!" << endl;
 
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -68,10 +68,36 @@ void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlo
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 	Cipher rot = scheme.rotate2(cipher, rotlogSlots);
 
-//	CZZ* dvec = scheme.decryptFull(cipher);
 	CZZ* dvec = scheme.decryptFull(rot);
 
-	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
+//	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
+	StringUtils::showcompare(mvec, dvec, slots, "val");
+
+	cout << "!!! END TEST ROTATE 2 !!!" << endl;
+}
+
+void TestScheme::testRotate(long logN, long logl, long logp, long L, long rotSlots, long logSlots) {
+	cout << "!!! START TEST ROTATE !!!" << endl;
+
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+
+	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
+
+
+	Cipher cipher = scheme.encryptFull(mvec, slots);
+	Cipher rot = scheme.rotate(cipher, rotSlots);
+
+	CZZ* dvec = scheme.decryptFull(rot);
+
+	//	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 
 	cout << "!!! END TEST ROTATE !!!" << endl;

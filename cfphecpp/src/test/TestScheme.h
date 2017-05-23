@@ -15,6 +15,7 @@ public:
 	//-----------------------------------------
 
 	static void testRotate2(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots);
+	static void testRotate(long logN, long logl, long logp, long L, long rotSlots, long logSlots);
 
 	//-----------------------------------------
 

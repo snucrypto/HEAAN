@@ -11,7 +11,7 @@
 void test() {
 	//-----------------------------------------
 	TimeUtils timeutils;
-	long logN = 13;
+	long logN = 6;
 	long logl = 3;
 	long logp = 30;
 	long L = 5;
@@ -22,6 +22,7 @@ void test() {
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
+	StringUtils::show(params.group3pows, params.Nh);
 }
 
 int main() {
@@ -42,7 +43,8 @@ int main() {
 	 * Params: logN, logl, logp, L, rotlogSlots, logSlots
 	 * Suggested: 13, 2, 30, 5, 0, 3
 	 */
-//	TestScheme::testRotate2(13, 5, 30, 4, 2, 4);
+//	TestScheme::testRotate2(6, 5, 30, 4, 0, 4);
+	TestScheme::testRotate(13, 5, 30, 4, 3, 12);
 
 	//-----------------------------------------
 
@@ -92,7 +94,7 @@ int main() {
 	 * Suggested: 13, 2, 35, 5, 8, 3
 	 * Suggested: 13, 37, 35, 4, 8, 3 (for lazy)
 	 */
-	TestScheme::testLogarithmBatch(13, 4, 35, 6, 10, 3);
+//	TestScheme::testLogarithmBatch(13, 4, 35, 6, 10, 3);
 
 	/*
 	 * Params: logN, logl, logp, L, degree, logSlots
