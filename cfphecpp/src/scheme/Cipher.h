@@ -9,15 +9,15 @@ using namespace NTL;
 class Cipher {
 public:
 
-	ZZX c0;
-	ZZX c1;
+	ZZX b;
+	ZZX a;
 
 	long slots;
 	long level;
 
 	//-----------------------------------------
 
-	Cipher(ZZX c0 = ZZX::zero(), ZZX c1 = ZZX::zero(), long slots = 1, long level = 1) : c0(c0), c1(c1), slots(slots) , level(level) {}
+	Cipher(ZZX b = ZZX::zero(), ZZX a = ZZX::zero(), long slots = 1, long level = 1) : b(b), a(a), slots(slots) , level(level) {}
 };
 
 #endif /* SCHEME_CIPHER_H_ */

@@ -32,29 +32,38 @@ public:
 
 	//-----------------------------------------
 
-	void rlweInstance(ZZX& c0, ZZX& c1, ZZ& qi);
-	void rlweInstance(ZZX& c0, ZZX& c1);
+	void rlweInstance(ZZX& b, ZZX& a, ZZ& qi);
+	void rlweInstance(ZZX& b, ZZX& a);
 
 	//-----------------------------------------
 
-	CZZ* doubleConjugate(CZZ*& vals, long slots);
-	CZZ* doubleConjugate(CZZ& val);
-	CZZ* deConjugate(CZZ*& vals, long slots);
+	CZZ* groupidx(CZZ*& vals, long slots);
+	CZZ* groupidx(CZZ& val);
+	CZZ* degroupidx(CZZ*& vals, long dslots);
 
 	//-----------------------------------------
 
 	Message encode(CZZ*& vals, long size);
-	Cipher encrypt(Message& msg, long level = 1);
-	Cipher encryptFull(CZZ& val, long level = 1);
-	Cipher encryptFull(CZZ*& vals, long slots, long level = 1);
-	Cipher* encryptFullSingleArray(CZZ*& vals, long size);
+	CZZ* decode(Message& msg);
 
 	//-----------------------------------------
 
+	Cipher encrypt(Message& msg, long level = 1);
 	Message decrypt(Cipher& cipher);
-	CZZ* decode(Message& msg);
+
+	//-----------------------------------------
+
+	Cipher encryptFull(CZZ*& vals, long slots, long level = 1);
 	CZZ* decryptFull(Cipher& cipher);
+
+	//-----------------------------------------
+
+	Cipher encryptFull(CZZ& val, long level = 1);
 	CZZ decryptFullSingle(Cipher& cipher);
+
+	//-----------------------------------------
+
+	Cipher* encryptFullSingleArray(CZZ*& vals, long size);
 	CZZ* decryptFullSingleArray(Cipher*& ciphers, long size);
 
 	//-----------------------------------------
@@ -119,6 +128,8 @@ public:
 
 	//-----------------------------------------
 
+	Cipher rotate2(Cipher& cipher, long& logSteps);
+	void rotate2AndEqual(Cipher& cipher, long& logSteps);
 	Cipher rotate(Cipher& cipher, long& steps);
 	void rotateAndEqual(Cipher& cipher, long& steps);
 

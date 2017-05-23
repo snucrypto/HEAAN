@@ -14,6 +14,10 @@ public:
 
 	//-----------------------------------------
 
+	static void testRotate2(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots);
+
+	//-----------------------------------------
+
 	static void testPowerOf2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots);
 	static void testPowerOf2Extended(long logN, long logl, long logp, long L, long logDegree);
 

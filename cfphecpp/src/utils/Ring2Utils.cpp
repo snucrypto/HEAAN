@@ -197,7 +197,7 @@ void Ring2Utils::multByMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const
 	shift %= degree;
 
 	res.SetLength(degree);
-	ZZ tmp;
+
 	for (long i = 0; i < shift; ++i) {
 		res.rep[i] = tmpx.rep[degree - shift + i];
 	}
@@ -302,9 +302,9 @@ void Ring2Utils::leftShift(ZZX& res, ZZX& p, const long& bits, const long& logMo
 	ZZ c;
 	res.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
-		c = coeff(p, i) << bits;
+		c = p.rep[i] << bits;
 		truncate(c, logMod);
-		SetCoeff(res, i, c);
+		res.rep[i] = c;
 	}
 	res.normalize();
 }
@@ -333,9 +333,9 @@ void Ring2Utils::rightShift(ZZX& res, ZZX& p, const long& bits, const long& logM
 	ZZ c;
 	res.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
-		c = coeff(p, i) >> bits;
+		c = p.rep[i] >> bits;
 		truncate(c, logMod);
-		SetCoeff(res, i, c);
+		res.rep[i] = c;
 	}
 	res.normalize();
 }
@@ -362,9 +362,9 @@ void Ring2Utils::rightShift(CZZX& res, CZZX& p, const long& bits, const long& de
 void Ring2Utils::rightShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree) {
 	ZZ c;
 	for (long i = 0; i < degree; ++i) {
-		c = coeff(p, i) >> bits;
+		c = p.rep[i] >> bits;
 		truncate(c, logMod);
-		SetCoeff(p, i, c);
+		p.rep[i] = c;
 	}
 	p.normalize();
 }
@@ -384,6 +384,24 @@ void Ring2Utils::rightShiftAndEqual(ZZX& p, const long& bits, const long& degree
 void Ring2Utils::rightShiftAndEqual(CZZX& p, const long& bits, const long& degree) {
 	rightShiftAndEqual(p.rx, bits, degree);
 	rightShiftAndEqual(p.ix, bits, degree);
+}
+
+//-----------------------------------------
+
+void Ring2Utils::inpower(ZZX& res, ZZX& p, const long& pow, const long& degree) {
+	res.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		long ipow = i * pow;
+		long shift = ipow % (2 * degree);
+		res.rep[shift % degree] += shift < degree ? p.rep[i] : -p.rep[i];
+	}
+	res.normalize();
+}
+
+void Ring2Utils::inpowerAndEqual(ZZX& p, const long& pow, const long& degree) {
+	ZZX tmp;
+	inpower(tmp, p, pow, degree);
+	p = tmp;
 }
 
 //-----------------------------------------

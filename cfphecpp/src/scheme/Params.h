@@ -17,6 +17,7 @@ public:
 	long Nh;
 	long L;
 	long logN;
+	long logNh;
 	long logl;
 	long logp;
 	long logq;
@@ -31,11 +32,11 @@ public:
 	ZZ q;
 	ZZ Pq;
 
-	vector<ZZ> qi;
-	vector<ZZ> Pqi;
+	ZZ* qi;
+	ZZ* Pqi;
 
-	vector<long> indexes;
-	vector<long> indexesInv;
+	long* group3pows;
+	long* group3powsInv;
 
 	KsiPows ksiPows;
 	TaylorPows taylorPows;

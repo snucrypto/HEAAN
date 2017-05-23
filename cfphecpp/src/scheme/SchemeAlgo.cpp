@@ -187,7 +187,7 @@ Cipher* SchemeAlgo::functionExtended(Cipher& cipher, string& funcName, const lon
 			scheme.addAndEqual(aixi, tmp);
 			res[idx] = aixi;
 		} else {
-			res[idx++] = res[idx - 1];
+			res[idx + 1] = res[idx++];
 		}
 	}
 	for (long i = 0; i < degree; ++i) {

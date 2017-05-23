@@ -1,5 +1,13 @@
 #include "StringUtils.h"
 
+void StringUtils::show(long*& vals, long size) {
+	cout << "[";
+	for (long i = 0; i < size; ++i) {
+		cout << vals[i] << ", ";
+	}
+	cout << "]" << endl;
+}
+
 void StringUtils::show(CZZ*& vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {

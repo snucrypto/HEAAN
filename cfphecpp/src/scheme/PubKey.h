@@ -12,11 +12,15 @@ using namespace NTL;
 
 class PubKey {
 public:
+
 	ZZX a;
 	ZZX b;
 
 	ZZX aStar;
 	ZZX bStar;
+
+	ZZX* aKeySwitch;
+	ZZX* bKeySwitch;
 
 	//-----------------------------------------
 

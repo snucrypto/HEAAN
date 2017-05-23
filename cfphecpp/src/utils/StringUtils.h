@@ -14,6 +14,7 @@
 
 class StringUtils {
 public:
+	static void show(long*& vals, long size);
 	static void show(CZZ*& vals, long size);
 
 	//-----------------------------------------

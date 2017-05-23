@@ -5,6 +5,8 @@
 #include "scheme/SecKey.h"
 #include "test/TestScheme.h"
 #include "utils/TimeUtils.h"
+#include "utils/Ring2Utils.h"
+#include "utils/StringUtils.h"
 
 void test() {
 	//-----------------------------------------
@@ -32,7 +34,15 @@ int main() {
 	 * Params: logN, logl, logp, L, logSlots
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
-//	TestScheme::testEncodeBatch(13, 2, 30, 4, 3);
+//	TestScheme::testEncodeBatch(13, 5, 30, 4, 12);
+
+	//-----------------------------------------
+
+	/*
+	 * Params: logN, logl, logp, L, rotlogSlots, logSlots
+	 * Suggested: 13, 2, 30, 5, 0, 3
+	 */
+//	TestScheme::testRotate2(13, 5, 30, 4, 2, 4);
 
 	//-----------------------------------------
 
@@ -96,7 +106,7 @@ int main() {
 
 //	TestScheme::testSigmoidBatch(13, 1, 35, 5, 7, 3);
 //	TestScheme::testLazySigmoidBatch(13, 36, 35, 4, 7, 3);
-	TestScheme::testSigmoidExtended(13, 1, 35, 5, 7);
+//	TestScheme::testSigmoidExtended(13, 1, 35, 5, 7);
 
 	//-----------------------------------------
 
@@ -107,7 +117,7 @@ int main() {
 	 */
 //	TestScheme::testFFT(14, 5, 50, 3, 4);
 //	TestScheme::testFFTBatch(14, 5, 50, 3, 4, 3);
-//	TestScheme::testLazyFFT(13, 1, 50, 2, 4);
+//	TestScheme::testLazyFFT(13, 51, 50, 2, 4);
 
 	//-----------------------------------------
 

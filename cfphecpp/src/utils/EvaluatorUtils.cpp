@@ -109,3 +109,14 @@ void EvaluatorUtils::leftShift(CZZ*& vals, const long& size, const long& logp) {
 		vals[i] <<= logp;
 	}
 }
+
+void EvaluatorUtils::idxShift(CZZ*& vals, const long& size, const long& shift) {
+	CZZ* tmp = new CZZ[size];
+	for (long i = 0; i < size - shift; ++i) {
+		tmp[i] = vals[i + shift];
+	}
+	for (long i = size - shift; i < size; ++i) {
+		tmp[i] = vals[i + shift - size];
+	}
+	vals = tmp;
+}

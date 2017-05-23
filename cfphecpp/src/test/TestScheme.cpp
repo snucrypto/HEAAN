@@ -48,6 +48,37 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 
 //-----------------------------------------
 
+void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
+	cout << "!!! START TEST ROTATE !!!" << endl;
+
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+	long rotSlots = (1 << rotlogSlots);
+
+	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
+
+
+	Cipher cipher = scheme.encryptFull(mvec, slots);
+	Cipher rot = scheme.rotate2(cipher, rotlogSlots);
+
+//	CZZ* dvec = scheme.decryptFull(cipher);
+	CZZ* dvec = scheme.decryptFull(rot);
+
+	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
+	StringUtils::showcompare(mvec, dvec, slots, "val");
+
+	cout << "!!! END TEST ROTATE !!!" << endl;
+}
+
+//-----------------------------------------
+
 void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots) {
 	cout << "!!! START TEST POWER OF 2 BATCH !!!" << endl;
 

@@ -37,6 +37,7 @@ public:
 	//-----------------------------------------
 
 	static void leftShift(CZZ*& vals, const long& size, const long& logp);
+	static void idxShift(CZZ*& vals, const long& size, const long& shift);
 };
 
 #endif /* UTILS_EVALUATORUTILS_H_ */

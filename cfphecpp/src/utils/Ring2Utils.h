@@ -87,6 +87,11 @@ class Ring2Utils {
 
 		//-----------------------------------------
 
+		static void inpower(ZZX& res, ZZX& p, const long& pow, const long& degree);
+		static void inpowerAndEqual(ZZX& p, const long& pow, const long& degree);
+
+		//-----------------------------------------
+
 		static void truncate(ZZX& res, ZZX& p, const long& logMod, const long& degree);
 		static void truncate(CZZX& res, CZZX& p, const long& logMod, const long& degree);
 
