@@ -64,12 +64,10 @@ void Scheme::rlweInstance(ZZX& b, ZZX& a) {
 
 CZZ* Scheme::groupidx(CZZ*& vals, long slots) {
 	CZZ* res = new CZZ[slots * 2];
-	long idx = 0;
-	long gap = params.Nh / slots;
+	long logslots = log2(slots);
 	for (long i = 0; i < slots; ++i) {
-		res[(params.group3pows[idx] - 1) / gap / 2] = vals[i];
-		res[(params.group3powsInv[idx] - 1) / gap / 2] = vals[i].conjugate();
-		idx += gap;
+		res[(params.group3pows[logslots][i] - 1) / 2] = vals[i];
+		res[(params.group3powsInv[logslots][i] - 1) / 2] = vals[i].conjugate();
 	}
 	return res;
 }
@@ -83,13 +81,11 @@ CZZ* Scheme::groupidx(CZZ& val) {
 }
 
 CZZ* Scheme::degroupidx(CZZ*& vals, long dslots) {
-	long idx = 0;
 	long slots = dslots / 2;
-	long gap = params.Nh / slots;
+	long logslots = log2(slots);
 	CZZ* res = new CZZ[slots];
 	for (long i = 0; i < slots; ++i) {
-		res[i] = vals[(params.group3pows[idx] - 1) / gap / 2];
-		idx += gap;
+		res[i] = vals[(params.group3pows[logslots][i] - 1) / 2];
 	}
 	return res;
 }
@@ -495,14 +491,13 @@ Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
 
 	ZZX brot, arot, aastar, abstar;
 
-	long logPow2 = logPow + params.logN - log2(cipher.slots);
-	long pow = (1 << logPow2);
+	long pow = (1 << logPow);
 
-	Ring2Utils::inpower(brot, cipher.b, params.group3pows[pow], params.N);
-	Ring2Utils::inpower(arot, cipher.a, params.group3pows[pow], params.N);
+	Ring2Utils::inpower(brot, cipher.b, params.group3pows[params.logNh][pow], params.N);
+	Ring2Utils::inpower(arot, cipher.a, params.group3pows[params.logNh][pow], params.N);
 
-	Ring2Utils::mult(aastar, publicKey.aKeySwitch[logPow2], arot, Pqi, params.N);
-	Ring2Utils::mult(abstar, publicKey.bKeySwitch[logPow2], arot, Pqi, params.N);
+	Ring2Utils::mult(aastar, publicKey.aKeySwitch[logPow], arot, Pqi, params.N);
+	Ring2Utils::mult(abstar, publicKey.bKeySwitch[logPow], arot, Pqi, params.N);
 
 	Ring2Utils::rightShiftAndEqual(aastar, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(abstar, params.logP, params.N);
@@ -519,8 +514,8 @@ void Scheme::rotate2AndEqual(Cipher& cipher, long& logPow) {
 
 	long pow = (1 << logPow);
 
-	Ring2Utils::inpower(brot, cipher.b, params.group3pows[pow], params.N);
-	Ring2Utils::inpower(arot, cipher.a, params.group3pows[pow], params.N);
+	Ring2Utils::inpower(brot, cipher.b, params.group3pows[params.logNh][pow], params.N);
+	Ring2Utils::inpower(arot, cipher.a, params.group3pows[params.logNh][pow], params.N);
 
 	Ring2Utils::mult(aastar, publicKey.aKeySwitch[logPow], arot, Pqi, params.N);
 	Ring2Utils::mult(abstar, publicKey.bKeySwitch[logPow], arot, Pqi, params.N);

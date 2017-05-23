@@ -21,8 +21,6 @@ void test() {
 	Scheme scheme(params, secretKey, publicKey);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-
-	StringUtils::show(params.group3pows, params.Nh);
 }
 
 int main() {
@@ -43,8 +41,8 @@ int main() {
 	 * Params: logN, logl, logp, L, rotlogSlots, logSlots
 	 * Suggested: 13, 2, 30, 5, 0, 3
 	 */
-//	TestScheme::testRotate2(6, 5, 30, 4, 0, 4);
-	TestScheme::testRotate(13, 5, 30, 4, 3, 12);
+//	TestScheme::testRotate2(13, 5, 30, 4, 2, 3);
+//	TestScheme::testRotate(13, 5, 30, 4, 3, 11);
 
 	//-----------------------------------------
 
@@ -125,7 +123,7 @@ int main() {
 	 * Suggested: 14, 7, 50, 2, 4 (for lazy)
 	 */
 //	TestScheme::testFFT(14, 5, 50, 3, 4);
-//	TestScheme::testFFTBatch(14, 5, 50, 3, 4, 3);
+	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testLazyFFT(13, 51, 50, 2, 4);
 
 	//-----------------------------------------

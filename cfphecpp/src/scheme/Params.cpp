@@ -33,17 +33,34 @@ Params::Params(long logN, long logl, long logp, long L, double sigma, double rho
 		power(Pqi[i], 2, logql + logP);
 	}
 
-	group3pows = new long[Nh];
-	group3powsInv = new long[Nh];
+//	group3pows = new long[Nh];
+//	group3powsInv = new long[Nh];
+
+	group3pows = new long*[logN];
+	group3powsInv = new long*[logN];
 
 
-	long val = 1;
-	for (long i = 0; i < Nh; ++i) {
-		group3pows[i] = val;
-		group3powsInv[i] = M - group3pows[i];
-		val *=3;
-		val %=M;
+	for (long i = 0; i < logN; ++i) {
+		long ipow = 1 << i;
+		long ipow2 = ipow << 2;
+		group3pows[i] = new long[ipow];
+		group3powsInv[i] = new long[ipow];
+		long val = 1;
+		for (long j = 0; j < ipow; ++j) {
+			group3pows[i][j] = val;
+			group3powsInv[i][j] = ipow2 - val;
+			val *= 3;
+			val %= ipow2;
+		}
 	}
+
+//	long val = 1;
+//	for (long i = 0; i < Nh; ++i) {
+//		group3pows[i] = val;
+//		group3powsInv[i] = M - group3pows[i];
+//		val *=3;
+//		val %=M;
+//	}
 
 	ksiPows.setLogp(logp);
 	ksiPows.precompute(logN + 2);

@@ -70,7 +70,7 @@ void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlo
 
 	CZZ* dvec = scheme.decryptFull(rot);
 
-//	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
+	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 
 	cout << "!!! END TEST ROTATE 2 !!!" << endl;
@@ -97,7 +97,7 @@ void TestScheme::testRotate(long logN, long logl, long logp, long L, long rotSlo
 
 	CZZ* dvec = scheme.decryptFull(rot);
 
-	//	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
+	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 
 	cout << "!!! END TEST ROTATE !!!" << endl;
@@ -692,25 +692,13 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	long fftdim = 1 << logfftdim;
 	long slots = 1 << logSlots;
 
-	CZZ** mvec1 = new CZZ*[fftdim];
-	CZZ** mvec2 = new CZZ*[fftdim];
-	CZZ** mvecp = new CZZ*[fftdim];
-
-	for (long i = 0; i < fftdim; ++i) {
-		mvec1[i] = new CZZ[slots];
-		mvec2[i] = new CZZ[slots];
-		mvecp[i] = new CZZ[slots];
-	}
+	CZZ** mvec1 = new CZZ*[slots];
+	CZZ** mvec2 = new CZZ*[slots];
+	CZZ** mvecp = new CZZ*[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		for (long j = 0; j < fftdim; ++j) {
-			mvec1[j][i] = EvaluatorUtils::evaluateRandomVal(logp);
-			mvec2[j][i] = EvaluatorUtils::evaluateRandomVal(logp);
-		}
-	}
-
-
-	for (long i = 0; i < slots; ++i) {
+		mvec1[i] = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
+		mvec2[i] = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
 		mvecp[i] = NumUtils::fftFull(mvec1[i], mvec2[i], fftdim, params.ksiPows);
 	}
 
@@ -721,7 +709,8 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 		CZZ* mvals1 = new CZZ[slots];
 		CZZ* mvals2	= new CZZ[slots];
 		for (long i = 0; i < slots; ++i) {
-			mvals1[i] = mvec1[j][i];
+			mvals1[i] = mvec1[i][j];
+			mvals2[i] = mvec2[i][j];
 		}
 		cvec1[j] = scheme.encryptFull(mvals1, slots);
 		cvec2[j] = scheme.encryptFull(mvals2, slots);
@@ -746,10 +735,6 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	timeutils.stop("cfft inv");
 
 	CZZ** dvecp = new CZZ*[fftdim];
-	for (long i = 0; i < fftdim; ++i) {
-		dvecp[i] = new CZZ[slots];
-	}
-
 	for (long j = 0; j < fftdim; ++j) {
 		dvecp[j] = scheme.decryptFull(cvecp[j]);
 	}

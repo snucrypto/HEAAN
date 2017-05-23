@@ -35,8 +35,8 @@ public:
 	ZZ* qi;
 	ZZ* Pqi;
 
-	long* group3pows;
-	long* group3powsInv;
+	long** group3pows;
+	long** group3powsInv;
 
 	KsiPows ksiPows;
 	TaylorPows taylorPows;

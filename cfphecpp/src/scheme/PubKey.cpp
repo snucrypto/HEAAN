@@ -20,7 +20,7 @@ PubKey::PubKey(Params& params, SecKey& secretKey) : aKeySwitch(), bKeySwitch() {
 	for (long i = 0; i < params.logNh; ++i) {
 		ZZX spow;
 		long ipow = (1 << i);
-		Ring2Utils::inpower(spow, secretKey.s, params.group3pows[ipow], params.N);
+		Ring2Utils::inpower(spow, secretKey.s, params.group3pows[params.logNh][ipow], params.N);
 
 		Ring2Utils::leftShiftAndEqual(spow, params.logP, params.logPq, params.N);
 		NumUtils::sampleUniform2(aKeySwitch[i], params.N, params.logPq);
