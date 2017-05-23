@@ -37,26 +37,25 @@ public:
 
 	//-----------------------------------------
 
-	vector<CZZ> doubleConjugate(vector<CZZ>& vals);
-	vector<CZZ> doubleConjugate(CZZ& val);
-	void doubleConjugateAndEqual(vector<CZZ>& vals);
-	vector<CZZ> deConjugate(vector<CZZ>& vals);
+	CZZ* doubleConjugate(CZZ*& vals, long slots);
+	CZZ* doubleConjugate(CZZ& val);
+	CZZ* deConjugate(CZZ*& vals, long slots);
 
 	//-----------------------------------------
 
-	Message encode(vector<CZZ>& vals);
+	Message encode(CZZ*& vals, long size);
 	Cipher encrypt(Message& msg, long level = 1);
 	Cipher encryptFull(CZZ& val, long level = 1);
-	Cipher encryptFull(vector<CZZ>& vals, long level = 1);
-	vector<Cipher> encryptFullSingleVec(vector<CZZ>& vals);
+	Cipher encryptFull(CZZ*& vals, long slots, long level = 1);
+	Cipher* encryptFullSingleArray(CZZ*& vals, long size);
 
 	//-----------------------------------------
 
 	Message decrypt(Cipher& cipher);
-	vector<CZZ> decode(Message& msg);
-	vector<CZZ> decryptFull(Cipher& cipher);
+	CZZ* decode(Message& msg);
+	CZZ* decryptFull(Cipher& cipher);
 	CZZ decryptFullSingle(Cipher& cipher);
-	vector<CZZ> decryptFullSingleVec(vector<Cipher>& ciphers);
+	CZZ* decryptFullSingleArray(Cipher*& ciphers, long size);
 
 	//-----------------------------------------
 
@@ -119,6 +118,9 @@ public:
 	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
 
 	//-----------------------------------------
+
+	Cipher rotate(Cipher& cipher, long& steps);
+	void rotateAndEqual(Cipher& cipher, long& steps);
 
 };
 

@@ -16,35 +16,34 @@ public:
 	//-----------------------------------------
 
 	Cipher powerOf2(Cipher& cipher, const long& logDegree);
-	void powerOf2Extended(vector<Cipher>& res, Cipher& cipher, const long& logDegree);
+	Cipher* powerOf2Extended(Cipher& cipher, const long& logDegree);
 
 	//-----------------------------------------
 
 	Cipher power(Cipher& cipher, const long& degree);
-	void powerExtended(vector<Cipher>& res, Cipher& cipher, const long& degree);
+	Cipher* powerExtended(Cipher& cipher, const long& degree);
 
 	//-----------------------------------------
 
-	Cipher prod2(vector<Cipher>& ciphers, const long& logDegree);
-	void prod2Extended(vector<vector<Cipher>>& res, vector<Cipher>& ciphers, const long& logDegree);
+	Cipher prod2(Cipher*& ciphers, const long& logDegree);
 
 	//-----------------------------------------
 
 	Cipher inverse(Cipher& cipher, const long& steps);
-	void inverseExtended(vector<Cipher>& res, Cipher& cipher, const long& steps);
+	Cipher* inverseExtended(Cipher& cipher, const long& steps);
 
 	//-----------------------------------------
 
 	Cipher function(Cipher& cipher, string& funcName, const long& degree);
 	Cipher functionLazy(Cipher& cipher, string& funcName, const long& degree);
-	void functionExtended(vector<Cipher>& res, Cipher& cipher, string& funcName, const long& degree);
+	Cipher* functionExtended(Cipher& cipher, string& funcName, const long& degree);
 
 	//-----------------------------------------
 
-	vector<Cipher> fftRaw(vector<Cipher>& ciphers, const bool& isForward);
-	vector<Cipher> fft(vector<Cipher>& ciphers);
-	vector<Cipher> fftInv(vector<Cipher>& ciphers);
-	vector<Cipher> fftInvLazy(vector<Cipher>& ciphers);
+	Cipher* fftRaw(Cipher*& ciphers, const long& size, const bool& isForward);
+	Cipher* fft(Cipher*& ciphers, const long& size);
+	Cipher* fftInv(Cipher*& ciphers, const long& size);
+	Cipher* fftInvLazy(Cipher*& ciphers, const long& size);
 
 	//-----------------------------------------
 

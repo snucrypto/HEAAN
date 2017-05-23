@@ -14,31 +14,28 @@ using namespace NTL;
 class NumUtils {
 public:
 
-	static void sampleGauss(vector<CZZ>& res, const long& dim, const double& stdev);
-	static void sampleGauss(ZZX& res, const long& dim, const double& stdev);
-	static void sampleZO(vector<CZZ>& res, const long& dim);
-	static void sampleZO(ZZX& res, const long& dim);
-	static void sampleUniform2(vector<CZZ>& res, const long& dim, const long& logBnd);
-	static void sampleUniform2(ZZX& res, const long& dim, const long& logBnd);
+	static void sampleGauss(ZZX& res, const long& size, const double& stdev);
+	static void sampleZO(ZZX& res, const long& size);
+	static void sampleUniform2(ZZX& res, const long& size, const long& logBnd);
+
+	static CZZ* sampleGauss(const long& size, const double& stdev);
+	static CZZ* sampleZO(const long& size);
+	static CZZ* sampleUniform2(const long& size, const long& logBnd);
 
 	//-----------------------------------------
 
-	static vector<CZZ> doubleConjugate(vector<CZZ>& vals);
+	static CZZ* fftRaw(CZZ*& vals, const long& size, KsiPows& ksiPows, const bool& isForward);
+	static CZZ* fft(CZZ*& vals, const long& size, KsiPows& ksiPows);
+	static CZZ* fftInv(CZZ*& vals, const long& size, KsiPows& ksiPows);
+	static CZZ* fftInvLazy(CZZ*& vals, const long& size, KsiPows& ksiPows);
+
+	static CZZ* fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, KsiPows& ksiPows);
+	static CZZ* fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, KsiPows& ksiPows);
 
 	//-----------------------------------------
 
-	static vector<CZZ> fftRaw(vector<CZZ>& vals, KsiPows& ksiPows, const bool& isForward);
-	static vector<CZZ> fft(vector<CZZ>& vals, KsiPows& ksiPows);
-	static vector<CZZ> fftInv(vector<CZZ>& vals, KsiPows& ksiPows);
-	static vector<CZZ> fftInvLazy(vector<CZZ>& vals, KsiPows& ksiPows);
-
-	static vector<CZZ> fftFull(vector<CZZ>& vals1, vector<CZZ>& vals2, KsiPows& ksiPows);
-	static vector<CZZ> fftFullLazy(vector<CZZ>& vals1, vector<CZZ>& vals2, KsiPows& ksiPows);
-
-	//-----------------------------------------
-
-	static vector<CZZ> fftSpecial(vector<CZZ>& vals, KsiPows& ksiPows);
-	static vector<CZZ> fftSpecialInv(vector<CZZ>& vals, KsiPows& ksiPows);
+	static CZZ* fftSpecial(CZZ*& vals, const long& size, KsiPows& ksiPows);
+	static CZZ* fftSpecialInv(CZZ*& vals, const long& size, KsiPows& ksiPows);
 
 	//-----------------------------------------
 

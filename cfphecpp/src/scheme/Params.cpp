@@ -11,6 +11,7 @@
 Params::Params(long logN, long logl, long logp, long L, double sigma, double rho, long h) : logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h) {
 	N = 1 << logN;
 	M = N << 1;
+	Nh = N >> 1;
 	logq = logl + logp * L;
 	logP = logq;
 	logPq = logP + logq;
@@ -27,8 +28,23 @@ Params::Params(long logN, long logl, long logp, long L, double sigma, double rho
 		Pqi.push_back(Pql);
 	}
 
+	indexes.reserve(Nh);
+	long val = 1;
+	indexes.push_back(val);
+	for (long i = 1; i < Nh; ++i) {
+		val *=3;
+		val %=M;
+		indexes.push_back(val);
+	}
+
+	indexesInv.reserve(Nh);
+	for (long i = 0; i < Nh; ++i) {
+		indexesInv.push_back(M - indexes[i]);
+	}
+
 	ksiPows.setLogp(logp);
 	ksiPows.precompute(logN + 2);
 	taylorPows.setLogp(logp);
 	taylorPows.precompute();
+
 }

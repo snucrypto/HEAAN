@@ -14,11 +14,11 @@ public:
 
 	long logp;
 
-	map<string, vector<double>> coeffsMap;
-	map<string, vector<ZZ>> powsMap;
+	map<string, double*> coeffsMap;
+	map<string, ZZ*> powsMap;
 
 	void setLogp(long logp);
-	void insert(string& name, vector<double>& coeffs);
+	void insert(string& name, double*& coeffs, long size);
 
 	void precompute();
 

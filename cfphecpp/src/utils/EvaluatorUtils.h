@@ -16,6 +16,7 @@ public:
 	static CZZ evaluateVal(const double& xr, const double& xi, const long& logp);
 	static CZZ evaluateRandomVal(const long& logp);
 	static CZZ evaluateRandomCircleVal(const long& logp);
+	static CZZ* evaluateRandomVals(const long& size, const long& logp);
 
 	//-----------------------------------------
 
@@ -24,8 +25,8 @@ public:
 
 	//-----------------------------------------
 
-	static vector<CZZ> evaluatePowvec(const double& xr, const double& xi, const long& degree, const long& logp);
-	static vector<CZZ> evaluatePow2vec(const double& xr, const double& xi, const long& logDegree, const long& logp);
+	static CZZ* evaluatePowvec(const double& xr, const double& xi, const long& degree, const long& logp);
+	static CZZ* evaluatePow2vec(const double& xr, const double& xi, const long& logDegree, const long& logp);
 
 	//-----------------------------------------
 
@@ -35,17 +36,7 @@ public:
 
 	//-----------------------------------------
 
-	static void evaluateRandomVals(vector<CZZ>& res, const long& size, const long& logp);
-	static void evaluateRandomCircleValsAndPows(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& degree, const long& logp);
-	static void evaluateRandomCircleValsAndPows2(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logDeg, const long& logp);
-	static void evaluateRandomCircleValsAndProduct(vector<vector<CZZ>>& vals, vector<CZZ>& fvals, const long& slots, const long& size, const long& logp);
-	static void evaluateRandomCircleBarValsAndInverses(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
-	static void evaluateRandomValsAndExponents(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
-	static void evaluateRandomValsAndSigmoids(vector<CZZ>& vals, vector<CZZ>& fvals, const long& slots, const long& logp);
-
-	//-----------------------------------------
-
-	static void leftShift(vector<CZZ>& vals, const long& logp);
+	static void leftShift(CZZ*& vals, const long& size, const long& logp);
 };
 
 #endif /* UTILS_EVALUATORUTILS_H_ */

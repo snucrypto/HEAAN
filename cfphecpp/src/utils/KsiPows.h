@@ -13,7 +13,7 @@ class KsiPows {
 public:
 
 	long logp;
-	vector<vector<CZZ>> pows;
+	CZZ** pows;
 
 	void setLogp(long logp);
 	void precompute(long logSize);

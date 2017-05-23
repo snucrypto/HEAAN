@@ -16,12 +16,12 @@ public:
 
 	ZZX mx;
 
-	long logSlots;
+	long slots;
 	long level;
 
 	//-----------------------------------------
 
-	Message(ZZX& mx, long& logSlots, long level = 1) : mx(mx), logSlots(logSlots), level(level) {}
+	Message(ZZX mx = ZZX::zero(), long slots = 1, long level = 1) : mx(mx), slots(slots), level(level) {}
 
 };
 

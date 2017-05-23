@@ -2,12 +2,12 @@
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
-#include <iostream>
-#include <vector>
+#include <cmath>
 
 #include "../czz/CZZ.h"
 #include "../utils/NumUtils.h"
 #include "../utils/Ring2Utils.h"
+#include "../utils/StringUtils.h"
 #include "Params.h"
 
 using namespace std;
@@ -62,48 +62,38 @@ void Scheme::rlweInstance(ZZX& c0, ZZX& c1) {
 
 //-----------------------------------------
 
-vector<CZZ> Scheme::doubleConjugate(vector<CZZ>& vals) {
-	vector<CZZ> res;
-	long vsize = vals.size();
-	res.reserve(vsize * 2);
+CZZ* Scheme::doubleConjugate(CZZ*& vals, long slots) {
+	CZZ* res = new CZZ[slots * 2];
+	for (long i = 0; i < slots; ++i) {
+		res[i] = vals[i];
+		res[2 * slots - i - 1] = vals[i].conjugate();
+	}
 
-	for (long i = 0; i < vsize; ++i) {
-		res.push_back(vals[i]);
-	}
-	for (long i = 0; i < vsize; ++i) {
-		res.push_back(vals[vsize - i - 1].conjugate());
-	}
 	return res;
 }
 
-vector<CZZ> Scheme::doubleConjugate(CZZ& val) {
-	vector<CZZ> res;
-	res.push_back(val);
-	res.push_back(val.conjugate());
+CZZ* Scheme::doubleConjugate(CZZ& val) {
+	CZZ* res;
+	res = new CZZ[2];
+	res[0] = val;
+	res[1] = val.conjugate();
 	return res;
 }
 
-void Scheme::doubleConjugateAndEqual(vector<CZZ>& vals) {
-	long vsize = vals.size();
-	for (long i = 0; i < vsize; ++i) {
-		vals.push_back(vals[vsize - i - 1].conjugate());
-	}
-}
+//-----------------------------------------
 
-Message Scheme::encode(vector<CZZ>& vals) {
+Message Scheme::encode(CZZ*& vals, long slots) {
 	ZZX poly;
 	poly.SetLength(params.N);
 	long idx = 0;
-	long slots = vals.size();
 	long logSlots = log2(slots);
 	long gap = (params.N >> logSlots);
-	vector<CZZ> fftInv = NumUtils::fftSpecialInv(vals, params.ksiPows);
+	CZZ* fftInv = NumUtils::fftSpecialInv(vals, slots, params.ksiPows);
 	for (long i = 0; i < slots; ++i) {
 		poly.rep[idx] = fftInv[i].r;
 		idx += gap;
 	}
-	Message res(poly, logSlots);
-	return res;
+	return Message(poly, slots);
 }
 
 Cipher Scheme::encrypt(Message& msg, long level) {
@@ -111,27 +101,25 @@ Cipher Scheme::encrypt(Message& msg, long level) {
 	ZZ qi = getqi(level);
 	rlweInstance(c0, c1, qi);
 	Ring2Utils::add(c0, msg.mx, c0, qi, params.N);
-	Cipher cipher(c0, c1, msg.logSlots, level);
-	return cipher;
+	return Cipher(c0, c1, msg.slots, level);
 }
 
-Cipher Scheme::encryptFull(vector<CZZ>& vals, long level) {
-	vector<CZZ> conj = doubleConjugate(vals);
-	Message msg = encode(conj);
+Cipher Scheme::encryptFull(CZZ*& vals, long slots, long level) {
+	CZZ* conj = doubleConjugate(vals, slots);
+	Message msg = encode(conj, slots * 2);
 	return encrypt(msg, level);
 }
 
 Cipher Scheme::encryptFull(CZZ& val, long level) {
-	vector<CZZ> conj = doubleConjugate(val);
-	Message msg = encode(conj);
+	CZZ* conj = doubleConjugate(val);
+	Message msg = encode(conj, 2);
 	return encrypt(msg, level);
 }
 
-vector<Cipher> Scheme::encryptFullSingleVec(vector<CZZ>& vals) {
-	vector<Cipher> res;
-	for (long i = 0; i < vals.size(); ++i) {
-		Cipher c = encryptFull(vals[i]);
-		res.push_back(c);
+Cipher* Scheme::encryptFullSingleArray(CZZ*& vals, long size) {
+	Cipher* res = new Cipher[size];
+	for (long i = 0; i < size; ++i) {
+		res[i] = encryptFull(vals[i]);
 	}
 	return res;
 }
@@ -144,56 +132,52 @@ Message Scheme::decrypt(Cipher& cipher) {
 	poly.SetLength(params.N);
 	Ring2Utils::mult(poly, cipher.c1, secretKey.s, qi, params.N);
 	Ring2Utils::add(poly, poly, cipher.c0, qi, params.N);
-	Message msg(poly, cipher.logSlots, cipher.level);
+	Message msg(poly, cipher.slots, cipher.level);
 	return msg;
 }
 
-vector<CZZ> Scheme::decode(Message& msg) {
-	vector<CZZ> fftinv;
+CZZ* Scheme::decode(Message& msg) {
+	CZZ* fftinv = new CZZ[msg.slots];
 	ZZ qi = getqi(msg.level);
 
 	long idx = 0;
-	long slots = (1 << msg.logSlots);
-	long gap = (params.N >> msg.logSlots);
-	for (long i = 0; i < slots; ++i) {
+	long logSlots = log2(msg.slots);
+	long gap = (params.N >> logSlots);
+	for (long i = 0; i < msg.slots; ++i) {
 		CZZ c(msg.mx.rep[idx], ZZ(0));
 		trueValue(c, qi);
-		fftinv.push_back(c);
+		fftinv[i] = c;
 		idx += gap;
 	}
-	vector<CZZ> fft = NumUtils::fftSpecial(fftinv, params.ksiPows);
-	return fft;
+	return NumUtils::fftSpecial(fftinv, msg.slots, params.ksiPows);
 }
 
-vector<CZZ> Scheme::deConjugate(vector<CZZ>& vals) {
-	vector<CZZ> res;
-	long size = vals.size();
-	for (long i = 0; i < size / 2; ++i) {
-		res.push_back(vals[i]);
+CZZ* Scheme::deConjugate(CZZ*& vals, long slots) {
+	CZZ* res = new CZZ[slots];
+	for (long i = 0; i < slots; ++i) {
+		res[i] = vals[i];
 	}
 	return res;
 }
 
-vector<CZZ> Scheme::decryptFull(Cipher& cipher) {
+CZZ* Scheme::decryptFull(Cipher& cipher) {
 	Message msg = decrypt(cipher);
-	vector<CZZ> conj = decode(msg);
-	return deConjugate(conj);
+	CZZ* conj = decode(msg);
+	return deConjugate(conj, msg.slots);
 }
 
 CZZ Scheme::decryptFullSingle(Cipher& cipher) {
 	Message msg = decrypt(cipher);
-	vector<CZZ> conj = decode(msg);
+	CZZ* conj = decode(msg);
 	return conj[0];
 }
 
-vector<CZZ> Scheme::decryptFullSingleVec(vector<Cipher>& ciphers) {
-	vector<CZZ> res;
-	long size = ciphers.size();
-	res.reserve(size);
+CZZ* Scheme::decryptFullSingleArray(Cipher*& ciphers, long size) {
+	CZZ* res = new CZZ[size];
 	for (int i = 0; i < size; ++i) {
 		Message msg = decrypt(ciphers[i]);
-		vector<CZZ> conj = decode(msg);
-		res.push_back(conj[0]);
+		CZZ* conj = decode(msg);
+		res[i] = conj[0];
 	}
 	return res;
 }
@@ -207,7 +191,7 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(c0, cipher1.c0, cipher2.c0, qi, params.N);
 	Ring2Utils::add(c1, cipher1.c1, cipher2.c1, qi, params.N);
 
-	Cipher res(c0, c1, cipher1.logSlots, cipher1.level);
+	Cipher res(c0, c1, cipher1.slots, cipher1.level);
 	return res;
 }
 
@@ -226,7 +210,7 @@ Cipher Scheme::addConst(Cipher& cipher, ZZ& cnst) {
 
 	AddMod(c0.rep[0], cipher.c0.rep[0], cnst, qi);
 	c0.normalize();
-	Cipher newCipher(c0, c1, cipher.logSlots, cipher.level);
+	Cipher newCipher(c0, c1, cipher.slots, cipher.level);
 	return newCipher;
 }
 
@@ -235,12 +219,10 @@ Cipher Scheme::addConst(Cipher& cipher, CZZ& cnst) {
 	ZZX c0 = cipher.c0;
 	ZZX c1 = cipher.c1;
 
-	vector<CZZ> cconj = doubleConjugate(cnst);
-	Message cmsg = encode(cconj);
+	CZZ* cconj = doubleConjugate(cnst);
+	Message cmsg = encode(cconj, cipher.slots);
 	Cipher cnstcipher = encrypt(cmsg, cipher.level);
-	Cipher res = add(cipher, cnstcipher);
-
-	return res;
+	return add(cipher, cnstcipher);
 }
 
 void Scheme::addConstAndEqual(Cipher& cipher, ZZ& cnst) {
@@ -258,7 +240,7 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::sub(c0, cipher1.c0, cipher2.c0, qi, params.N);
 	Ring2Utils::sub(c1, cipher1.c1, cipher2.c1, qi, params.N);
 
-	Cipher res(c0, c1, cipher1.logSlots, cipher1.level);
+	Cipher res(c0, c1, cipher1.slots, cipher1.level);
 	return res;
 }
 
@@ -295,7 +277,7 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::subAndEqual(mulC1, cc11, qi, params.N);
 	Ring2Utils::addAndEqual(mulC0, cc00, qi, params.N);
 
-	Cipher cipher(mulC0, mulC1, cipher1.logSlots, cipher1.level);
+	Cipher cipher(mulC0, mulC1, cipher1.slots, cipher1.level);
 	return cipher;
 }
 
@@ -346,7 +328,7 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::addAndEqual(mulC1, cc10, qi, params.N);
 	Ring2Utils::addAndEqual(mulC0, cc00, qi, params.N);
 
-	Cipher c(mulC0, mulC1, cipher.logSlots, cipher.level);
+	Cipher c(mulC0, mulC1, cipher.slots, cipher.level);
 	return c;
 }
 
@@ -382,7 +364,7 @@ Cipher Scheme::multByConst(Cipher& cipher, ZZ& cnst) {
 	Ring2Utils::multByConst(c0, cipher.c0, cnst, qi, params.N);
 	Ring2Utils::multByConst(c1, cipher.c1, cnst, qi, params.N);
 
-	Cipher newCipher(c0, c1, cipher.logSlots, cipher.level);
+	Cipher newCipher(c0, c1, cipher.slots, cipher.level);
 	return newCipher;
 }
 
@@ -400,7 +382,7 @@ Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
 	Ring2Utils::multByMonomial(c0, cipher.c0, degree, params.N);
 	Ring2Utils::multByMonomial(c1, cipher.c1, degree, params.N);
 
-	Cipher res(c0, c1, cipher.logSlots, cipher.level);
+	Cipher res(c0, c1, cipher.slots, cipher.level);
 	return res;
 }
 
@@ -418,7 +400,7 @@ Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
 	Ring2Utils::leftShift(c0, cipher.c0, bits, logqi, params.N);
 	Ring2Utils::leftShift(c1, cipher.c1, bits, logqi, params.N);
 
-	Cipher newCipher(c0, c1, cipher.logSlots, cipher.level);
+	Cipher newCipher(c0, c1, cipher.slots, cipher.level);
 	return newCipher;
 }
 
@@ -437,7 +419,7 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	Ring2Utils::rightShift(c0, cipher.c0, logdf, params.N);
 	Ring2Utils::rightShift(c1, cipher.c1, logdf, params.N);
 
-	Cipher newCipher(c0, c1, cipher.logSlots, newLevel);
+	Cipher newCipher(c0, c1, cipher.slots, newLevel);
 	return newCipher;
 }
 
@@ -466,7 +448,7 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	Ring2Utils::truncate(c0, cipher.c0, newLogqi, params.N);
 	Ring2Utils::truncate(c1, cipher.c1, newLogqi, params.N);
 
-	Cipher newCipher(c0, c1, cipher.logSlots, newLevel);
+	Cipher newCipher(c0, c1, cipher.slots, newLevel);
 	return newCipher;
 }
 
@@ -501,3 +483,11 @@ void Scheme::multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2) {
 }
 
 //-----------------------------------------
+
+//Cipher Scheme::rotate(Cipher& cipher, long& steps) {
+//
+//}
+//
+//void Scheme::rotateAndEqual(Cipher& cipher, long& steps) {
+//
+//}

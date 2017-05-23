@@ -12,12 +12,12 @@ public:
 	ZZX c0;
 	ZZX c1;
 
-	long logSlots;
+	long slots;
 	long level;
 
 	//-----------------------------------------
 
-	Cipher(ZZX c0, ZZX c1, long logSlots, long level = 1) : c0(c0), c1(c1), logSlots(logSlots) , level(level) {}
+	Cipher(ZZX c0 = ZZX::zero(), ZZX c1 = ZZX::zero(), long slots = 1, long level = 1) : c0(c0), c1(c1), slots(slots) , level(level) {}
 };
 
 #endif /* SCHEME_CIPHER_H_ */

@@ -42,7 +42,7 @@ int main() {
 	 * Suggested: 15, 2, 56, 11, 10, 3
 	 */
 
-//	TestScheme::testPowerOf2Batch(15, 2, 40, 11, 10, 3);
+//	TestScheme::testPowerOf2Batch(13, 2, 30, 5, 4, 3);
 //	TestScheme::testPowerOf2Extended(15, 3, 56, 11, 10);
 
 	//-----------------------------------------
@@ -82,7 +82,7 @@ int main() {
 	 * Suggested: 13, 2, 35, 5, 8, 3
 	 * Suggested: 13, 37, 35, 4, 8, 3 (for lazy)
 	 */
-//	TestScheme::testExponentBatch(13, 2, 35, 6, 10, 3);
+//	TestScheme::testExponentBatch(13, 4, 35, 6, 10, 3);
 //	TestScheme::testLazyExponentBatch(13, 37, 35, 4, 8, 3);
 //	TestScheme::testExponentExtended(13, 2, 25, 6, 10);
 
@@ -96,18 +96,18 @@ int main() {
 
 //	TestScheme::testSigmoidBatch(13, 1, 35, 5, 7, 3);
 //	TestScheme::testLazySigmoidBatch(13, 36, 35, 4, 7, 3);
-//	TestScheme::testSigmoidExtended(13, 1, 35, 5, 7);
+	TestScheme::testSigmoidExtended(13, 1, 35, 5, 7);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logp, L, logfftdim, logSlots
+	 * Params: logN, logl, logp, L, logfftdim, logSlots
 	 * Suggested: 14, 7, 50, 3, 4, 3;
 	 * Suggested: 14, 7, 50, 2, 4 (for lazy)
 	 */
 //	TestScheme::testFFT(14, 5, 50, 3, 4);
 //	TestScheme::testFFTBatch(14, 5, 50, 3, 4, 3);
-//	TestScheme::testLazyFFT(13, 7, 50, 2, 4);
+//	TestScheme::testLazyFFT(13, 1, 50, 2, 4);
 
 	//-----------------------------------------
 

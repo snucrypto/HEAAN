@@ -14,14 +14,14 @@
 
 class StringUtils {
 public:
-	static void show(vector<CZZ>& vals);
+	static void show(CZZ*& vals, long size);
 
 	//-----------------------------------------
 
 	static void showcompare(CZZ& val1, CZZ& val2, string prefix);
-	static void showcompare(vector<CZZ>& vals1, vector<CZZ>& vals2, string prefix);
-	static void showcompare(vector<CZZ>& vals1, CZZ& val2, string prefix);
-	static void showcompare(CZZ& val1, vector<CZZ>& vals2, string prefix);
+	static void showcompare(CZZ*& vals1, CZZ*& vals2, long size, string prefix);
+	static void showcompare(CZZ*& vals1, CZZ& val2, long size, string prefix);
+	static void showcompare(CZZ& val1, CZZ*& vals2, long size, string prefix);
 
 };
 

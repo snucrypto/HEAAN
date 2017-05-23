@@ -14,6 +14,7 @@ class Params {
 public:
 	long M;
 	long N;
+	long Nh;
 	long L;
 	long logN;
 	long logl;
@@ -32,6 +33,9 @@ public:
 
 	vector<ZZ> qi;
 	vector<ZZ> Pqi;
+
+	vector<long> indexes;
+	vector<long> indexesInv;
 
 	KsiPows ksiPows;
 	TaylorPows taylorPows;
