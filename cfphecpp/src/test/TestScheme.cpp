@@ -348,6 +348,46 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 
 //-----------------------------------------
 
+void TestScheme::testLogarithmBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
+	cout << "!!! START TEST LOGARITHM BATCH !!!" << endl;
+
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	long slots = 1 << logSlots;
+
+
+	CZZ* mvec = new CZZ[slots];
+	CZZ* mlog = new CZZ[slots];
+
+	for (long i = 0; i < slots; ++i) {
+		double mr = (double)arc4random() / RAND_MAX / 20;
+		double mi = (double)arc4random() / RAND_MAX / 20;
+
+		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
+		mlog[i] = EvaluatorUtils::evaluateLogarithm(1 + mr, mi, logp);
+	}
+
+	Cipher cipher = scheme.encryptFull(mvec, slots);
+
+	timeutils.start(LOGARITHM);
+	Cipher cexp = algo.function(cipher, LOGARITHM, degree);
+	timeutils.stop(LOGARITHM);
+
+	CZZ* dexp = scheme.decryptFull(cexp);
+
+	StringUtils::showcompare(mlog, dexp, slots, LOGARITHM);
+
+	cout << "!!! END TEST LOGARITHM BATCH !!!" << endl;
+}
+
+//-----------------------------------------
+
 void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
 	cout << "!!! START TEST EXPONENT BATCH !!!" << endl;
 

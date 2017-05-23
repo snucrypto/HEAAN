@@ -85,6 +85,13 @@ CZZ EvaluatorUtils::evaluateInverse(const double& xr, const double& xi, const lo
 	return evaluateVal(xinvr, xinvi, logp);
 }
 
+CZZ EvaluatorUtils::evaluateLogarithm(const double& xr, const double& xi, const long& logp) {
+	double xlogr = log(xr * xr + xi * xi) / 2;
+	double xlogi = atan(xi / xr);
+
+	return evaluateVal(xlogr, xlogi, logp);
+}
+
 CZZ EvaluatorUtils::evaluateExponent(const double& xr, const double& xi, const long& logp) {
 	double xrexp = exp(xr);
 	double xexpr = xrexp * cos(xi);

@@ -31,6 +31,7 @@ public:
 	//-----------------------------------------
 
 	static CZZ evaluateInverse(const double& xr, const double& xi, const long& logp);
+	static CZZ evaluateLogarithm(const double& xr, const double& xi, const long& logp);
 	static CZZ evaluateExponent(const double& xr, const double& xi, const long& logp);
 	static CZZ evaluateSigmoid(const double& xr, const double& xi, const long& logp);
 

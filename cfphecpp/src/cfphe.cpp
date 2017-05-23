@@ -92,6 +92,13 @@ int main() {
 	 * Suggested: 13, 2, 35, 5, 8, 3
 	 * Suggested: 13, 37, 35, 4, 8, 3 (for lazy)
 	 */
+	TestScheme::testLogarithmBatch(13, 4, 35, 6, 10, 3);
+
+	/*
+	 * Params: logN, logl, logp, L, degree, logSlots
+	 * Suggested: 13, 2, 35, 5, 8, 3
+	 * Suggested: 13, 37, 35, 4, 8, 3 (for lazy)
+	 */
 //	TestScheme::testExponentBatch(13, 4, 35, 6, 10, 3);
 //	TestScheme::testLazyExponentBatch(13, 37, 35, 4, 8, 3);
 //	TestScheme::testExponentExtended(13, 2, 25, 6, 10);

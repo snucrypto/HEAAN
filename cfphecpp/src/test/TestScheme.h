@@ -37,6 +37,10 @@ public:
 
 	//-----------------------------------------
 
+	static void testLogarithmBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
+
+	//-----------------------------------------
+
 	static void testExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
 	static void testLazyExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
 	static void testExponentExtended(long logN, long logl, long logp, long L, long degree);

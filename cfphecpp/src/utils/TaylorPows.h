@@ -29,5 +29,6 @@ public:
 
 static string EXPONENT = "Exponent";
 static string SIGMOID = "Sigmoid";
+static string LOGARITHM = "Logarithm";
 
 #endif /* UTILS_TAYLORPOWS_H_ */
