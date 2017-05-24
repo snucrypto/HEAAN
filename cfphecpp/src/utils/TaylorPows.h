@@ -16,9 +16,10 @@ public:
 	map<string, double*> coeffsMap;
 	map<string, ZZ*> powsMap;
 
+	//-----------------------------------------
+
 	void setLogp(long logp);
 	void insert(string& name, double*& coeffs, long size);
-
 	void precompute();
 
 	//-----------------------------------------

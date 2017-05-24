@@ -100,6 +100,8 @@ class Ring2Utils {
 
 		static void truncate(ZZ& res, const long& logMod);
 		static void truncate(CZZ& res, const long& logMod);
+
+		//-----------------------------------------
 };
 
 #endif /* POLYSCHEME_ZRINGUTILS_H_ */

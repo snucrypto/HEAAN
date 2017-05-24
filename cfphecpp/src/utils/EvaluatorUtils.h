@@ -12,6 +12,8 @@ static double const Pi = 4.0 * atan(1.0);
 class EvaluatorUtils {
 public:
 
+	//-----------------------------------------
+
 	static CZZ evaluateVal(const double& xr, const double& xi, const long& logp);
 	static CZZ evaluateRandomVal(const long& logp);
 	static CZZ evaluateRandomCircleVal(const long& logp);
@@ -37,7 +39,12 @@ public:
 	//-----------------------------------------
 
 	static void leftShift(CZZ*& vals, const long& size, const long& logp);
+
+	//-----------------------------------------
+
 	static void idxShift(CZZ*& vals, const long& size, const long& shift);
+
+	//-----------------------------------------
 };
 
 #endif /* UTILS_EVALUATORUTILS_H_ */

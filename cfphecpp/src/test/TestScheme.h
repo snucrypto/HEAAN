@@ -39,19 +39,19 @@ public:
 	//-----------------------------------------
 
 	static void testExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
-	static void testLazyExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
+	static void testExponentBatchLazy(long logN, long logl, long logp, long L, long degree, long logSlots);
 	static void testExponentExtended(long logN, long logl, long logp, long L, long degree);
 
 	//-----------------------------------------
 
 	static void testSigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
+	static void testSigmoidBatchLazy(long logN, long logl, long logp, long L, long degree, long logSlots);
 	static void testSigmoidExtended(long logN, long logl, long logp, long L, long degree);
-	static void testLazySigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
 	//-----------------------------------------
 
 	static void testFFT(long logN, long logl, long logp, long L, long logfftdim);
 	static void testFFTBatch(long logN, long logl, long logp, long L, long logfftdim, long logSlots);
-	static void testLazyFFT(long logN, long logl, long logp, long L, long logfftdim);
+	static void testFFTLazy(long logN, long logl, long logp, long L, long logfftdim);
 };
 
 #endif /* TEST_TESTSCHEME_H_ */

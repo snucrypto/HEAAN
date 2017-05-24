@@ -137,8 +137,7 @@ Message Scheme::decrypt(Cipher& cipher) {
 	poly.SetLength(params.N);
 	Ring2Utils::mult(poly, cipher.a, secretKey.s, qi, params.N);
 	Ring2Utils::add(poly, poly, cipher.b, qi, params.N);
-	Message msg(poly, cipher.slots, cipher.level);
-	return msg;
+	return Message(poly, cipher.slots, cipher.level);
 }
 
 CZZ* Scheme::decode(Message& msg) {
@@ -187,8 +186,7 @@ Cipher Scheme::add(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::add(b, cipher1.b, cipher2.b, qi, params.N);
 	Ring2Utils::add(a, cipher1.a, cipher2.a, qi, params.N);
 
-	Cipher res(b, a, cipher1.slots, cipher1.level);
-	return res;
+	return Cipher(b, a, cipher1.slots, cipher1.level);
 }
 
 void Scheme::addAndEqual(Cipher& cipher1, Cipher& cipher2) {
@@ -206,8 +204,7 @@ Cipher Scheme::addConst(Cipher& cipher, ZZ& cnst) {
 
 	AddMod(b.rep[0], cipher.b.rep[0], cnst, qi);
 	b.normalize();
-	Cipher newCipher(b, a, cipher.slots, cipher.level);
-	return newCipher;
+	return Cipher(b, a, cipher.slots, cipher.level);
 }
 
 Cipher Scheme::addConst(Cipher& cipher, CZZ& cnst) {
@@ -236,8 +233,7 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::sub(b, cipher1.b, cipher2.b, qi, params.N);
 	Ring2Utils::sub(a, cipher1.a, cipher2.a, qi, params.N);
 
-	Cipher res(b, a, cipher1.slots, cipher1.level);
-	return res;
+	return Cipher(b, a, cipher1.slots, cipher1.level);
 }
 
 void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
@@ -251,10 +247,8 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
+	ZZX bb, aa, amult, bmult, add1, add2, mult;
 
-	ZZX bb, aa, amult, bmult;
-
-	ZZX add1, add2, mult;
 	Ring2Utils::add(add1, cipher1.b, cipher1.a, qi, params.N);
 	Ring2Utils::add(add2, cipher2.b, cipher2.a, qi, params.N);
 	Ring2Utils::mult(mult, add1, add2, qi, params.N);
@@ -273,17 +267,14 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::subAndEqual(amult, aa, qi, params.N);
 	Ring2Utils::addAndEqual(bmult, bb, qi, params.N);
 
-	Cipher cipher(bmult, amult, cipher1.slots, cipher1.level);
-	return cipher;
+	return Cipher(bmult, amult, cipher1.slots, cipher1.level);
 }
 
 void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
+	ZZX bb, aa, add1, add2, mult;
 
-	ZZX bb, aa;
-
-	ZZX add1, add2, mult;
 	Ring2Utils::mult(bb, cipher1.b, cipher2.b, qi, params.N);
 	Ring2Utils::add(add1, cipher1.b, cipher1.a, qi, params.N);
 	Ring2Utils::add(add2, cipher2.b, cipher2.a, qi, params.N);
@@ -307,7 +298,6 @@ void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 Cipher Scheme::square(Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
-
 	ZZX bb, ab, aa, bmult, amult;
 
 	Ring2Utils::square(bb, cipher.b, qi, params.N);
@@ -324,14 +314,12 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::addAndEqual(amult, ab, qi, params.N);
 	Ring2Utils::addAndEqual(bmult, bb, qi, params.N);
 
-	Cipher c(bmult, amult, cipher.slots, cipher.level);
-	return c;
+	return Cipher(bmult, amult, cipher.slots, cipher.level);
 }
 
 void Scheme::squareAndEqual(Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
-
 	ZZX bb, ab, aa, bmult, amult;
 
 	Ring2Utils::square(bb, cipher.b, qi, params.N);
@@ -360,8 +348,7 @@ Cipher Scheme::multByConst(Cipher& cipher, ZZ& cnst) {
 	Ring2Utils::multByConst(b, cipher.b, cnst, qi, params.N);
 	Ring2Utils::multByConst(a, cipher.a, cnst, qi, params.N);
 
-	Cipher newCipher(b, a, cipher.slots, cipher.level);
-	return newCipher;
+	return Cipher(b, a, cipher.slots, cipher.level);
 }
 
 void Scheme::multByConstAndEqual(Cipher& cipher, ZZ& cnst) {
@@ -378,8 +365,7 @@ Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
 	Ring2Utils::multByMonomial(b, cipher.b, degree, params.N);
 	Ring2Utils::multByMonomial(a, cipher.a, degree, params.N);
 
-	Cipher res(b, a, cipher.slots, cipher.level);
-	return res;
+	return Cipher(b, a, cipher.slots, cipher.level);
 }
 
 void Scheme::multByMonomialAndEqual(Cipher& cipher, const long& degree) {
@@ -396,8 +382,7 @@ Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
 	Ring2Utils::leftShift(b, cipher.b, bits, logqi, params.N);
 	Ring2Utils::leftShift(a, cipher.a, bits, logqi, params.N);
 
-	Cipher newCipher(b, a, cipher.slots, cipher.level);
-	return newCipher;
+	return Cipher(b, a, cipher.slots, cipher.level);
 }
 
 void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
@@ -415,8 +400,7 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	Ring2Utils::rightShift(b, cipher.b, logdf, params.N);
 	Ring2Utils::rightShift(a, cipher.a, logdf, params.N);
 
-	Cipher newCipher(b, a, cipher.slots, newLevel);
-	return newCipher;
+	return Cipher(b, a, cipher.slots, newLevel);
 }
 
 Cipher Scheme::modSwitch(Cipher& cipher) {
@@ -444,8 +428,7 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	Ring2Utils::truncate(b, cipher.b, newLogqi, params.N);
 	Ring2Utils::truncate(a, cipher.a, newLogqi, params.N);
 
-	Cipher newCipher(b, a, cipher.slots, newLevel);
-	return newCipher;
+	return Cipher(b, a, cipher.slots, newLevel);
 }
 
 Cipher Scheme::modEmbed(Cipher& cipher) {

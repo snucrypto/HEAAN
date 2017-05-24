@@ -12,6 +12,8 @@ public:
 	long logp;
 	CZZ** pows;
 
+	//-----------------------------------------
+
 	void setLogp(long logp);
 	void precompute(long logSize);
 

@@ -14,15 +14,12 @@ void TaylorPows::insert(string& name, double*& coeffs, long size) {
 	coeffsMap.insert(pair<string, double*>(name, coeffs));
 	ZZ* pows = new ZZ[size];
 	if(logp < 31) {
-		long p = (1 << logp);
 		for (long i = 0; i < size; ++i) {
-			pows[i] = to_ZZ(p * coeffs[i]);
+			pows[i] = to_ZZ((1 << logp) * coeffs[i]);
 		}
 	} else {
-		long tmp1 = (1 << 30);
 		for (long i = 0; i < size; ++i) {
-			pows[i] = to_ZZ(tmp1 * coeffs[i]);
-			pows[i] <<= (logp - 30);
+			pows[i] = to_ZZ((1 << 30) * coeffs[i]) << (logp - 30);
 		}
 	}
 
@@ -30,50 +27,9 @@ void TaylorPows::insert(string& name, double*& coeffs, long size) {
 }
 
 void TaylorPows::precompute() {
-
-	double* expCoeffs = new double[11];
-	double* sigCoeffs = new double[11];
-	double* logCoeffs = new double[11];
-
-	expCoeffs[0] = 1.0 / 1.0;
-	expCoeffs[1] = 1.0 / 1.0;
-	expCoeffs[2] = 1.0 / 2.0;
-	expCoeffs[3] = 1.0 / 6.0;
-	expCoeffs[4] = 1.0 / 24.0;
-	expCoeffs[5] = 1.0 / 120.0;
-	expCoeffs[6] = 1.0 / 720.0;
-	expCoeffs[7] = 1.0 / 5040.0;
-	expCoeffs[8] = 1.0 / 40320.0;
-	//----------------------------------------
-	expCoeffs[9] = 1.0 / 362880.0;
-	expCoeffs[10] = 1.0 / 3628800.0;
-
-
-	sigCoeffs[0] = 1.0 / 2.0;
-	sigCoeffs[1] = 1.0 / 4.0;
-	sigCoeffs[2] = 0.0;
-	sigCoeffs[3] = -1.0 / 48.0;
-	sigCoeffs[4] = 0.0;
-	sigCoeffs[5] = 1.0 / 480.0;
-	sigCoeffs[6] = 0.0;
-	sigCoeffs[7] = -17.0 / 80640.0;
-	sigCoeffs[8] = 0.0;
-	//-----------------------------------------
-	sigCoeffs[9] = 31.0 / 1451520.0;
-	sigCoeffs[10] = 0.0;
-
-	logCoeffs[0] = 0.0;
-	logCoeffs[1] = 1.0;
-	logCoeffs[2] = -1.0 / 2.0;
-	logCoeffs[3] = 1.0 / 3.0;
-	logCoeffs[4] = -1.0 / 4.0;
-	logCoeffs[5] = 1.0 / 5.0;
-	logCoeffs[6] = -1.0 / 6.0;
-	logCoeffs[7] = 1.0 / 7.0;
-	logCoeffs[8] = -1.0 / 8.0;
-	//-----------------------------------------
-	logCoeffs[9] = 1.0 / 9.0;
-	logCoeffs[10] = -1.0 / 10.0;
+	double* logCoeffs = new double[11]{0, 1, -1./2, 1./3, -1./4, 1./5, -1./6, 1./7, -1./8, 1./9, -1./10};
+	double* expCoeffs = new double[11]{1./1, 1./1, 1./2, 1./6, 1./24, 1./120, 1./720, 1./5040, 1./40320, 1./362880, 1./3628800};
+	double* sigCoeffs = new double[11]{1./2, 1./4, 0, -1./48, 0, 1./480, 0, -17./80640, 0, 31./1451520, 0};
 
 	insert(LOGARITHM, logCoeffs, 11);
 	insert(EXPONENT, expCoeffs, 11);

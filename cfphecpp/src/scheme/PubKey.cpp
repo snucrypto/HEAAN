@@ -26,7 +26,6 @@ PubKey::PubKey(Params& params, SecKey& secretKey) : aKeySwitch(), bKeySwitch() {
 		Ring2Utils::addAndEqual(e, spow, params.Pq, params.N);
 		Ring2Utils::mult(bKeySwitch[i], secretKey.s, aKeySwitch[i], params.Pq, params.N);
 		Ring2Utils::sub(bKeySwitch[i], e, bKeySwitch[i], params.Pq, params.N);
-
 	}
 
 	//-----------------------------------------

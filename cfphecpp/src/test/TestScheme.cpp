@@ -34,13 +34,13 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 
-	timeutils.start("Encrypt");
+	timeutils.start("Encrypt batch");
 	Cipher cipher = scheme.encryptFull(mvec, slots);
-	timeutils.stop("Encrypt");
+	timeutils.stop("Encrypt batch");
 
-	timeutils.start("Decrypt");
+	timeutils.start("Decrypt batch");
 	CZZ* dvec = scheme.decryptFull(cipher);
-	timeutils.stop("Decrypt");
+	timeutils.stop("Decrypt batch");
 
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 
@@ -139,9 +139,9 @@ void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start("Power of 2");
+	timeutils.start("Power of 2 batch");
 	Cipher cpow = algo.powerOf2(cipher, logDegree);
-	timeutils.stop("Power of 2");
+	timeutils.stop("Power of 2 batch");
 
 	CZZ* dpow = scheme.decryptFull(cpow);
 
@@ -171,9 +171,9 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 
 	Cipher cipher = scheme.encryptFull(mval);
 
-	timeutils.start("Power of 2");
+	timeutils.start("Power of 2 extended");
 	Cipher* cpow = algo.powerOf2Extended(cipher, logDegree);
-	timeutils.stop("Power of 2");
+	timeutils.stop("Power of 2 extended");
 
 	CZZ* dpow = scheme.decryptFullSingleArray(cpow, logDegree + 1);
 
@@ -211,9 +211,9 @@ void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long de
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start("Power");
+	timeutils.start("Power batch");
 	Cipher cpow = algo.power(cipher, degree);
-	timeutils.stop("Power");
+	timeutils.stop("Power batch");
 
 	CZZ* dpow = scheme.decryptFull(cpow);
 
@@ -243,9 +243,9 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 
 	Cipher cipher = scheme.encryptFull(mval);
 
-	timeutils.start("Power");
+	timeutils.start("Power extended");
 	Cipher* cpow = algo.powerExtended(cipher, degree);
-	timeutils.stop("Power");
+	timeutils.stop("Power extended");
 
 	CZZ* dpow = scheme.decryptFullSingleArray(cpow, degree);
 
@@ -296,9 +296,9 @@ void TestScheme::testProd2Batch(long logN, long logl, long logp, long L, long lo
 		cvec[i] = scheme.encryptFull(mvec[i], slots);
 	}
 
-	timeutils.start("Prod 2");
+	timeutils.start("Prod 2 batch");
 	Cipher cprod = algo.prod2(cvec, logDegree);
-	timeutils.stop("Prod 2");
+	timeutils.stop("Prod 2 batch");
 
 	CZZ* dvec = scheme.decryptFull(cprod);
 
@@ -326,7 +326,7 @@ void TestScheme::testInverseBatch(long logN, long logl, long logp, long L, long 
 	CZZ* minv = new CZZ[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		double angle = (double)arc4random() / RAND_MAX / 50;
+		double angle = (double)arc4random() / RAND_MAX / 20;
 		double mr = cos(angle * 2 * Pi);
 		double mi = sin(angle * 2 * Pi);
 
@@ -336,9 +336,9 @@ void TestScheme::testInverseBatch(long logN, long logl, long logp, long L, long 
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start("Inverse");
+	timeutils.start("Inverse batch");
 	Cipher cinv = algo.inverse(cipher, invSteps);
-	timeutils.stop("Inverse");
+	timeutils.stop("Inverse batch");
 
 	CZZ* dinv = scheme.decryptFull(cinv);
 
@@ -359,7 +359,7 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double angle = (double)arc4random() / RAND_MAX / 50;
+	double angle = (double)arc4random() / RAND_MAX / 20;
 	double mr = cos(angle * 2 * Pi);
 	double mi = sin(angle * 2 * Pi);
 
@@ -408,9 +408,9 @@ void TestScheme::testLogarithmBatch(long logN, long logl, long logp, long L, lon
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start(LOGARITHM);
+	timeutils.start(LOGARITHM + " batch");
 	Cipher cexp = algo.function(cipher, LOGARITHM, degree);
-	timeutils.stop(LOGARITHM);
+	timeutils.stop(LOGARITHM + " batch");
 
 	CZZ* dexp = scheme.decryptFull(cexp);
 
@@ -447,9 +447,9 @@ void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start(EXPONENT);
+	timeutils.start(EXPONENT + " batch");
 	Cipher cexp = algo.function(cipher, EXPONENT, degree);
-	timeutils.stop(EXPONENT);
+	timeutils.stop(EXPONENT + " batch");
 
 	CZZ* dexp = scheme.decryptFull(cexp);
 
@@ -458,7 +458,7 @@ void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long
 	cout << "!!! END TEST EXPONENT BATCH !!!" << endl;
 }
 
-void TestScheme::testLazyExponentBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
+void TestScheme::testExponentBatchLazy(long logN, long logl, long logp, long L, long degree, long logSlots) {
 	cout << "!!! START TEST EXPONENT LAZY !!!" << endl;
 
 	//----------------------------
@@ -486,9 +486,9 @@ void TestScheme::testLazyExponentBatch(long logN, long logl, long logp, long L, 
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start(EXPONENT);
+	timeutils.start(EXPONENT + " lazy");
 	Cipher cexp = algo.functionLazy(cipher, EXPONENT, degree);
-	timeutils.stop(EXPONENT);
+	timeutils.stop(EXPONENT + " lazy");
 
 	CZZ* dexp = scheme.decryptFull(cexp);
 
@@ -518,10 +518,9 @@ void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, l
 
 	Cipher cipher = scheme.encryptFull(mval);
 
-	timeutils.start(EXPONENT);
+	timeutils.start(EXPONENT + " extended");
 	Cipher* cexp = algo.functionExtended(cipher, EXPONENT, degree);
-	timeutils.stop(EXPONENT);
-
+	timeutils.stop(EXPONENT + " extended");
 	CZZ* dexp = scheme.decryptFullSingleArray(cexp, degree);
 
 	StringUtils::showcompare(mexp, dexp, degree, EXPONENT);
@@ -557,9 +556,9 @@ void TestScheme::testSigmoidBatch(long logN, long logl, long logp, long L, long 
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start(SIGMOID);
+	timeutils.start(SIGMOID + " batch");
 	Cipher csig = algo.function(cipher, SIGMOID, degree);
-	timeutils.stop(SIGMOID);
+	timeutils.stop(SIGMOID + " batch");
 
 	CZZ* dsig = scheme.decryptFull(csig);
 
@@ -568,7 +567,7 @@ void TestScheme::testSigmoidBatch(long logN, long logl, long logp, long L, long 
 	cout << "!!! END TEST SIGMOID BATCH !!!" << endl;
 }
 
-void TestScheme::testLazySigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
+void TestScheme::testSigmoidBatchLazy(long logN, long logl, long logp, long L, long degree, long logSlots) {
 	cout << "!!! START TEST SIGMOID LAZY !!!" << endl;
 
 	//----------------------------
@@ -595,9 +594,9 @@ void TestScheme::testLazySigmoidBatch(long logN, long logl, long logp, long L, l
 
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
-	timeutils.start(SIGMOID);
+	timeutils.start(SIGMOID + " lazy");
 	Cipher csig = algo.functionLazy(cipher, SIGMOID, degree);
-	timeutils.stop(SIGMOID);
+	timeutils.stop(SIGMOID + " lazy");
 
 	CZZ* dsig = scheme.decryptFull(csig);
 
@@ -626,9 +625,9 @@ void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, lo
 
 	Cipher cipher = scheme.encryptFull(mval);
 
-	timeutils.start(SIGMOID);
+	timeutils.start(SIGMOID + " extended");
 	Cipher* csig = algo.functionExtended(cipher, SIGMOID, degree);
-	timeutils.stop(SIGMOID);
+	timeutils.stop(SIGMOID + " extended");
 
 	CZZ* dsig = scheme.decryptFullSingleArray(csig, degree);
 
@@ -723,23 +722,23 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 		cvec2[j] = scheme.encryptFull(mvals2, slots);
 	}
 
-	timeutils.start("cfft 1");
+	timeutils.start("cfft 1 batch");
 	Cipher* cfft1 = algo.fft(cvec1, fftdim);
-	timeutils.stop("cfft 1");
+	timeutils.stop("cfft 1 batch");
 
-	timeutils.start("cfft 2");
+	timeutils.start("cfft 2 batch");
 	Cipher* cfft2 = algo.fft(cvec2, fftdim);
-	timeutils.stop("cfft 2");
+	timeutils.stop("cfft 2 batch");
 
-	timeutils.start("cfft mult");
+	timeutils.start("cfft mult batch");
 	for (long i = 0; i < fftdim; ++i) {
 		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
 	}
-	timeutils.stop("cfft mult");
+	timeutils.stop("cfft mult batch");
 
-	timeutils.start("cfft inv");
+	timeutils.start("cfft inv batch");
 	Cipher* cvecp = algo.fftInv(cfft1, fftdim);
-	timeutils.stop("cfft inv");
+	timeutils.stop("cfft inv batch");
 
 	CZZ** dvecp = new CZZ*[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
@@ -755,7 +754,7 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	cout << "!!! END TEST FFT BATCH !!!" << endl;
 }
 
-void TestScheme::testLazyFFT(long logN, long logl, long logp, long L, long logfftdim) {
+void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logfftdim) {
 	cout << "!!! START TEST FFT LAZY !!!" << endl;
 
 	//----------------------------
@@ -776,23 +775,23 @@ void TestScheme::testLazyFFT(long logN, long logl, long logp, long L, long logff
 	Cipher* cvec1 = scheme.encryptFullSingleArray(mvec1, fftdim);
 	Cipher* cvec2 = scheme.encryptFullSingleArray(mvec2, fftdim);
 
-	timeutils.start("cfft 1");
+	timeutils.start("cfft 1 lazy");
 	Cipher* cfft1 = algo.fft(cvec1, fftdim);
-	timeutils.stop("cfft 1");
+	timeutils.stop("cfft 1 lazy");
 
-	timeutils.start("cfft 2");
+	timeutils.start("cfft 2 lazy");
 	Cipher* cfft2 = algo.fft(cvec2, fftdim);
-	timeutils.stop("cfft 2");
+	timeutils.stop("cfft 2 lazy");
 
-	timeutils.start("cfft mult");
+	timeutils.start("cfft mult lazy");
 	for (long i = 0; i < fftdim; ++i) {
 		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
 	}
-	timeutils.stop("cfft mult");
+	timeutils.stop("cfft mult lazy");
 
-	timeutils.start("cfft inv");
+	timeutils.start("cfft inv lazy");
 	Cipher* cvecp = algo.fftInvLazy(cfft1, fftdim);
-	timeutils.stop("cfft inv");
+	timeutils.stop("cfft inv lazy");
 
 	CZZ* dvecp = scheme.decryptFullSingleArray(cvecp, fftdim);
 

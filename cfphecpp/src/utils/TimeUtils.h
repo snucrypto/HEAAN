@@ -10,12 +10,12 @@ struct timeval;
 using namespace std;
 
 class TimeUtils {
-private:
+public:
 
 	struct timeval startTime, stopTime;
 	double timeElapsed;
 
-public:
+	//-----------------------------------------
 
 	void start(string msg);
 	void stop(string msg);

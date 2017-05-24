@@ -129,7 +129,7 @@ Cipher SchemeAlgo::function(Cipher& cipher, string& funcName, const long& degree
 	double* coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
 
 	Cipher res = scheme.multByConst(cpows[0], pows[1]);
-	ZZ a0 = scheme.params.p * pows[0];
+	ZZ a0 = pows[0] << scheme.params.logp;
 	scheme.addConstAndEqual(res, a0);
 
 	for (int i = 1; i < degree; ++i) {
@@ -150,7 +150,7 @@ Cipher SchemeAlgo::functionLazy(Cipher& cipher, string& funcName, const long& de
 	double* coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
 
 	Cipher res = scheme.multByConst(cpows[0], pows[1]);
-	ZZ a0 = scheme.params.p * pows[0];
+	ZZ a0 = pows[0] << scheme.params.logp;
 	scheme.addConstAndEqual(res, a0);
 
 	for (int i = 1; i < degree; ++i) {
@@ -170,7 +170,7 @@ Cipher* SchemeAlgo::functionExtended(Cipher& cipher, string& funcName, const lon
 	double* coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
 
 	Cipher aixi = scheme.multByConst(cpows[0], pows[1]);
-	ZZ a0 = scheme.params.p * pows[0];
+	ZZ a0 = pows[0] << scheme.params.logp;
 	scheme.addConstAndEqual(aixi, a0);
 	Cipher* res = new Cipher[degree];
 	res[0] = aixi;

@@ -10,6 +10,8 @@ class SchemeAlgo {
 public:
 	Scheme& scheme;
 
+	//-----------------------------------------
+
 	SchemeAlgo(Scheme& scheme) : scheme(scheme) {};
 
 	//-----------------------------------------

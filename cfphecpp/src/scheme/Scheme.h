@@ -17,6 +17,8 @@ public:
 	SecKey& secretKey;
 	PubKey& publicKey;
 
+	//-----------------------------------------
+
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey) : params(params), secretKey(secretKey), publicKey(publicKey) {};
 
 	//-----------------------------------------
