@@ -110,6 +110,40 @@ void TestScheme::testRotate(long logN, long logl, long logp, long L, long rotSlo
 	cout << "!!! END TEST ROTATE !!!" << endl;
 }
 
+void TestScheme::testSlotssum(long logN, long logl, long logp, long L, long logSlots) {
+	cout << "!!! START TEST SLOTSUM !!!" << endl;
+
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	Scheme scheme(params, secretKey, publicKey);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+
+	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
+
+	Cipher cipher = scheme.encryptFull(mvec, slots);
+
+	timeutils.start("slotsum");
+	algo.slotsum(cipher, slots);
+	timeutils.stop("slotsum");
+
+	CZZ* dvec = scheme.decryptFull(cipher);
+
+	CZZ msum = CZZ();
+
+	for (long i = 0; i < slots; ++i) {
+		msum += mvec[i];
+	}
+	StringUtils::showcompare(msum, dvec, slots, "slotsum");
+
+	cout << "!!! END TEST SLOTSUM !!!" << endl;
+}
+
+
 //-----------------------------------------
 
 void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots) {

@@ -27,8 +27,9 @@ public:
 	TaylorPows();
 };
 
+static string LOGARITHM = "Logarithm";
 static string EXPONENT = "Exponent";
 static string SIGMOID = "Sigmoid";
-static string LOGARITHM = "Logarithm";
+static string SIGMOID1 = "Sigmoid1";
 
 #endif /* UTILS_TAYLORPOWS_H_ */

@@ -12,6 +12,7 @@ public:
 
 	static void testRotate2(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots);
 	static void testRotate(long logN, long logl, long logp, long L, long rotSlots, long logSlots);
+	static void testSlotssum(long logN, long logl, long logp, long L, long logSlots);
 
 	//-----------------------------------------
 
@@ -47,11 +48,14 @@ public:
 	static void testSigmoidBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
 	static void testSigmoidBatchLazy(long logN, long logl, long logp, long L, long degree, long logSlots);
 	static void testSigmoidExtended(long logN, long logl, long logp, long L, long degree);
+
 	//-----------------------------------------
 
 	static void testFFT(long logN, long logl, long logp, long L, long logfftdim);
 	static void testFFTBatch(long logN, long logl, long logp, long L, long logfftdim, long logSlots);
 	static void testFFTLazy(long logN, long logl, long logp, long L, long logfftdim);
+
+	//-----------------------------------------
 };
 
 #endif /* TEST_TESTSCHEME_H_ */

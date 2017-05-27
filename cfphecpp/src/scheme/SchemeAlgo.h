@@ -48,6 +48,10 @@ public:
 
 	//-----------------------------------------
 
+	void slotsum(Cipher& cipher, const long& size);
+
+	//-----------------------------------------
+
 };
 
 #endif /* SCHEME_SCHEMEALGO_H_ */

@@ -3,10 +3,8 @@
 #include "scheme/Scheme.h"
 #include "scheme/SchemeAlgo.h"
 #include "scheme/SecKey.h"
-#include "test/TestScheme.h"
+#include "test/TestSGD.h"
 #include "utils/TimeUtils.h"
-#include "utils/Ring2Utils.h"
-#include "utils/StringUtils.h"
 
 void test() {
 	//-----------------------------------------
@@ -45,6 +43,7 @@ int main() {
 
 //	TestScheme::testRotate2(13, 2, 30, 4, 2, 11);
 //	TestScheme::testRotate(13, 2, 30, 4, 17, 8);
+//	TestScheme::testSlotssum(13, 2, 30, 4, 8);
 
 	//-----------------------------------------
 
@@ -136,6 +135,13 @@ int main() {
 //	TestScheme::testFFTLazy(14, 51, 50, 2, 8);
 
 	//-----------------------------------------
+
+	/*
+	 * Params: logN, logl, logp, L, logSlots, logSample
+	 * Suggested: 13, 2, 30, 4, 8, 10;
+	 */
+
+	TestSGD::testSGD(13, 2, 30, 13, 4, 7);
 
 	return 0;
 }
