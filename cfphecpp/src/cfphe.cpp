@@ -4,6 +4,7 @@
 #include "scheme/SchemeAlgo.h"
 #include "scheme/SecKey.h"
 #include "test/TestSGD.h"
+#include "test/TestScheme.h"
 #include "utils/TimeUtils.h"
 
 void test() {
@@ -16,7 +17,8 @@ void test() {
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
+	SchemeAux schemeaux(logp, logN + 2);
+	Scheme scheme(params, secretKey, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 }
@@ -131,7 +133,7 @@ int main() {
 	 */
 
 //	TestScheme::testFFT(14, 5, 50, 3, 4);
-//	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
+	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testFFTLazy(14, 51, 50, 2, 8);
 
 	//-----------------------------------------
@@ -141,7 +143,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 4, 8, 10;
 	 */
 
-	TestSGD::testSGD(13, 2, 30, 13, 4, 7);
+//	TestSGD::testSGD(13, 2, 30, 13, 4, 7);
 
 	return 0;
 }

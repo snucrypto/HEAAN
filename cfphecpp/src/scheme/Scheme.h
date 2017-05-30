@@ -1,10 +1,12 @@
 #ifndef SCHEME_SCHEME_H_
 #define SCHEME_SCHEME_H_
 
+#include "../czz/CZZ.h"
 #include "SecKey.h"
 #include "Cipher.h"
 #include "Message.h"
 #include "PubKey.h"
+#include "SchemeAux.h"
 
 using namespace std;
 using namespace NTL;
@@ -16,10 +18,11 @@ public:
 	Params& params;
 	SecKey& secretKey;
 	PubKey& publicKey;
+	SchemeAux& aux;
 
 	//-----------------------------------------
 
-	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey) : params(params), secretKey(secretKey), publicKey(publicKey) {};
+	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey, SchemeAux& schemeaux) : params(params), secretKey(secretKey), publicKey(publicKey), aux(schemeaux) {};
 
 	//-----------------------------------------
 

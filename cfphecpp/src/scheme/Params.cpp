@@ -41,9 +41,4 @@ Params::Params(long logN, long logl, long logp, long L, double sigma, double rho
 			val %= ipow2;
 		}
 	}
-
-	ksiPows.setLogp(logp);
-	ksiPows.precompute(logN + 2);
-	taylorPows.setLogp(logp);
-	taylorPows.precompute();
 }

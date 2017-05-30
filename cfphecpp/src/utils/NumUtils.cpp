@@ -48,7 +48,7 @@ void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& logBnd) {
 	res.normalize();
 }
 
-CZZ* NumUtils::fftRaw(CZZ*& vals, const long& size, KsiPows& ksiPows, const bool& isForward) {
+CZZ* NumUtils::fftRaw(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp, const bool& isForward) {
 	if (size == 1) {
 		return vals;
 	}
@@ -61,17 +61,17 @@ CZZ* NumUtils::fftRaw(CZZ*& vals, const long& size, KsiPows& ksiPows, const bool
 		sub1[i] = vals[2 * i];
 		sub2[i] = vals[2 * i + 1];
 	}
-	CZZ* y1 = fftRaw(sub1, sizeh, ksiPows, isForward);
-	CZZ* y2 = fftRaw(sub2, sizeh, ksiPows, isForward);
+	CZZ* y1 = fftRaw(sub1, sizeh, ksiPows, logp, isForward);
+	CZZ* y2 = fftRaw(sub2, sizeh, ksiPows, logp, isForward);
 	if (isForward) {
 		for (long i = 0; i < sizeh; ++i) {
-			y2[i] *= ksiPows.pows[logsize][i];
-			y2[i] >>= ksiPows.logp;
+			y2[i] *= ksiPows[logsize][i];
+			y2[i] >>= logp;
 		}
 	} else {
 		for (long i = 0; i < sizeh; ++i) {
-			y2[i] *= ksiPows.pows[logsize][size - i];
-			y2[i] >>= ksiPows.logp;
+			y2[i] *= ksiPows[logsize][size - i];
+			y2[i] >>= logp;
 		}
 	}
 	CZZ* res = new CZZ[size];
@@ -82,12 +82,12 @@ CZZ* NumUtils::fftRaw(CZZ*& vals, const long& size, KsiPows& ksiPows, const bool
 	return res;
 }
 
-CZZ* NumUtils::fft(CZZ*& vals, const long& size, KsiPows& ksiPows) {
-	return fftRaw(vals, size, ksiPows, true);
+CZZ* NumUtils::fft(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp) {
+	return fftRaw(vals, size, ksiPows, logp, true);
 }
 
-CZZ* NumUtils::fftInv(CZZ*& vals, const long& size, KsiPows& ksiPows) {
-	CZZ* fftInv = fftRaw(vals, size, ksiPows, false);
+CZZ* NumUtils::fftInv(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp) {
+	CZZ* fftInv = fftRaw(vals, size, ksiPows, logp, false);
 	long logSize = log2(size);
 	for (long i = 0; i < size; ++i) {
 		fftInv[i] >>= logSize;
@@ -95,11 +95,11 @@ CZZ* NumUtils::fftInv(CZZ*& vals, const long& size, KsiPows& ksiPows) {
 	return fftInv;
 }
 
-CZZ* NumUtils::fftInvLazy(CZZ*& vals, const long& size, KsiPows& ksiPows) {
-	return fftRaw(vals, size, ksiPows, false);
+CZZ* NumUtils::fftInvLazy(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp) {
+	return fftRaw(vals, size, ksiPows, logp, false);
 }
 
-CZZ* NumUtils::fftSpecial(CZZ*& vals, const long& size, KsiPows& ksiPows) {
+CZZ* NumUtils::fftSpecial(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp) {
 	if(size == 1) {
 		return vals;
 	}
@@ -115,12 +115,12 @@ CZZ* NumUtils::fftSpecial(CZZ*& vals, const long& size, KsiPows& ksiPows) {
 		sub2[i] = vals[2 * i + 1];
 	}
 
-	CZZ* y1 = fftSpecial(sub1, sizeh, ksiPows);
-	CZZ* y2 = fftSpecial(sub2, sizeh, ksiPows);
+	CZZ* y1 = fftSpecial(sub1, sizeh, ksiPows, logp);
+	CZZ* y2 = fftSpecial(sub2, sizeh, ksiPows, logp);
 
 	for (long i = 0; i < sizeh; ++i) {
-		y2[i] *= ksiPows.pows[logsize + 1][2 * i + 1];
-		y2[i] >>= ksiPows.logp;
+		y2[i] *= ksiPows[logsize + 1][2 * i + 1];
+		y2[i] >>= logp;
 	}
 
 	CZZ* res = new CZZ[size];
@@ -132,35 +132,35 @@ CZZ* NumUtils::fftSpecial(CZZ*& vals, const long& size, KsiPows& ksiPows) {
 	return res;
 }
 
-CZZ* NumUtils::fftSpecialInv(CZZ*& vals, const long& size, KsiPows& ksiPows) {
-	CZZ* fftInv = fftRaw(vals, size, ksiPows, false);
+CZZ* NumUtils::fftSpecialInv(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp) {
+	CZZ* fftInv = fftRaw(vals, size, ksiPows, logp, false);
 	long logsize = log2(size);
 	for (long i = 0; i < size; ++i) {
-		fftInv[i] *= ksiPows.pows[logsize + 1][2 * size - i];
-		fftInv[i] >>= (ksiPows.logp + logsize);
+		fftInv[i] *= ksiPows[logsize + 1][2 * size - i];
+		fftInv[i] >>= (logp + logsize);
 	}
 	return fftInv;
 }
 
-CZZ* NumUtils::fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, KsiPows& ksiPows) {
-	CZZ* mfft1 = fft(vals1, size, ksiPows);
-	CZZ* mfft2 = fft(vals2, size, ksiPows);
+CZZ* NumUtils::fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, CZZ**& ksiPows, const long& logp) {
+	CZZ* mfft1 = fft(vals1, size, ksiPows, logp);
+	CZZ* mfft2 = fft(vals2, size, ksiPows, logp);
 
 	for (long i = 0; i < size; ++i) {
 		mfft1[i] *= mfft2[i];
-		mfft1[i] >>= ksiPows.logp;
+		mfft1[i] >>= logp;
 	}
-	return fftInv(mfft1, size, ksiPows);
+	return fftInv(mfft1, size, ksiPows, logp);
 }
 
 
-CZZ* NumUtils::fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, KsiPows& ksiPows) {
-	CZZ* mfft1 = fft(vals1, size, ksiPows);
-	CZZ* mfft2 = fft(vals2, size, ksiPows);
+CZZ* NumUtils::fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, CZZ**& ksiPows, const long& logp) {
+	CZZ* mfft1 = fft(vals1, size, ksiPows, logp);
+	CZZ* mfft2 = fft(vals2, size, ksiPows, logp);
 
 	for (long i = 0; i < size; ++i) {
 		mfft1[i] *= mfft2[i];
-		mfft1[i] >>= ksiPows.logp;
+		mfft1[i] >>= logp;
 	}
-	return fftInvLazy(mfft1, size, ksiPows);
+	return fftInvLazy(mfft1, size, ksiPows, logp);
 }

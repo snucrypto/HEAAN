@@ -4,7 +4,6 @@
 #include <cmath>
 #include <map>
 
-#include "../utils/TaylorPows.h"
 #include "Params.h"
 
 Cipher SchemeAlgo::powerOf2(Cipher& cipher, const long& logDegree) {
@@ -125,8 +124,8 @@ Cipher* SchemeAlgo::inverseExtended(Cipher& cipher, const long& steps) {
 Cipher SchemeAlgo::function(Cipher& cipher, string& funcName, const long& degree) {
 	Cipher* cpows = powerExtended(cipher, degree);
 
-	ZZ* pows = scheme.params.taylorPows.powsMap.at(funcName);
-	double* coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
+	ZZ* pows = scheme.aux.taylorPowsMap.at(funcName);
+	double* coeffs = scheme.aux.taylorCoeffsMap.at(funcName);
 
 	Cipher res = scheme.multByConst(cpows[0], pows[1]);
 	ZZ a0 = pows[0] << scheme.params.logp;
@@ -146,8 +145,8 @@ Cipher SchemeAlgo::function(Cipher& cipher, string& funcName, const long& degree
 Cipher SchemeAlgo::functionLazy(Cipher& cipher, string& funcName, const long& degree) {
 	Cipher* cpows = powerExtended(cipher, degree);
 
-	ZZ* pows = scheme.params.taylorPows.powsMap.at(funcName);
-	double* coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
+	ZZ* pows = scheme.aux.taylorPowsMap.at(funcName);
+	double* coeffs = scheme.aux.taylorCoeffsMap.at(funcName);
 
 	Cipher res = scheme.multByConst(cpows[0], pows[1]);
 	ZZ a0 = pows[0] << scheme.params.logp;
@@ -166,8 +165,8 @@ Cipher SchemeAlgo::functionLazy(Cipher& cipher, string& funcName, const long& de
 Cipher* SchemeAlgo::functionExtended(Cipher& cipher, string& funcName, const long& degree) {
 	Cipher* cpows = powerExtended(cipher, degree);
 
-	ZZ* pows = scheme.params.taylorPows.powsMap.at(funcName);
-	double* coeffs = scheme.params.taylorPows.coeffsMap.at(funcName);
+	ZZ* pows = scheme.aux.taylorPowsMap.at(funcName);
+	double* coeffs = scheme.aux.taylorCoeffsMap.at(funcName);
 
 	Cipher aixi = scheme.multByConst(cpows[0], pows[1]);
 	ZZ a0 = pows[0] << scheme.params.logp;

@@ -4,7 +4,6 @@
 #include <NTL/ZZX.h>
 
 #include "../czz/CZZ.h"
-#include "KsiPows.h"
 
 using namespace NTL;
 
@@ -19,17 +18,17 @@ public:
 
 	//-----------------------------------------
 
-	static CZZ* fftRaw(CZZ*& vals, const long& size, KsiPows& ksiPows, const bool& isForward);
-	static CZZ* fft(CZZ*& vals, const long& size, KsiPows& ksiPows);
-	static CZZ* fftInv(CZZ*& vals, const long& size, KsiPows& ksiPows);
-	static CZZ* fftInvLazy(CZZ*& vals, const long& size, KsiPows& ksiPows);
-	static CZZ* fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, KsiPows& ksiPows);
-	static CZZ* fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, KsiPows& ksiPows);
+	static CZZ* fftRaw(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp, const bool& isForward);
+	static CZZ* fft(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp);
+	static CZZ* fftInv(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp);
+	static CZZ* fftInvLazy(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp);
+	static CZZ* fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, CZZ**& ksiPows, const long& logp);
+	static CZZ* fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, CZZ**& ksiPows, const long& logp);
 
 	//-----------------------------------------
 
-	static CZZ* fftSpecial(CZZ*& vals, const long& size, KsiPows& ksiPows);
-	static CZZ* fftSpecialInv(CZZ*& vals, const long& size, KsiPows& ksiPows);
+	static CZZ* fftSpecial(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp);
+	static CZZ* fftSpecialInv(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp);
 
 	//-----------------------------------------
 };

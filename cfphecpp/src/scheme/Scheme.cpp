@@ -93,7 +93,7 @@ Message Scheme::encode(CZZ*& vals, long slots) {
 	long idx = 0;
 	long logSlots = log2(slots);
 	long gap = (params.N >> logSlots);
-	CZZ* fftInv = NumUtils::fftSpecialInv(vals, slots, params.ksiPows);
+	CZZ* fftInv = NumUtils::fftSpecialInv(vals, slots, aux.ksiPows, params.logp);
 	for (long i = 0; i < slots; ++i) {
 		poly.rep[idx] = fftInv[i].r;
 		idx += gap;
@@ -152,7 +152,7 @@ CZZ* Scheme::decode(Message& msg) {
 		fftinv[i] = c;
 		idx += gap;
 	}
-	return NumUtils::fftSpecial(fftinv, msg.slots, params.ksiPows);
+	return NumUtils::fftSpecial(fftinv, msg.slots, aux.ksiPows, params.logp);
 }
 
 CZZ* Scheme::decryptFull(Cipher& cipher) {

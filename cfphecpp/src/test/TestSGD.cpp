@@ -1,5 +1,7 @@
 #include "TestSGD.h"
 
+#include <NTL/ZZ.h>
+#include <cstdlib>
 #include <iostream>
 
 #include "../czz/CZZ.h"
@@ -10,7 +12,6 @@
 #include "../scheme/SchemeAlgo.h"
 #include "../scheme/SecKey.h"
 #include "../sgd/SGD.h"
-#include "../utils/EvaluatorUtils.h"
 #include "../utils/StringUtils.h"
 #include "../utils/TimeUtils.h"
 
@@ -22,9 +23,10 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L, long logSlots, lo
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	Scheme scheme(params, secretKey, publicKey);
+	SchemeAux schemeaux(logp, logN + 2);
+	Scheme scheme(params, secretKey, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
-	SGD sgd = SGD(scheme, algo);
+	SGD sgd(scheme, algo);
 	//-----------------------------------------
 	long slots = (1 << logSlots);
 	long sample = (1 << logSample);

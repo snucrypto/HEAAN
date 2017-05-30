@@ -3,9 +3,6 @@
 
 #include <NTL/ZZ.h>
 
-#include "../utils/KsiPows.h"
-#include "../utils/TaylorPows.h"
-
 using namespace std;
 using namespace NTL;
 
@@ -36,9 +33,6 @@ public:
 
 	long** group3pows;
 	long** group3powsInv;
-
-	KsiPows ksiPows;
-	TaylorPows taylorPows;
 
 	//-----------------------------------------
 
