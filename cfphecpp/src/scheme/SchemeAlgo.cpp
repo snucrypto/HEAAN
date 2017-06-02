@@ -243,9 +243,19 @@ Cipher* SchemeAlgo::fftInvLazy(Cipher*& ciphers, const long& size) {
 	return fftRaw(ciphers, size, false);
 }
 
-void SchemeAlgo::slotsum(Cipher& cipher, const long& size) {
-	long logsize = log2(size);
-	for (long i = 0; i < logsize; ++i) {
+Cipher SchemeAlgo::slotsum(Cipher& cipher, const long& slots) {
+	long logslots = log2(slots);
+	Cipher res = cipher;
+	for (long i = 0; i < logslots; ++i) {
+		Cipher rot = scheme.rotate2(cipher, i);
+		scheme.addAndEqual(res, rot);
+	}
+	return res;
+}
+
+void SchemeAlgo::slotsumAndEqual(Cipher& cipher, const long& slots) {
+	long logslots = log2(slots);
+	for (long i = 0; i < logslots; ++i) {
 		Cipher rot = scheme.rotate2(cipher, i);
 		scheme.addAndEqual(cipher, rot);
 	}

@@ -27,6 +27,19 @@ void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
 	addAndEqual(p1.ix, p2.ix, mod, degree);
 }
 
+void Ring2Utils::average(ZZX& res, ZZX*& ps, long& size, ZZ& mod, const long& degree) {
+	res.SetLength(degree);
+	for (long i = 0; i < degree; ++i) {
+		ZZ tmp = ZZ::zero();
+		for (long j = 0; j < size; ++j) {
+			tmp += ps[j].rep[i];
+		}
+		res.rep[i] = tmp / size;
+		res.rep[i] %= mod;
+	}
+	res.normalize();
+}
+
 //-----------------------------------------
 
 void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {

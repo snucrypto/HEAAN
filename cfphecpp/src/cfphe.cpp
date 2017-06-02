@@ -108,6 +108,7 @@ int main() {
 	 * Suggested: 13, 37, 35, 4, 8, 3 (for lazy)
 	 */
 
+//	TestScheme::testExponentBatch(19, 4, 35, 50, 7, 3); // less than 1 minute
 //	TestScheme::testExponentBatch(13, 4, 35, 6, 10, 3);
 //	TestScheme::testExponentBatchLazy(13, 37, 35, 4, 8, 3);
 //	TestScheme::testExponentExtended(13, 2, 25, 6, 10);
@@ -133,17 +134,17 @@ int main() {
 	 */
 
 //	TestScheme::testFFT(14, 5, 50, 3, 4);
-	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
+//	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testFFTLazy(14, 51, 50, 2, 8);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, logSlots, logSample
-	 * Suggested: 13, 2, 30, 4, 8, 10;
+	 * Params: logN, logl, logp, L
+	 * Suggested: 13, 2, 30, 4;
 	 */
 
-//	TestSGD::testSGD(13, 2, 30, 13, 4, 7);
+	TestSGD::testSGD(13, 2, 30, 13);
 
 	return 0;
 }

@@ -19,6 +19,7 @@ class Ring2Utils {
 		static void addAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree);
 		static void addAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree);
 
+		static void average(ZZX& res, ZZX*& ps, long& size, ZZ& mod, const long& degree);
 		//-----------------------------------------
 
 		static void sub(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree);

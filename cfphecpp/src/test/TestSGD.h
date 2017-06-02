@@ -3,7 +3,7 @@
 
 class TestSGD {
 public:
-	static void testSGD(long logN, long logl, long logp, long L, long logSlots, long logSample);
+	static void testSGD(long logN, long logl, long logp, long L);
 
 };
 

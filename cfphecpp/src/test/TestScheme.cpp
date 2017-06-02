@@ -133,7 +133,7 @@ void TestScheme::testSlotssum(long logN, long logl, long logp, long L, long logS
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
 	timeutils.start("slotsum");
-	algo.slotsum(cipher, slots);
+	algo.slotsumAndEqual(cipher, slots);
 	timeutils.stop("slotsum");
 
 	CZZ* dvec = scheme.decryptFull(cipher);

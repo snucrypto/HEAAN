@@ -48,8 +48,8 @@ public:
 
 	//-----------------------------------------
 
-	void slotsum(Cipher& cipher, const long& size);
-
+	Cipher slotsum(Cipher& cipher, const long& slots);
+	void slotsumAndEqual(Cipher& cipher, const long& slots);
 	//-----------------------------------------
 
 };
