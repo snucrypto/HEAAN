@@ -144,7 +144,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 4;
 	 */
 
-	TestSGD::testSGD(13, 2, 30, 13);
+//	TestSGD::testSGD(13, 2, 30, 13);
 
 	return 0;
 }

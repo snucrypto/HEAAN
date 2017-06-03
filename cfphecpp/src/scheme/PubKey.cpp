@@ -3,40 +3,40 @@
 #include "../utils/NumUtils.h"
 #include "../utils/Ring2Utils.h"
 
-PubKey::PubKey(Params& params, SecKey& secretKey) : aKeySwitch(), bKeySwitch() {
-	ZZX e, s2;
+PubKey::PubKey(Params& params, SecKey& secretKey) : axKeySwitch(), bxKeySwitch() {
+	ZZX ex, sxsx;
 
-	NumUtils::sampleUniform2(a, params.N, params.logq);
-	NumUtils::sampleGauss(e, params.N, params.sigma);
-	Ring2Utils::mult(b, secretKey.s, a, params.q, params.N);
-	Ring2Utils::sub(b, e, b, params.q, params.N);
+	NumUtils::sampleUniform2(ax, params.N, params.logq);
+	NumUtils::sampleGauss(ex, params.N, params.sigma);
+	Ring2Utils::mult(bx, secretKey.sx, ax, params.q, params.N);
+	Ring2Utils::sub(bx, ex, bx, params.q, params.N);
 
 	//-----------------------------------------
 
-	aKeySwitch = new ZZX[params.logNh];
-	bKeySwitch = new ZZX[params.logNh];
+	axKeySwitch = new ZZX[params.logNh];
+	bxKeySwitch = new ZZX[params.logNh];
 
 	for (long i = 0; i < params.logNh; ++i) {
 		ZZX spow;
 		long ipow = (1 << i);
-		Ring2Utils::inpower(spow, secretKey.s, params.group3pows[params.logNh][ipow], params.N);
+		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[params.logNh][ipow], params.N);
 		Ring2Utils::leftShiftAndEqual(spow, params.logP, params.logPq, params.N);
-		NumUtils::sampleUniform2(aKeySwitch[i], params.N, params.logPq);
-		NumUtils::sampleGauss(e, params.N, params.sigma);
-		Ring2Utils::addAndEqual(e, spow, params.Pq, params.N);
-		Ring2Utils::mult(bKeySwitch[i], secretKey.s, aKeySwitch[i], params.Pq, params.N);
-		Ring2Utils::sub(bKeySwitch[i], e, bKeySwitch[i], params.Pq, params.N);
+		NumUtils::sampleUniform2(axKeySwitch[i], params.N, params.logPq);
+		NumUtils::sampleGauss(ex, params.N, params.sigma);
+		Ring2Utils::addAndEqual(ex, spow, params.Pq, params.N);
+		Ring2Utils::mult(bxKeySwitch[i], secretKey.sx, axKeySwitch[i], params.Pq, params.N);
+		Ring2Utils::sub(bxKeySwitch[i], ex, bxKeySwitch[i], params.Pq, params.N);
 	}
 
 	//-----------------------------------------
 
-	Ring2Utils::mult(s2, secretKey.s, secretKey.s, params.q, params.N);
-	Ring2Utils::leftShiftAndEqual(s2, params.logP, params.logPq, params.N);
-	NumUtils::sampleUniform2(aStar, params.N, params.logPq);
-	NumUtils::sampleGauss(e, params.N, params.sigma);
-	Ring2Utils::addAndEqual(e, s2, params.Pq, params.N);
-	Ring2Utils::mult(bStar, secretKey.s, aStar, params.Pq, params.N);
-	Ring2Utils::sub(bStar, e, bStar, params.Pq, params.N);
+	Ring2Utils::mult(sxsx, secretKey.sx, secretKey.sx, params.q, params.N);
+	Ring2Utils::leftShiftAndEqual(sxsx, params.logP, params.logPq, params.N);
+	NumUtils::sampleUniform2(axStar, params.N, params.logPq);
+	NumUtils::sampleGauss(ex, params.N, params.sigma);
+	Ring2Utils::addAndEqual(ex, sxsx, params.Pq, params.N);
+	Ring2Utils::mult(bxStar, secretKey.sx, axStar, params.Pq, params.N);
+	Ring2Utils::sub(bxStar, ex, bxStar, params.Pq, params.N);
 
 	//-----------------------------------------
 }

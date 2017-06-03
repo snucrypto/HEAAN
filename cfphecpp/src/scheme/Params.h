@@ -31,8 +31,8 @@ public:
 	ZZ* qi;
 	ZZ* Pqi;
 
-	long** group3pows;
-	long** group3powsInv;
+	long** rotGroup;
+	long** rotGroupInv;
 
 	//-----------------------------------------
 

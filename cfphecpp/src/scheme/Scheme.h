@@ -37,8 +37,8 @@ public:
 
 	//-----------------------------------------
 
-	void rlweInstance(ZZX& b, ZZX& a, ZZ& qi);
-	void rlweInstance(ZZX& b, ZZX& a);
+	void rlweInstance(ZZX& bx, ZZX& ax, ZZ& qi);
+	void rlweInstance(ZZX& bx, ZZX& ax);
 
 	//-----------------------------------------
 

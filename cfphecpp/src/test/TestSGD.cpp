@@ -75,6 +75,8 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 
 	long tmpsampledim = (1 << (long)log2(sampledim));
 	long truesampledim = tmpsampledim < sampledim ? tmpsampledim << 1 : tmpsampledim;
+	long bits = 15;
+	long xbits = 7;
 
 	CZZ** xsample = new CZZ*[dim];
 	CZZ* ysample = new CZZ[truesampledim];
@@ -87,7 +89,7 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 
 	for (long j = 0; j < sampledim; ++j) {
 		for (long i = 0; i < dim; ++i) {
-			xsample[i][j] = data_X[i][j] == 0 ? CZZ() : CZZ(params.p);
+			xsample[i][j] = data_X[i][j] == 0 ? CZZ() : CZZ((params.p >> xbits));
 		}
 		ysample[j] = data_Y[j] == 0 ? CZZ() : CZZ(params.p);
 	}
@@ -106,17 +108,16 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 	Cipher* wcipher = scheme.encryptFullSingleArray(widx, dim);
 
 	long itter = 10;
-	long bits = 20;
 	for (long k = 0; k < itter; ++k) {
 		timeutils.start("SGD");
-		Cipher* grad = sgd.grad(ycipher, xcipher, wcipher, dim, truesampledim);
+		Cipher* cgrad = sgd.grad(ycipher, xcipher, wcipher, dim, truesampledim);
 		timeutils.stop("SGD");
 
 		for (long i = 0; i < dim; ++i) {
-			scheme.leftShiftAndEqual(grad[i], bits);
-			scheme.modSwitchAndEqual(grad[i]);
-			scheme.modEmbedAndEqual(wcipher[i], grad[i].level);
-			scheme.addAndEqual(wcipher[i], grad[i]);
+			scheme.leftShiftAndEqual(cgrad[i], bits);
+			scheme.modSwitchAndEqual(cgrad[i]);
+			scheme.modEmbedAndEqual(wcipher[i], cgrad[i].level);
+			scheme.addAndEqual(wcipher[i], cgrad[i]);
 		}
 
 		CZZ* dwidx = scheme.decryptFullSingleArray(wcipher, dim);

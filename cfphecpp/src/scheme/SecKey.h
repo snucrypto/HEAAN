@@ -10,7 +10,7 @@ using namespace NTL;
 class SecKey {
 public:
 
-	ZZX s;
+	ZZX sx;
 
 	//-----------------------------------------
 

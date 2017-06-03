@@ -70,19 +70,15 @@ void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
 //-----------------------------------------
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
-	ZZ tmp1, tmp2;
 	ZZX p;
 	p.SetLength(2 * degree);
 	res.SetLength(degree);
 	mul(p, p1, p2);
 
 	for (long i = 0; i < degree; ++i) {
-		tmp1 = coeff(p, i);
-		tmp2 = coeff(p, i + degree);
-		tmp1 %= mod;
-		tmp2 %= mod;
-		tmp2 = mod - tmp2;
-		AddMod(res.rep[i], tmp1, tmp2, mod);
+		ZZ tmp1 = coeff(p, i) % mod;
+		ZZ tmp2 =  coeff(p, i + degree) % mod;
+		AddMod(res.rep[i], tmp1, -tmp2, mod);
 	}
 	res.normalize();
 }
@@ -144,17 +140,14 @@ void Ring2Utils::multAndEqual(CZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 //-----------------------------------------
 
 void Ring2Utils::square(ZZX& res, ZZX& p, ZZ& mod, const long& degree) {
-	ZZ tmp1, tmp2;
 	res.SetLength(degree);
 	ZZX p2;
 	p2.SetLength(2 * degree);
 	p2 = p * p;
 
 	for (long i = 0; i < degree; ++i) {
-		tmp1 = coeff(p2, i);
-		tmp2 = coeff(p2, i + degree);
-		tmp1 %= mod;
-		tmp2 %= mod;
+		ZZ tmp1 = coeff(p2, i) % mod;
+		ZZ tmp2 = coeff(p2, i + degree) % mod;
 		AddMod(res.rep[i], tmp1, -tmp2, mod);
 	}
 	res.normalize();

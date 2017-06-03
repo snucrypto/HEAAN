@@ -1,7 +1,7 @@
 #include "Params.h"
 
 Params::Params(long logN, long logl, long logp, long L, double sigma, double rho, long h) :
-			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h), qi(), Pqi(), group3pows(), group3powsInv() {
+			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h), qi(), Pqi(), rotGroup(), rotGroupInv() {
 
 	//-----------------------------------------
 
@@ -25,18 +25,18 @@ Params::Params(long logN, long logl, long logp, long L, double sigma, double rho
 		power(Pqi[i], 2, logql + logP);
 	}
 
-	group3pows = new long*[logN];
-	group3powsInv = new long*[logN];
+	rotGroup = new long*[logN];
+	rotGroupInv = new long*[logN];
 
 	for (long i = 0; i < logN; ++i) {
 		long ipow = 1 << i;
 		long ipow2 = ipow << 2;
-		group3pows[i] = new long[ipow];
-		group3powsInv[i] = new long[ipow];
+		rotGroup[i] = new long[ipow];
+		rotGroupInv[i] = new long[ipow];
 		long val = 1;
 		for (long j = 0; j < ipow; ++j) {
-			group3pows[i][j] = val;
-			group3powsInv[i][j] = ipow2 - val;
+			rotGroup[i][j] = val;
+			rotGroupInv[i][j] = ipow2 - val;
 			val *= 3;
 			val %= ipow2;
 		}
