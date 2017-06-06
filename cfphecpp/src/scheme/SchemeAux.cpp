@@ -1,10 +1,3 @@
-/*
- * SchemeAux.cpp
- *
- *  Created on: May 30, 2017
- *      Author: kimandrik
- */
-
 #include "SchemeAux.h"
 
 SchemeAux::SchemeAux(long logp, long logKsiSize): logp(logp), ksiPows() {

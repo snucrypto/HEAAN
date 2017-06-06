@@ -46,6 +46,8 @@ public:
 	Cipher* fftInv(Cipher*& ciphers, const long& size);
 	Cipher* fftInvLazy(Cipher*& ciphers, const long& size);
 
+	void dummy(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift);
+	void rescale(Cipher& c, long& bits);
 	//-----------------------------------------
 
 	Cipher slotsum(Cipher& cipher, const long& slots);

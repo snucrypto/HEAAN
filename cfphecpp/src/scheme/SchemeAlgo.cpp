@@ -3,6 +3,8 @@
 #include <NTL/ZZ.h>
 #include <cmath>
 #include <map>
+#include <thread>
+#include <future>
 
 #include "Params.h"
 
@@ -207,21 +209,32 @@ Cipher* SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isFor
 		sub2[i] = ciphers[2 * i + 1];
 	}
 
-	Cipher* y1 = fftRaw(sub1, sizeh, isForward);
-	Cipher* y2 = fftRaw(sub2, sizeh, isForward);
+	future<Cipher*> f1 = async(&SchemeAlgo::fftRaw, this, ref(sub1), ref(sizeh), ref(isForward));
+	future<Cipher*> f2 = async(&SchemeAlgo::fftRaw, this, ref(sub2), ref(sizeh), ref(isForward));
+
+	Cipher* y1 = f1.get();
+	Cipher* y2 = f2.get();
 
 	long shift = isForward ? (scheme.params.M / size) : (scheme.params.M - scheme.params.M / size);
 
 	Cipher* res = new Cipher[size];
 
+	thread* thpull = new thread[sizeh];
 	for (long i = 0; i < sizeh; ++i) {
-		scheme.multByMonomialAndEqual(y2[i], shift * i);
-		res[i] = y1[i];
-		res[i + sizeh] = y1[i];
-		scheme.addAndEqual(res[i], y2[i]);
-		scheme.subAndEqual(res[i + sizeh], y2[i]);
+		thpull[i] = thread(&SchemeAlgo::dummy, this, ref(res[i]), ref(res[i + sizeh]), ref(y1[i]), ref(y2[i]), shift * i);
+	}
+	for (long i = 0; i < sizeh; ++i) {
+		thpull[i].join();
 	}
 	return res;
+}
+
+void SchemeAlgo::dummy(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift) {
+	scheme.multByMonomialAndEqual(y2, shift);
+	res1 = y1;
+	res2 = y1;
+	scheme.addAndEqual(res1, y2);
+	scheme.subAndEqual(res2, y2);
 }
 
 Cipher* SchemeAlgo::fft(Cipher*& ciphers, const long& size) {
@@ -232,11 +245,20 @@ Cipher* SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
 	Cipher* fftInv = fftRaw(ciphers, size, false);
 	long logsize = log2(size);
 	long bits = scheme.params.logp - logsize;
+	thread* thpull = new thread[size];
 	for (long i = 0; i < size; ++i) {
-		scheme.leftShiftAndEqual(fftInv[i], bits);
-		scheme.modSwitchAndEqual(fftInv[i]);
+		thpull[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
+	}
+
+	for(long i = 0; i < size; ++i) {
+		thpull[i].join();
 	}
 	return fftInv;
+}
+
+void SchemeAlgo::rescale(Cipher& c, long& bits) {
+	scheme.leftShiftAndEqual(c, bits);
+	scheme.modSwitchAndEqual(c);
 }
 
 Cipher* SchemeAlgo::fftInvLazy(Cipher*& ciphers, const long& size) {

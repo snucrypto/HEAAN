@@ -131,6 +131,9 @@ public:
 	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
 	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
 
+	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
+	int multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
+
 	//-----------------------------------------
 
 	Cipher rotate2(Cipher& cipher, long& logSteps);

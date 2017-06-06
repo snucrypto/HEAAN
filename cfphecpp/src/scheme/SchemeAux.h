@@ -1,10 +1,3 @@
-/*
- * SchemeAux.h
- *
- *  Created on: May 30, 2017
- *      Author: kimandrik
- */
-
 #ifndef SCHEME_SCHEMEAUX_H_
 #define SCHEME_SCHEMEAUX_H_
 

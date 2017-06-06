@@ -721,9 +721,12 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	timeutils.stop("cfft 2");
 
 	timeutils.start("cfft mult");
-	for (long i = 0; i < fftdim; ++i) {
-		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
-	}
+//	Cipher* cfftm = scheme.multAndModSwitchVec(cfft1, cfft2, fftdim);
+	scheme.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
+
+//	for (long i = 0; i < fftdim; ++i) {
+//		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
+//	}
 	timeutils.stop("cfft mult");
 
 	timeutils.start("cfft inv");
@@ -785,9 +788,10 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	timeutils.stop("cfft 2 batch");
 
 	timeutils.start("cfft mult batch");
-	for (long i = 0; i < fftdim; ++i) {
-		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
-	}
+	scheme.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
+//	for (long i = 0; i < fftdim; ++i) {
+//		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
+//	}
 	timeutils.stop("cfft mult batch");
 
 	timeutils.start("cfft inv batch");

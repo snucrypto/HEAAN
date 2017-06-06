@@ -6,7 +6,7 @@
  */
 
 #include "SGD.h"
-
+#include <thread>
 // 5 levels;
 Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const long& dim, const long& sampledim) {
 	long bits = 1;
@@ -26,10 +26,19 @@ Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const lon
 	scheme.multModSwitchAndEqual(sig, tmp);
 
 	Cipher* res = new Cipher[dim];
+	thread* thpull = new thread[dim];
 	for (long i = 0; i < dim; ++i) {
-		res[i] = scheme.modEmbed(xcipher[i], sig.level);
-		scheme.multModSwitchAndEqual(res[i], sig);
-		algo.slotsumAndEqual(res[i], sampledim);
+		thpull[i] = thread(&SGD::operation, this, ref(res[i]), ref(sig), ref(xcipher[i]), ref(sampledim));
+	}
+	for (long i = 0; i < dim; ++i) {
+		thpull[i].join();
 	}
 	return res;
 }
+
+void SGD::operation(Cipher& res, Cipher& sig, Cipher& xcipher, const long& sampledim) {
+	res = scheme.modEmbed(xcipher, sig.level);
+	scheme.multModSwitchAndEqual(res, sig);
+	algo.slotsumAndEqual(res, sampledim);
+}
+
