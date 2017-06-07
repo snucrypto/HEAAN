@@ -5,6 +5,9 @@
 #include <cmath>
 #include <thread>
 #include <future>
+#include <chrono>
+#include <vector>
+#include <unistd.h>
 
 #include "../czz/CZZ.h"
 #include "../utils/NumUtils.h"
@@ -462,27 +465,6 @@ Cipher Scheme::multAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
 void Scheme::multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	multAndEqual(cipher1, cipher2);
 	modSwitchAndEqual(cipher1);
-}
-
-Cipher* Scheme::multAndModSwitchVec(Cipher*& cipher1, Cipher*& cipher2, long& size) {
-	Cipher* res = new Cipher[size];
-	future<Cipher>* thpool = new future<Cipher>[size];
-	for (long i = 0; i < size; ++i) {
-		thpool[i] = async(&Scheme::multAndModSwitch, this, ref(cipher1[i]), ref(cipher2[i]));
-		res[i] = thpool[i].get();
-	}
-	return res;
-}
-
-int Scheme::multModSwitchAndEqualVec(Cipher*& cipher1, Cipher*& cipher2, long& size) {
-	thread* thpool = new thread[size];
-	for (long i = 0; i < size; ++i) {
-		thpool[i] = thread(&Scheme::multModSwitchAndEqual, this, ref(cipher1[i]), ref(cipher2[i]));
-		thpool[i].join();
-	}
-	for (long i = 0; i < size; ++i) {
-	}
-	return 0;
 }
 
 //-----------------------------------------

@@ -4,6 +4,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <thread>
+#include <future>
+#include <atomic>
+#include <mutex>
 
 #include "../czz/CZZ.h"
 #include "../scheme/Cipher.h"
@@ -721,12 +725,9 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	timeutils.stop("cfft 2");
 
 	timeutils.start("cfft mult");
-//	Cipher* cfftm = scheme.multAndModSwitchVec(cfft1, cfft2, fftdim);
-	scheme.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
-
-//	for (long i = 0; i < fftdim; ++i) {
-//		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
-//	}
+	for (long i = 0; i < fftdim; ++i) {
+		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
+	}
 	timeutils.stop("cfft mult");
 
 	timeutils.start("cfft inv");
@@ -787,8 +788,15 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	Cipher* cfft2 = algo.fft(cvec2, fftdim);
 	timeutils.stop("cfft 2 batch");
 
+	thread* thpool = new thread[fftdim];
 	timeutils.start("cfft mult batch");
-	scheme.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
+	for (long i = 0; i < fftdim; ++i) {
+		thpool[i] = thread(&Scheme::multModSwitchAndEqual, scheme, ref(cfft1[i]), ref(cfft2[i]));
+	}
+	for(long i = 0; i < fftdim; ++i) {
+		thpool[i].join();
+	}
+
 //	for (long i = 0; i < fftdim; ++i) {
 //		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
 //	}

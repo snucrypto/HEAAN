@@ -8,12 +8,15 @@
 #include "PubKey.h"
 #include "SchemeAux.h"
 
+#include <mutex>
+#include <atomic>
+
 using namespace std;
 using namespace NTL;
 
+static mutex _mutex;
 class Scheme {
 private:
-
 public:
 	Params& params;
 	SecKey& secretKey;
@@ -23,7 +26,6 @@ public:
 	//-----------------------------------------
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey, SchemeAux& schemeaux) : params(params), secretKey(secretKey), publicKey(publicKey), aux(schemeaux) {};
-
 	//-----------------------------------------
 
 	ZZ getqi(long& level);
@@ -130,9 +132,6 @@ public:
 
 	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
 	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
-
-	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
-	int multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
 
 	//-----------------------------------------
 

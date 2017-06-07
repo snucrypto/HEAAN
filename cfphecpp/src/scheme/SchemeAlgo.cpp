@@ -219,12 +219,12 @@ Cipher* SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isFor
 
 	Cipher* res = new Cipher[size];
 
-	thread* thpull = new thread[sizeh];
+	thread* thpool = new thread[sizeh];
 	for (long i = 0; i < sizeh; ++i) {
-		thpull[i] = thread(&SchemeAlgo::dummy, this, ref(res[i]), ref(res[i + sizeh]), ref(y1[i]), ref(y2[i]), shift * i);
+		thpool[i] = thread(&SchemeAlgo::dummy, this, ref(res[i]), ref(res[i + sizeh]), ref(y1[i]), ref(y2[i]), shift * i);
 	}
 	for (long i = 0; i < sizeh; ++i) {
-		thpull[i].join();
+		thpool[i].join();
 	}
 	return res;
 }
@@ -245,13 +245,12 @@ Cipher* SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
 	Cipher* fftInv = fftRaw(ciphers, size, false);
 	long logsize = log2(size);
 	long bits = scheme.params.logp - logsize;
-	thread* thpull = new thread[size];
+	thread* thpool = new thread[size];
 	for (long i = 0; i < size; ++i) {
-		thpull[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
+		thpool[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
 	}
-
 	for(long i = 0; i < size; ++i) {
-		thpull[i].join();
+		thpool[i].join();
 	}
 	return fftInv;
 }
