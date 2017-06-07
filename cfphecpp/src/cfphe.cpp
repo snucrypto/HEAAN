@@ -130,10 +130,10 @@ int main() {
 	/*
 	 * Params: logN, logl, logp, L, logfftdim, logSlots
 	 * Suggested: 14, 7, 50, 3, 4, 3;
-	 * Suggested: 14, 7, 50, 2, 4 (for lazy)
+	 * Suggested: 14, 57, 50, 2, 4 (for lazy)
 	 */
 
-	TestScheme::testFFT(13, 2, 50, 3, 4);
+	TestScheme::testFFT(14, 5, 50, 3, 4);
 //	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testFFTLazy(13, 51, 50, 2, 6);
 

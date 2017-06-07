@@ -222,9 +222,9 @@ Cipher* SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isFor
 	thread* thpool = new thread[sizeh];
 	for (long i = 0; i < sizeh; ++i) {
 		thpool[i] = thread(&SchemeAlgo::dummy, this, ref(res[i]), ref(res[i + sizeh]), ref(y1[i]), ref(y2[i]), shift * i);
+		thpool[i].join();
 	}
 	for (long i = 0; i < sizeh; ++i) {
-		thpool[i].join();
 	}
 	return res;
 }
@@ -248,9 +248,9 @@ Cipher* SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
 	thread* thpool = new thread[size];
 	for (long i = 0; i < size; ++i) {
 		thpool[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
+		thpool[i].join();
 	}
 	for(long i = 0; i < size; ++i) {
-		thpool[i].join();
 	}
 	return fftInv;
 }
