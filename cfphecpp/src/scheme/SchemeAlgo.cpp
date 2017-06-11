@@ -38,7 +38,7 @@ Cipher SchemeAlgo::power(Cipher& cipher, const long& degree) {
 	if(remDegree > 0) {
 		Cipher tmp = power(cipher, remDegree);
 		scheme.modEmbedAndEqual(tmp, res.level);
-		scheme.multModSwitchAndEqual(res, tmp);
+		scheme.multModSwitchOneAndEqual(res, tmp);
 	}
 	return res;
 }
@@ -53,14 +53,14 @@ Cipher* SchemeAlgo::powerExtended(Cipher& cipher, const long& degree) {
 		res[idx++] = cpows[i];
 		for (int j = 0; j < powi-1; ++j) {
 			res[idx] = scheme.modEmbed(res[j], cpows[i].level);
-			scheme.multModSwitchAndEqual(res[idx++], cpows[i]);
+			scheme.multModSwitchOneAndEqual(res[idx++], cpows[i]);
 		}
 	}
 	res[idx++] = cpows[logDegree];
 	long degree2 = (1 << logDegree);
 	for (int i = 0; i < (degree - degree2); ++i) {
 		res[idx] = scheme.modEmbed(res[i], cpows[logDegree].level);
-		scheme.multModSwitchAndEqual(res[idx++], cpows[logDegree]);
+		scheme.multModSwitchOneAndEqual(res[idx++], cpows[logDegree]);
 	}
 	return res;
 }
@@ -121,7 +121,7 @@ void SchemeAlgo::dummymultequal(Cipher& c1, Cipher& c2) {
 Cipher SchemeAlgo::inverse(Cipher& cipher, const long& steps) {
 	Cipher cpow = cipher;
 	Cipher tmp = scheme.addConst(cipher, scheme.params.p);
-	scheme.modEmbedAndEqual(tmp);
+	scheme.modEmbedOneAndEqual(tmp);
 	Cipher res = tmp;
 
 	for (long i = 1; i < steps; ++i) {
@@ -140,7 +140,7 @@ Cipher* SchemeAlgo::inverseExtended(Cipher& cipher, const long& steps) {
 	Cipher* res = new Cipher[steps];
 	Cipher cpow = cipher;
 	Cipher tmp = scheme.addConst(cipher, scheme.params.p);
-	scheme.modEmbedAndEqual(tmp);
+	scheme.modEmbedOneAndEqual(tmp);
 	res[0] = tmp;
 
 	for (long i = 1; i < steps; ++i) {

@@ -18,12 +18,12 @@ Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const lon
 	scheme.modSwitchOneAndEqual(ip);
 
 	Cipher tmp = scheme.modEmbed(ycipher, ip.level);
-	scheme.multModSwitchAndEqual(ip, tmp);
+	scheme.multModSwitchOneAndEqual(ip, tmp);
 	scheme.leftShiftAndEqual(ip, bits);
 	Cipher sig =  algo.function(ip, SIGMOID1, 7);
 
 	tmp = scheme.modEmbed(ycipher, sig.level);
-	scheme.multModSwitchAndEqual(sig, tmp);
+	scheme.multModSwitchOneAndEqual(sig, tmp);
 
 	Cipher* res = new Cipher[dim];
 	thread* thpull = new thread[dim];
@@ -38,7 +38,7 @@ Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const lon
 
 void SGD::operation(Cipher& res, Cipher& sig, Cipher& xcipher, const long& sampledim) {
 	res = scheme.modEmbed(xcipher, sig.level);
-	scheme.multModSwitchAndEqual(res, sig);
+	scheme.multModSwitchOneAndEqual(res, sig);
 	algo.slotsumAndEqual(res, sampledim);
 }
 

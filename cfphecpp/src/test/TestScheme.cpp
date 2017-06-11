@@ -791,7 +791,7 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	thread* thpool = new thread[fftdim];
 	timeutils.start("cfft mult batch");
 	for (long i = 0; i < fftdim; ++i) {
-		thpool[i] = thread(&Scheme::multModSwitchAndEqual, scheme, ref(cfft1[i]), ref(cfft2[i]));
+		thpool[i] = thread(&Scheme::multModSwitchOneAndEqual, scheme, ref(cfft1[i]), ref(cfft2[i]));
 	}
 	for(long i = 0; i < fftdim; ++i) {
 		thpool[i].join();
@@ -852,7 +852,7 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 
 	timeutils.start("cfft mult lazy");
 	for (long i = 0; i < fftdim; ++i) {
-		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
+		scheme.multModSwitchOneAndEqual(cfft1[i], cfft2[i]);
 	}
 	timeutils.stop("cfft mult lazy");
 

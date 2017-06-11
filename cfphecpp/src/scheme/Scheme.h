@@ -126,12 +126,12 @@ public:
 	Cipher modEmbed(Cipher& cipher, long newLevel);
 	Cipher modEmbed(Cipher& cipher);
 	void modEmbedAndEqual(Cipher& cipher, long newLevel);
-	void modEmbedAndEqual(Cipher& cipher);
+	void modEmbedOneAndEqual(Cipher& cipher);
 
 	//-----------------------------------------
 
 	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
-	void multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2);
+	void multModSwitchOneAndEqual(Cipher& cipher1, Cipher& cipher2);
 
 	//-----------------------------------------
 
