@@ -89,8 +89,8 @@ Cipher* SchemeAlgo::multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, lo
 		thpool[i] = thread(&SchemeAlgo::dummymult, this, ref(res[i]), ref(ciphers1[i]), ref(ciphers2[i]));
 	}
 	for (long i = 0; i < size; ++i) {
-		//TODO check what is the problem with the code
 		thpool[i].join();
+		//TODO check what is the problem with the code
 	}
 	return res;
 }
