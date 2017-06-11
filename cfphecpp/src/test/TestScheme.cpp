@@ -725,13 +725,13 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	timeutils.stop("cfft 2");
 
 	timeutils.start("cfft mult");
-	for (long i = 0; i < fftdim; ++i) {
-		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
-	}
+	Cipher* cfftm = algo.multAndModSwitchVec(cfft1, cfft2, fftdim);
+//	algo.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
 	timeutils.stop("cfft mult");
 
 	timeutils.start("cfft inv");
-	Cipher* cvecp = algo.fftInv(cfft1, fftdim);
+	Cipher* cvecp = algo.fftInv(cfftm, fftdim);
+//	Cipher* cvecp = algo.fftInv(cfft1, fftdim);
 	timeutils.stop("cfft inv");
 
 	CZZ* dvecp = scheme.decryptFullSingleArray(cvecp, fftdim);

@@ -115,7 +115,7 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 
 		for (long i = 0; i < dim; ++i) {
 			scheme.leftShiftAndEqual(cgrad[i], bits);
-			scheme.modSwitchAndEqual(cgrad[i]);
+			scheme.modSwitchOneAndEqual(cgrad[i]);
 			scheme.modEmbedAndEqual(wcipher[i], cgrad[i].level);
 			scheme.addAndEqual(wcipher[i], cgrad[i]);
 		}

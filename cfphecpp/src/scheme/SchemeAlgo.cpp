@@ -12,7 +12,7 @@ Cipher SchemeAlgo::powerOf2(Cipher& cipher, const long& logDegree) {
 	Cipher res = cipher;
 	for (long i = 0; i < logDegree; ++i) {
 		scheme.squareAndEqual(res);
-		scheme.modSwitchAndEqual(res);
+		scheme.modSwitchOneAndEqual(res);
 	}
 	return res;
 }
@@ -22,7 +22,7 @@ Cipher* SchemeAlgo::powerOf2Extended(Cipher& cipher, const long& logDegree) {
 	res[0] = cipher;
 	for (long i = 1; i < logDegree + 1; ++i) {
 		res[i] = scheme.square(res[i-1]);
-		scheme.modSwitchAndEqual(res[i]);
+		scheme.modSwitchOneAndEqual(res[i]);
 	}
 	return res;
 }
@@ -75,11 +75,45 @@ Cipher SchemeAlgo::prod2(Cipher*& ciphers, const long& logDegree) {
 		Cipher* cprodvec = new Cipher[powih];
 		for (long j = 0; j < powih; ++j) {
 			cprodvec[j] = scheme.mult(res[2 * j], res[2 * j + 1]);
-			scheme.modSwitchAndEqual(cprodvec[j]);
+			scheme.modSwitchOneAndEqual(cprodvec[j]);
 		}
 		res = cprodvec;
 	}
 	return res[0];
+}
+
+Cipher* SchemeAlgo::multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size) {
+	Cipher* res = new Cipher[size];
+	thread*  thpool = new thread[size];
+	for (long i = 0; i < size; ++i) {
+		thpool[i] = thread(&SchemeAlgo::dummymult, this, ref(res[i]), ref(ciphers1[i]), ref(ciphers2[i]));
+	}
+	for (long i = 0; i < size; ++i) {
+		//TODO check what is the problem with the code
+		thpool[i].join();
+	}
+	return res;
+}
+
+void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size) {
+	thread* thpool = new thread[size];
+	for (long i = 0; i < size; ++i) {
+		thpool[i] = thread(&SchemeAlgo::dummymultequal, this, ref(ciphers1[i]), ref(ciphers2[i]));
+	}
+	for (long i = 0; i < size; ++i) {
+		//TODO check what is the problem with the code
+		thpool[i].join();
+	}
+}
+
+void SchemeAlgo::dummymult(Cipher& res, Cipher& c1, Cipher& c2) {
+	res = scheme.mult(c1, c2);
+	scheme.modSwitchOneAndEqual(res);
+}
+
+void SchemeAlgo::dummymultequal(Cipher& c1, Cipher& c2) {
+	scheme.multAndEqual(c1, c2);
+	scheme.modSwitchOneAndEqual(c1);
 }
 
 //-----------------------------------------
@@ -92,7 +126,7 @@ Cipher SchemeAlgo::inverse(Cipher& cipher, const long& steps) {
 
 	for (long i = 1; i < steps; ++i) {
 		scheme.squareAndEqual(cpow);
-		scheme.modSwitchAndEqual(cpow);
+		scheme.modSwitchOneAndEqual(cpow);
 		tmp = cpow;
 		scheme.addConstAndEqual(tmp, scheme.params.p);
 		scheme.multAndEqual(tmp, res);
@@ -111,7 +145,7 @@ Cipher* SchemeAlgo::inverseExtended(Cipher& cipher, const long& steps) {
 
 	for (long i = 1; i < steps; ++i) {
 		scheme.squareAndEqual(cpow);
-		scheme.modSwitchAndEqual(cpow);
+		scheme.modSwitchOneAndEqual(cpow);
 		tmp = cpow;
 		scheme.addConstAndEqual(tmp, scheme.params.p);
 		scheme.multAndEqual(tmp, res[i - 1]);
@@ -140,7 +174,7 @@ Cipher SchemeAlgo::function(Cipher& cipher, string& funcName, const long& degree
 			scheme.addAndEqual(res, aixi);
 		}
 	}
-	scheme.modSwitchAndEqual(res);
+	scheme.modSwitchOneAndEqual(res);
 	return res;
 }
 
@@ -186,7 +220,7 @@ Cipher* SchemeAlgo::functionExtended(Cipher& cipher, string& funcName, const lon
 		}
 	}
 	for (long i = 0; i < degree; ++i) {
-		scheme.modSwitchAndEqual(res[i]);
+		scheme.modSwitchOneAndEqual(res[i]);
 	}
 	return res;
 }
@@ -222,9 +256,9 @@ Cipher* SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isFor
 	thread* thpool = new thread[sizeh];
 	for (long i = 0; i < sizeh; ++i) {
 		thpool[i] = thread(&SchemeAlgo::dummy, this, ref(res[i]), ref(res[i + sizeh]), ref(y1[i]), ref(y2[i]), shift * i);
-		thpool[i].join();
 	}
 	for (long i = 0; i < sizeh; ++i) {
+		thpool[i].join();
 	}
 	return res;
 }
@@ -248,16 +282,16 @@ Cipher* SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
 	thread* thpool = new thread[size];
 	for (long i = 0; i < size; ++i) {
 		thpool[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
-		thpool[i].join();
 	}
 	for(long i = 0; i < size; ++i) {
+		thpool[i].join();
 	}
 	return fftInv;
 }
 
 void SchemeAlgo::rescale(Cipher& c, long& bits) {
 	scheme.leftShiftAndEqual(c, bits);
-	scheme.modSwitchAndEqual(c);
+	scheme.modSwitchOneAndEqual(c);
 }
 
 Cipher* SchemeAlgo::fftInvLazy(Cipher*& ciphers, const long& size) {

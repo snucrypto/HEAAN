@@ -15,7 +15,7 @@ Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const lon
 		Cipher tmp = scheme.mult(xcipher[i], wcipher[i]);
 		scheme.addAndEqual(ip, tmp);
 	}
-	scheme.modSwitchAndEqual(ip);
+	scheme.modSwitchOneAndEqual(ip);
 
 	Cipher tmp = scheme.modEmbed(ycipher, ip.level);
 	scheme.multModSwitchAndEqual(ip, tmp);

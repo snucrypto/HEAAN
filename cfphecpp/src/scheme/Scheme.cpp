@@ -421,7 +421,7 @@ void Scheme::modSwitchAndEqual(Cipher& cipher, long newLevel) {
 	cipher.level = newLevel;
 }
 
-void Scheme::modSwitchAndEqual(Cipher& cipher) {
+void Scheme::modSwitchOneAndEqual(Cipher& cipher) {
 	long newLevel = cipher.level + 1;
 	modSwitchAndEqual(cipher, newLevel);
 }
@@ -458,13 +458,13 @@ void Scheme::modEmbedAndEqual(Cipher& cipher) {
 
 Cipher Scheme::multAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
 	Cipher cmult = mult(cipher1, cipher2);
-	modSwitchAndEqual(cmult);
+	modSwitchOneAndEqual(cmult);
 	return cmult;
 }
 
 void Scheme::multModSwitchAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	multAndEqual(cipher1, cipher2);
-	modSwitchAndEqual(cipher1);
+	modSwitchOneAndEqual(cipher1);
 }
 
 //-----------------------------------------

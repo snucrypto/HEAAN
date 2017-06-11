@@ -30,6 +30,13 @@ public:
 
 	//-----------------------------------------
 
+	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
+	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
+
+	void dummymult(Cipher& res, Cipher& c1, Cipher& c2);
+	void dummymultequal(Cipher& c1, Cipher& c2);
+	//-----------------------------------------
+
 	Cipher inverse(Cipher& cipher, const long& steps);
 	Cipher* inverseExtended(Cipher& cipher, const long& steps);
 
