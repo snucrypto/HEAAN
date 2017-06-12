@@ -31,11 +31,15 @@ public:
 	//-----------------------------------------
 
 	Cipher sum(Cipher*& ciphers, const long& size);
+
 	//-----------------------------------------
 
-	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
-	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
+	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
+	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
 
+	//-----------------------------------------
+
+	Cipher innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
 	//-----------------------------------------
 
 	Cipher inverse(Cipher& cipher, const long& steps);

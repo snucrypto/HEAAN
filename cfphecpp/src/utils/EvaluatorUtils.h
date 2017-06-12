@@ -2,6 +2,7 @@
 #define UTILS_EVALUATORUTILS_H_
 
 #include <NTL/ZZ.h>
+#include <NTL/RR.h>
 
 #include "../czz/CZZ.h"
 

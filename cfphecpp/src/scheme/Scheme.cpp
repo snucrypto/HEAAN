@@ -3,11 +3,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 #include <cmath>
-#include <thread>
-#include <future>
-#include <chrono>
 #include <vector>
-#include <unistd.h>
 
 #include "../czz/CZZ.h"
 #include "../utils/NumUtils.h"
@@ -402,7 +398,7 @@ Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
 	return Cipher(bx, ax, cipher.slots, newLevel);
 }
 
-Cipher Scheme::modSwitch(Cipher& cipher) {
+Cipher Scheme::modSwitchOne(Cipher& cipher) {
 	long newLevel = cipher.level + 1;
 	return modSwitch(cipher, newLevel);
 }

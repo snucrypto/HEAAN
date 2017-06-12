@@ -8,13 +8,9 @@
 #include "PubKey.h"
 #include "SchemeAux.h"
 
-#include <mutex>
-#include <atomic>
-
 using namespace std;
 using namespace NTL;
 
-static mutex _mutex;
 class Scheme {
 private:
 public:
@@ -117,7 +113,7 @@ public:
 	//-----------------------------------------
 
 	Cipher modSwitch(Cipher& cipher, long newLevel);
-	Cipher modSwitch(Cipher& cipher);
+	Cipher modSwitchOne(Cipher& cipher);
 	void modSwitchAndEqual(Cipher& cipher, long newLevel);
 	void modSwitchOneAndEqual(Cipher& cipher);
 

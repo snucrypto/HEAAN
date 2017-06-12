@@ -4,17 +4,11 @@
 #include <cstdlib>
 
 CZZ EvaluatorUtils::evaluateVal(const double& xr, const double& xi, const long& logp) {
-	if(logp < 31) {
-		long p = 1 << logp;
-		ZZ pxexpr = to_ZZ(xr * p);
-		ZZ pxexpi = to_ZZ(xi * p);
-		return CZZ(pxexpr, pxexpi);
-	} else {
-		long tmp = (1 << 30);
-		ZZ pxexpr = to_ZZ(xr * tmp) << (logp - 30);
-		ZZ pxexpi = to_ZZ(xi * tmp) << (logp - 30);
-		return CZZ(pxexpr, pxexpi);
-	}
+	RR xrp = to_RR(xr);
+	RR xip = to_RR(xi);
+	xrp.e += logp;
+	xip.e += logp;
+	return CZZ(RoundToZZ(xrp), RoundToZZ(xip));
 }
 
 CZZ EvaluatorUtils::evaluateRandomVal(const long& logp) {

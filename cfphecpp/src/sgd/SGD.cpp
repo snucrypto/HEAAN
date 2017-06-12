@@ -12,15 +12,7 @@
 #include <thread>
 // 5 levels;
 Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const long& dim, const long& sampledim) {
-	Cipher* res = new Cipher[dim];
-	NTL_EXEC_RANGE(dim, first, last);
-	for (long i = first; i < last; ++i) {
-		res[i] = scheme.mult(xcipher[i], wcipher[i]);
-	}
-	NTL_EXEC_RANGE_END;
-
-	Cipher ip = algo.sum(res, dim);
-	scheme.modSwitchOneAndEqual(ip);
+	Cipher ip = algo.innerProd(xcipher, wcipher, dim);
 
 	Cipher tmp = scheme.modEmbed(ycipher, ip.level);
 	scheme.multModSwitchOneAndEqual(ip, tmp);
@@ -30,6 +22,7 @@ Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const lon
 	tmp = scheme.modEmbed(ycipher, sig.level);
 	scheme.multModSwitchOneAndEqual(sig, tmp);
 
+	Cipher* res = new Cipher[dim];
 	NTL_EXEC_RANGE(dim, first, last);
 	for (long i = first; i < last; ++i) {
 		res[i] = scheme.modEmbed(xcipher[i], sig.level);

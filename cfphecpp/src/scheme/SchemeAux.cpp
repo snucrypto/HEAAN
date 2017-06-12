@@ -7,33 +7,20 @@ SchemeAux::SchemeAux(long logp, long logKsiSize): logp(logp), ksiPows() {
 
 void SchemeAux::precomputeKsiPows(long logSize) {
 	ksiPows = new CZZ*[logSize];
-	if(logp < 31) {
-		long p = (1 << logp);
-		for (long i = 0; i < logSize; ++i) {
-			long ipow = (1 << i);
-			CZZ* temp = new CZZ[ipow + 1];
+	for (long i = 0; i < logSize; ++i) {
+		long ipow = (1 << i);
+		CZZ* temp = new CZZ[ipow + 1];
 
-			for (long j = 0; j < ipow; ++j) {
-				double angle = 2.0 * M_PI * j / ipow;
-				temp[j] = CZZ(to_ZZ(cos(angle) * p), to_ZZ(sin(angle) * p));
-			}
-			temp[ipow] = temp[0];
-			ksiPows[i] = temp;
+		for (long j = 0; j < ipow; ++j) {
+			RR angle = to_RR(2.0 * M_PI * j / ipow);
+			RR cosp = cos(angle);
+			RR sinp = sin(angle);
+			cosp.e += logp;
+			sinp.e += logp;
+			temp[j] = CZZ(RoundToZZ(cosp), RoundToZZ(sinp));
 		}
-	} else {
-		long tmp = (1 << 30);
-		for (long i = 0; i < logSize; ++i) {
-			long ipow = (1 << i);
-			CZZ* temp = new CZZ[ipow + 1];
-			for (long j = 0; j < ipow; ++j) {
-				double angle = 2.0 * M_PI * j / ipow;
-				ZZ rx = to_ZZ((long)(cos(angle) * tmp)) << (logp - 30);
-				ZZ ix = to_ZZ((long)(sin(angle) * tmp)) << (logp - 30);
-				temp[j] = CZZ(rx, ix);
-			}
-			temp[ipow] = temp[0];
-			ksiPows[i] = temp;
-		}
+		temp[ipow] = temp[0];
+		ksiPows[i] = temp;
 	}
 }
 
@@ -52,14 +39,10 @@ void SchemeAux::precomputeTaylorPows() {
 void SchemeAux::insertTaylorPows(string& name, double*& coeffs, long size) {
 	taylorCoeffsMap.insert(pair<string, double*>(name, coeffs));
 	ZZ* pows = new ZZ[size];
-	if(logp < 31) {
-		for (long i = 0; i < size; ++i) {
-			pows[i] = to_ZZ((1 << logp) * coeffs[i]);
-		}
-	} else {
-		for (long i = 0; i < size; ++i) {
-			pows[i] = to_ZZ((1 << 30) * coeffs[i]) << (logp - 30);
-		}
+	for (long i = 0; i < size; ++i) {
+		RR coeffsp = to_RR(coeffs[i]);
+		coeffsp.e += logp;
+		pows[i] = RoundToZZ(coeffsp);
 	}
 
 	taylorPowsMap.insert(pair<string, ZZ*>(name, pows));

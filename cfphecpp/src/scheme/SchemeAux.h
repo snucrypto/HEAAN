@@ -3,6 +3,7 @@
 
 #include "../czz/CZZ.h"
 #include <NTL/ZZ.h>
+#include <NTL/RR.h>
 #include <iostream>
 #include <map>
 

@@ -95,7 +95,7 @@ Cipher SchemeAlgo::sum(Cipher*& ciphers, const long& size) {
 	return res;
 }
 
-Cipher* SchemeAlgo::multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size) {
+Cipher* SchemeAlgo::multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
 	Cipher* res = new Cipher[size];
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {
@@ -105,7 +105,7 @@ Cipher* SchemeAlgo::multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, lo
 	return res;
 }
 
-void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size) {
+void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {
 		scheme.multModSwitchOneAndEqual(ciphers1[i], ciphers2[i]);
@@ -113,6 +113,16 @@ void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, 
 	NTL_EXEC_RANGE_END;
 }
 
+Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
+	Cipher* hadamardMult = new Cipher[size];
+	NTL_EXEC_RANGE(size, first, last);
+	for (long i = first; i < last; ++i) {
+		hadamardMult[i] = scheme.mult(ciphers1[i], ciphers2[i]);
+	}
+	NTL_EXEC_RANGE_END;
+	Cipher scipher = sum(hadamardMult, size);
+	return scheme.modSwitchOne(scipher);
+}
 //-----------------------------------------
 
 Cipher SchemeAlgo::inverse(Cipher& cipher, const long& steps) {
