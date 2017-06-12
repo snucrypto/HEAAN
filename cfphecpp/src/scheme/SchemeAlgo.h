@@ -33,6 +33,7 @@ public:
 	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
 	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
 
+	void dummyms(Cipher& res);
 	void dummymult(Cipher& res, Cipher& c1, Cipher& c2);
 	void dummymultequal(Cipher& c1, Cipher& c2);
 	//-----------------------------------------

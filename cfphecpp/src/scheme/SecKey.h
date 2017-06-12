@@ -5,6 +5,7 @@
 
 #include "Params.h"
 
+using namespace std;
 using namespace NTL;
 
 class SecKey {
@@ -15,6 +16,8 @@ public:
 	//-----------------------------------------
 
 	SecKey(Params& params);
+
+	string toString();
 };
 
 #endif /* SCHEME_SECKEY_H_ */

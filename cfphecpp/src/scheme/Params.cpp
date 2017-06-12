@@ -1,5 +1,8 @@
 #include "Params.h"
 
+#include <sstream>
+#include <string>
+
 Params::Params(long logN, long logl, long logp, long L, double sigma, double rho, long h) :
 			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h), qi(), Pqi(), rotGroup(), rotGroupInv() {
 
@@ -41,4 +44,22 @@ Params::Params(long logN, long logl, long logp, long L, double sigma, double rho
 			val %= ipow2;
 		}
 	}
+}
+
+string Params::toString() {
+	stringstream ss;
+	ss << "Params: [M = ";
+	ss << M;
+	ss << " , N = ";
+	ss << N;
+	ss << " , L = ";
+	ss << L;
+	ss << " , logp = ";
+	ss << logp;
+	ss << " , logl = ";
+	ss << logl;
+	ss << " , logq = ";
+	ss << logq;
+	ss <<"]";
+	return ss.str();
 }

@@ -86,11 +86,14 @@ Cipher* SchemeAlgo::multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, lo
 	Cipher* res = new Cipher[size];
 	thread*  thpool = new thread[size];
 	for (long i = 0; i < size; ++i) {
-		thpool[i] = thread(&SchemeAlgo::dummymult, this, ref(res[i]), ref(ciphers1[i]), ref(ciphers2[i]));
+		res[i] = scheme.mult(ciphers1[i], ciphers2[i]);
 	}
 	for (long i = 0; i < size; ++i) {
-		thpool[i].join();
+		thpool[i] = thread(&SchemeAlgo::dummyms, this, ref(res[i]));
+	}
+	for (long i = 0; i < size; ++i) {
 		//TODO check what is the problem with the code
+		thpool[i].join();
 	}
 	return res;
 }
@@ -99,11 +102,15 @@ void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, 
 	thread* thpool = new thread[size];
 	for (long i = 0; i < size; ++i) {
 		thpool[i] = thread(&SchemeAlgo::dummymultequal, this, ref(ciphers1[i]), ref(ciphers2[i]));
+		thpool[i].join();
 	}
 	for (long i = 0; i < size; ++i) {
 		//TODO check what is the problem with the code
-		thpool[i].join();
 	}
+}
+
+void SchemeAlgo::dummyms(Cipher& res) {
+	scheme.modSwitchOneAndEqual(res);
 }
 
 void SchemeAlgo::dummymult(Cipher& res, Cipher& c1, Cipher& c2) {

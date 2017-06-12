@@ -81,7 +81,6 @@ public:
 	//-----------------------------------------
 
 	Cipher addConst(Cipher& cipher, ZZ& cnst);
-	Cipher addConst(Cipher& cipher, CZZ& cnst);
 	void addConstAndEqual(Cipher& cipher, ZZ& cnst);
 
 	//-----------------------------------------

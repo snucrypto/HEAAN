@@ -212,17 +212,6 @@ Cipher Scheme::addConst(Cipher& cipher, ZZ& cnst) {
 	return Cipher(bx, ax, cipher.slots, cipher.level);
 }
 
-Cipher Scheme::addConst(Cipher& cipher, CZZ& cnst) {
-	ZZ qi = getqi(cipher.level);
-	ZZX bx = cipher.bx;
-	ZZX ax = cipher.ax;
-
-	CZZ* gcnst = groupidx(cnst);
-	Message cmsg = encode(gcnst, cipher.slots);
-	Cipher ccipher = encrypt(cmsg, cipher.level);
-	return add(cipher, ccipher);
-}
-
 void Scheme::addConstAndEqual(Cipher& cipher, ZZ& cnst) {
 	ZZ qi = getqi(cipher.level);
 	AddMod(cipher.bx.rep[0], cipher.bx.rep[0], cnst, qi);
@@ -477,8 +466,8 @@ Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
 
 	long pow = (1 << logPow);
 
-	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.N);
-	Ring2Utils::inpower(axrot, cipher.ax, params.rotGroup[params.logNh][pow], params.N);
+	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.q, params.N);
+	Ring2Utils::inpower(axrot, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
 
 	Ring2Utils::mult(axres, publicKey.axKeySwitch[logPow], axrot, Pqi, params.N);
 	Ring2Utils::mult(bxres, publicKey.bxKeySwitch[logPow], axrot, Pqi, params.N);
@@ -498,8 +487,8 @@ void Scheme::rotate2AndEqual(Cipher& cipher, long& logPow) {
 
 	long pow = (1 << logPow);
 
-	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.N);
-	Ring2Utils::inpower(axrot, cipher.ax, params.rotGroup[params.logNh][pow], params.N);
+	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.q, params.N);
+	Ring2Utils::inpower(axrot, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
 
 	Ring2Utils::mult(axaxstar, publicKey.axKeySwitch[logPow], axrot, Pqi, params.N);
 	Ring2Utils::mult(axbxstar, publicKey.bxKeySwitch[logPow], axrot, Pqi, params.N);

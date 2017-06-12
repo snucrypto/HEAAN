@@ -23,6 +23,8 @@ public:
 	//-----------------------------------------
 
 	PubKey(Params& params, SecKey& secretKey);
+
+	string toString();
 };
 
 #endif /* SCHEME_PUBKEY_H_ */

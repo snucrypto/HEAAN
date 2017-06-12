@@ -88,8 +88,8 @@ class Ring2Utils {
 
 		//-----------------------------------------
 
-		static void inpower(ZZX& res, ZZX& p, const long& pow, const long& degree);
-		static ZZX inpower(ZZX& p, const long& pow, const long& degree);
+		static void inpower(ZZX& res, ZZX& p, const long& pow, ZZ& mod, const long& degree);
+		static ZZX inpower(ZZX& p, const long& pow, ZZ& mod, const long& degree);
 
 		//-----------------------------------------
 

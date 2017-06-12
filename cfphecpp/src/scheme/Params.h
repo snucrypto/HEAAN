@@ -31,12 +31,17 @@ public:
 	ZZ* qi;
 	ZZ* Pqi;
 
+	/**
+	 * rotation group for rotating messages withing slots
+	 */
 	long** rotGroup;
 	long** rotGroupInv;
 
 	//-----------------------------------------
 
 	Params(long logN, long logl, long logp, long L, double sigma = 3.2, double rho = 0.5, long h = 64);
+
+	string toString();
 };
 
 #endif /* SCHEME_PARAMS_H_ */

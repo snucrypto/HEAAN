@@ -70,14 +70,12 @@ void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	res.SetLength(degree);
-	ZZX p;
+	ZZX p = p1 * p2;
 	p.SetLength(2 * degree);
-	p = p1 * p2;
-
 	for (long i = 0; i < degree; ++i) {
 		p.rep[i] %= mod;
 		p.rep[i + degree] %= mod;
-		AddMod(res.rep[i], p.rep[i], -p.rep[i + degree], mod);
+		SubMod(res.rep[i], p.rep[i], p.rep[i + degree], mod);
 	}
 	res.normalize();
 }
@@ -109,14 +107,13 @@ ZZX Ring2Utils::mult(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 //}
 
 void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
-	ZZX p;
+	ZZX p = p1 * p2;
 	p.SetLength(2 * degree);
-	p = p1 * p2;
 
 	for (long i = 0; i < degree; ++i) {
 		p.rep[i] %= mod;
 		p.rep[i + degree] %= mod;
-		AddMod(p1.rep[i], p.rep[i], -p.rep[i + degree], mod);
+		SubMod(p1.rep[i], p.rep[i], p.rep[i + degree], mod);
 	}
 	p1.normalize();
 }
@@ -151,9 +148,9 @@ void Ring2Utils::square(ZZX& res, ZZX& p, ZZ& mod, const long& degree) {
 	pp = p * p;
 
 	for (long i = 0; i < degree; ++i) {
-		ZZ tmp1 = coeff(pp, i) % mod;
-		ZZ tmp2 = coeff(pp, i + degree) % mod;
-		AddMod(res.rep[i], tmp1, -tmp2, mod);
+		pp.rep[i] %= mod;
+		pp.rep[i + degree] %= mod;
+		AddMod(res.rep[i], pp.rep[i], -pp.rep[i + degree], mod);
 	}
 	res.normalize();
 }
@@ -386,19 +383,23 @@ void Ring2Utils::rightShiftAndEqual(ZZX& p, const long& bits, const long& degree
 
 //-----------------------------------------
 
-void Ring2Utils::inpower(ZZX& res, ZZX& p, const long& pow, const long& degree) {
+void Ring2Utils::inpower(ZZX& res, ZZX& p, const long& pow, ZZ& mod, const long& degree) {
 	res.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
 		long ipow = i * pow;
 		long shift = ipow % (2 * degree);
-		res.rep[shift % degree] += shift < degree ? p.rep[i] : -p.rep[i];
+		if(shift < degree) {
+			AddMod(res.rep[shift % degree], res.rep[shift % degree], p.rep[i], mod);
+		} else {
+			AddMod(res.rep[shift % degree], res.rep[shift % degree], -p.rep[i], mod);
+		}
 	}
 	res.normalize();
 }
 
-ZZX Ring2Utils::inpower(ZZX& p, const long& pow, const long& degree) {
+ZZX Ring2Utils::inpower(ZZX& p, const long& pow, ZZ& mod, const long& degree) {
 	ZZX res;
-	inpower(res, p, pow, degree);
+	inpower(res, p, pow, mod, degree);
 	return res;
 }
 

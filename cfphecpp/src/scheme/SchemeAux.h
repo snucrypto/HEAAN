@@ -25,8 +25,8 @@ public:
 };
 
 static string LOGARITHM = "Logarithm";
-static string EXPONENT = "Exponent";
-static string SIGMOID = "Sigmoid";
-static string SIGMOID1 = "Sigmoid1";
+static string EXPONENT  = "Exponent";
+static string SIGMOID   = "Sigmoid";
+static string SIGMOID1  = "Sigmoid1";
 
 #endif /* SCHEME_SCHEMEAUX_H_ */
