@@ -118,13 +118,10 @@ CZZ* NumUtils::fftSpecial(CZZ*& vals, const long& size, CZZ**& ksiPows, const lo
 	CZZ* y1 = fftSpecial(sub1, sizeh, ksiPows, logp);
 	CZZ* y2 = fftSpecial(sub2, sizeh, ksiPows, logp);
 
+	CZZ* res = new CZZ[size];
 	for (long i = 0; i < sizeh; ++i) {
 		y2[i] *= ksiPows[logsize + 1][2 * i + 1];
 		y2[i] >>= logp;
-	}
-
-	CZZ* res = new CZZ[size];
-	for (long i = 0; i < sizeh; ++i) {
 		res[i] = y1[i] + y2[i];
 		res[sizeh + i] = y1[i] - y2[i];
 	}

@@ -9,6 +9,8 @@
 #include <atomic>
 #include <mutex>
 
+#include <NTL/BasicThreadPool.h>
+
 #include "../czz/CZZ.h"
 #include "../scheme/Cipher.h"
 #include "../scheme/Params.h"
@@ -21,6 +23,8 @@
 #include "../utils/NumUtils.h"
 #include "../utils/StringUtils.h"
 #include "../utils/TimeUtils.h"
+
+using namespace NTL;
 
 //-----------------------------------------
 
@@ -71,8 +75,6 @@ void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlo
 	long rotSlots = (1 << rotlogSlots);
 
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
-
-
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
 	timeutils.start("Rotate 2");
@@ -102,8 +104,6 @@ void TestScheme::testRotate(long logN, long logl, long logp, long L, long rotSlo
 	long slots = (1 << logSlots);
 
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
-
-
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
 	timeutils.start("Rotate");
@@ -133,7 +133,6 @@ void TestScheme::testSlotssum(long logN, long logl, long logp, long L, long logS
 	long slots = (1 << logSlots);
 
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
-
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 
 	timeutils.start("slotsum");
@@ -143,7 +142,6 @@ void TestScheme::testSlotssum(long logN, long logl, long logp, long L, long logS
 	CZZ* dvec = scheme.decryptFull(cipher);
 
 	CZZ msum = CZZ();
-
 	for (long i = 0; i < slots; ++i) {
 		msum += mvec[i];
 	}
@@ -315,6 +313,7 @@ void TestScheme::testProd2Batch(long logN, long logl, long logp, long L, long lo
 	Scheme scheme(params, secretKey, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
+	SetNumThreads(2);
 	long slots = 1 << logSlots;
 	long degree = 1 << logDegree;
 
@@ -706,6 +705,7 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	Scheme scheme(params, secretKey, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//----------------------------
+	SetNumThreads(4);
 	long fftdim = 1 << logfftdim;
 
 	CZZ* mvec1 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
@@ -716,6 +716,7 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	Cipher* cvec1 = scheme.encryptFullSingleArray(mvec1, fftdim);
 	Cipher* cvec2 = scheme.encryptFullSingleArray(mvec2, fftdim);
 
+
 	timeutils.start("cfft 1");
 	Cipher* cfft1 = algo.fft(cvec1, fftdim);
 	timeutils.stop("cfft 1");
@@ -725,12 +726,10 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	timeutils.stop("cfft 2");
 
 	timeutils.start("cfft mult");
-//	Cipher* cfftm = algo.multAndModSwitchVec(cfft1, cfft2, fftdim);
 	algo.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
 	timeutils.stop("cfft mult");
 
 	timeutils.start("cfft inv");
-//	Cipher* cvecp = algo.fftInv(cfftm, fftdim);
 	Cipher* cvecp = algo.fftInv(cfft1, fftdim);
 	timeutils.stop("cfft inv");
 
@@ -753,6 +752,7 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	Scheme scheme(params, secretKey, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//----------------------------
+	SetNumThreads(8);
 	long fftdim = 1 << logfftdim;
 	long slots = 1 << logSlots;
 
@@ -788,18 +788,8 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	Cipher* cfft2 = algo.fft(cvec2, fftdim);
 	timeutils.stop("cfft 2 batch");
 
-	thread* thpool = new thread[fftdim];
 	timeutils.start("cfft mult batch");
-	for (long i = 0; i < fftdim; ++i) {
-		thpool[i] = thread(&Scheme::multModSwitchOneAndEqual, scheme, ref(cfft1[i]), ref(cfft2[i]));
-	}
-	for(long i = 0; i < fftdim; ++i) {
-		thpool[i].join();
-	}
-
-//	for (long i = 0; i < fftdim; ++i) {
-//		scheme.multModSwitchAndEqual(cfft1[i], cfft2[i]);
-//	}
+	algo.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
 	timeutils.stop("cfft mult batch");
 
 	timeutils.start("cfft inv batch");

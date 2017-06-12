@@ -76,6 +76,7 @@ class Ring2Utils {
 //		static void leftShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree);
 
 		static void leftShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree);
+		static void doubleAndEqual(ZZX& p, const long& logMod, const long& degree);
 //		static void leftShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree);
 
 		//-----------------------------------------

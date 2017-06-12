@@ -241,22 +241,21 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
-	ZZX bxbx, axax, axmult, bxmult, tmp1, tmp2;
 
-	Ring2Utils::add(tmp1, cipher1.bx, cipher1.ax, qi, params.N);
-	Ring2Utils::add(tmp2, cipher2.bx, cipher2.ax, qi, params.N);
-	Ring2Utils::multAndEqual(tmp1, tmp2, qi, params.N);
+	ZZX axbx1 = Ring2Utils::add(cipher1.ax, cipher1.bx, qi, params.N);
+	ZZX axbx2 = Ring2Utils::add(cipher2.ax, cipher2.bx, qi, params.N);
+	Ring2Utils::multAndEqual(axbx1, axbx2, qi, params.N);
 
-	Ring2Utils::mult(bxbx, cipher1.bx, cipher2.bx, qi, params.N);
-	Ring2Utils::mult(axax, cipher1.ax, cipher2.ax, qi, params.N);
+	ZZX bxbx = Ring2Utils::mult(cipher1.bx, cipher2.bx, qi, params.N);
+	ZZX axax = Ring2Utils::mult(cipher1.ax, cipher2.ax, qi, params.N);
 
-	Ring2Utils::mult(axmult, axax, publicKey.axStar, Pqi, params.N);
-	Ring2Utils::mult(bxmult, axax, publicKey.bxStar, Pqi, params.N);
+	ZZX axmult = Ring2Utils::mult(axax, publicKey.axStar, Pqi, params.N);
+	ZZX bxmult = Ring2Utils::mult(axax, publicKey.bxStar, Pqi, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axmult, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(bxmult, params.logP, params.N);
 
-	Ring2Utils::addAndEqual(axmult, tmp1, qi, params.N);
+	Ring2Utils::addAndEqual(axmult, axbx1, qi, params.N);
 	Ring2Utils::subAndEqual(axmult, bxbx, qi, params.N);
 	Ring2Utils::subAndEqual(axmult, axax, qi, params.N);
 	Ring2Utils::addAndEqual(bxmult, bxbx, qi, params.N);
@@ -267,22 +266,21 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
-	ZZX bxbx, axax, tmp1, tmp2;
 
-	Ring2Utils::add(tmp1, cipher1.bx, cipher1.ax, qi, params.N);
-	Ring2Utils::add(tmp2, cipher2.bx, cipher2.ax, qi, params.N);
-	Ring2Utils::multAndEqual(tmp1, tmp2, qi, params.N);
+	ZZX axbx1 = Ring2Utils::add(cipher1.ax, cipher1.bx, qi, params.N);
+	ZZX axbx2 = Ring2Utils::add(cipher2.ax, cipher2.bx, qi, params.N);
+	Ring2Utils::multAndEqual(axbx1, axbx2, qi, params.N);
 
-	Ring2Utils::mult(bxbx, cipher1.bx, cipher2.bx, qi, params.N);
-	Ring2Utils::mult(axax, cipher1.ax, cipher2.ax, qi, params.N);
+	ZZX bxbx = Ring2Utils::mult(cipher1.bx, cipher2.bx, qi, params.N);
+	ZZX axax = Ring2Utils::mult(cipher1.ax, cipher2.ax, qi, params.N);
 
-	Ring2Utils::mult(cipher1.ax, axax, publicKey.axStar, Pqi, params.N);
-	Ring2Utils::mult(cipher1.bx, axax, publicKey.bxStar, Pqi, params.N);
+	cipher1.ax = Ring2Utils::mult(axax, publicKey.axStar, Pqi, params.N);
+	cipher1.bx = Ring2Utils::mult(axax, publicKey.bxStar, Pqi, params.N);
 
 	Ring2Utils::rightShiftAndEqual(cipher1.ax, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(cipher1.bx, params.logP, params.N);
 
-	Ring2Utils::addAndEqual(cipher1.ax, tmp1, qi, params.N);
+	Ring2Utils::addAndEqual(cipher1.ax, axbx1, qi, params.N);
 	Ring2Utils::subAndEqual(cipher1.ax, bxbx, qi, params.N);
 	Ring2Utils::subAndEqual(cipher1.ax, axax, qi, params.N);
 	Ring2Utils::addAndEqual(cipher1.bx, bxbx, qi, params.N);
@@ -386,6 +384,12 @@ void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
 	Ring2Utils::leftShiftAndEqual(cipher.ax, bits, logqi, params.N);
 }
 
+void Scheme::doubleAndEqual(Cipher& cipher) {
+	long logqi = getLogqi(cipher.level);
+	Ring2Utils::doubleAndEqual(cipher.bx, logqi, params.N);
+	Ring2Utils::doubleAndEqual(cipher.ax, logqi, params.N);
+}
+
 //-----------------------------------------
 
 Cipher Scheme::modSwitch(Cipher& cipher, long newLevel) {
@@ -445,7 +449,7 @@ void Scheme::modEmbedOneAndEqual(Cipher& cipher) {
 
 //-----------------------------------------
 
-Cipher Scheme::multAndModSwitch(Cipher& cipher1, Cipher& cipher2) {
+Cipher Scheme::multAndModSwitchOne(Cipher& cipher1, Cipher& cipher2) {
 	Cipher cmult = mult(cipher1, cipher2);
 	modSwitchOneAndEqual(cmult);
 	return cmult;

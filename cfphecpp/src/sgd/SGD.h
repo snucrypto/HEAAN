@@ -15,8 +15,6 @@ public:
 
 	Cipher* grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const long& dim, const long& sampledim);
 
-	void operation(Cipher& res, Cipher& sig, Cipher& xcipher, const long& sampledim);
-
 	SGD(Scheme& scheme, SchemeAlgo& algo) : scheme(scheme), algo(algo) {}
 };
 

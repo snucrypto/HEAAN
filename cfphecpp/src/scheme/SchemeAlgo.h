@@ -30,12 +30,12 @@ public:
 
 	//-----------------------------------------
 
+	Cipher sum(Cipher*& ciphers, const long& size);
+	//-----------------------------------------
+
 	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
 	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, long& size);
 
-	void dummyms(Cipher& res);
-	void dummymult(Cipher& res, Cipher& c1, Cipher& c2);
-	void dummymultequal(Cipher& c1, Cipher& c2);
 	//-----------------------------------------
 
 	Cipher inverse(Cipher& cipher, const long& steps);
@@ -54,7 +54,7 @@ public:
 	Cipher* fftInv(Cipher*& ciphers, const long& size);
 	Cipher* fftInvLazy(Cipher*& ciphers, const long& size);
 
-	void dummy(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift);
+	void butOperation(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift);
 	void rescale(Cipher& c, long& bits);
 	//-----------------------------------------
 

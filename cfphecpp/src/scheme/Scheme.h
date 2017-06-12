@@ -112,6 +112,7 @@ public:
 
 	Cipher leftShift(Cipher& cipher, long& bits);
 	void leftShiftAndEqual(Cipher& cipher, long& bits);
+	void doubleAndEqual(Cipher& cipher);
 
 	//-----------------------------------------
 
@@ -129,7 +130,7 @@ public:
 
 	//-----------------------------------------
 
-	Cipher multAndModSwitch(Cipher& cipher1, Cipher& cipher2);
+	Cipher multAndModSwitchOne(Cipher& cipher1, Cipher& cipher2);
 	void multModSwitchOneAndEqual(Cipher& cipher1, Cipher& cipher2);
 
 	//-----------------------------------------

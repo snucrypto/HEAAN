@@ -7,6 +7,8 @@
 #include <vector>
 #include <math.h>
 
+#include <NTL/BasicThreadPool.h>
+
 #include "../czz/CZZ.h"
 #include "../scheme/Cipher.h"
 #include "../scheme/Params.h"
@@ -17,6 +19,10 @@
 #include "../sgd/SGD.h"
 #include "../utils/StringUtils.h"
 #include "../utils/TimeUtils.h"
+
+using namespace NTL;
+
+//-----------------------------------------
 
 void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 	cout << "!!! START TEST SGD !!!" << endl;
@@ -31,6 +37,7 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 	SchemeAlgo algo(scheme);
 	SGD sgd(scheme, algo);
 	//-----------------------------------------
+	SetNumThreads(8);
 	string filePath = "data.txt";
 
 	long dim = 0; 		// dimension of x
@@ -113,12 +120,14 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 		Cipher* cgrad = sgd.grad(ycipher, xcipher, wcipher, dim, truesampledim);
 		timeutils.stop("SGD");
 
-		for (long i = 0; i < dim; ++i) {
+		NTL_EXEC_RANGE(dim, first, last);
+		for (long i = first; i < last; ++i) {
 			scheme.leftShiftAndEqual(cgrad[i], bits);
 			scheme.modSwitchOneAndEqual(cgrad[i]);
 			scheme.modEmbedAndEqual(wcipher[i], cgrad[i].level);
 			scheme.addAndEqual(wcipher[i], cgrad[i]);
 		}
+		NTL_EXEC_RANGE_END;
 
 		CZZ* dwidx = scheme.decryptFullSingleArray(wcipher, dim);
 		StringUtils::showcompare(widx, dwidx, 2, "sgd");

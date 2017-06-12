@@ -6,39 +6,39 @@
  */
 
 #include "SGD.h"
+
+#include <NTL/BasicThreadPool.h>
+
 #include <thread>
 // 5 levels;
 Cipher* SGD::grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const long& dim, const long& sampledim) {
-	long bits = 1;
-	Cipher ip = scheme.mult(xcipher[0], wcipher[0]);
-	for (long i = 1; i < dim; ++i) {
-		Cipher tmp = scheme.mult(xcipher[i], wcipher[i]);
-		scheme.addAndEqual(ip, tmp);
+	Cipher* res = new Cipher[dim];
+	NTL_EXEC_RANGE(dim, first, last);
+	for (long i = first; i < last; ++i) {
+		res[i] = scheme.mult(xcipher[i], wcipher[i]);
 	}
+	NTL_EXEC_RANGE_END;
+
+	Cipher ip = algo.sum(res, dim);
 	scheme.modSwitchOneAndEqual(ip);
 
 	Cipher tmp = scheme.modEmbed(ycipher, ip.level);
 	scheme.multModSwitchOneAndEqual(ip, tmp);
-	scheme.leftShiftAndEqual(ip, bits);
+	scheme.doubleAndEqual(ip);
 	Cipher sig =  algo.function(ip, SIGMOID1, 7);
 
 	tmp = scheme.modEmbed(ycipher, sig.level);
 	scheme.multModSwitchOneAndEqual(sig, tmp);
 
-	Cipher* res = new Cipher[dim];
-	thread* thpull = new thread[dim];
-	for (long i = 0; i < dim; ++i) {
-		thpull[i] = thread(&SGD::operation, this, ref(res[i]), ref(sig), ref(xcipher[i]), ref(sampledim));
-	}
-	for (long i = 0; i < dim; ++i) {
-		thpull[i].join();
-	}
-	return res;
-}
+	NTL_EXEC_RANGE(dim, first, last);
+	for (long i = first; i < last; ++i) {
+		res[i] = scheme.modEmbed(xcipher[i], sig.level);
+		scheme.multModSwitchOneAndEqual(res[i], sig);
+		algo.slotsumAndEqual(res[i], sampledim);
 
-void SGD::operation(Cipher& res, Cipher& sig, Cipher& xcipher, const long& sampledim) {
-	res = scheme.modEmbed(xcipher, sig.level);
-	scheme.multModSwitchOneAndEqual(res, sig);
-	algo.slotsumAndEqual(res, sampledim);
+	}
+	NTL_EXEC_RANGE_END;
+
+	return res;
 }
 
