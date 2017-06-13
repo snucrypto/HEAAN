@@ -171,9 +171,9 @@ void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long
 	CZZ* mpow = new CZZ[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		double angle = (double)arc4random() / RAND_MAX;
-		double mr = cos(angle * 2 * Pi);
-		double mi = sin(angle * 2 * Pi);
+		RR angle = random_RR();
+		RR mr = cos(angle * 2 * Pi);
+		RR mi = sin(angle * 2 * Pi);
 
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		mpow[i] = EvaluatorUtils::evaluatePow2(mr, mi, logDegree, logp);
@@ -205,9 +205,9 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double angle = (double)arc4random() / RAND_MAX;
-	double mr = cos(angle * 2 * Pi);
-	double mi = sin(angle * 2 * Pi);
+	RR angle = random_RR();
+	RR mr = cos(angle * 2 * Pi);
+	RR mi = sin(angle * 2 * Pi);
 
 	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ* mpow = EvaluatorUtils::evaluatePow2vec(mr, mi, logDegree, logp);
@@ -245,9 +245,9 @@ void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long de
 	CZZ* mpow = new CZZ[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		double angle = (double)arc4random() / RAND_MAX;
-		double mr = cos(angle * 2 * Pi);
-		double mi = sin(angle * 2 * Pi);
+		RR angle = random_RR();
+		RR mr = cos(angle * 2 * Pi);
+		RR mi = sin(angle * 2 * Pi);
 
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		mpow[i] = EvaluatorUtils::evaluatePow(mr, mi, degree, logp);
@@ -279,9 +279,9 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double angle = (double)arc4random() / RAND_MAX;
-	double mr = cos(angle * 2 * Pi);
-	double mi = sin(angle * 2 * Pi);
+	RR angle = random_RR();
+	RR mr = cos(angle * 2 * Pi);
+	RR mi = sin(angle * 2 * Pi);
 
 	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ* mpow = EvaluatorUtils::evaluatePowvec(mr, mi, degree, logp);
@@ -374,9 +374,9 @@ void TestScheme::testInverseBatch(long logN, long logl, long logp, long L, long 
 	CZZ* minv = new CZZ[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		double angle = (double)arc4random() / RAND_MAX / 20;
-		double mr = cos(angle * 2 * Pi);
-		double mi = sin(angle * 2 * Pi);
+		RR angle = random_RR() / 20;
+		RR mr = cos(angle * 2 * Pi);
+		RR mi = sin(angle * 2 * Pi);
 
 		mvec[i] = EvaluatorUtils::evaluateVal(1 - mr, -mi, logp);
 		minv[i] = EvaluatorUtils::evaluateInverse(mr, mi, logp);
@@ -408,9 +408,9 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 
-	double angle = (double)arc4random() / RAND_MAX / 20;
-	double mr = cos(angle * 2 * Pi);
-	double mi = sin(angle * 2 * Pi);
+	RR angle = random_RR() / 20;
+	RR mr = cos(angle * 2 * Pi);
+	RR mi = sin(angle * 2 * Pi);
 
 	CZZ mbar = EvaluatorUtils::evaluateVal(1 - mr, -mi, logp);
 	CZZ minv = EvaluatorUtils::evaluateInverse(mr, mi, logp);
@@ -489,8 +489,8 @@ void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long
 	CZZ* mvec = new CZZ[slots];
 	CZZ* mexp = new CZZ[slots];
 	for (long i = 0; i < slots; ++i) {
-		double mr = (double)arc4random() / RAND_MAX;
-		double mi = (double)arc4random() / RAND_MAX;
+		RR mr = random_RR();
+		RR mi = random_RR();
 
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		mexp[i] = EvaluatorUtils::evaluateExponent(mr, mi, logp);
@@ -527,8 +527,8 @@ void TestScheme::testExponentBatchLazy(long logN, long logl, long logp, long L, 
 	CZZ* mexp = new CZZ[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		double mr = (double)arc4random() / RAND_MAX;
-		double mi = (double)arc4random() / RAND_MAX;
+		RR mr = random_RR();
+		RR mi = random_RR();
 
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		mexp[i] = EvaluatorUtils::evaluateExponent(mr, mi, logp);
@@ -562,8 +562,8 @@ void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, l
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	double mr = (double)arc4random() / RAND_MAX;
-	double mi = (double)arc4random() / RAND_MAX;
+	RR mr = random_RR();
+	RR mi = random_RR();
 
 	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ mexp = EvaluatorUtils::evaluateExponent(mr, mi, logp);
@@ -600,8 +600,8 @@ void TestScheme::testSigmoidBatch(long logN, long logl, long logp, long L, long 
 	CZZ* msig = new CZZ[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		double mr = (double)arc4random() / RAND_MAX;
-		double mi = (double)arc4random() / RAND_MAX;
+		RR mr = random_RR();
+		RR mi = random_RR();
 
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		msig[i] = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
@@ -638,8 +638,8 @@ void TestScheme::testSigmoidBatchLazy(long logN, long logl, long logp, long L, l
 	CZZ* msig = new CZZ[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		double mr = (double)arc4random() / RAND_MAX;
-		double mi = (double)arc4random() / RAND_MAX;
+		RR mr = random_RR();
+		RR mi = random_RR();
 
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		msig[i] = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
@@ -672,8 +672,8 @@ void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, lo
 	SchemeAlgo algo(scheme);
 	//----------------------------
 
-	double mr = (double)arc4random() / RAND_MAX;
-	double mi = (double)arc4random() / RAND_MAX;
+	RR mr = random_RR();
+	RR mi = random_RR();
 
 	CZZ mval = EvaluatorUtils::evaluateVal(mr, mi, logp);
 	CZZ msig = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
@@ -822,6 +822,7 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 	Scheme scheme(params, secretKey, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//----------------------------
+	SetNumThreads(8);
 	long fftdim = 1 << logfftdim;
 
 	CZZ* mvec1 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
@@ -841,9 +842,7 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 	timeutils.stop("cfft 2 lazy");
 
 	timeutils.start("cfft mult lazy");
-	for (long i = 0; i < fftdim; ++i) {
-		scheme.multModSwitchOneAndEqual(cfft1[i], cfft2[i]);
-	}
+	algo.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
 	timeutils.stop("cfft mult lazy");
 
 	timeutils.start("cfft inv lazy");

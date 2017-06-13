@@ -133,7 +133,7 @@ int main() {
 	 * Suggested: 14, 57, 50, 2, 4 (for lazy)
 	 */
 
-//	TestScheme::testFFT(13, 7, 50, 3, 6);
+	TestScheme::testFFT(13, 7, 50, 3, 6);
 //	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testFFTLazy(13, 51, 50, 2, 6);
 
@@ -144,7 +144,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 4;
 	 */
 
-//	TestSGD::testSGD(13, 2, 30, 13);
+//	TestSGD::testSGD(13, 2, 30, 10);
 
 	return 0;
 }

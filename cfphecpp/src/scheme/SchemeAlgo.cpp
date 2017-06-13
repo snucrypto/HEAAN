@@ -286,13 +286,19 @@ Cipher* SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
 	Cipher* fftInv = fftRaw(ciphers, size, false);
 	long logsize = log2(size);
 	long bits = scheme.params.logp - logsize;
-	thread* thpool = new thread[size];
-	for (long i = 0; i < size; ++i) {
-		thpool[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
+	NTL_EXEC_RANGE(size, first, last);
+	for (int i = first; i < last; ++i) {
+		scheme.leftShiftAndEqual(fftInv[i], bits);
+		scheme.modSwitchOneAndEqual(fftInv[i]);
 	}
-	for(long i = 0; i < size; ++i) {
-		thpool[i].join();
-	}
+	NTL_EXEC_RANGE_END;
+//	thread* thpool = new thread[size];
+//	for (long i = 0; i < size; ++i) {
+//		thpool[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
+//	}
+//	for(long i = 0; i < size; ++i) {
+//		thpool[i].join();
+//	}
 	return fftInv;
 }
 

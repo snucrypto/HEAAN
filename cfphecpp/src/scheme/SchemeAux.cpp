@@ -12,7 +12,8 @@ void SchemeAux::precomputeKsiPows(long logSize) {
 		CZZ* temp = new CZZ[ipow + 1];
 
 		for (long j = 0; j < ipow; ++j) {
-			RR angle = to_RR(2.0 * M_PI * j / ipow);
+			RR pi = ComputePi_RR();
+			RR angle = 2.0 * pi * j / ipow;
 			RR cosp = cos(angle);
 			RR sinp = sin(angle);
 			cosp.e += logp;

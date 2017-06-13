@@ -38,50 +38,56 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 	SGD sgd(scheme, algo);
 	//-----------------------------------------
 	SetNumThreads(8);
-	string filePath = "data.txt";
+	string filename = "data.txt";
+	vector<vector<long>> xdata;
+	vector<long> ydata;
 
 	long dim = 0; 		// dimension of x
 	long sampledim = 0;	// number of samples
 
-	ifstream openFile(filePath.data());
-	vector< vector<int> > data_X;
-	vector<int> data_Y;
-
-	if( openFile.is_open() ){
+	ifstream openFile(filename.data());
+	if(openFile.is_open()) {
 		string line;
-
-		// counting dimension
 		getline(openFile, line);
-		for(int i = 0; i < line.length(); ++i){
-			if( line[i] == ',' ) dim++;
-		}
 
-		// read and store data
+		for(long i = 0; i < line.length(); ++i) if(line[i] == ',' ) dim++;
+
 		while(getline(openFile, line)){
-			if( line.length() != 2 * dim + 1 ){ cout << "Error: data format" << endl; break; }
-
-			// read y
-			if( line[0] == '0' ) data_Y.push_back(-1);
-			else if( line[0] == '1' ) data_Y.push_back(1);
-			else{ cout << "Error: data value" << endl; break; }
-
-			// read x
-			vector<int> vec_line;
-			for(int i = 2; i < 2 * dim + 1; i += 2){
-				if( line[i] == '0' ) vec_line.push_back(0);
-				else if( line[i] == '1' ) vec_line.push_back(1);
-				else{ cout << "Error: data value" << endl; break; }
+			if(line.length() != 2 * dim + 1 ) {
+				cout << "Error: data format" << endl;
+				break;
 			}
-			data_X.push_back(vec_line);
+			if(line[0] == '0') {
+				ydata.push_back(-1);
+			} else if(line[0] == '1') {
+				ydata.push_back(1);
+			} else {
+				cout << "Error: data value" << endl;
+				break;
+			}
+			vector<long> vecline;
+			for(long i = 2; i < 2 * dim + 1; i += 2) {
+				if(line[i] == '0') {
+					vecline.push_back(0);
+				} else if(line[i] == '1') {
+					vecline.push_back(1);
+				} else{
+					cout << "Error: data value" << endl;
+					break;
+				}
+			}
+			xdata.push_back(vecline);
 			sampledim++;
 		}
 		openFile.close();
+	} else {
+		cout << "Error: cannot read file" << endl;
 	}
-	else{ cout << "Error: cannot read file" << endl; }
 	cout << "Data dimension: " << dim << ", Number of samples: " << sampledim << "\n\n";
 
 	long tmpsampledim = (1 << (long)log2(sampledim));
 	long truesampledim = tmpsampledim < sampledim ? tmpsampledim << 1 : tmpsampledim;
+
 	long bits = 15;
 	long xbits = 7;
 
@@ -96,9 +102,9 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 
 	for (long j = 0; j < sampledim; ++j) {
 		for (long i = 0; i < dim; ++i) {
-			xsample[i][j] = data_X[i][j] == 0 ? CZZ() : CZZ((params.p >> xbits));
+			xsample[i][j] = xdata[i][j] == 0 ? CZZ() : CZZ((params.p >> xbits));
 		}
-		ysample[j] = data_Y[j] == 0 ? CZZ() : CZZ(params.p);
+		ysample[j] = ydata[j] == 0 ? CZZ() : CZZ(params.p);
 	}
 	for (long j = sampledim; j < truesampledim; ++j) {
 		for (long i = 0; i < dim; ++i) {
