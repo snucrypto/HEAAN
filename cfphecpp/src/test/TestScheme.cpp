@@ -705,7 +705,7 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	Scheme scheme(params, secretKey, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//----------------------------
-	SetNumThreads(4);
+	SetNumThreads(8);
 	long fftdim = 1 << logfftdim;
 
 	CZZ* mvec1 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
