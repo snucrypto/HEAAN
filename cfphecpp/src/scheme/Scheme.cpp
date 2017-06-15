@@ -137,7 +137,7 @@ Message Scheme::decrypt(Cipher& cipher) {
 	ZZX mx;
 	mx.SetLength(params.N);
 	Ring2Utils::mult(mx, cipher.ax, secretKey.sx, qi, params.N);
-	Ring2Utils::add(mx, mx, cipher.bx, qi, params.N);
+	Ring2Utils::addAndEqual(mx, cipher.bx, qi, params.N);
 	return Message(mx, cipher.slots, cipher.level);
 }
 

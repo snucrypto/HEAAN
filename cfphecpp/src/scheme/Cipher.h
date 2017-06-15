@@ -9,18 +9,18 @@ using namespace NTL;
 class Cipher {
 public:
 
-	ZZX bx;
-	ZZX ax;
+	ZZX bx; ///< lwe instance
+	ZZX ax; ///< lwe instance
 
-	long slots;
-	long level;
+	long slots; ///< number of slots
+	long level; ///< level of ciphertext
 
 	//-----------------------------------------
 
 	/**
 	 * Ciphertext bx = mx + ex - ax * sx
-	 * @slots: batch number of slots
-	 * @level: ciphertext level
+	 * @param[in] slots: batch number of slots
+	 * @param[in] level: ciphertext level
 	 */
 	Cipher(ZZX bx = ZZX::zero(), ZZX ax = ZZX::zero(), long slots = 1, long level = 1) : bx(bx), ax(ax), slots(slots) , level(level) {}
 

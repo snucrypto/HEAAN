@@ -24,17 +24,45 @@ public:
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey, SchemeAux& schemeaux) : params(params), secretKey(secretKey), publicKey(publicKey), aux(schemeaux) {};
 	//-----------------------------------------
 
+	/**
+	 * @param[in] level
+	 * @return modulus of given level
+	 */
 	ZZ getqi(long& level);
+
+	/**
+	 * @param[in] level
+	 * @return big modulus of given level
+	 */
 	ZZ getPqi(long& level);
+
+	/**
+	 * @param level
+	 * @return log of modulus of given level
+	 */
 	long getLogqi(long& level);
 
 	//-----------------------------------------
 
+	/**
+	 * computes value between [-modulus/2, modulus/2]
+	 * @param[in,out] complex number
+	 * @param[in] modulus
+	 */
 	void trueValue(CZZ& m, ZZ& qi);
+
+	/**
+	 * computes value between [-modulus/2, modulus/2]
+	 * @param[in,out] real number
+	 * @param[in] modulus
+	 */
 	void trueValue(ZZ& m, ZZ& qi);
 
 	//-----------------------------------------
 
+	/**
+	 * make standard lwe instance bx = ex - ax * sx mod qi
+	 */
 	void rlweInstance(ZZX& bx, ZZX& ax, ZZ& qi);
 	void rlweInstance(ZZX& bx, ZZX& ax);
 

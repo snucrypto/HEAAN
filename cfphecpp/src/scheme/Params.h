@@ -8,18 +8,19 @@ using namespace NTL;
 
 class Params {
 public:
-	long M;
-	long N;
+
+	long M; ///< M - power of two
+	long N; ///< N = phi(M) = M/2 - degree of RLWE
 	long Nh;
 	long logN;
 	long logNh;
-	long logl;
-	long logp;
-	long logq;
-	long logP;
+	long logl; ///< additional amount of bits (normally small) needed for correct decoding
+	long logp; ///< power of 2, modulus
+	long logq; ///< Highest Modulus
+	long logP; ///< Modulus needed in KeySwitching procedure
 	long logPq;
 
-	long L;
+	long L; ///< number of levels
 	double sigma;
 	double rho;
 	long h;

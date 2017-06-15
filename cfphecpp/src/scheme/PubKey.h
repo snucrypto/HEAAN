@@ -11,14 +11,14 @@ using namespace NTL;
 class PubKey {
 public:
 
-	ZZX ax;
-	ZZX bx;
+	ZZX ax; ///<< information for symmetric encryption
+	ZZX bx; ///<< information for symmetric encryption
 
-	ZZX axStar;
-	ZZX bxStar;
+	ZZX axStar; ///<< auxiliary information for multiplication
+	ZZX bxStar; ///<< auxiliary information for multiplication
 
-	ZZX* axKeySwitch;
-	ZZX* bxKeySwitch;
+	ZZX* axKeySwitch; ///< auxiliary information for rotation
+	ZZX* bxKeySwitch; ///< auxiliary information for rotation
 
 	//-----------------------------------------
 

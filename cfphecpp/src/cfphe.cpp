@@ -34,7 +34,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
 
-//	TestScheme::testEncodeBatch(13, 5, 30, 4, 12);
+//	TestScheme::testEncodeBatch(13, 5, 30, 4, 3);
 
 	//-----------------------------------------
 
@@ -133,7 +133,7 @@ int main() {
 	 * Suggested: 14, 57, 50, 2, 4 (for lazy)
 	 */
 
-	TestScheme::testFFT(13, 2, 50, 3, 4);
+	TestScheme::testFFT(13, 5, 50, 3, 4);
 //	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testFFTLazy(13, 51, 50, 2, 4);
 

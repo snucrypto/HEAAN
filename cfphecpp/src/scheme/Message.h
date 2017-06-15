@@ -9,17 +9,17 @@ using namespace NTL;
 class Message {
 public:
 
-	ZZX mx;
+	ZZX mx; ///< message mod X^N + 1
 
-	long slots;
-	long level;
+	long slots; ///< number of slots
+	long level; ///< level of message
 
 	//-----------------------------------------
 
 	/**
 	 * Message: mx
-	 * @slots: batch number of slots
-	 * @level: message level
+	 * @param[in] slots: batch number of slots
+	 * @param[in] level: message level
 	 */
 	Message(ZZX mx = ZZX::zero(), long slots = 1, long level = 1) : mx(mx), slots(slots), level(level) {}
 

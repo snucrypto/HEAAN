@@ -78,8 +78,8 @@ Cipher SchemeAlgo::prod2(Cipher*& ciphers, const long& logDegree) {
 		Cipher* cprodvec = new Cipher[powih];
 		NTL_EXEC_RANGE(powih, first, last);
 		for (long j = first; j < last; ++j) {
-			cprodvec[j] = scheme.mult(res[2 * j], res[2 * j + 1]);
-			scheme.modSwitchOneAndEqual(cprodvec[j]);
+			scheme.multAndEqual(res[2 * j], res[2 * j + 1]);
+			cprodvec[j] = scheme.modSwitchOne(cprodvec[j]);
 		}
 		NTL_EXEC_RANGE_END;
 		res = cprodvec;
@@ -94,6 +94,25 @@ Cipher SchemeAlgo::sum(Cipher*& ciphers, const long& size) {
 	}
 	return res;
 }
+
+Cipher* SchemeAlgo::multVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
+	Cipher* res = new Cipher[size];
+	NTL_EXEC_RANGE(size, first, last);
+	for (long i = first; i < last; ++i) {
+		res[i] = scheme.mult(ciphers1[i], ciphers2[i]);
+	}
+	NTL_EXEC_RANGE_END;
+	return res;
+}
+
+void SchemeAlgo::multAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
+	NTL_EXEC_RANGE(size, first, last);
+	for (long i = first; i < last; ++i) {
+		scheme.multAndEqual(ciphers1[i], ciphers2[i]);
+	}
+	NTL_EXEC_RANGE_END;
+}
+
 
 Cipher* SchemeAlgo::multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
 	Cipher* res = new Cipher[size];
@@ -114,14 +133,9 @@ void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, 
 }
 
 Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
-	Cipher* hadamardMult = new Cipher[size];
-	NTL_EXEC_RANGE(size, first, last);
-	for (long i = first; i < last; ++i) {
-		hadamardMult[i] = scheme.mult(ciphers1[i], ciphers2[i]);
-	}
-	NTL_EXEC_RANGE_END;
-	Cipher scipher = sum(hadamardMult, size);
-	return scheme.modSwitchOne(scipher);
+	Cipher* cmulvec = multVec(ciphers1, ciphers2, size);
+	Cipher csum = sum(cmulvec, size);
+	return scheme.modSwitchOne(csum);
 }
 //-----------------------------------------
 
@@ -267,14 +281,15 @@ Cipher* SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isFor
 	for (long i = 0; i < sizeh; ++i) {
 		thpool[i].join();
 	}
+
 	return res;
 }
 
 void SchemeAlgo::butOperation(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift) {
 	scheme.multByMonomialAndEqual(y2, shift);
 	res1 = y1;
-	res2 = y1;
 	scheme.addAndEqual(res1, y2);
+	res2 = y1;
 	scheme.subAndEqual(res2, y2);
 }
 
@@ -286,13 +301,14 @@ Cipher* SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
 	Cipher* fftInv = fftRaw(ciphers, size, false);
 	long logsize = log2(size);
 	long bits = scheme.params.logp - logsize;
-	thread* thpool = new thread[size];
-	for (long i = 0; i < size; ++i) {
-		thpool[i] = thread(&SchemeAlgo::rescale, this, ref(fftInv[i]), ref(bits));
+
+	NTL_EXEC_RANGE(size, first, last);
+	for (long i = first; i < last; ++i) {
+		scheme.leftShiftAndEqual(fftInv[i], bits);
+		scheme.modSwitchOneAndEqual(fftInv[i]);
 	}
-	for(long i = 0; i < size; ++i) {
-		thpool[i].join();
-	}
+	NTL_EXEC_RANGE_END;
+
 	return fftInv;
 }
 
