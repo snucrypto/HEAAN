@@ -1,5 +1,7 @@
 #include "StringUtils.h"
 
+#include <string>
+
 void StringUtils::show(long*& vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {

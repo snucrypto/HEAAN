@@ -74,10 +74,10 @@ void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlo
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 	//-----------------------------------------
 	timeutils.start("Rotate 2");
-	Cipher rot = scheme.rotate2(cipher, rotlogSlots);
+	scheme.rotate2AndEqual(cipher, rotlogSlots);
 	timeutils.stop("Rotate 2");
 	//-----------------------------------------
-	CZZ* dvec = scheme.decryptFull(rot);
+	CZZ* dvec = scheme.decryptFull(cipher);
 	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
@@ -100,10 +100,10 @@ void TestScheme::testRotate(long logN, long logl, long logp, long L, long rotSlo
 	Cipher cipher = scheme.encryptFull(mvec, slots);
 	//-----------------------------------------
 	timeutils.start("Rotate");
-	Cipher rot = scheme.rotate(cipher, rotSlots);
+	scheme.rotateAndEqual(cipher, rotSlots);
 	timeutils.stop("Rotate");
 	//-----------------------------------------
-	CZZ* dvec = scheme.decryptFull(rot);
+	CZZ* dvec = scheme.decryptFull(cipher);
 	EvaluatorUtils::idxShift(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------

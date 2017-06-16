@@ -462,15 +462,15 @@ Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
 
-	ZZX bxrot, axrot, axres, bxres;
+	ZZX bxrot, bxres, axres;
 
 	long pow = (1 << logPow);
 
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.q, params.N);
-	Ring2Utils::inpower(axrot, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
+	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
 
-	Ring2Utils::mult(axres, publicKey.axKeySwitch[logPow], axrot, Pqi, params.N);
-	Ring2Utils::mult(bxres, publicKey.bxKeySwitch[logPow], axrot, Pqi, params.N);
+	Ring2Utils::mult(axres, bxres, publicKey.axKeySwitch[logPow], Pqi, params.N);
+	Ring2Utils::multAndEqual(bxres, publicKey.bxKeySwitch[logPow], Pqi, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logP, params.N);
@@ -483,34 +483,28 @@ void Scheme::rotate2AndEqual(Cipher& cipher, long& logPow) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
 
-	ZZX bxrot, axrot, axaxstar, axbxstar;
+	ZZX bxrot, bxres, axres;
 
 	long pow = (1 << logPow);
 
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.q, params.N);
-	Ring2Utils::inpower(axrot, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
+	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
 
-	Ring2Utils::mult(axaxstar, publicKey.axKeySwitch[logPow], axrot, Pqi, params.N);
-	Ring2Utils::mult(axbxstar, publicKey.bxKeySwitch[logPow], axrot, Pqi, params.N);
+	Ring2Utils::mult(axres, bxres, publicKey.axKeySwitch[logPow], Pqi, params.N);
+	Ring2Utils::multAndEqual(bxres, publicKey.bxKeySwitch[logPow], Pqi, params.N);
 
-	Ring2Utils::rightShiftAndEqual(axaxstar, params.logP, params.N);
-	Ring2Utils::rightShiftAndEqual(axbxstar, params.logP, params.N);
+	Ring2Utils::rightShiftAndEqual(axres, params.logP, params.N);
+	Ring2Utils::rightShiftAndEqual(bxres, params.logP, params.N);
 
-	Ring2Utils::addAndEqual(axbxstar, bxrot, qi, params.N);
+	Ring2Utils::addAndEqual(bxres, bxrot, qi, params.N);
 
-	cipher.bx = axbxstar;
-	cipher.ax = axaxstar;
+	cipher.bx = bxres;
+	cipher.ax = axres;
 }
 
 Cipher Scheme::rotate(Cipher& cipher, long& steps) {
-	steps %= params.Nh;
 	Cipher res = cipher;
-	long logsteps = log2(steps);
-	for (long i = 0; i < logsteps + 1; ++i) {
-		if(bit(steps, i)) {
-			res = rotate2(res, i);
-		}
-	}
+	rotateAndEqual(res, steps);
 	return res;
 }
 

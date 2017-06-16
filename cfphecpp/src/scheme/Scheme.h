@@ -162,6 +162,7 @@ public:
 
 	Cipher rotate2(Cipher& cipher, long& logSteps);
 	void rotate2AndEqual(Cipher& cipher, long& logSteps);
+
 	Cipher rotate(Cipher& cipher, long& steps);
 	void rotateAndEqual(Cipher& cipher, long& steps);
 

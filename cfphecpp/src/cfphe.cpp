@@ -43,9 +43,9 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 0, 3
 	 */
 
-//	TestScheme::testRotate2(13, 2, 30, 4, 2, 11);
-//	TestScheme::testRotate(13, 2, 30, 4, 17, 8);
-//	TestScheme::testSlotssum(13, 2, 30, 4, 8);
+//	TestScheme::testRotate2(13, 2, 30, 4, 2, 3);
+//	TestScheme::testRotate(13, 2, 30, 4, 17, 3);
+	TestScheme::testSlotssum(13, 2, 30, 4, 3);
 
 	//-----------------------------------------
 
@@ -133,7 +133,7 @@ int main() {
 	 * Suggested: 14, 57, 50, 2, 4 (for lazy)
 	 */
 
-	TestScheme::testFFT(13, 5, 50, 3, 4);
+//	TestScheme::testFFT(13, 5, 50, 3, 4);
 //	TestScheme::testFFTBatch(13, 7, 50, 4, 4, 3);
 //	TestScheme::testFFTLazy(13, 51, 50, 2, 4);
 

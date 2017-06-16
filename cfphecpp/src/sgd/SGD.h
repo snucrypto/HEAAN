@@ -13,9 +13,13 @@ public:
 	Scheme scheme;
 	SchemeAlgo algo;
 
-	Cipher* grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const long& dim, const long& sampledim);
+	//-----------------------------------------
 
 	SGD(Scheme& scheme, SchemeAlgo& algo) : scheme(scheme), algo(algo) {}
+
+	//-----------------------------------------
+
+	Cipher* grad(Cipher& ycipher, Cipher*& xcipher, Cipher*& wcipher, const long& dim, const long& sampledim);
 };
 
 #endif /* SGD_SGD_H_ */
