@@ -22,6 +22,7 @@ public:
 	//-----------------------------------------
 
 	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey, SchemeAux& schemeaux) : params(params), secretKey(secretKey), publicKey(publicKey), aux(schemeaux) {};
+
 	//-----------------------------------------
 
 	/**

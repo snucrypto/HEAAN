@@ -23,6 +23,8 @@ public:
 	 */
 	Message(ZZX mx = ZZX::zero(), long slots = 1, long level = 1) : mx(mx), slots(slots), level(level) {}
 
+	//-----------------------------------------
+
 	string toString();
 };
 

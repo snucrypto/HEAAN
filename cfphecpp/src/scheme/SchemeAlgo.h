@@ -63,10 +63,12 @@ public:
 
 	void butOperation(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift);
 	void rescale(Cipher& c, long& bits);
+
 	//-----------------------------------------
 
 	Cipher slotsum(Cipher& cipher, const long& slots);
 	void slotsumAndEqual(Cipher& cipher, const long& slots);
+
 	//-----------------------------------------
 
 };

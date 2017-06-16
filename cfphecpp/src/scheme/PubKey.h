@@ -24,6 +24,8 @@ public:
 
 	PubKey(Params& params, SecKey& secretKey);
 
+	//-----------------------------------------
+
 	string toString();
 };
 

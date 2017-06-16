@@ -24,6 +24,8 @@ public:
 	 */
 	Cipher(ZZX bx = ZZX::zero(), ZZX ax = ZZX::zero(), long slots = 1, long level = 1) : bx(bx), ax(ax), slots(slots) , level(level) {}
 
+	//-----------------------------------------
+
 	string toString();
 };
 

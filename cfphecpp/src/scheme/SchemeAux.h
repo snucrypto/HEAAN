@@ -18,7 +18,11 @@ public:
 	map<string, double*> taylorCoeffsMap;
 	map<string, ZZ*> taylorPowsMap;
 
+	//-----------------------------------------
+
 	SchemeAux(long logp, long logKsiSize);
+
+	//-----------------------------------------
 
 	void precomputeKsiPows(long logKsiSize);
 	void precomputeTaylorPows();

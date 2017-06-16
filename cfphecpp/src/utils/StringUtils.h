@@ -5,6 +5,9 @@
 
 class StringUtils {
 public:
+
+	//-----------------------------------------
+
 	static void show(long*& vals, long size);
 	static void show(CZZ*& vals, long size);
 
@@ -14,6 +17,8 @@ public:
 	static void showcompare(CZZ*& vals1, CZZ*& vals2, long size, string prefix);
 	static void showcompare(CZZ*& vals1, CZZ& val2, long size, string prefix);
 	static void showcompare(CZZ& val1, CZZ*& vals2, long size, string prefix);
+
+	//-----------------------------------------
 
 };
 

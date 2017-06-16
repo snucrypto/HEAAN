@@ -17,6 +17,8 @@ public:
 
 	SecKey(Params& params);
 
+	//-----------------------------------------
+
 	string toString();
 };
 

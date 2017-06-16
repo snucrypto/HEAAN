@@ -42,6 +42,8 @@ public:
 
 	Params(long logN, long logl, long logp, long L, double sigma = 3.2, double rho = 0.5, long h = 64);
 
+	//-----------------------------------------
+
 	string toString();
 };
 
