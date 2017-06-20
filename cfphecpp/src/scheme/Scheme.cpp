@@ -122,14 +122,6 @@ Cipher Scheme::encryptFull(CZZ& val, long level) {
 	return encrypt(msg, level);
 }
 
-Cipher* Scheme::encryptFullSingleArray(CZZ*& vals, long size) {
-	Cipher* res = new Cipher[size];
-	for (long i = 0; i < size; ++i) {
-		res[i] = encryptFull(vals[i]);
-	}
-	return res;
-}
-
 //-----------------------------------------
 
 Message Scheme::decrypt(Cipher& cipher) {
@@ -166,16 +158,6 @@ CZZ Scheme::decryptFullSingle(Cipher& cipher) {
 	Message msg = decrypt(cipher);
 	CZZ* gvals = decode(msg);
 	return gvals[0];
-}
-
-CZZ* Scheme::decryptFullSingleArray(Cipher*& ciphers, long size) {
-	CZZ* res = new CZZ[size];
-	for (int i = 0; i < size; ++i) {
-		Message msg = decrypt(ciphers[i]);
-		CZZ* gvals = decode(msg);
-		res[i] = gvals[0];
-	}
-	return res;
 }
 
 //-----------------------------------------

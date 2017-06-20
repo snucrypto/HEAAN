@@ -41,6 +41,11 @@ public:
 
 	//-----------------------------------------
 
+	Cipher* encryptFullSingleArray(CZZ*& vals, long size);
+	CZZ* decryptFullSingleArray(Cipher*& ciphers, long size);
+
+	//-----------------------------------------
+
 	Cipher innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
 
 	//-----------------------------------------

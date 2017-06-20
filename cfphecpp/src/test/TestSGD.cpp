@@ -109,7 +109,7 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 		xcipher[i] = scheme.encryptFull(xsample[i], truesampledim);
 	}
 	Cipher ycipher = scheme.encryptFull(ysample, truesampledim);
-	Cipher* wcipher = scheme.encryptFullSingleArray(widx, dim);
+	Cipher* wcipher = algo.encryptFullSingleArray(widx, dim);
 	//-----------------------------------------
 	long itter = 10;
 	for (long k = 0; k < itter; ++k) {
@@ -126,10 +126,10 @@ void TestSGD::testSGD(long logN, long logl, long logp, long L) {
 		}
 		NTL_EXEC_RANGE_END;
 		//-----------------------------------------
-		CZZ* dwidx = scheme.decryptFullSingleArray(wcipher, dim);
+		CZZ* dwidx = algo.decryptFullSingleArray(wcipher, dim);
 		StringUtils::showcompare(widx, dwidx, 2, "sgd");
 		widx = dwidx;
-		wcipher = scheme.encryptFullSingleArray(widx, dim);
+		wcipher = algo.encryptFullSingleArray(widx, dim);
 	}
 	//-----------------------------------------
 	cout << "!!! END TEST SGD !!!" << endl;

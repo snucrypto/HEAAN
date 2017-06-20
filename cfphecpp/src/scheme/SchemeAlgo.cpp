@@ -132,6 +132,24 @@ void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, 
 	NTL_EXEC_RANGE_END;
 }
 
+CZZ* SchemeAlgo::decryptFullSingleArray(Cipher*& ciphers, long size) {
+	CZZ* res = new CZZ[size];
+	for (int i = 0; i < size; ++i) {
+		Message msg = scheme.decrypt(ciphers[i]);
+		CZZ* gvals = scheme.decode(msg);
+		res[i] = gvals[0];
+	}
+	return res;
+}
+
+Cipher* SchemeAlgo::encryptFullSingleArray(CZZ*& vals, long size) {
+	Cipher* res = new Cipher[size];
+	for (long i = 0; i < size; ++i) {
+		res[i] = scheme.encryptFull(vals[i]);
+	}
+	return res;
+}
+
 Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
 	Cipher* cmulvec = multVec(ciphers1, ciphers2, size);
 	Cipher csum = sum(cmulvec, size);
