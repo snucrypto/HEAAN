@@ -18,7 +18,7 @@ public:
 
 	/**
 	 * Message: mx
-	 * @param[in] slots: batch number of slots
+	 * @param[in] slots: number of slots
 	 * @param[in] level: message level
 	 */
 	Message(ZZX mx = ZZX::zero(), long slots = 1, long level = 1) : mx(mx), slots(slots), level(level) {}

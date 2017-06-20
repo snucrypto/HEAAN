@@ -11,7 +11,7 @@ using namespace NTL;
 class SecKey {
 public:
 
-	ZZX sx;
+	ZZX sx; ///< secret key
 
 	//-----------------------------------------
 
