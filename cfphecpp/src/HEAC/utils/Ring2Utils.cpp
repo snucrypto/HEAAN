@@ -212,7 +212,7 @@ void Ring2Utils::multByMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const
 	res.SetLength(degree);
 
 	for (long i = 0; i < shift; ++i) {
-		res.rep[i] = tmpx.rep[degree - shift + i];
+		res.rep[i] = -tmpx.rep[degree - shift + i];
 	}
 
 	for (long i = shift; i < degree; ++i) {
