@@ -7,3 +7,10 @@ The scheme in this library is on the paper "Homomorphic Encryption for Arithmeti
 This library does not contain bootstrapping yet, and we plan to add bootstrapping in next version.
 
 This library is written by c++ and using NTL library (http://www.shoup.net/ntl/).
+
+## How to use this library?
+### 1. Build a static library
+TBA
+
+### 2. Use portable version
+TBA
