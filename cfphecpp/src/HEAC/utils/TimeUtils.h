@@ -21,7 +21,16 @@ public:
 
 	//-----------------------------------------
 
+	/**
+	 * starts timer
+	 * @param[in] string message
+	 */
 	void start(string msg);
+
+	/**
+	 * stops timer and prints time elapsed in console
+	 * @param[in] string message
+	 */
 	void stop(string msg);
 
 	//-----------------------------------------
