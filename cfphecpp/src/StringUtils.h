@@ -1,7 +1,7 @@
 #ifndef UTILS_STRINGUTILS_H_
 #define UTILS_STRINGUTILS_H_
 
-#include "../czz/CZZ.h"
+#include "CZZ.h"
 
 class StringUtils {
 public:

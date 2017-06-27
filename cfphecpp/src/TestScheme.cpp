@@ -11,18 +11,18 @@
 
 #include <NTL/BasicThreadPool.h>
 
-#include "../czz/CZZ.h"
-#include "../scheme/Cipher.h"
-#include "../scheme/Params.h"
-#include "../scheme/PubKey.h"
-#include "../scheme/Scheme.h"
-#include "../scheme/SchemeAlgo.h"
-#include "../scheme/SchemeAux.h"
-#include "../scheme/SecKey.h"
-#include "../utils/EvaluatorUtils.h"
-#include "../utils/NumUtils.h"
-#include "../utils/StringUtils.h"
-#include "../utils/TimeUtils.h"
+#include "CZZ.h"
+#include "Cipher.h"
+#include "Params.h"
+#include "PubKey.h"
+#include "Scheme.h"
+#include "SchemeAlgo.h"
+#include "SchemeAux.h"
+#include "SecKey.h"
+#include "EvaluatorUtils.h"
+#include "NumUtils.h"
+#include "StringUtils.h"
+#include "TimeUtils.h"
 
 using namespace NTL;
 

@@ -3,8 +3,8 @@
 #include <sstream>
 #include <string>
 
-#include "../utils/NumUtils.h"
-#include "../utils/Ring2Utils.h"
+#include "NumUtils.h"
+#include "Ring2Utils.h"
 
 PubKey::PubKey(Params& params, SecKey& secretKey) : axKeySwitch(), bxKeySwitch() {
 	ZZX ex, sxsx;

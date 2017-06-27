@@ -1,7 +1,7 @@
 #ifndef SCHEME_SCHEMEAUX_H_
 #define SCHEME_SCHEMEAUX_H_
 
-#include "../czz/CZZ.h"
+#include "CZZ.h"
 #include <NTL/ZZ.h>
 #include <NTL/RR.h>
 #include <iostream>

@@ -4,7 +4,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/RR.h>
 
-#include "../czz/CZZ.h"
+#include "CZZ.h"
 
 using namespace NTL;
 

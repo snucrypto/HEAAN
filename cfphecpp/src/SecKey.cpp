@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 
-#include "../utils/NumUtils.h"
+#include "NumUtils.h"
 
 SecKey::SecKey(Params& params) {
 	NumUtils::sampleGauss(sx, params.N, params.sigma);

@@ -3,8 +3,8 @@
 
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
-#include "../czz/CZZ.h"
-#include "../czz/CZZX.h"
+#include "CZZ.h"
+#include "CZZX.h"
 
 using namespace NTL;
 

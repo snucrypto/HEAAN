@@ -5,10 +5,10 @@
 #include <cmath>
 #include <vector>
 
-#include "../czz/CZZ.h"
-#include "../utils/NumUtils.h"
-#include "../utils/Ring2Utils.h"
-#include "../utils/StringUtils.h"
+#include "CZZ.h"
+#include "NumUtils.h"
+#include "Ring2Utils.h"
+#include "StringUtils.h"
 #include "Params.h"
 
 using namespace std;

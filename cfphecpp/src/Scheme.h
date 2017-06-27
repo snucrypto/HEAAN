@@ -1,7 +1,7 @@
 #ifndef SCHEME_SCHEME_H_
 #define SCHEME_SCHEME_H_
 
-#include "../czz/CZZ.h"
+#include "CZZ.h"
 #include "SecKey.h"
 #include "Cipher.h"
 #include "Message.h"
