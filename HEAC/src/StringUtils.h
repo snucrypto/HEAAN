@@ -40,6 +40,8 @@ public:
 	 */
 	static void showcompare(CZZ*& vals1, CZZ*& vals2, long size, string prefix);
 
+	static void showcompare(double*& val1r, double*& val1i, double*& val2r, double*& val2i, long size, string prefix);
+
 	/**
 	 * prints in console pairwise val1[i], val2 and (val1[i]-val2)
 	 * @param[in] array of CZZ val

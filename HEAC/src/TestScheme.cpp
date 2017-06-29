@@ -49,8 +49,17 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 	timeutils.start("Decrypt batch");
 	CZZ* dvec = scheme.decryptFull(cipher);
 	timeutils.stop("Decrypt batch");
+
+	double* mvecr = new double[slots];
+	double* mveci = new double[slots];
+	double* dvecr = new double[slots];
+	double* dveci = new double[slots];
+
+	EvaluatorUtils::evaluateDoubleVals(mvecr, mveci, mvec, slots, logp);
+	EvaluatorUtils::evaluateDoubleVals(dvecr, dveci, dvec, slots, logp);
 	//-----------------------------------------
-	StringUtils::showcompare(mvec, dvec, slots, "val");
+	StringUtils::showcompare(mvecr, mveci, dvecr, dveci, slots, "val");
+//	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
 	cout << "!!! END TEST ENCODE BATCH !!!" << endl;
 }

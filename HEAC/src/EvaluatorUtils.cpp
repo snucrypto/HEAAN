@@ -7,10 +7,38 @@ CZZ EvaluatorUtils::evaluateVal(const double& xr, const double& xi, const long& 
 	return evaluateVal(to_RR(xr), to_RR(xi), logp);
 }
 
+void EvaluatorUtils::evaluateDoubleVal(double& xr, double& xi, CZZ& x, const long& logp) {
+	RR xxr = to_RR(x.r);
+	xxr.e -= logp;
+	xr = to_double(xxr);
+
+	RR xxi = to_RR(x.i);
+	xxi.e -= logp;
+	xi = to_double(xxi);
+}
+
+void EvaluatorUtils::evaluateDoubleVals(double*& xvecr, double*& xveci, CZZ*& xvec, const long size, const long& logp) {
+	for (long i = 0; i < size; ++i) {
+		RR xxvecr = to_RR(xvec[i].r);
+		xxvecr.e -= logp;
+		xvecr[i] = to_double(xxvecr);
+		RR xxveci = to_RR(xvec[i].i);
+		xxveci.e -= logp;
+		xveci[i] = to_double(xxveci);
+	}
+}
+
 CZZ EvaluatorUtils::evaluateVal(const RR& xr, const RR& xi, const long& logp) {
 	RR xrp = MakeRR(xr.x, xr.e + logp);
 	RR xip = MakeRR(xi.x, xi.e + logp);
 	return CZZ(RoundToZZ(xrp), RoundToZZ(xip));
+}
+
+void EvaluatorUtils::evaluateRRVal(RR& xr, RR& xi, CZZ& x, const long& logp) {
+	xr = to_RR(x.r);
+	xr.e -= logp;
+	xi = to_RR(x.i);
+	xr.e -= logp;
 }
 
 CZZ EvaluatorUtils::evaluateRandomVal(const long& logp) {

@@ -38,6 +38,16 @@ void StringUtils::showcompare(CZZ*& vals1, CZZ*& vals2, long size, string prefix
 	}
 }
 
+void StringUtils::showcompare(double*& vals1r, double*& vals1i, double*& vals2r, double*& vals2i, long size, string prefix) {
+	for (long i = 0; i < size; ++i) {
+		cout << "---------------------" << endl;
+		cout << "m" + prefix + ": " << i << " :[" << vals1r[i] << ", " << vals1i[i] << "]" << endl;
+		cout << "d" + prefix + ": " << i << " :[" << vals2r[i] << ", " << vals2i[i] << "]" << endl;
+		cout << "e" + prefix + ": " << i << " :[" << vals1r[i] - vals2r[i] << ", " << vals1i[i] - vals2i[i] << "]" << endl;
+		cout << "---------------------" << endl;
+	}
+}
+
 void StringUtils::showcompare(CZZ*& vals1, CZZ& val2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;

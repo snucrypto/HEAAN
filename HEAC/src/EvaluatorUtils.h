@@ -20,11 +20,16 @@ public:
 	 */
 	static CZZ evaluateVal(const double& xr, const double& xi, const long& logp);
 
+	static void evaluateDoubleVal(double& xr, double& xi, CZZ& x, const long& logp);
+
+	static void evaluateDoubleVals(double*& xvecr, double*& xveci, CZZ*& xvec, const long size, const long& logp);
+
 	/**
 	 * evaluates Z[i] value [(xr + i * xi) * p]
 	 */
 	static CZZ evaluateVal(const RR& xr, const RR& xi, const long& logp);
 
+	static void evaluateRRVal(RR& xr, RR& xi, CZZ& x, const long& logp);
 	/**
 	 * evaluates random Z[i] value with real and imaginary parts in [0, 2^logp - 1]
 	 */
