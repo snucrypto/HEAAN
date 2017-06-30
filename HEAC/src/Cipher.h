@@ -18,7 +18,7 @@ public:
 	//-----------------------------------------
 
 	/**
-	 * Ciphertext bx = mx + ex - ax * sx
+	 * Ciphertext = (bx = mx + ex - ax * sx, ax) for secret key sx and error ex
 	 * @param[in] slots: number of slots
 	 * @param[in] level: ciphertext level
 	 */
