@@ -16,14 +16,30 @@ using namespace NTL;
 
 //-----------------------------------------
 
+/**
+INPUT: level
+OUTPUT: integer qi
+qi is an integer corresponding to a modulus of ciphertext(c) with c.level = level
+*/
 ZZ Scheme::getqi(long& level) {
 	return params.qi[params.L - level];
 }
 
+/**
+INPUT: level
+OUTPUT: integer Pqi
+Pqi is an integer corresponding to a special modulus of ciphertext(c) with c.level = level
+This special modulus is used in homomorphic multiplication
+*/
 ZZ Scheme::getPqi(long& level) {
 	return params.Pqi[params.L - level];
 }
 
+/**
+INPUT: level
+OUTPUT: bit size of an integer qi
+qi is an integer corresponding to a special modulus of ciphertext(c) with c.level = level
+*/
 long Scheme::getLogqi(long& level) {
 	return params.logq - params.logp * (level-1);
 }
@@ -45,6 +61,11 @@ void Scheme::trueValue(ZZ& m, ZZ& qi) {
 
 //-----------------------------------------
 
+/**
+INPUT: ZZX bx, ax and ZZ qi
+RESULT: Set ax = random in R_qi, bx = ex + ax * sx in R_qi
+///> Randomly choose 'ax' in R_qi = Z_qi[X]/(X^N + 1) for N = params.N
+*/
 void Scheme::rlweInstance(ZZX& bx, ZZX& ax, ZZ& qi) {
 	ZZX vx;
 	NumUtils::sampleZO(vx, params.N);
@@ -52,6 +73,11 @@ void Scheme::rlweInstance(ZZX& bx, ZZX& ax, ZZ& qi) {
 	Ring2Utils::mult(ax, vx, publicKey.ax, qi, params.N);
 }
 
+/**
+INPUT: ZZX bx, ax
+RESULT: Set ax = random in R_qi, bx = ex + ax * sx in R_q for q = params.q
+///> Randomly choose 'ax' in R_q = Z_q[X]/(X^N + 1) for N = params.N
+*/
 void Scheme::rlweInstance(ZZX& bx, ZZX& ax) {
 	rlweInstance(bx, ax, params.q);
 }
@@ -88,6 +114,10 @@ CZZ* Scheme::degroupidx(CZZ*& vals, long dslots) {
 
 //-----------------------------------------
 
+/**
+INPUT: array of CZZ values
+OUTPUT: encoded Message
+*/
 Message Scheme::encode(CZZ*& vals, long slots) {
 	ZZX mx;
 	mx.SetLength(params.N);
@@ -102,6 +132,11 @@ Message Scheme::encode(CZZ*& vals, long slots) {
 	return Message(mx, slots);
 }
 
+/**
+INPUT: msg and level
+OUTPUT: ciphertext with modulus qi which is corresponding the input level
+///> !!!Before encrypt an array of CZZ values using this function, we have to use encode function.
+*/
 Cipher Scheme::encrypt(Message& msg, long level) {
 	ZZX bx, ax;
 	ZZ qi = getqi(level);
@@ -216,6 +251,11 @@ void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 //-----------------------------------------
 
+/**
+Return = cipher1 * cipher2
+///> This alogirhtm contain relinearization
+///> To controll message size, we need to do Scheme::modSwitch or Scheme::modSwitchOne after this algorithm
+*/
 Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
@@ -241,6 +281,11 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	return Cipher(bxmult, axmult, cipher1.slots, cipher1.level);
 }
 
+/**
+cipher1 *= cipher2
+///> This alogirhtm contain relinearization
+///> To controll message size, we need to do Scheme::modSwitch or Scheme::modSwitchOne after this algorithm
+*/
 void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	ZZ qi = getqi(cipher1.level);
 	ZZ Pqi = getPqi(cipher1.level);
@@ -266,6 +311,11 @@ void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 //-----------------------------------------
 
+/**
+Return = cipher * cipher
+///> This alogirhtm contain relinearization
+///> To controll message size, we need to do Scheme::modSwitch or Scheme::modSwitchOne after this algorithm
+*/
 Cipher Scheme::square(Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
@@ -288,6 +338,11 @@ Cipher Scheme::square(Cipher& cipher) {
 	return Cipher(bxmult, axmult, cipher.slots, cipher.level);
 }
 
+/**
+cipher = cipher * cipher
+///> This alogirhtm contain relinearization
+///> To controll message size, we need to do Scheme::modSwitch or Scheme::modSwitchOne after this algorithm
+*/
 void Scheme::squareAndEqual(Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
