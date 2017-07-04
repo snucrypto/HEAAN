@@ -13,7 +13,6 @@ class Ring2Utils {
 
 		//-----------------------------------------
 
-
 		/**
 		 * addition in ring Z_q[X] / (X^N + 1)
 		 * @param[out] p1 + p2 in Z_q[X] / (X^N + 1)
@@ -308,6 +307,9 @@ class Ring2Utils {
 		 */
 		static ZZX inpower(ZZX& p, const long& pow, ZZ& mod, const long& degree);
 
+		static ZZX* bitDecomposition(ZZX& p, long& logMod, const long& degree);
+
+		static ZZX innerProduct(ZZX*& pvec1, ZZX*& pvec2, const long& size, ZZ& mod, const long& degree);
 		//-----------------------------------------
 
 		/**

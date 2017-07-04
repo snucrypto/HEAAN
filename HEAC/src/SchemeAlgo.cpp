@@ -140,7 +140,7 @@ void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, 
 	NTL_EXEC_RANGE_END;
 }
 
-CZZ* SchemeAlgo::decryptFullSingleArray(SecKey& secretKey, Cipher*& ciphers, long size) {
+CZZ* SchemeAlgo::decryptSingleArray(SecKey& secretKey, Cipher*& ciphers, long size) {
 	CZZ* res = new CZZ[size];
 	for (int i = 0; i < size; ++i) {
 		Message msg = scheme.decryptMsg(secretKey, ciphers[i]);
@@ -150,7 +150,7 @@ CZZ* SchemeAlgo::decryptFullSingleArray(SecKey& secretKey, Cipher*& ciphers, lon
 	return res;
 }
 
-Cipher* SchemeAlgo::encryptFullSingleArray(CZZ*& vals, long size) {
+Cipher* SchemeAlgo::encryptSingleArray(CZZ*& vals, long size) {
 	Cipher* res = new Cipher[size];
 	for (long i = 0; i < size; ++i) {
 		res[i] = scheme.encryptSingle(vals[i]);

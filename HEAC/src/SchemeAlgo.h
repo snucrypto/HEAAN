@@ -114,7 +114,7 @@ public:
 	 * @param[in] size
 	 * @return [cipher(m_1), cipher(m_2),...,cipher(m_size)]
 	 */
-	Cipher* encryptFullSingleArray(CZZ*& vals, long size);
+	Cipher* encryptSingleArray(CZZ*& vals, long size);
 
 	/**
 	 * decrypting array of ciphers with single val encrypted in each
@@ -122,7 +122,7 @@ public:
 	 * @param[in] size
 	 * @return [m_1, m_2,...,m_size]
 	 */
-	CZZ* decryptFullSingleArray(SecKey& secretKey, Cipher*& ciphers, long size);
+	CZZ* decryptSingleArray(SecKey& secretKey, Cipher*& ciphers, long size);
 
 	//-----------------------------------------
 

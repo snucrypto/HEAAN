@@ -432,6 +432,33 @@ ZZX Ring2Utils::inpower(ZZX& p, const long& pow, ZZ& mod, const long& degree) {
 	return res;
 }
 
+ZZX* Ring2Utils::bitDecomposition(ZZX& p, long& logMod, const long& degree) {
+	ZZX* res = new ZZX[logMod];
+	for (long i = 0; i < logMod; ++i) {
+		res[i].SetLength(degree);
+	}
+
+	for (int j = 0; j < degree; ++j) {
+		ZZ coeff = p.rep[j];
+		for (long i = 0; i < logMod; ++i) {
+			res[i].rep[j] = bit(coeff, j);
+		}
+	}
+	for (long i = 0; i < logMod; ++i) {
+		res[i].normalize();
+	}
+	return res;
+}
+
+ZZX Ring2Utils::innerProduct(ZZX*& pvec1, ZZX*& pvec2, const long& size, ZZ& mod, const long& degree) {
+	ZZX res = mult(pvec1[0], pvec2[0], mod, degree);
+	for (long i = 1; i < size; ++i) {
+		ZZX termi = mult(pvec1[i], pvec2[i], mod, degree);
+		addAndEqual(res, termi, mod, degree);
+	}
+	return res;
+}
+
 //-----------------------------------------
 
 void Ring2Utils::truncate(ZZX& res, ZZX& p, const long& logMod, const long& degree) {

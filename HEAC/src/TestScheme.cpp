@@ -226,7 +226,7 @@ void TestScheme::testPowerOf2Extended(long logN, long logl, long logp, long L, l
 	Cipher* cpow = algo.powerOf2Extended(cipher, logDegree);
 	timeutils.stop("Power of 2 extended");
 	//-----------------------------------------
-	CZZ* dpow = algo.decryptFullSingleArray(secretKey, cpow, logDegree + 1);
+	CZZ* dpow = algo.decryptSingleArray(secretKey, cpow, logDegree + 1);
 	StringUtils::showcompare(mpow, dpow, logDegree + 1, "pow2");
 	//-----------------------------------------
 	cout << "!!! END TEST POWER OF 2 EXTENDED !!!" << endl;
@@ -289,7 +289,7 @@ void TestScheme::testPowerExtended(long logN, long logl, long logp, long L, long
 	Cipher* cpow = algo.powerExtended(cipher, degree);
 	timeutils.stop("Power extended");
 	//-----------------------------------------
-	CZZ* dpow = algo.decryptFullSingleArray(secretKey, cpow, degree);
+	CZZ* dpow = algo.decryptSingleArray(secretKey, cpow, degree);
 	StringUtils::showcompare(mpow, dpow, degree, "pow");
 	//-----------------------------------------
 	cout << "!!! END TEST POWER EXTENDED !!!" << endl;
@@ -400,7 +400,7 @@ void TestScheme::testInverseExtended(long logN, long logl, long logp, long L, lo
 	Cipher* cinv = algo.inverseExtended(cipher, invSteps);
 	timeutils.stop("Inverse extended");
 	//-----------------------------------------
-	CZZ* dinv = algo.decryptFullSingleArray(secretKey, cinv, invSteps);
+	CZZ* dinv = algo.decryptSingleArray(secretKey, cinv, invSteps);
 	StringUtils::showcompare(minv, dinv, invSteps, "inv");
 	//-----------------------------------------
 	cout << "!!! END TEST INVERSE EXTENDED !!!" << endl;
@@ -528,7 +528,7 @@ void TestScheme::testExponentExtended(long logN, long logl, long logp, long L, l
 	Cipher* cexp = algo.functionExtended(cipher, EXPONENT, degree);
 	timeutils.stop(EXPONENT + " extended");
 	//-----------------------------------------
-	CZZ* dexp = algo.decryptFullSingleArray(secretKey, cexp, degree);
+	CZZ* dexp = algo.decryptSingleArray(secretKey, cexp, degree);
 	StringUtils::showcompare(mexp, dexp, degree, EXPONENT);
 	//-----------------------------------------
 	cout << "!!! END TEST EXPONENT EXTENDED !!!" << endl;
@@ -622,7 +622,7 @@ void TestScheme::testSigmoidExtended(long logN, long logl, long logp, long L, lo
 	Cipher* csig = algo.functionExtended(cipher, SIGMOID, degree);
 	timeutils.stop(SIGMOID + " extended");
 	//-----------------------------------------
-	CZZ* dsig = algo.decryptFullSingleArray(secretKey, csig, degree);
+	CZZ* dsig = algo.decryptSingleArray(secretKey, csig, degree);
 	StringUtils::showcompare(msig, dsig, degree, SIGMOID);
 	//-----------------------------------------
 	cout << "!!! END TEST SIGMOID EXTENDED !!!" << endl;
@@ -647,8 +647,8 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	CZZ* mvec1 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
 	CZZ* mvec2 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
 	CZZ* mvecp = NumUtils::fftFull(mvec1, mvec2, fftdim, scheme.aux.ksiPows, logp);
-	Cipher* cvec1 = algo.encryptFullSingleArray(mvec1, fftdim);
-	Cipher* cvec2 = algo.encryptFullSingleArray(mvec2, fftdim);
+	Cipher* cvec1 = algo.encryptSingleArray(mvec1, fftdim);
+	Cipher* cvec2 = algo.encryptSingleArray(mvec2, fftdim);
 	//-----------------------------------------
 	timeutils.start("cfft 1");
 	Cipher* cfft1 = algo.fft(cvec1, fftdim);
@@ -666,7 +666,7 @@ void TestScheme::testFFT(long logN, long logl, long logp, long L, long logfftdim
 	Cipher* cvecp = algo.fftInv(cfft1, fftdim);
 	timeutils.stop("cfft inv");
 	//-----------------------------------------
-	CZZ* dvecp = algo.decryptFullSingleArray(secretKey, cvecp, fftdim);
+	CZZ* dvecp = algo.decryptSingleArray(secretKey, cvecp, fftdim);
 	StringUtils::showcompare(mvecp, dvecp, fftdim, "fft");
 	//-----------------------------------------
 	cout << "!!! END TEST FFT !!!" << endl;
@@ -754,8 +754,8 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 	CZZ* mvec1 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
 	CZZ* mvec2 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
 	CZZ* mvecp = NumUtils::fftFullLazy(mvec1, mvec2, fftdim, scheme.aux.ksiPows, logp);
-	Cipher* cvec1 = algo.encryptFullSingleArray(mvec1, fftdim);
-	Cipher* cvec2 = algo.encryptFullSingleArray(mvec2, fftdim);
+	Cipher* cvec1 = algo.encryptSingleArray(mvec1, fftdim);
+	Cipher* cvec2 = algo.encryptSingleArray(mvec2, fftdim);
 	//-----------------------------------------
 	timeutils.start("cfft 1 lazy");
 	Cipher* cfft1 = algo.fft(cvec1, fftdim);
@@ -773,7 +773,7 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 	Cipher* cvecp = algo.fftInvLazy(cfft1, fftdim);
 	timeutils.stop("cfft inv lazy");
 	//-----------------------------------------
-	CZZ* dvecp = algo.decryptFullSingleArray(secretKey, cvecp, fftdim);
+	CZZ* dvecp = algo.decryptSingleArray(secretKey, cvecp, fftdim);
 	StringUtils::showcompare(mvecp, dvecp, fftdim, "fft");
 	//-----------------------------------------
 	cout << "!!! END TEST FFT LAZY !!!" << endl;

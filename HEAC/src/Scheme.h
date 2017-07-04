@@ -66,14 +66,14 @@ public:
 	 * @param[out] ax
 	 * @param[in] qi
 	 */
-	void rlweInstance(ZZX& bx, ZZX& ax, ZZ& qi);
+	void rlweInstance(ZZX& ax, ZZX& bx, ZZ& qi);
 
 	/**
 	 * make standard lwe instance bx = ex - ax * sx mod q
 	 * @param[out] bx
 	 * @param[out] ax
 	 */
-	void rlweInstance(ZZX& bx, ZZX& ax);
+	void rlweInstance(ZZX& ax, ZZX& bx);
 
 	//-----------------------------------------
 

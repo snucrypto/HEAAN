@@ -9,8 +9,8 @@ using namespace NTL;
 class Cipher {
 public:
 
-	ZZX bx;
 	ZZX ax;
+	ZZX bx;
 
 	long slots; ///< number of slots
 	long level; ///< level of ciphertext
@@ -22,7 +22,7 @@ public:
 	 * @param[in] slots: number of slots
 	 * @param[in] level: ciphertext level
 	 */
-	Cipher(ZZX bx = ZZX::zero(), ZZX ax = ZZX::zero(), long slots = 1, long level = 1) : bx(bx), ax(ax), slots(slots) , level(level) {}
+	Cipher(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), long slots = 1, long level = 1) : ax(ax), bx(bx), slots(slots) , level(level) {}
 
 	//-----------------------------------------
 
