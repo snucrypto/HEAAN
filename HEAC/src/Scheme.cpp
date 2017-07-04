@@ -137,7 +137,7 @@ INPUT: msg and level
 OUTPUT: ciphertext with modulus qi which is corresponding the input level
 ///> !!!Before encrypt an array of CZZ values using this function, we have to use encode function.
 */
-Cipher Scheme::encrypt(Message& msg, long level) {
+Cipher Scheme::encryptMsg(Message& msg, long level) {
 	ZZX bx, ax;
 	ZZ qi = getqi(level);
 	rlweInstance(bx, ax, qi);
@@ -145,21 +145,21 @@ Cipher Scheme::encrypt(Message& msg, long level) {
 	return Cipher(bx, ax, msg.slots, level);
 }
 
-Cipher Scheme::encryptFull(CZZ*& vals, long slots, long level) {
+Cipher Scheme::encrypt(CZZ*& vals, long slots, long level) {
 	CZZ* gvals = groupidx(vals, slots);
 	Message msg = encode(gvals, slots * 2);
-	return encrypt(msg, level);
+	return encryptMsg(msg, level);
 }
 
-Cipher Scheme::encryptFull(CZZ& val, long level) {
+Cipher Scheme::encryptSingle(CZZ& val, long level) {
 	CZZ* gvals = groupidx(val);
 	Message msg = encode(gvals, 2);
-	return encrypt(msg, level);
+	return encryptMsg(msg, level);
 }
 
 //-----------------------------------------
 
-Message Scheme::decrypt(Cipher& cipher) {
+Message Scheme::decryptMsg(SecKey& secretKey, Cipher& cipher) {
 	ZZ qi = getqi(cipher.level);
 	ZZX mx;
 	mx.SetLength(params.N);
@@ -183,14 +183,14 @@ CZZ* Scheme::decode(Message& msg) {
 	return NumUtils::fftSpecial(fftinv, msg.slots, aux.ksiPows, params.logp);
 }
 
-CZZ* Scheme::decryptFull(Cipher& cipher) {
-	Message msg = decrypt(cipher);
+CZZ* Scheme::decrypt(SecKey& secretKey, Cipher& cipher) {
+	Message msg = decryptMsg(secretKey, cipher);
 	CZZ* gvals = decode(msg);
 	return degroupidx(gvals, msg.slots);
 }
 
-CZZ Scheme::decryptFullSingle(Cipher& cipher) {
-	Message msg = decrypt(cipher);
+CZZ Scheme::decryptSingle(SecKey& secretKey, Cipher& cipher) {
+	Message msg = decryptMsg(secretKey, cipher);
 	CZZ* gvals = decode(msg);
 	return gvals[0];
 }

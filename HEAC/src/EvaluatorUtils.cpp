@@ -17,6 +17,7 @@ void EvaluatorUtils::evaluateDoubleVal(double& xr, double& xi, CZZ& x, const lon
 	xi = to_double(xxi);
 }
 
+
 void EvaluatorUtils::evaluateDoubleVals(double*& xvecr, double*& xveci, CZZ*& xvec, const long size, const long& logp) {
 	for (long i = 0; i < size; ++i) {
 		RR xxvecr = to_RR(xvec[i].r);

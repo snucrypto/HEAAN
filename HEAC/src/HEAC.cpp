@@ -1,27 +1,4 @@
-#include "../Params.h"
-#include "../PubKey.h"
-#include "../Scheme.h"
-#include "../SchemeAlgo.h"
-#include "../SchemeAux.h"
-#include "../SecKey.h"
-#include "../TestScheme.h"
-#include "../TimeUtils.h"
-
-void test() {
-	//-----------------------------------------
-	TimeUtils timeutils;
-	long logN = 13;
-	long logl = 3;
-	long logp = 30;
-	long L = 2;
-	Params params(logN, logl, logp, L);
-	SecKey secretKey(params);
-	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
-	Scheme scheme(params, secretKey, publicKey, schemeaux);
-	SchemeAlgo algo(scheme);
-	//-----------------------------------------
-}
+#include "TestScheme.h"
 
 int main() {
 
@@ -32,7 +9,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
 
-	TestScheme::testEncodeBatch(13, 5, 30, 4, 3);
+//	TestScheme::testEncodeBatch(13, 5, 30, 4, 3);
 
 	/*
 	 * Params: logN, logl, logp, L, logSlots

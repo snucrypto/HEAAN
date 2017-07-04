@@ -15,13 +15,12 @@ class Scheme {
 private:
 public:
 	Params& params;
-	SecKey& secretKey;
 	PubKey& publicKey;
 	SchemeAux& aux;
 
 	//-----------------------------------------
 
-	Scheme(Params& params, SecKey& secretKey, PubKey& publicKey, SchemeAux& schemeaux) : params(params), secretKey(secretKey), publicKey(publicKey), aux(schemeaux) {};
+	Scheme(Params& params, PubKey& publicKey, SchemeAux& schemeaux) : params(params), publicKey(publicKey), aux(schemeaux) {};
 
 	//-----------------------------------------
 
@@ -127,14 +126,15 @@ public:
 	 * @param[in] level
 	 * @return cipher
 	 */
-	Cipher encrypt(Message& msg, long level = 1);
+	Cipher encryptMsg(Message& msg, long level = 1);
 
 	/**
 	 * decrypts cipher
+	 * @param[in] secret key
 	 * @param[in] cipher
 	 * @return message
 	 */
-	Message decrypt(Cipher& cipher);
+	Message decryptMsg(SecKey& secretKey, Cipher& cipher);
 
 	//-----------------------------------------
 
@@ -145,31 +145,31 @@ public:
 	 * @param[in] level
 	 * @return cipher
 	 */
-	Cipher encryptFull(CZZ*& vals, long slots, long level = 1);
+	Cipher encrypt(CZZ*& vals, long slots, long level = 1);
 
 	/**
 	 * All decryption process: decrypt, decode, and degroup vals with removing conjugates
 	 * @param[in] cipher
 	 * @return vals
 	 */
-	CZZ* decryptFull(Cipher& cipher);
+	CZZ* decrypt(SecKey& secretKey, Cipher& cipher);
 
 	//-----------------------------------------
 
 	/**
-	 * encryptFull with only one value
+	 * encrypt with only one value
 	 * @param[in] val
 	 * @param[in] level
 	 * @return cipher
 	 */
-	Cipher encryptFull(CZZ& val, long level = 1);
+	Cipher encryptSingle(CZZ& val, long level = 1);
 
 	/**
-	 * decryptFull with advance knowledge that slots = 1;
+	 * decrypt with advance knowledge that slots = 1;
 	 * @param[in] cipher
 	 * @return val
 	 */
-	CZZ decryptFullSingle(Cipher& cipher);
+	CZZ decryptSingle(SecKey& secretKey, Cipher& cipher);
 
 	//-----------------------------------------
 

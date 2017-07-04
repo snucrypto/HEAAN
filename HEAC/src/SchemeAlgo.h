@@ -122,7 +122,7 @@ public:
 	 * @param[in] size
 	 * @return [m_1, m_2,...,m_size]
 	 */
-	CZZ* decryptFullSingleArray(Cipher*& ciphers, long size);
+	CZZ* decryptFullSingleArray(SecKey& secretKey, Cipher*& ciphers, long size);
 
 	//-----------------------------------------
 
