@@ -11,7 +11,7 @@ public:
 
 	ZZX mx; ///< message mod X^N + 1
 
-	long slots; ///< number of slots
+	long doubleslots; ///< number of slots
 	long level; ///< level of message
 
 	//-----------------------------------------
@@ -21,7 +21,7 @@ public:
 	 * @param[in] slots: number of slots
 	 * @param[in] level: message level
 	 */
-	Message(ZZX mx = ZZX::zero(), long slots = 1, long level = 1) : mx(mx), slots(slots), level(level) {}
+	Message(ZZX mx = ZZX::zero(), long doubleslots = 2, long level = 1) : mx(mx), doubleslots(doubleslots), level(level) {}
 
 	//-----------------------------------------
 
