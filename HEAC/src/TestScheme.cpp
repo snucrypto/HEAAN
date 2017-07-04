@@ -66,6 +66,35 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 
 //-----------------------------------------
 
+void TestScheme::testConjugate(long logN, long logl, long logp, long L, long logSlots) {
+	cout << "!!! START TEST CONJUGATE !!!" << endl;
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	SchemeAux schemeaux(logp, logN + 2);
+	Scheme scheme(params, secretKey, publicKey, schemeaux);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
+	CZZ* mvecconj = new CZZ[slots];
+	for (long i = 0; i < slots; ++i) {
+		mvecconj[i] = mvec[i].conjugate();
+	}
+
+	Cipher cipher = scheme.encryptFull(mvec, slots);
+	timeutils.start("Conjugate");
+	Cipher cconj = scheme.conjugate(cipher);
+	timeutils.stop("Conjugate");
+
+	CZZ* dvecconj = scheme.decryptFull(cconj);
+
+	StringUtils::showcompare(mvecconj, dvecconj, slots, "conj");
+
+	cout << "!!! END TEST CONJUGATE !!!" << endl;
+}
+
 void TestScheme::testRotate2(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
 	cout << "!!! START TEST ROTATE 2 !!!" << endl;
 	//-----------------------------------------

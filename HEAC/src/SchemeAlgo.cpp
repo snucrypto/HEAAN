@@ -95,6 +95,14 @@ Cipher SchemeAlgo::sum(Cipher*& ciphers, const long& size) {
 	return res;
 }
 
+Cipher SchemeAlgo::delta(Cipher& cipher1, Cipher& cipher2) {
+	Cipher cres = scheme.sub(cipher1, cipher2);
+	scheme.squareAndEqual(cres);
+	scheme.modSwitchOneAndEqual(cres);
+	slotsumAndEqual(cres, cres.slots / 2);
+	return cres;
+}
+
 Cipher* SchemeAlgo::multVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
 	Cipher* res = new Cipher[size];
 	NTL_EXEC_RANGE(size, first, last);

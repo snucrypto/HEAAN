@@ -61,6 +61,25 @@ void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	p1.normalize();
 }
 
+void Ring2Utils::conjugate(ZZX& res, ZZX& p, const long& degree) {
+	res.SetLength(degree);
+	res.rep[0] = p.rep[0];
+	for (long i = 1; i < degree; ++i) {
+		res.rep[i] = -p.rep[degree - i];
+	}
+	res.normalize();
+}
+
+void Ring2Utils::conjugateAndEqual(ZZX& p, const long& degree) {
+	for (long i = 0; i < degree / 2; ++i) {
+		ZZ tmp = p.rep[i];
+		p.rep[i] = p.rep[degree - i];
+		p.rep[degree - i] = tmp;
+	}
+	p.rep[degree / 2] = -p.rep[degree / 2];
+	p.normalize();
+}
+
 //void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
 //	subAndEqual(p1.rx, p2.rx, mod, degree);
 //	subAndEqual(p1.ix, p2.ix, mod, degree);

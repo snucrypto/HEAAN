@@ -41,6 +41,15 @@ PubKey::PubKey(Params& params, SecKey& secretKey) : axKeySwitch(), bxKeySwitch()
 	Ring2Utils::mult(bxStar, secretKey.sx, axStar, params.Pq, params.N);
 	Ring2Utils::sub(bxStar, ex, bxStar, params.Pq, params.N);
 
+	ZZX sxconj;
+	Ring2Utils::conjugate(sxconj, secretKey.sx, params.N);
+	Ring2Utils::leftShiftAndEqual(sxconj, params.logP, params.logPq, params.N);
+	NumUtils::sampleUniform2(axConj, params.N, params.logPq);
+	NumUtils::sampleGauss(ex, params.N, params.sigma);
+	Ring2Utils::addAndEqual(ex, sxconj, params.Pq, params.N);
+	Ring2Utils::mult(bxConj, secretKey.sx, axConj, params.Pq, params.N);
+	Ring2Utils::sub(bxConj, ex, bxConj, params.Pq, params.N);
+
 	//-----------------------------------------
 }
 

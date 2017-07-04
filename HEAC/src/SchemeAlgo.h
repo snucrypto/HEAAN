@@ -69,6 +69,7 @@ public:
 	 */
 	Cipher sum(Cipher*& ciphers, const long& size);
 
+	Cipher delta(Cipher& cipher1, Cipher& cipher2);
 	//-----------------------------------------
 
 	/**

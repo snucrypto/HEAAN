@@ -14,7 +14,12 @@ public:
 	//-----------------------------------------
 
 	/**
-	 * Suggested: 13, 2, 30, 5, 0, 3
+	 * Suggested: 13, 2, 30, 5, 3
+	 */
+	static void testConjugate(long logN, long logl, long logp, long L, long logSlots);
+
+	/**
+	 * Suggested: 13, 2, 30, 5, 1, 3
 	 */
 	static void testRotate2(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots);
 

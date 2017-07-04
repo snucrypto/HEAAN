@@ -222,6 +222,10 @@ public:
 	 */
 	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
 
+	Cipher conjugate(Cipher& cipher);
+
+	void conjugateAndEqual(Cipher& cipher);
+
 	//-----------------------------------------
 
 	/**

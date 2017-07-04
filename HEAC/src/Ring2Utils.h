@@ -80,6 +80,10 @@ class Ring2Utils {
 		 */
 		static void subAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree);
 
+		static void conjugate(ZZX& res, ZZX& p, const long& degree);
+
+		static void conjugateAndEqual(ZZX& p, const long& degree);
+
 //		static void subAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree);
 
 		//-----------------------------------------

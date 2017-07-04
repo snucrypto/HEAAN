@@ -17,6 +17,9 @@ public:
 	ZZX axStar; ///<< auxiliary information for multiplication
 	ZZX bxStar; ///<< auxiliary information for multiplication
 
+	ZZX axConj; ///<< auxiliary information for conjugation
+	ZZX bxConj; ///<< auxiliary information for conjugation
+
 	ZZX* axKeySwitch; ///< auxiliary information for rotation
 	ZZX* bxKeySwitch; ///< auxiliary information for rotation
 
