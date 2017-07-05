@@ -407,7 +407,7 @@ public:
 	 * @param[in] logsteps
 	 * @return
 	 */
-	void rotate2AndEqual(Cipher& cipher, long& logSteps);
+	void leftRotate2AndEqual(Cipher& cipher, long& logSteps);
 
 	/**
 	 * calculates cipher of array with rotated indexes

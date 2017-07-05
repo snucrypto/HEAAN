@@ -190,7 +190,7 @@ void EvaluatorUtils::leftShift(CZZ*& vals, const long& size, const long& logp) {
 	}
 }
 
-void EvaluatorUtils::idxShift(CZZ*& vals, const long& size, const long& shift) {
+void EvaluatorUtils::leftRotate(CZZ*& vals, const long& size, const long& shift) {
 	long remshift = shift % size;
 	CZZ* tmp = new CZZ[size];
 	for (long i = 0; i < size - remshift; ++i) {

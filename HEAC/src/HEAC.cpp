@@ -16,7 +16,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
 
-	TestScheme::testConjugate(13, 5, 30, 4, 3);
+//	TestScheme::testConjugateBatch(13, 5, 30, 4, 3);
 
 	//-----------------------------------------
 
@@ -25,7 +25,7 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 0, 3
 	 */
 
-//	TestScheme::testRotate2(13, 2, 30, 4, 2, 3);
+	TestScheme::testLeftRotate2Batch(13, 2, 30, 4, 2, 4);
 //	TestScheme::testRotate(13, 2, 30, 4, 17, 3);
 //	TestScheme::testSlotssum(13, 2, 30, 4, 12);
 

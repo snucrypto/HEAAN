@@ -138,7 +138,7 @@ public:
 	/**
 	 * rotates indexes of vals by shift
 	 */
-	static void idxShift(CZZ*& vals, const long& size, const long& shift);
+	static void leftRotate(CZZ*& vals, const long& size, const long& shift);
 
 	//-----------------------------------------
 };

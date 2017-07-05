@@ -555,7 +555,7 @@ Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
 	return Cipher(axres, bxres, cipher.doubleslots, cipher.level);
 }
 
-void Scheme::rotate2AndEqual(Cipher& cipher, long& logPow) {
+void Scheme::leftRotate2AndEqual(Cipher& cipher, long& logPow) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
 
@@ -589,7 +589,7 @@ void Scheme::rotateAndEqual(Cipher& cipher, long& steps) {
 	long logsteps = log2(steps);
 	for (long i = 0; i < logsteps; ++i) {
 		if(bit(steps, i)) {
-			rotate2AndEqual(cipher, i);
+			leftRotate2AndEqual(cipher, i);
 		}
 	}
 }

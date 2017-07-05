@@ -99,7 +99,7 @@ Cipher SchemeAlgo::delta(Cipher& cipher1, Cipher& cipher2) {
 	Cipher cres = scheme.sub(cipher1, cipher2);
 	scheme.squareAndEqual(cres);
 	scheme.modSwitchOneAndEqual(cres);
-	slotsumAndEqual(cres, cres.doubleslots / 2);
+	partialSlotsSumAndEqual(cres, cres.doubleslots / 2);
 	return cres;
 }
 
@@ -347,7 +347,7 @@ Cipher* SchemeAlgo::fftInvLazy(Cipher*& ciphers, const long& size) {
 	return fftRaw(ciphers, size, false);
 }
 
-Cipher SchemeAlgo::slotsum(Cipher& cipher, const long& slots) {
+Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long& slots) {
 	long logslots = log2(slots);
 	Cipher res = cipher;
 	for (long i = 0; i < logslots; ++i) {
@@ -357,7 +357,7 @@ Cipher SchemeAlgo::slotsum(Cipher& cipher, const long& slots) {
 	return res;
 }
 
-void SchemeAlgo::slotsumAndEqual(Cipher& cipher, const long& slots) {
+void SchemeAlgo::partialSlotsSumAndEqual(Cipher& cipher, const long& slots) {
 	long logslots = log2(slots);
 	for (long i = 0; i < logslots; ++i) {
 		Cipher rot = scheme.rotate2(cipher, i);

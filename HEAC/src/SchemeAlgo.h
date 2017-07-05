@@ -229,8 +229,8 @@ public:
 
 	//-----------------------------------------
 
-	Cipher slotsum(Cipher& cipher, const long& slots);
-	void slotsumAndEqual(Cipher& cipher, const long& slots);
+	Cipher partialSlotsSum(Cipher& cipher, const long& slots);
+	void partialSlotsSumAndEqual(Cipher& cipher, const long& slots);
 
 	//-----------------------------------------
 
