@@ -351,12 +351,6 @@ void Ring2Utils::leftShift(ZZX& res, ZZX& p, const long& bits, const long& logMo
 	res.normalize();
 }
 
-ZZX Ring2Utils::leftShift(ZZX& p, const long& bits, const long& logMod, const long& degree) {
-	ZZX res;
-	leftShift(res, p, bits, logMod, degree);
-	return res;
-}
-
 //void Ring2Utils::leftShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree) {
 //	leftShift(res.rx, p.rx, bits, logMod, degree);
 //	leftShift(res.ix, p.ix, bits, logMod, degree);

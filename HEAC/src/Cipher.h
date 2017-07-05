@@ -16,7 +16,7 @@ public:
 	ZZX ax;
 	ZZX bx;
 
-	long doubleslots; ///< number of slots
+	long slots; ///< number of slots
 	long level; ///< level of ciphertext
 
 	//-----------------------------------------
@@ -26,7 +26,7 @@ public:
 	 * @param[in] slots: number of slots
 	 * @param[in] level: ciphertext level
 	 */
-	Cipher(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), long doubleslots = 2, long level = 1) : ax(ax), bx(bx), doubleslots(doubleslots) , level(level) {}
+	Cipher(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), long slots = 1, long level = 1) : ax(ax), bx(bx), slots(slots) , level(level) {}
 
 	//-----------------------------------------
 

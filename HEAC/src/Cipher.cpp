@@ -6,7 +6,7 @@
 string Cipher::toString() {
 	stringstream ss;
 	ss << "Cipher: [slots = ";
-	ss << doubleslots;
+	ss << slots;
 	ss << " , level = ";
 	ss << level;
 	ss << " , [ax[0] = ";

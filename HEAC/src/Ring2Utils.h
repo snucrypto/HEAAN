@@ -234,16 +234,6 @@ class Ring2Utils {
 		 */
 		static void leftShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree);
 
-		/**
-		 * multiplication by 2^b in ring Z_q[X] / (X^N + 1)
-		 * @param[in] p in Z_q[X] / (X^N + 1)
-		 * @param[in] degree b
-		 * @param[in] logmod log(q)
-		 * @param[in] degree N
-		 * @result p * 2^b in Z_q[X] / (X^N + 1)
-		 */
-		static ZZX leftShift(ZZX& p, const long& bits, const long& logMod, const long& degree);
-
 //		static void leftShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree);
 
 		/**

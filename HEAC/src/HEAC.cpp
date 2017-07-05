@@ -25,9 +25,9 @@ int main() {
 	 * Suggested: 13, 2, 30, 5, 0, 3
 	 */
 
-	TestScheme::testLeftRotate2Batch(13, 2, 30, 4, 2, 4);
-//	TestScheme::testRotate(13, 2, 30, 4, 17, 3);
-//	TestScheme::testSlotssum(13, 2, 30, 4, 12);
+//	TestScheme::testLeftRotate2Batch(13, 2, 30, 4, 2, 4);
+//	TestScheme::testLeftRotateBatch(13, 2, 30, 4, 17, 3);
+//	TestScheme::testSlotsSum(13, 2, 30, 4, 12);
 
 	//-----------------------------------------
 

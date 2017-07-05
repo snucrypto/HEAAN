@@ -6,7 +6,7 @@
 string Message::toString() {
 	stringstream ss;
 	ss << "Message: [slots = ";
-	ss << doubleslots;
+	ss << slots;
 	ss << " , level = ";
 	ss << level;
 	ss << " , [mx[0] = ";

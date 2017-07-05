@@ -87,7 +87,7 @@ void TestScheme::testConjugateBatch(long logN, long logl, long logp, long L, lon
 }
 
 void TestScheme::testLeftRotate2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
-	cout << "!!! START TEST ROTATE 2 !!!" << endl;
+	cout << "!!! START TEST LEFT ROTATE 2 !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -102,19 +102,19 @@ void TestScheme::testLeftRotate2Batch(long logN, long logl, long logp, long L, l
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
-	timeutils.start("Rotate 2");
+	timeutils.start("Left Rotate 2");
 	scheme.leftRotate2AndEqual(cipher, rotlogSlots);
-	timeutils.stop("Rotate 2");
+	timeutils.stop("Left Rotate 2");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
 	EvaluatorUtils::leftRotate(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
-	cout << "!!! END TEST ROTATE 2 !!!" << endl;
+	cout << "!!! END TEST LEFT ROTATE 2 !!!" << endl;
 }
 
 void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, long rotSlots, long logSlots) {
-	cout << "!!! START TEST ROTATE !!!" << endl;
+	cout << "!!! START TEST LEFT ROTATE !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -136,11 +136,11 @@ void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, lo
 	EvaluatorUtils::leftRotate(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
-	cout << "!!! END TEST ROTATE !!!" << endl;
+	cout << "!!! END TEST LEFT ROTATE !!!" << endl;
 }
 
 void TestScheme::testSlotsSum(long logN, long logl, long logp, long L, long logSlots) {
-	cout << "!!! START TEST SLOTSUM !!!" << endl;
+	cout << "!!! START TEST SLOTS SUM !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -165,7 +165,7 @@ void TestScheme::testSlotsSum(long logN, long logl, long logp, long L, long logS
 	}
 	StringUtils::showcompare(msum, dvec, slots, "slotsum");
 	//-----------------------------------------
-	cout << "!!! END TEST SLOTSUM !!!" << endl;
+	cout << "!!! END TEST SLOTS SUM !!!" << endl;
 }
 
 

@@ -99,7 +99,7 @@ Cipher SchemeAlgo::delta(Cipher& cipher1, Cipher& cipher2) {
 	Cipher cres = scheme.sub(cipher1, cipher2);
 	scheme.squareAndEqual(cres);
 	scheme.modSwitchOneAndEqual(cres);
-	partialSlotsSumAndEqual(cres, cres.doubleslots / 2);
+	partialSlotsSumAndEqual(cres, cres.slots);
 	return cres;
 }
 
