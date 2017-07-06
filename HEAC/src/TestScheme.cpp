@@ -86,7 +86,7 @@ void TestScheme::testConjugateBatch(long logN, long logl, long logp, long L, lon
 	cout << "!!! END TEST CONJUGATE !!!" << endl;
 }
 
-void TestScheme::testLeftRotate2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
+void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
 	cout << "!!! START TEST LEFT ROTATE 2 !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -103,7 +103,7 @@ void TestScheme::testLeftRotate2Batch(long logN, long logl, long logp, long L, l
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
 	timeutils.start("Left Rotate 2");
-	scheme.leftRotate2AndEqual(cipher, rotlogSlots);
+	scheme.leftRotateByPo2AndEqual(cipher, rotlogSlots);
 	timeutils.stop("Left Rotate 2");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
@@ -129,7 +129,7 @@ void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, lo
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
 	timeutils.start("Rotate");
-	scheme.rotateAndEqual(cipher, rotSlots);
+	scheme.leftRotateAndEqual(cipher, rotSlots);
 	timeutils.stop("Rotate");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
@@ -241,7 +241,7 @@ void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long de
 
 //-----------------------------------------
 
-void TestScheme::testProd2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots) {
+void TestScheme::testProdOfPo2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots) {
 	cout << "!!! START TEST PROD 2 BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -278,7 +278,7 @@ void TestScheme::testProd2Batch(long logN, long logl, long logp, long L, long lo
 	}
 	//-----------------------------------------
 	timeutils.start("Prod 2 batch");
-	Cipher cprod = algo.prod2(cvec, logDegree);
+	Cipher cprod = algo.prodOfPo2(cvec, logDegree);
 	timeutils.stop("Prod 2 batch");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cprod);

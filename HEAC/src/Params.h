@@ -6,14 +6,6 @@
 using namespace std;
 using namespace NTL;
 
-/**
- * Input params: logN, logl, logp, L, sigma
- * p is a power of 2 that corresponds to the base of the exponent and modulus switching
- * N is a power of 2 that corresponds to the ring Z[X] / (X^N + 1)
- * logl corresponds to additional number of bits needed for correct decryption on last level
- * L corresponds to number of levels
- * sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
- */
 class Params {
 public:
 
@@ -47,6 +39,13 @@ public:
 
 	//-----------------------------------------
 
+	/**
+	 *@param[in] N is a power of 2 that corresponds to the ring Z[X] / (X^N + 1)
+	 *@param[in] logl corresponds to additional number of bits needed for correct decryption on last level
+	 *@param[in] p is a power of 2 that corresponds to the base of the exponent and modulus switching
+	 *@param[in] L corresponds to number of levels
+	 *@param[in] sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
+	 */
 	Params(long logN, long logl, long logp, long L, double sigma = 3.2);
 
 	//-----------------------------------------

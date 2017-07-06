@@ -57,7 +57,7 @@ public:
 	 * @param[in] logdeg
 	 * @return cipher(m_1 * m_2 *...*m_{2^logdeg})
 	 */
-	Cipher prod2(Cipher*& ciphers, const long& logDegree);
+	Cipher prodOfPo2(Cipher*& ciphers, const long& logDegree);
 
 	//-----------------------------------------
 
@@ -69,7 +69,13 @@ public:
 	 */
 	Cipher sum(Cipher*& ciphers, const long& size);
 
-	Cipher delta(Cipher& cipher1, Cipher& cipher2);
+	/**
+	 * Calculating distance of ciphers
+	 * @param[in] cipher(m_1, m_2, ..., m_slots)
+	 * @param[in] cipher(m'_1, m'_2, ..., m'_slots)
+	 * @return cipher(sum((m_i-m'_i)^2) / p)
+	 */
+	Cipher distance(Cipher& cipher1, Cipher& cipher2);
 	//-----------------------------------------
 
 	/**

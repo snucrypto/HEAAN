@@ -10,7 +10,6 @@ public:
 	 * Testing encoding and decoding timing of the ciphertext
 	 * c(m_1, ..., m_slots)
 	 * number of levels switched: 0
-	 * Tested on: 13, 2, 30, 4, 3
 	 * @param[in] logN input parameter for Params class
 	 * @param[in] logl input parameter for Params class
 	 * @param[in] logp input parameter for Params class
@@ -44,7 +43,7 @@ public:
 	 * @param[in] log of rotation number
 	 * @param[in] log of number of slots
 	 */
-	static void testLeftRotate2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots);
+	static void testLeftRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots);
 
 	/**
 	 * Testing left rotation timing in the ciphertext
@@ -117,7 +116,7 @@ public:
 	 * @param[in] log of number of slots
 	 */
 
-	static void testProd2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots);
+	static void testProdOfPo2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots);
 
 	//-----------------------------------------
 

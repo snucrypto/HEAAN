@@ -535,7 +535,7 @@ void Scheme::multModSwitchOneAndEqual(Cipher& cipher1, Cipher& cipher2) {
 
 //-----------------------------------------
 
-Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
+Cipher Scheme::leftRotateByPo2(Cipher& cipher, long& logPow) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
 
@@ -556,7 +556,7 @@ Cipher Scheme::rotate2(Cipher& cipher, long& logPow) {
 	return Cipher(axres, bxres, cipher.slots, cipher.level);
 }
 
-void Scheme::leftRotate2AndEqual(Cipher& cipher, long& logPow) {
+void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long& logPow) {
 	ZZ qi = getqi(cipher.level);
 	ZZ Pqi = getPqi(cipher.level);
 
@@ -579,18 +579,18 @@ void Scheme::leftRotate2AndEqual(Cipher& cipher, long& logPow) {
 	cipher.bx = bxres;
 }
 
-Cipher Scheme::rotate(Cipher& cipher, long& steps) {
+Cipher Scheme::leftRotate(Cipher& cipher, long& steps) {
 	Cipher res = cipher;
-	rotateAndEqual(res, steps);
+	leftRotateAndEqual(res, steps);
 	return res;
 }
 
-void Scheme::rotateAndEqual(Cipher& cipher, long& steps) {
+void Scheme::leftRotateAndEqual(Cipher& cipher, long& steps) {
 	steps %= params.Nh;
 	long logsteps = log2(steps);
 	for (long i = 0; i < logsteps; ++i) {
 		if(bit(steps, i)) {
-			leftRotate2AndEqual(cipher, i);
+			leftRotateByPo2AndEqual(cipher, i);
 		}
 	}
 }

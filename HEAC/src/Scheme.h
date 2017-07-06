@@ -222,8 +222,17 @@ public:
 	 */
 	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
 
+	/**
+	 * conjugation of cipher
+	 * @param[in] cipher(m)
+	 * @return cipher(conj(m))
+	 */
 	Cipher conjugate(Cipher& cipher);
 
+	/**
+	 * conjugation of cipher
+	 * @param[in, out] cipher(m) -> cipher(conj(m))
+	 */
 	void conjugateAndEqual(Cipher& cipher);
 
 	//-----------------------------------------
@@ -248,13 +257,13 @@ public:
 	/**
 	 * square of cipher
 	 * @param[in] cipher(m)
-	 * @return cipher(m * m)
+	 * @return cipher(m^2)
 	 */
 	Cipher square(Cipher& cipher);
 
 	/**
 	 * square of cipher
-	 * @param[in, out] cipher(m) -> cipher(m * m)
+	 * @param[in, out] cipher(m) -> cipher(m^2)
 	 */
 	void squareAndEqual(Cipher& cipher);
 
@@ -400,14 +409,14 @@ public:
 	 * @param[in] logsteps
 	 * @return cipher(m(v_{1+2^logsteps}, v_{2+2^logsteps}, ..., v_{slots+2^logsteps})
 	 */
-	Cipher rotate2(Cipher& cipher, long& logSteps);
+	Cipher leftRotateByPo2(Cipher& cipher, long& logSteps);
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in, out] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1+2^logsteps}, v_{2+2^logsteps}, ..., v_{slots+2^logsteps})
 	 * @param[in] logsteps
 	 * @return
 	 */
-	void leftRotate2AndEqual(Cipher& cipher, long& logSteps);
+	void leftRotateByPo2AndEqual(Cipher& cipher, long& logSteps);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -415,14 +424,14 @@ public:
 	 * @param[in] steps
 	 * @return cipher(m(v_{1+steps}, v_{2+steps}, ..., v_{slots+steps})
 	 */
-	Cipher rotate(Cipher& cipher, long& steps);
+	Cipher leftRotate(Cipher& cipher, long& steps);
 
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1+steps}, v_{2+steps}, ..., v_{slots+steps})
 	 * @param[in] steps
 	 */
-	void rotateAndEqual(Cipher& cipher, long& steps);
+	void leftRotateAndEqual(Cipher& cipher, long& steps);
 
 	//-----------------------------------------
 

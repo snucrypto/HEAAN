@@ -70,7 +70,7 @@ Cipher* SchemeAlgo::powerExtended(Cipher& cipher, const long& degree) {
 
 //-----------------------------------------
 
-Cipher SchemeAlgo::prod2(Cipher*& ciphers, const long& logDegree) {
+Cipher SchemeAlgo::prodOfPo2(Cipher*& ciphers, const long& logDegree) {
 	Cipher* res = ciphers;
 	for (long i = logDegree; i > 0; --i) {
 		long powi = (1 << i);
@@ -95,7 +95,7 @@ Cipher SchemeAlgo::sum(Cipher*& ciphers, const long& size) {
 	return res;
 }
 
-Cipher SchemeAlgo::delta(Cipher& cipher1, Cipher& cipher2) {
+Cipher SchemeAlgo::distance(Cipher& cipher1, Cipher& cipher2) {
 	Cipher cres = scheme.sub(cipher1, cipher2);
 	scheme.squareAndEqual(cres);
 	scheme.modSwitchOneAndEqual(cres);
@@ -351,7 +351,7 @@ Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long& slots) {
 	long logslots = log2(slots);
 	Cipher res = cipher;
 	for (long i = 0; i < logslots; ++i) {
-		Cipher rot = scheme.rotate2(cipher, i);
+		Cipher rot = scheme.leftRotateByPo2(cipher, i);
 		scheme.addAndEqual(res, rot);
 	}
 	return res;
@@ -360,7 +360,7 @@ Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long& slots) {
 void SchemeAlgo::partialSlotsSumAndEqual(Cipher& cipher, const long& slots) {
 	long logslots = log2(slots);
 	for (long i = 0; i < logslots; ++i) {
-		Cipher rot = scheme.rotate2(cipher, i);
+		Cipher rot = scheme.leftRotateByPo2(cipher, i);
 		scheme.addAndEqual(cipher, rot);
 	}
 }
