@@ -6,44 +6,48 @@
 using namespace std;
 using namespace NTL;
 
+/**
+ * Input params: logN, logl, logp, L, sigma
+ * p is a power of 2 that corresponds to the base of the exponent and modulus switching
+ * N is a power of 2 that corresponds to the ring Z[X] / (X^N + 1)
+ * logl corresponds to additional number of bits needed for correct decryption on last level
+ * L corresponds to number of levels
+ * sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
+ */
 class Params {
 public:
 
-	//input parameters
-	long logN;
-	long logl; ///< additional amount of bits (normally small) needed for correct decoding
-	long logp; ///< power of 2, modulus
-	long L; ///< number of levels
+	//-----------------------------------------
+	long logN; ///< N is a power of 2 that corresponds to the ring Z[X] / (X^N + 1)
+	long logl; ///< logl corresponds to additional number of bits needed for correct decryption on last level
+	long logp; ///< p is a power of 2 that corresponds to the base of the exponent and modulus switching
+	long L; ///< L corresponds to number of levels
+	//-----------------------------------------
+	double sigma; ///< sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
+	//-----------------------------------------
 
-	double sigma;
-	double rho;
-	long h;
-
-	long M; ///< M - power of two
-	long N; ///< N = phi(M) = M/2 - degree of RLWE
-	long Nh;
+	long M; ///< M = 2 * N
+	long N;
+	long Nh; ///< Nh = N / 2
 	long logNh;
-	long logq; ///< Highest Modulus
-	long logP; ///< Modulus needed in KeySwitching procedure
-	long logPq;
+	long logq; ///< q corresponds to highest modulus and q = p^L * 2^logl
+	long logP; ///< P = q corresponds to big modulus for linearization procedure
+	long logPq; ///< Pq = P * q
 
 
 	ZZ p;
 	ZZ q;
 	ZZ Pq;
 
-	ZZ* qi;
-	ZZ* Pqi;
+	ZZ* qi; ///< array of modulus used in scheme [q_0 = p * 2^logl, q_1 = p^2 * 2^logl, ..., q_{L-1} = q = p^L * 2^logl]
+	ZZ* Pqi; ///< array of modulus used in linearization procedure [Pq_0 = P * q_0, ..., Pq_{L-1} = P * q_{L-1}]
 
-	/**
-	 * rotation group for rotating messages withing slots
-	 */
-	long** rotGroup;
-	long** rotGroupInv;
+	long** rotGroup; ///< auxiliary information about rotation group indexes for batch encoding
+	long** rotGroupInv; ///< auxiliary information about rotation group indexes for batch encoding
 
 	//-----------------------------------------
 
-	Params(long logN, long logl, long logp, long L, double sigma = 3.2, double rho = 0.5, long h = 64);
+	Params(long logN, long logl, long logp, long L, double sigma = 3.2);
 
 	//-----------------------------------------
 

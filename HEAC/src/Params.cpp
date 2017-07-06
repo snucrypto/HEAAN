@@ -3,8 +3,8 @@
 #include <sstream>
 #include <string>
 
-Params::Params(long logN, long logl, long logp, long L, double sigma, double rho, long h) :
-			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), rho(rho), h(h), qi(), Pqi(), rotGroup(), rotGroupInv() {
+Params::Params(long logN, long logl, long logp, long L, double sigma) :
+			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), qi(), Pqi(), rotGroup(), rotGroupInv() {
 
 	//-----------------------------------------
 
