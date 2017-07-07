@@ -16,4 +16,4 @@ TBA
 TBA
 
 ### 3. Running test functions
-You can make a sample test program with test/HEAC.cpp by typing ./run in the main directoy. We checked the sample program was working well on Ubuntu 16.04.2 LTS. You need to install NTL, GMP, pThread, and libbsd libraries before starting 'run'. After successful compilation, you can see 'a.out' file in test directory.
+You can make a sample test program with test/HEAC.cpp by typing ./run in the main directory. We checked the sample program was working well on Ubuntu 16.04.2 LTS. You need to install NTL, GMP, pThread, and libbsd libraries before starting 'run'. After successful compilation, you can see 'a.out' file in test directory.
