@@ -1,7 +1,8 @@
 #include "Params.h"
 
+#include <NTL/tools.h>
+#include <cmath>
 #include <sstream>
-#include <string>
 
 Params::Params(long logN, long logl, long logp, long L, double sigma) :
 			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), qi(), Pqi(), rotGroup(), rotGroupInv() {
@@ -62,4 +63,24 @@ string Params::toString() {
 	ss << logq;
 	ss <<"]";
 	return ss.str();
+}
+
+long Params::suggestlogl(long logp, long L, long msgbits, long maxLevelAdditions) {
+	double exbits = max(msgbits - logp, 0);
+	double logadd = log2(maxLevelAdditions);
+	double res = 0;
+	for (long i = 0; i < L-1; ++i) {
+		res += (logadd + exbits) * (logadd + exbits);
+		exbits = res;
+	}
+	res += (logadd + exbits);
+	return (long)ceil(res);
+}
+
+long Params::suggestlogN(long lambda, long logl, long logp, long L) {
+	long logq = logp * L + logl;
+	long res = logq * lambda / 3;
+	double logres = log2(res);
+	long logN = logres + 1;
+	return logN;
 }

@@ -48,6 +48,24 @@ public:
 	 */
 	Params(long logN, long logl, long logp, long L, double sigma = 3.2);
 
+	/**
+	 * suggests logl value. In reality however logl can be taken lower than suggested value
+	 * @param[in] logp value
+	 * @param[in] levels needed
+	 * @param[in] supposed bits in values that are encrypted (logl increases fast if number of bits in values bigger than logp)
+	 * @param[in] maximum number of additions in each level
+	 * @return suggested logl value
+	 */
+	static long suggestlogl(long logp, long L, long msgbits, long maxLevelAdditions);
+
+	/**
+	 * suggests logN value. The formula is logN = log(2 * (logp * L + logl) / 3)
+	 * @param[in] lambda - security parameter
+	 * @param[in] logl value
+	 * @param[in] logp value
+	 * @param[in] levels needed
+	 */
+	static long suggestlogN(long lambda, long logl, long logp, long L);
 	//-----------------------------------------
 
 	string toString();
