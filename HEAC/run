@@ -1,0 +1,6 @@
+cd ./src
+make
+mv *.o ../test
+cd ../test
+make
+
