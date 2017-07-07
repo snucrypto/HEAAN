@@ -2,7 +2,6 @@
 
 #include <NTL/ZZ.h>
 #include <NTL/BasicThreadPool.h>
-#include <__functional_base>
 #include <cmath>
 #include <future>
 #include <map>
