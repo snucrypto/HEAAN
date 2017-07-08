@@ -426,13 +426,13 @@ ZZX Ring2Utils::inpower(ZZX& p, const long& pow, ZZ& mod, const long& degree) {
 	return res;
 }
 
-ZZX* Ring2Utils::bitDecomposition(ZZX& p, long& logMod, const long& degree) {
+ZZX* Ring2Utils::bitDecomposition(ZZX& p, const long& logMod, const long& degree) {
 	ZZX* res = new ZZX[logMod];
 	for (long i = 0; i < logMod; ++i) {
 		res[i].SetLength(degree);
 	}
 
-	for (int j = 0; j < degree; ++j) {
+	for (long j = 0; j < degree; ++j) {
 		ZZ coeff = p.rep[j];
 		for (long i = 0; i < logMod; ++i) {
 			res[i].rep[j] = bit(coeff, j);
