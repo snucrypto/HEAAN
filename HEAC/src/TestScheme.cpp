@@ -8,7 +8,6 @@
 #include <future>
 #include <atomic>
 #include <mutex>
-#include <bsd/stdlib.h>
 #include <NTL/BasicThreadPool.h>
 
 #include "CZZ.h"
