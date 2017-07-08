@@ -22,11 +22,11 @@ int main() {
 
 	/*
 	 * Params: logN, logl, logp, L, rotlogSlots, logSlots
-	 * Suggested: 13, 2, 30, 5, 0, 3
+	 * Suggested: 13, 2, 30, 5, 2, 5
 	 */
 
-//	TestScheme::testLeftRotateByPo2Batch(13, 2, 30, 5, 2, 4);
-//	TestScheme::testLeftRotateBatch(13, 2, 30, 5, 17, 3);
+//	TestScheme::testLeftRotateByPo2Batch(13, 2, 30, 5, 2, 5);
+//	TestScheme::testLeftRotateBatch(13, 2, 30, 5, 17, 5);
 
 	/*
 	 * Params: logN, logl, logp, L, logSlots
@@ -102,7 +102,7 @@ int main() {
 	 * Suggested: 13, 32, 30, 4, 7, 3 (for lazy)
 	 */
 
-	TestScheme::testSigmoidBatch(13, 2, 30, 5, 7, 3);
+//	TestScheme::testSigmoidBatch(13, 2, 30, 5, 7, 3);
 //	TestScheme::testSigmoidBatchLazy(13, 32, 30, 4, 7, 3);
 
 	//-----------------------------------------
