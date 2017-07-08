@@ -79,8 +79,7 @@ long Params::suggestlogl(long logp, long L, long msgbits, long maxLevelAdditions
 
 long Params::suggestlogN(long lambda, long logl, long logp, long L) {
 	long logq = logp * L + logl;
-	long res = logq * lambda / 3;
+	long res = 2 * logq * (lambda + 110) / 7.2;
 	double logres = log2(res);
-	long logN = logres + 1;
-	return logN;
+	return (long)ceil(logres);
 }
