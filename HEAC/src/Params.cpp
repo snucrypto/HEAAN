@@ -4,8 +4,8 @@
 #include <cmath>
 #include <sstream>
 
-Params::Params(long logN, long logl, long logp, long L, double sigma) :
-			logN(logN), logl(logl), logp(logp), L(L), sigma(sigma), qi(), Pqi(), rotGroup(), rotGroupInv() {
+Params::Params(long logN, long logl, long logp, long L, bool isGauss, double sigma, long h) :
+			logN(logN), logl(logl), logp(logp), L(L), isGauss(isGauss), sigma(sigma), h(h) {
 
 	//-----------------------------------------
 

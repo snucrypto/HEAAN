@@ -25,7 +25,7 @@ public:
 	 * @param[out] ZZX polynomial
 	 * @param[in] long polynomial degree
 	 */
-	static void sampleZO(ZZX& res, const long& size);
+	static void sampleZO(ZZX& res, const long& size, const long& h);
 
 
 	/**

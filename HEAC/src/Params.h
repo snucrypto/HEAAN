@@ -15,8 +15,11 @@ public:
 	long logp; ///< p is a power of 2 that corresponds to the base of the exponent and modulus switching
 	long L; ///< L corresponds to number of levels
 	//-----------------------------------------
+	bool isGauss; ///< if distribution of secret key should be gaussian or from set {-1, 0, 1} with hamming weight h
 	double sigma; ///< sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
+	long h; ///< hamming weight of secret key
 	//-----------------------------------------
+
 
 	long M; ///< M = 2 * N
 	long N;
@@ -46,7 +49,7 @@ public:
 	 *@param[in] L corresponds to number of levels
 	 *@param[in] sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
 	 */
-	Params(long logN, long logl, long logp, long L, double sigma = 3.2);
+	Params(long logN, long logl, long logp, long L, bool isGauss = true, double sigma = 3.2, long h = 64);
 
 	/**
 	 * suggests logl value. In reality however logl can be taken lower than suggested value

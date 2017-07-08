@@ -24,11 +24,17 @@ void NumUtils::sampleGauss(ZZX& res, const long& size, const double& stdev) {
 	}
 }
 
-void NumUtils::sampleZO(ZZX& res, const long& size) {
+void NumUtils::sampleZO(ZZX& res, const long& size, const long& h) {
 	res.SetLength(size);
-	for (long i = 0; i < size; ++i) {
-		ZZ temp = RandomBits_ZZ(2);
-		res.rep[i] = (temp == 0) ? ZZ(1) : (temp == 1) ? ZZ(-1) : ZZ(0);
+	long idx = 0;
+	while(idx < h) {
+		long i = RandomBnd(size);
+		if(res.rep[i] == 0) {
+			res.rep[i] = (0 == ( rand() % 2 )) ? ZZ(1) : ZZ(-1);
+			idx++;
+		} else {
+			continue;
+		}
 	}
 	res.normalize();
 }

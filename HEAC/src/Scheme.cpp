@@ -68,7 +68,7 @@ RESULT: Set ax = random in R_qi, bx = ex + ax * sx in R_qi
 */
 void Scheme::rlweInstance(ZZX& ax, ZZX& bx, ZZ& qi) {
 	ZZX vx;
-	NumUtils::sampleZO(vx, params.N);
+	NumUtils::sampleZO(vx, params.N, params.Nh);
 	Ring2Utils::mult(ax, vx, publicKey.ax, qi, params.N);
 	Ring2Utils::mult(bx, vx, publicKey.bx, qi, params.N);
 }

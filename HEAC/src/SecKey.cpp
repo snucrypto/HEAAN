@@ -6,7 +6,11 @@
 #include "NumUtils.h"
 
 SecKey::SecKey(Params& params) {
-	NumUtils::sampleGauss(sx, params.N, params.sigma);
+	if(params.isGauss) {
+		NumUtils::sampleGauss(sx, params.N, params.sigma);
+	} else {
+		NumUtils::sampleZO(sx, params.N, params.h);
+	}
 }
 
 string SecKey::toString() {
