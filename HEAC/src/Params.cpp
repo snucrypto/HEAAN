@@ -47,24 +47,6 @@ Params::Params(long logN, long logl, long logp, long L, bool isGauss, double sig
 	}
 }
 
-string Params::toString() {
-	stringstream ss;
-	ss << "Params: [M = ";
-	ss << M;
-	ss << " , N = ";
-	ss << N;
-	ss << " , L = ";
-	ss << L;
-	ss << " , logp = ";
-	ss << logp;
-	ss << " , logl = ";
-	ss << logl;
-	ss << " , logq = ";
-	ss << logq;
-	ss <<"]";
-	return ss.str();
-}
-
 long Params::suggestlogl(long logp, long L, long msgbits, long maxLevelAdditions) {
 	double exbits = max(msgbits - logp, 0);
 	double logadd = log2(maxLevelAdditions);
@@ -82,4 +64,14 @@ long Params::suggestlogN(long lambda, long logl, long logp, long L) {
 	long res = 2 * logq * (lambda + 110) / 7.2;
 	double logres = log2(res);
 	return (long)ceil(logres);
+}
+
+string Params::toString() {
+	stringstream ss;
+	ss << "Params: [logN = " << logN;
+	ss << " , logl = " << logl;
+	ss << " , logp = " << logp;
+	ss << " , L = " << L;
+	ss <<"]";
+	return ss.str();
 }

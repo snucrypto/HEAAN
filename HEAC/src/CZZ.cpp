@@ -151,10 +151,8 @@ CZZ CZZ::conjugate() {
 
 string CZZ::toString() {
 	stringstream ss;
-	ss << " [r = ";
-	ss << r;
-	ss << " , i = ";
-	ss << i;
+	ss << " [r = " << r;
+	ss << " , i = " << i;
 	ss << " ] ";
 	return ss.str();
 }

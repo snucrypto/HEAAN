@@ -98,17 +98,6 @@ void CZZX::normalize() {
 	ix.normalize();
 }
 
-string CZZX::toString() {
-	stringstream ss;
-	ss << " [rx = ";
-	ss << rx;
-	ss << "\n";
-	ss << " ,ix = ";
-	ss << ix;
-	ss << " ] ";
-	return ss.str();
-}
-
 CZZ coeff(CZZX& cx, long s) {
 	ZZ r = NTL::coeff(cx.rx, s);
 	ZZ i = NTL::coeff(cx.ix, s);
@@ -128,4 +117,12 @@ void GetCoeff(CZZ& c, CZZX& cx, long s) {
 
 long deg(CZZX& cx) {
 	return deg(cx.rx);
+}
+
+string CZZX::toString() {
+	stringstream ss;
+	ss << " [rx = " << rx << "\n";
+	ss << " ,ix = " << ix;
+	ss << " ] ";
+	return ss.str();
 }

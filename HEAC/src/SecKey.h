@@ -19,7 +19,6 @@ public:
 
 	//-----------------------------------------
 
-	string toString();
 };
 
 #endif /* SCHEME_SECKEY_H_ */

@@ -1,9 +1,7 @@
 #include "PubKey.h"
 
-#include <sstream>
-#include <string>
-
 #include "NumUtils.h"
+#include "Params.h"
 #include "Ring2Utils.h"
 
 PubKey::PubKey(Params& params, SecKey& secretKey) : axKeySwitch(), bxKeySwitch() {
@@ -51,18 +49,4 @@ PubKey::PubKey(Params& params, SecKey& secretKey) : axKeySwitch(), bxKeySwitch()
 	Ring2Utils::sub(bxConj, ex, bxConj, params.Pq, params.N);
 
 	//-----------------------------------------
-}
-
-string PubKey::toString() {
-	stringstream ss;
-	ss << "PublicKey: [ax[0] = ";
-	ss << ax.rep[0];
-	ss << " , bx[0] = ";
-	ss << bx.rep[0];
-	ss << " , axStar[0] = ";
-	ss << axStar.rep[0];
-	ss << " , bxStar[0] = ";
-	ss << bxStar.rep[0];
-	ss <<"]";
-	return ss.str();
 }

@@ -29,7 +29,6 @@ public:
 
 	//-----------------------------------------
 
-	string toString();
 };
 
 #endif /* SCHEME_PUBKEY_H_ */

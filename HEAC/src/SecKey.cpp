@@ -1,8 +1,5 @@
 #include "SecKey.h"
 
-#include <sstream>
-#include <string>
-
 #include "NumUtils.h"
 
 SecKey::SecKey(Params& params) {
@@ -11,12 +8,4 @@ SecKey::SecKey(Params& params) {
 	} else {
 		NumUtils::sampleZO(sx, params.N, params.h);
 	}
-}
-
-string SecKey::toString() {
-	stringstream ss;
-	ss << "SecretKey: [sx[0] = ";
-	ss << sx.rep[0];
-	ss << "]";
-	return ss.str();
 }

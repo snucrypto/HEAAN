@@ -5,14 +5,10 @@
 
 string Cipher::toString() {
 	stringstream ss;
-	ss << "Cipher: [slots = ";
-	ss << slots;
-	ss << " , level = ";
-	ss << level;
-	ss << " , [ax[0] = ";
-	ss << ax.rep[0];
-	ss << " , bx[0] = ";
-	ss << bx.rep[0];
+	ss << "Cipher: [slots = " << slots;
+	ss << " , level = " << level;
+	ss << " , [ax[0] = " << ax.rep[0];
+	ss << " , bx[0] = " << bx.rep[0];
 	ss << " ] ]";
 	return ss.str();
 }
