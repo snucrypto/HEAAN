@@ -295,7 +295,7 @@ Cipher* SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isFor
 	Cipher* y1 = f1.get();
 	Cipher* y2 = f2.get();
 
-	long shift = isForward ? (scheme.params.M / size) : (scheme.params.M - scheme.params.M / size);
+	long shift = isForward ? ((scheme.params.N / size) << 1) : ((scheme.params.N - scheme.params.N / size) << 1);
 
 	Cipher* res = new Cipher[size];
 

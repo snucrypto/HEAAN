@@ -14,13 +14,13 @@ PubKey::PubKey(Params& params, SecKey& secretKey) : axKeySwitch(), bxKeySwitch()
 
 	//-----------------------------------------
 
-	axKeySwitch = new ZZX[params.logNh];
-	bxKeySwitch = new ZZX[params.logNh];
+	axKeySwitch = new ZZX[params.logN - 1];
+	bxKeySwitch = new ZZX[params.logN - 1];
 
-	for (long i = 0; i < params.logNh; ++i) {
+	for (long i = 0; i < (params.logN - 1); ++i) {
 		ZZX spow;
 		long ipow = (1 << i);
-		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[params.logNh][ipow], params.q, params.N);
+		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[params.logN - 1][ipow], params.q, params.N);
 		Ring2Utils::leftShiftAndEqual(spow, params.logP, params.logPq, params.N);
 		NumUtils::sampleUniform2(axKeySwitch[i], params.N, params.logPq);
 		NumUtils::sampleGauss(ex, params.N, params.sigma);

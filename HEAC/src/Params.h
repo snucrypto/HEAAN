@@ -21,10 +21,7 @@ public:
 	//-----------------------------------------
 
 
-	long M; ///< M = 2 * N
 	long N;
-	long Nh; ///< Nh = N / 2
-	long logNh;
 	long logq; ///< q corresponds to highest modulus and q = p^L * 2^logl
 	long logP; ///< P = q corresponds to big modulus for linearization procedure
 	long logPq; ///< Pq = P * q

@@ -10,9 +10,6 @@ Params::Params(long logN, long logl, long logp, long L, bool isGauss, double sig
 	//-----------------------------------------
 
 	N = 1 << logN;
-	M = N << 1;
-	Nh = N >> 1;
-	logNh = logN - 1;
 	logq = logl + logp * L;
 	logP = logq;
 	logPq = logP + logq;

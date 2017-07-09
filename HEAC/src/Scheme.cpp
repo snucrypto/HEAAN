@@ -68,7 +68,7 @@ RESULT: Set ax = random in R_qi, bx = ex + ax * sx in R_qi
 */
 void Scheme::rlweInstance(ZZX& ax, ZZX& bx, ZZ& qi) {
 	ZZX vx;
-	NumUtils::sampleZO(vx, params.N, params.Nh);
+	NumUtils::sampleZO(vx, params.N, params.h);
 	Ring2Utils::mult(ax, vx, publicKey.ax, qi, params.N);
 	Ring2Utils::mult(bx, vx, publicKey.bx, qi, params.N);
 }
@@ -543,8 +543,8 @@ Cipher Scheme::leftRotateByPo2(Cipher& cipher, long& logPow) {
 
 	long pow = (1 << logPow);
 
-	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.q, params.N);
-	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
+	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logN - 1][pow], params.q, params.N);
+	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logN - 1][pow], params.q, params.N);
 
 	Ring2Utils::mult(axres, bxres, publicKey.axKeySwitch[logPow], Pqi, params.N);
 	Ring2Utils::multAndEqual(bxres, publicKey.bxKeySwitch[logPow], Pqi, params.N);
@@ -564,8 +564,8 @@ void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long& logPow) {
 
 	long pow = (1 << logPow);
 
-	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logNh][pow], params.q, params.N);
-	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logNh][pow], params.q, params.N);
+	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logN - 1][pow], params.q, params.N);
+	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logN - 1][pow], params.q, params.N);
 
 	Ring2Utils::mult(axres, bxres, publicKey.axKeySwitch[logPow], Pqi, params.N);
 	Ring2Utils::multAndEqual(bxres, publicKey.bxKeySwitch[logPow], Pqi, params.N);
@@ -586,7 +586,7 @@ Cipher Scheme::leftRotate(Cipher& cipher, long& steps) {
 }
 
 void Scheme::leftRotateAndEqual(Cipher& cipher, long& steps) {
-	steps %= params.Nh;
+	steps %= (params.N >> 1);
 	long logsteps = log2(steps);
 	for (long i = 0; i < logsteps; ++i) {
 		if(bit(steps, i)) {
