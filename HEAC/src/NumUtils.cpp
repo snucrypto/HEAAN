@@ -32,13 +32,23 @@ void NumUtils::sampleZO(ZZX& res, const long& size, const long& h) {
 		if(res.rep[i] == 0) {
 			res.rep[i] = (0 == ( rand() % 2 )) ? ZZ(1) : ZZ(-1);
 			idx++;
-		} else {
-			continue;
 		}
 	}
 	res.normalize();
 }
 
+void NumUtils::sampleBinary(ZZX& res, const long& size, const long& h) {
+	res.SetLength(size);
+	long idx = 0;
+	while(idx < h) {
+		long i = RandomBnd(size);
+		if(res.rep[i] == 0) {
+			res.rep[i] = ZZ(1);
+			idx++;
+		}
+	}
+	res.normalize();
+}
 void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& logBnd) {
 	res.SetLength(size);
 	for (long i = 0; i < size; i++) {
@@ -149,7 +159,6 @@ CZZ* NumUtils::fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, CZZ**& ksiPow
 	}
 	return fftInv(mfft1, size, ksiPows, logp);
 }
-
 
 CZZ* NumUtils::fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, CZZ**& ksiPows, const long& logp) {
 	CZZ* mfft1 = fft(vals1, size, ksiPows, logp);

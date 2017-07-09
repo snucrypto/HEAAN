@@ -238,7 +238,8 @@ public:
 	//-----------------------------------------
 
 	/**
-	 * multiplication of ciphers
+	 * multiplication of ciphers. This algorithm contain linearization.
+	 * To manage the noise we usually need modular switching method after mult
 	 * @param[in] cipher(m1)
 	 * @param[in] cipher(m2)
 	 * @return cipher(m1 * m2)
@@ -246,7 +247,8 @@ public:
 	Cipher mult(Cipher& cipher1, Cipher& cipher2);
 
 	/**
-	 * multiplication of ciphers
+	 * multiplication of ciphers. This algorithm contain linearization.
+	 * To manage the noise we usually need modular switching method after mult
 	 * @param[in, out] cipher(m1) -> cipher(m1 * m2)
 	 * @param[in] cipher(m2)
 	 */
@@ -255,14 +257,16 @@ public:
 	//-----------------------------------------
 
 	/**
-	 * square of cipher
+	 * square of cipher. This algorithm contain linearization.
+	 * To manage the noise we usually need modular switching method after square
 	 * @param[in] cipher(m)
 	 * @return cipher(m^2)
 	 */
 	Cipher square(Cipher& cipher);
 
 	/**
-	 * square of cipher
+	 * square of cipher. This algorithm contain linearization.
+	 * To manage the noise we usually need modular switching method after square
 	 * @param[in, out] cipher(m) -> cipher(m^2)
 	 */
 	void squareAndEqual(Cipher& cipher);

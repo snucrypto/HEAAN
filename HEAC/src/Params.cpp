@@ -6,9 +6,7 @@
 
 Params::Params(long logN, long logl, long logp, long L, bool isGauss, double sigma, long h) :
 			logN(logN), logl(logl), logp(logp), L(L), isGauss(isGauss), sigma(sigma), h(h) {
-
 	//-----------------------------------------
-
 	N = 1 << logN;
 	logq = logl + logp * L;
 	logP = logq;

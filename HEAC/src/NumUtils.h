@@ -21,12 +21,20 @@ public:
 	static void sampleGauss(ZZX& res, const long& size, const double& stdev);
 
 	/**
-	 * samples polynomial with random {1, 0, -1} coefficients
+	 * samples polynomial with random {-1,0,1} coefficients
 	 * @param[out] ZZX polynomial
 	 * @param[in] long polynomial degree
+	 * @param[in] number of nonzero coefficients
 	 */
 	static void sampleZO(ZZX& res, const long& size, const long& h);
 
+	/**
+	 * samples polynomial with random {0,1} coefficients
+	 * @param[out] ZZX polynomial
+	 * @param[in] long polynomial degree
+	 * @param[in] number of nonzero coefficients
+	 */
+	static void sampleBinary(ZZX& res, const long& size, const long& h);
 
 	/**
 	 * samples polynomial with random uniform coefficients in [0, 2^logBnd-1]
@@ -38,6 +46,14 @@ public:
 
 	//-----------------------------------------
 
+	/**
+	 * calculates pre fft in Z_q[X] / (X^N + 1)
+	 * @param[in] arrays of vals
+	 * @param[in] size of array
+	 * @param[in] auxiliary information
+	 * @param[in] auxiliary information
+	 * @return pre fft
+	 */
 	static CZZ* fftRaw(CZZ*& vals, const long& size, CZZ**& ksiPows, const long& logp, const bool& isForward);
 
 	/**
