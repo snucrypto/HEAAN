@@ -29,12 +29,12 @@ void SchemeAux::precomputeTaylorPows() {
 	double* logCoeffs  = new double[11]{   0,     1, -1./2,   1./3, -1./4,    1./5,  -1./6,       1./7,    -1./8,         1./9,     -1./10};
 	double* expCoeffs  = new double[11]{   1,     1,  1./2,   1./6, 1./24,  1./120, 1./720,    1./5040, 1./40320,    1./362880, 1./3628800};
 	double* sigCoeffs  = new double[11]{1./2,  1./4,     0, -1./48,     0,  1./480,      0, -17./80640,        0,  31./1451520,          0};
-	double* sig1Coeffs = new double[11]{1./2, -1./4,     0,  1./48,     0, -1./480,      0,  17./80640,        0, -31./1451520,          0};
+	double* sigbarCoeffs = new double[11]{1./2, -1./4,     0,  1./48,     0, -1./480,      0,  17./80640,        0, -31./1451520,          0};
 
-	insertTaylorPows(LOGARITHM,  logCoeffs, 11);
-	insertTaylorPows( EXPONENT,  expCoeffs, 11);
-	insertTaylorPows(  SIGMOID,  sigCoeffs, 11);
-	insertTaylorPows( SIGMOID1, sig1Coeffs, 11);
+	insertTaylorPows(  LOGARITHM,    logCoeffs, 11);
+	insertTaylorPows(   EXPONENT,    expCoeffs, 11);
+	insertTaylorPows(    SIGMOID,    sigCoeffs, 11);
+	insertTaylorPows( SIGMOIDBAR, sigbarCoeffs, 11);
 }
 
 void SchemeAux::insertTaylorPows(string& name, double*& coeffs, long size) {

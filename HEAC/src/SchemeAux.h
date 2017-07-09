@@ -29,9 +29,9 @@ public:
 	void insertTaylorPows(string& name, double*& coeffs, long size);
 };
 
-static string LOGARITHM = "Logarithm";
-static string EXPONENT  = "Exponent";
-static string SIGMOID   = "Sigmoid";
-static string SIGMOID1  = "Sigmoid1";
+static string LOGARITHM = "Logarithm"; ///< log(x)
+static string EXPONENT  = "Exponent"; ///< exp(x)
+static string SIGMOID   = "Sigmoid"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
+static string SIGMOIDBAR  = "Sigmoidbar"; ///< sigmoidbar = 1 - sigmoid(x)
 
 #endif /* SCHEME_SCHEMEAUX_H_ */
