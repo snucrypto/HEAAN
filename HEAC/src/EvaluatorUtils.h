@@ -236,7 +236,7 @@ public:
 	 * @param[in] array size
 	 * @param[in] log(p)
 	 */
-	static void leftShift(CZZ*& vals, const long& size, const long& logp);
+	static void leftShiftAndEqual(CZZ*& vals, const long& size, const long& logp);
 
 	//-----------------------------------------
 
@@ -244,9 +244,9 @@ public:
 	 * left indexes rotation of values
 	 * @param[in, out] array of values
 	 * @param[in] array size
-	 * @param[in] shift
+	 * @param[in] rotation size
 	 */
-	static void leftRotate(CZZ*& vals, const long& size, const long& shift);
+	static void leftRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize);
 
 	//-----------------------------------------
 };

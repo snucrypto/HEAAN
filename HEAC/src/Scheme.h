@@ -45,39 +45,6 @@ public:
 	//-----------------------------------------
 
 	/**
-	 * computes value between [-modulus/2, modulus/2]
-	 * @param[in,out] complex number
-	 * @param[in] modulus
-	 */
-	void trueValue(CZZ& m, ZZ& qi);
-
-	/**
-	 * computes value between [-modulus/2, modulus/2]
-	 * @param[in,out] real number
-	 * @param[in] modulus
-	 */
-	void trueValue(ZZ& m, ZZ& qi);
-
-	//-----------------------------------------
-
-	/**
-	 * make standard lwe instance bx = ex - ax * sx mod qi
-	 * @param[out] bx
-	 * @param[out] ax
-	 * @param[in] qi
-	 */
-	void rlweInstance(ZZX& ax, ZZX& bx, ZZ& qi);
-
-	/**
-	 * make standard lwe instance bx = ex - ax * sx mod q
-	 * @param[out] bx
-	 * @param[out] ax
-	 */
-	void rlweInstance(ZZX& ax, ZZX& bx);
-
-	//-----------------------------------------
-
-	/**
 	 * regroup vals indexes (i) -> (3^i mod slots) and add conjugates
 	 * @param[in] vals
 	 * @param[in] slots
@@ -410,32 +377,32 @@ public:
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in] cipher(m(v_1, v_2, ..., v_slots))
-	 * @param[in] logsteps
+	 * @param[in] log of rotation slots
 	 * @return cipher(m(v_{1+2^logsteps}, v_{2+2^logsteps}, ..., v_{slots+2^logsteps})
 	 */
-	Cipher leftRotateByPo2(Cipher& cipher, long& logSteps);
+	Cipher leftRotateByPo2(Cipher& cipher, long& logrotSlots);
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in, out] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1+2^logsteps}, v_{2+2^logsteps}, ..., v_{slots+2^logsteps})
-	 * @param[in] logsteps
+	 * @param[in] log of rotation slots
 	 * @return
 	 */
-	void leftRotateByPo2AndEqual(Cipher& cipher, long& logSteps);
+	void leftRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in] cipher(m(v_1, v_2, ..., v_slots))
-	 * @param[in] steps
+	 * @param[in] rotation slots
 	 * @return cipher(m(v_{1+steps}, v_{2+steps}, ..., v_{slots+steps})
 	 */
-	Cipher leftRotate(Cipher& cipher, long& steps);
+	Cipher leftRotate(Cipher& cipher, long& rotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1+steps}, v_{2+steps}, ..., v_{slots+steps})
-	 * @param[in] steps
+	 * @param[in] rotation slots
 	 */
-	void leftRotateAndEqual(Cipher& cipher, long& steps);
+	void leftRotateAndEqual(Cipher& cipher, long& rotSlots);
 
 	//-----------------------------------------
 

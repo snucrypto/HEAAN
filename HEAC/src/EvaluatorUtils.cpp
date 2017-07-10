@@ -184,20 +184,20 @@ CZZ EvaluatorUtils::evaluateSigmoid(const RR& xr, const RR& xi, const long& logp
 	return evaluateVal(xsigmoidr, xsigmoidi, logp);
 }
 
-void EvaluatorUtils::leftShift(CZZ*& vals, const long& size, const long& logp) {
+void EvaluatorUtils::leftShiftAndEqual(CZZ*& vals, const long& size, const long& logp) {
 	for (long i = 0; i < size; ++i) {
 		vals[i] <<= logp;
 	}
 }
 
-void EvaluatorUtils::leftRotate(CZZ*& vals, const long& size, const long& shift) {
-	long remshift = shift % size;
+void EvaluatorUtils::leftRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize) {
+	long remrotSize = rotSize % size;
 	CZZ* tmp = new CZZ[size];
-	for (long i = 0; i < size - remshift; ++i) {
-		tmp[i] = vals[i + remshift];
+	for (long i = 0; i < size - remrotSize; ++i) {
+		tmp[i] = vals[i + remrotSize];
 	}
-	for (long i = size - remshift; i < size; ++i) {
-		tmp[i] = vals[i + remshift - size];
+	for (long i = size - remrotSize; i < size; ++i) {
+		tmp[i] = vals[i + remrotSize - size];
 	}
 	vals = tmp;
 }

@@ -106,7 +106,7 @@ void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long 
 	timeutils.stop("Left Rotate 2");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
-	EvaluatorUtils::leftRotate(mvec, slots, rotSlots);
+	EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
 	cout << "!!! END TEST LEFT ROTATE 2 !!!" << endl;
@@ -132,7 +132,7 @@ void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, lo
 	timeutils.stop("Rotate");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
-	EvaluatorUtils::leftRotate(mvec, slots, rotSlots);
+	EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
 	cout << "!!! END TEST LEFT ROTATE !!!" << endl;
@@ -409,7 +409,7 @@ void TestScheme::testExponentBatchLazy(long logN, long logl, long logp, long L, 
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		mexp[i] = EvaluatorUtils::evaluateExponent(mr, mi, logp);
 	}
-	EvaluatorUtils::leftShift(mexp, slots, logp);
+	EvaluatorUtils::leftShiftAndEqual(mexp, slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
 	timeutils.start(EXPONENT + " lazy");
@@ -476,7 +476,7 @@ void TestScheme::testSigmoidBatchLazy(long logN, long logl, long logp, long L, l
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		msig[i] = EvaluatorUtils::evaluateSigmoid(mr, mi, logp);
 	}
-	EvaluatorUtils::leftShift(msig, slots, logp);
+	EvaluatorUtils::leftShiftAndEqual(msig, slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
 	timeutils.start(SIGMOID + " lazy");

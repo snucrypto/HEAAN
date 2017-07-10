@@ -4,7 +4,7 @@
 #include "Params.h"
 #include "Ring2Utils.h"
 
-PubKey::PubKey(Params& params, SecKey& secretKey) : axKeySwitch(), bxKeySwitch() {
+PubKey::PubKey(Params& params, SecKey& secretKey) {
 	ZZX ex, sxsx;
 
 	NumUtils::sampleUniform2(ax, params.N, params.logq);
