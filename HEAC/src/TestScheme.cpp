@@ -86,7 +86,7 @@ void TestScheme::testConjugateBatch(long logN, long logl, long logp, long L, lon
 }
 
 void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
-	cout << "!!! START TEST LEFT ROTATE 2 !!!" << endl;
+	cout << "!!! START TEST LEFT ROTATE BY POWER OF 2 BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -101,19 +101,19 @@ void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long 
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
-	timeutils.start("Left Rotate 2");
+	timeutils.start("Left Rotate by power of 2 batch");
 	scheme.leftRotateByPo2AndEqual(cipher, rotlogSlots);
-	timeutils.stop("Left Rotate 2");
+	timeutils.stop("Left Rotate by power of 2 batch");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
 	EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
-	cout << "!!! END TEST LEFT ROTATE 2 !!!" << endl;
+	cout << "!!! END TEST LEFT ROTATE BY POWER OF 2 BATCH !!!" << endl;
 }
 
 void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, long rotSlots, long logSlots) {
-	cout << "!!! START TEST LEFT ROTATE !!!" << endl;
+	cout << "!!! START TEST LEFT ROTATE BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -127,15 +127,15 @@ void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, lo
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
-	timeutils.start("Rotate");
+	timeutils.start("Left rotate batch");
 	scheme.leftRotateAndEqual(cipher, rotSlots);
-	timeutils.stop("Rotate");
+	timeutils.stop("Left rotate batch");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
 	EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
-	cout << "!!! END TEST LEFT ROTATE !!!" << endl;
+	cout << "!!! END TEST LEFT ROTATE BATCH !!!" << endl;
 }
 
 void TestScheme::testSlotsSum(long logN, long logl, long logp, long L, long logSlots) {
@@ -153,9 +153,9 @@ void TestScheme::testSlotsSum(long logN, long logl, long logp, long L, long logS
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
-	timeutils.start("slotsum");
+	timeutils.start("slots sum");
 	algo.partialSlotsSumAndEqual(cipher, slots);
-	timeutils.stop("slotsum");
+	timeutils.stop("slots sum");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
 	CZZ msum = CZZ();
@@ -241,7 +241,7 @@ void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long de
 //-----------------------------------------
 
 void TestScheme::testProdOfPo2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots) {
-	cout << "!!! START TEST PROD 2 BATCH !!!" << endl;
+	cout << "!!! START TEST PROD OF POWER OF 2 BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -251,7 +251,7 @@ void TestScheme::testProdOfPo2Batch(long logN, long logl, long logp, long L, lon
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	SetNumThreads(2);
+	SetNumThreads(8);
 	long slots = 1 << logSlots;
 	long degree = 1 << logDegree;
 	Cipher* cvec = new Cipher[degree];
@@ -276,14 +276,14 @@ void TestScheme::testProdOfPo2Batch(long logN, long logl, long logp, long L, lon
 		cvec[i] = scheme.encrypt(mvec[i], slots);
 	}
 	//-----------------------------------------
-	timeutils.start("Prod 2 batch");
+	timeutils.start("Product of power of 2 batch");
 	Cipher cprod = algo.prodOfPo2(cvec, logDegree);
-	timeutils.stop("Prod 2 batch");
+	timeutils.stop("Product of power of 2 batch");
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cprod);
 	StringUtils::showcompare(pvec, dvec, slots, "prod");
 	//-----------------------------------------
-	cout << "!!! END TEST PROD 2 BATCH !!!" << endl;
+	cout << "!!! END TEST PROD OF POWER OF 2 BATCH !!!" << endl;
 }
 
 //-----------------------------------------
@@ -527,21 +527,21 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 		cvec2[j] = scheme.encrypt(mvals2, slots);
 	}
 	//-----------------------------------------
-	timeutils.start("cfft 1 batch");
+	timeutils.start("ciphers fft 1 batch");
 	Cipher* cfft1 = algo.fft(cvec1, fftdim);
-	timeutils.stop("cfft 1 batch");
+	timeutils.stop("ciphers fft 1 batch");
 	//-----------------------------------------
-	timeutils.start("cfft 2 batch");
+	timeutils.start("ciphers fft 2 batch");
 	Cipher* cfft2 = algo.fft(cvec2, fftdim);
-	timeutils.stop("cfft 2 batch");
+	timeutils.stop("ciphers fft 2 batch");
 	//-----------------------------------------
-	timeutils.start("cfft mult batch");
+	timeutils.start("ciphers hadamard mult batch");
 	algo.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
-	timeutils.stop("cfft mult batch");
+	timeutils.stop("ciphers hadamard mult batch");
 	//-----------------------------------------
-	timeutils.start("cfft inv batch");
+	timeutils.start("ciphers fft inverse batch");
 	Cipher* cvecp = algo.fftInv(cfft1, fftdim);
-	timeutils.stop("cfft inv batch");
+	timeutils.stop("ciphers fft inverse batch");
 	//-----------------------------------------
 	CZZ** dvecp = new CZZ*[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
@@ -576,21 +576,21 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 	Cipher* cvec1 = algo.encryptSingleArray(mvec1, fftdim);
 	Cipher* cvec2 = algo.encryptSingleArray(mvec2, fftdim);
 	//-----------------------------------------
-	timeutils.start("cfft 1 lazy");
+	timeutils.start("ciphers fft 1");
 	Cipher* cfft1 = algo.fft(cvec1, fftdim);
-	timeutils.stop("cfft 1 lazy");
+	timeutils.stop("ciphers fft 1");
 	//-----------------------------------------
-	timeutils.start("cfft 2 lazy");
+	timeutils.start("ciphers fft 2");
 	Cipher* cfft2 = algo.fft(cvec2, fftdim);
-	timeutils.stop("cfft 2 lazy");
+	timeutils.stop("ciphers fft 2");
 	//-----------------------------------------
-	timeutils.start("cfft mult lazy");
+	timeutils.start("ciphers hadamard mult");
 	algo.multModSwitchAndEqualVec(cfft1, cfft2, fftdim);
-	timeutils.stop("cfft mult lazy");
+	timeutils.stop("ciphers hadamard mult");
 	//-----------------------------------------
-	timeutils.start("cfft inv lazy");
+	timeutils.start("ciphers fft inverse lazy");
 	Cipher* cvecp = algo.fftInvLazy(cfft1, fftdim);
-	timeutils.stop("cfft inv lazy");
+	timeutils.stop("ciphers fft inverse lazy");
 	//-----------------------------------------
 	CZZ* dvecp = algo.decryptSingleArray(secretKey, cvecp, fftdim);
 	StringUtils::showcompare(mvecp, dvecp, fftdim, "fft");
