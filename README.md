@@ -9,11 +9,10 @@ This library does not contain bootstrapping yet, and we plan to add bootstrappin
 This library is written by c++ and using NTL library (http://www.shoup.net/ntl/).
 
 ## How to use this library?
-### 1. Build a static library
-TBA
+### 1. Build a static library/Running test functions
+You can make a sample test program with test/HEAC.cpp by typing ./run in the main directory. We checked the sample program was working well on Ubuntu 16.04.2 LTS. You need to install NTL (with GMP), pThread, and libbsd libraries before starting 'run'. After successful compilation, you can see 'a.out' file in test directory. You can find a static library (heac.a) in test directory. 
+
 
 ### 2. Use portable version
 TBA
 
-### 3. Running test functions
-You can make a sample test program with test/HEAC.cpp by typing ./run in the main directory. We checked the sample program was working well on Ubuntu 16.04.2 LTS. You need to install NTL (with GMP), pThread, and libbsd libraries before starting 'run'. After successful compilation, you can see 'a.out' file in test directory.
