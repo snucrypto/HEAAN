@@ -47,7 +47,7 @@ void Scheme::trueValue(ZZ& m, ZZ& qi) {
 
 void Scheme::rlweInstance(ZZX& ax, ZZX& bx, ZZ& qi) {
 	ZZX vx;
-	NumUtils::sampleZO(vx, params.N, params.h);
+	NumUtils::sampleBinary(vx, params.N, params.h);
 	Ring2Utils::mult(ax, vx, publicKey.ax, qi, params.N);
 	Ring2Utils::mult(bx, vx, publicKey.bx, qi, params.N);
 }

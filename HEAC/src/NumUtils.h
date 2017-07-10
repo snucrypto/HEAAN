@@ -37,6 +37,13 @@ public:
 	static void sampleBinary(ZZX& res, const long& size, const long& h);
 
 	/**
+	 * samples polynomial with random {0,1} coefficients
+	 * @param[out] ZZX polynomial
+	 * @param[in] long polynomial degree
+	 */
+	static void sampleBinary(ZZX& res, const long& size);
+
+	/**
 	 * samples polynomial with random uniform coefficients in [0, 2^logBnd-1]
 	 * @param[out] ZZX polynomial
 	 * @param[in] long polynomial degree

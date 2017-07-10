@@ -49,6 +49,15 @@ void NumUtils::sampleBinary(ZZX& res, const long& size, const long& h) {
 	}
 	res.normalize();
 }
+
+void NumUtils::sampleBinary(ZZX& res, const long& size) {
+	res.SetLength(size);
+	for (long i = 0; i < size; ++i) {
+		res.rep[i] = (rand() % 2) ? ZZ(0) : ZZ(1);
+	}
+	res.normalize();
+}
+
 void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& logBnd) {
 	res.SetLength(size);
 	for (long i = 0; i < size; i++) {
