@@ -425,7 +425,7 @@ Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
 	return Cipher(ax, bx, cipher.slots, newLevel);
 }
 
-Cipher Scheme::modEmbed(Cipher& cipher) {
+Cipher Scheme::modEmbedOne(Cipher& cipher) {
 	long newLevel = cipher.level + 1;
 	return modEmbed(cipher, newLevel);
 }

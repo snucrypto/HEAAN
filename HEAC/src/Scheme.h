@@ -347,7 +347,7 @@ public:
 	 * @param[in] cipher(m)
 	 * @return cipher(m) with one level up
 	 */
-	Cipher modEmbed(Cipher& cipher);
+	Cipher modEmbedOne(Cipher& cipher);
 
 	/**
 	 * modulus embedding procedure
