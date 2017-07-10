@@ -1,13 +1,8 @@
 #include "SchemeAux.h"
 
-SchemeAux::SchemeAux(long logp, long logKsiSize): logp(logp), ksiPows() {
-	precomputeKsiPows(logKsiSize);
-	precomputeTaylorPows();
-}
-
-void SchemeAux::precomputeKsiPows(long logSize) {
-	ksiPows = new CZZ*[logSize];
-	for (long i = 0; i < logSize; ++i) {
+SchemeAux::SchemeAux(Params& params, bool computeTaylorPows): logp(params.logp) {
+	ksiPows = new CZZ*[params.logN + 2];
+	for (long i = 0; i < params.logN + 2; ++i) {
 		long ipow = (1 << i);
 		CZZ* temp = new CZZ[ipow + 1];
 
@@ -22,6 +17,9 @@ void SchemeAux::precomputeKsiPows(long logSize) {
 		}
 		temp[ipow] = temp[0];
 		ksiPows[i] = temp;
+	}
+	if(computeTaylorPows) {
+		precomputeTaylorPows();
 	}
 }
 

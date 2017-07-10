@@ -2,6 +2,7 @@
 #define SCHEME_SCHEMEAUX_H_
 
 #include "CZZ.h"
+#include "Params.h"
 #include <NTL/ZZ.h>
 #include <NTL/RR.h>
 #include <iostream>
@@ -20,12 +21,22 @@ public:
 
 	//-----------------------------------------
 
-	SchemeAux(long logp, long logKsiSize);
+	SchemeAux(Params& params, bool computeTaylorPows = true);
 
 	//-----------------------------------------
 
-	void precomputeKsiPows(long logKsiSize);
+	/**
+	 * precomputing information about taylor power series for logarithm, exponent sigmoid and (1 - sigmoid) functions
+	 * this information needed for evaluating corresponding functions in encrypted state
+	 */
 	void precomputeTaylorPows();
+
+	/**
+	 * adding information about taylor power series for a function needed for evaluating this function in encrypted state
+	 * @param[in] function name
+	 * @param[in] array of taylor serires coefficients of a function
+	 * @param[in] size of an array
+	 */
 	void insertTaylorPows(string& name, double*& coeffs, long size);
 };
 

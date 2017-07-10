@@ -235,7 +235,20 @@ public:
 
 	//-----------------------------------------
 
+	/**
+	 * Calculating cipher of partial sums
+	 * @param[in] cipher(m_1, m_2,..., m_size)
+	 * @param[in] slots summed in partial sums
+	 * @return cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
+	 *
+	 */
 	Cipher partialSlotsSum(Cipher& cipher, const long& slots);
+
+	/**
+	 * Calculating cipher of partial sums
+	 * @param[in, out] cipher(m_1, m_2,..., m_size) -> cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
+	 * @param[in] slots summed in partial sums
+	 */
 	void partialSlotsSumAndEqual(Cipher& cipher, const long& slots);
 
 	//-----------------------------------------

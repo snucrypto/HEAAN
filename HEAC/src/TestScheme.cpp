@@ -34,7 +34,7 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -62,7 +62,7 @@ void TestScheme::testConjugateBatch(long logN, long logl, long logp, long L, lon
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -92,7 +92,7 @@ void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long 
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -119,7 +119,7 @@ void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, lo
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -145,7 +145,7 @@ void TestScheme::testSlotsSum(long logN, long logl, long logp, long L, long logS
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -177,7 +177,7 @@ void TestScheme::testPowerOf2Batch(long logN, long logl, long logp, long L, long
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -212,7 +212,7 @@ void TestScheme::testPowerBatch(long logN, long logl, long logp, long L, long de
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -247,7 +247,7 @@ void TestScheme::testProdOfPo2Batch(long logN, long logl, long logp, long L, lon
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -295,7 +295,7 @@ void TestScheme::testInverseBatch(long logN, long logl, long logp, long L, long 
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -330,7 +330,7 @@ void TestScheme::testLogarithmBatch(long logN, long logl, long logp, long L, lon
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -364,7 +364,7 @@ void TestScheme::testExponentBatch(long logN, long logl, long logp, long L, long
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -396,7 +396,7 @@ void TestScheme::testExponentBatchLazy(long logN, long logl, long logp, long L, 
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -431,7 +431,7 @@ void TestScheme::testSigmoidBatch(long logN, long logl, long logp, long L, long 
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -463,7 +463,7 @@ void TestScheme::testSigmoidBatchLazy(long logN, long logl, long logp, long L, l
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -498,7 +498,7 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
@@ -563,7 +563,7 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
 	PubKey publicKey(params, secretKey);
-	SchemeAux schemeaux(logp, logN + 2);
+	SchemeAux schemeaux(params);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
