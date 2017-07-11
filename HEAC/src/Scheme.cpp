@@ -231,6 +231,54 @@ void Scheme::conjugateAndEqual(Cipher& cipher) {
 	cipher.ax = axres;
 	cipher.bx = bxres;
 }
+
+Cipher Scheme::imult(Cipher& cipher) {
+
+	ZZ qi = getqi(cipher.level);
+	ZZX bxres, axres, axtmp, bxtmp;
+
+	Ring2Utils::multByMonomial(axtmp, cipher.ax, params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(axtmp, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::multByMonomial(bxtmp, cipher.bx, params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(bxtmp, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::multByMonomial(axres, cipher.ax, 3 * params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(axres, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::multByMonomial(bxres, cipher.bx, 3 * params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(bxres, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::addAndEqual(axres, axtmp, qi, params.N);
+	Ring2Utils::addAndEqual(bxres, bxtmp, qi, params.N);
+
+	Cipher res(axres, bxres, cipher.slots, cipher.level);
+	modSwitchOneAndEqual(res);
+	return res;
+}
+
+void Scheme::imultAndEqual(Cipher& cipher) {
+
+	ZZ qi = getqi(cipher.level);
+	ZZX axtmp, bxtmp;
+
+	Ring2Utils::multByMonomial(axtmp, cipher.ax, params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(axtmp, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::multByMonomial(bxtmp, cipher.bx, params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(bxtmp, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::multByMonomialAndEqual(cipher.ax, 3 * params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(cipher.ax, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::multByMonomialAndEqual(cipher.bx, 3 * params.N / 4, params.N);
+	Ring2Utils::multByConstAndEqual(cipher.bx, aux.psqrt2, qi, params.N);
+
+	Ring2Utils::addAndEqual(cipher.ax, axtmp, qi, params.N);
+	Ring2Utils::addAndEqual(cipher.bx, bxtmp, qi, params.N);
+
+	modSwitchOneAndEqual(cipher);
+}
 //-----------------------------------------
 
 Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
@@ -343,6 +391,26 @@ void Scheme::multByConstAndEqual(Cipher& cipher, ZZ& cnst) {
 	ZZ qi = getqi(cipher.level);
 	Ring2Utils::multByConstAndEqual(cipher.ax, cnst, qi, params.N);
 	Ring2Utils::multByConstAndEqual(cipher.bx, cnst, qi, params.N);
+}
+
+Cipher Scheme::multByConstBySlots(Cipher& cipher, CZZ*& cnstvec) {
+	ZZ qi = getqi(cipher.level);
+	CZZ* gcnstvec = groupidx(cnstvec, cipher.slots);
+	Message msg = encode(gcnstvec, cipher.slots);
+
+	ZZX axres, bxres;
+	Ring2Utils::mult(axres, cipher.ax, msg.mx, qi, params.N);
+	Ring2Utils::mult(bxres, cipher.bx, msg.mx, qi, params.N);
+	return Cipher(axres, bxres, cipher.slots, cipher.level);
+}
+
+void Scheme::multByConstBySlotsAndEqual(Cipher& cipher, CZZ*& cnstvec) {
+	ZZ qi = getqi(cipher.level);
+	CZZ* gcnstvec = groupidx(cnstvec, cipher.slots);
+	Message msg = encode(gcnstvec, cipher.slots);
+
+	Ring2Utils::multAndEqual(cipher.ax, msg.mx, qi, params.N);
+	Ring2Utils::multAndEqual(cipher.bx, msg.mx, qi, params.N);
 }
 
 //-----------------------------------------

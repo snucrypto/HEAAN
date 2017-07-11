@@ -57,7 +57,7 @@ void TestScheme::testEncodeBatch(long logN, long logl, long logp, long L, long l
 //-----------------------------------------
 
 void TestScheme::testConjugateBatch(long logN, long logl, long logp, long L, long logSlots) {
-	cout << "!!! START TEST CONJUGATE !!!" << endl;
+	cout << "!!! START TEST CONJUGATE BATCH !!!" << endl;
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
 	SecKey secretKey(params);
@@ -74,15 +74,45 @@ void TestScheme::testConjugateBatch(long logN, long logl, long logp, long L, lon
 	}
 
 	Cipher cipher = scheme.encrypt(mvec, slots);
-	timeutils.start("Conjugate");
+	timeutils.start("Conjugate batch");
 	Cipher cconj = scheme.conjugate(cipher);
-	timeutils.stop("Conjugate");
+	timeutils.stop("Conjugate batch");
 
 	CZZ* dvecconj = scheme.decrypt(secretKey, cconj);
 
 	StringUtils::showcompare(mvecconj, dvecconj, slots, "conj");
 
-	cout << "!!! END TEST CONJUGATE !!!" << endl;
+	cout << "!!! END TEST CONJUGATE BATCH !!!" << endl;
+}
+
+void TestScheme::testimultBatch(long logN, long logl, long logp, long L, long logSlots) {
+	cout << "!!! START TEST i MULTIPLICATION BATCH !!!" << endl;
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	SchemeAux schemeaux(params);
+	Scheme scheme(params, publicKey, schemeaux);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
+	CZZ* imvec = new CZZ[slots];
+	for (long i = 0; i < slots; ++i) {
+		imvec[i].r = -mvec[i].i;
+		imvec[i].i = mvec[i].r;
+	}
+
+	Cipher cipher = scheme.encrypt(mvec, slots);
+	timeutils.start("Multiplication by i batch");
+	Cipher icipher = scheme.imult(cipher);
+	timeutils.stop("Multiplication by i batch");
+
+	CZZ* idvec = scheme.decrypt(secretKey, icipher);
+
+	StringUtils::showcompare(imvec, idvec, slots, "imult");
+
+	cout << "!!! END TEST i MULTIPLICATION BATCH !!!" << endl;
 }
 
 void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {

@@ -33,6 +33,18 @@ public:
 	static void testConjugateBatch(long logN, long logl, long logp, long L, long logSlots);
 
 	/**
+	 * Testing multiplication by i (imaginary 1) timing of the ciphertext
+	 * c(m_1, ..., m_slots) -> c(i * m_1, ...,i * m_slots)
+	 * number of levels switched: 1
+	 * @param[in] logN input parameter for Params class
+	 * @param[in] logl input parameter for Params class
+	 * @param[in] logp input parameter for Params class
+	 * @param[in] L input parameter for Params class
+	 * @param[in] log of number of slots
+	 */
+	static void testimultBatch(long logN, long logl, long logp, long L, long logSlots);
+
+	/**
 	 * Testing left rotation timing in the ciphertext
 	 * number of levels switched: 0
 	 * c(m_1, ..., m_slots) -> c(m_(rotslots+1), m_(rotslots+2), ... m_(rotslots-1))

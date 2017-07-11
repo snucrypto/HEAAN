@@ -15,8 +15,13 @@ int main() {
 	 * Params: logN, logl, logp, L, logSlots
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
-
 //	TestScheme::testConjugateBatch(13, 5, 30, 5, 3);
+
+	/*
+	 * Params: logN, logl, logp, L, logSlots
+	 * Suggested: 13, 2, 30, 5, 3
+	 */
+//	TestScheme::testimultBatch(13, 5, 30, 5, 3);
 
 	//-----------------------------------------
 

@@ -190,17 +190,30 @@ public:
 	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
 
 	/**
-	 * conjugation of cipher
-	 * @param[in] cipher(m)
-	 * @return cipher(conj(m))
+	 * conjugation in cipher
+	 * @param[in] cipher(m = x + iy)
+	 * @return cipher(x - iy)
 	 */
 	Cipher conjugate(Cipher& cipher);
 
 	/**
-	 * conjugation of cipher
-	 * @param[in, out] cipher(m) -> cipher(conj(m))
+	 * conjugation in cipher
+	 * @param[in, out] cipher(m = x + iy) -> cipher(x - iy)
 	 */
 	void conjugateAndEqual(Cipher& cipher);
+
+	/**
+	 * multiplication by i (imaginary 1) in cipher
+	 * @param[in] cipher(m)
+	 * @return cipher(i * m)
+	 */
+	Cipher imult(Cipher& cipher);
+
+	/**
+	 * multiplication by i (imaginary 1) in cipher
+	 * @param[in, out] cipher(m) -> cipher(i * m)
+	 */
+	void imultAndEqual(Cipher& cipher);
 
 	//-----------------------------------------
 
@@ -254,6 +267,23 @@ public:
 	 * @param[in] constant
 	 */
 	void multByConstAndEqual(Cipher& cipher, ZZ& cnst);
+
+	/**
+	 * constant multiplication by slots
+	 * @param[in] cipher(m_1, ..., m_slots)
+	 * @param[in] constant array (c_1, ..., c_slots) size should be same as number of slots in cipher. Constants cannot be all too small
+	 * normally method is used as a fast version of mult method if array cnstvec is known
+	 * @return cipher(c_1 * m_1, ..., c_slots * m_slots)
+	 */
+	Cipher multByConstBySlots(Cipher& cipher, CZZ*& cnstvec);
+
+	/**
+	 * constant multiplication by slots
+	 * @param[in, out] cipher(m_1, ..., m_slots) -> cipher(c_1 * m_1, ..., c_slots * m_slots)
+	 * @param[in] constant array (c_1, ..., c_slots) size should be same as number of slots in cipher. Constants cannot be all too small
+	 * normally method is used as a fast version of mult method if array cnstvec is known
+	 */
+	void multByConstBySlotsAndEqual(Cipher& cipher, CZZ*& cnstvec);
 
 	//-----------------------------------------
 

@@ -1,5 +1,6 @@
 #include "SchemeAux.h"
 
+#include <NTL/RR.h>
 SchemeAux::SchemeAux(Params& params, bool computeTaylorPows): logp(params.logp) {
 	ksiPows = new CZZ*[params.logN + 2];
 	for (long i = 0; i < params.logN + 2; ++i) {
@@ -18,6 +19,11 @@ SchemeAux::SchemeAux(Params& params, bool computeTaylorPows): logp(params.logp) 
 		temp[ipow] = temp[0];
 		ksiPows[i] = temp;
 	}
+
+	RR sqrt2 = sqrt(to_RR(2.0));
+	sqrt2.e += logp - 1;
+	psqrt2 = to_ZZ(sqrt2);
+
 	if(computeTaylorPows) {
 		precomputeTaylorPows();
 	}
