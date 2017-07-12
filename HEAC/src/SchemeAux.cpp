@@ -22,7 +22,7 @@ SchemeAux::SchemeAux(Params& params, bool computeTaylorPows): logp(params.logp) 
 
 	RR sqrt2 = sqrt(to_RR(2.0));
 	sqrt2.e += logp - 1;
-	psqrt2 = to_ZZ(sqrt2);
+	poversqrt2 = to_ZZ(sqrt2);
 
 	if(computeTaylorPows) {
 		precomputeTaylorPows();

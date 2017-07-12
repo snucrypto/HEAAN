@@ -238,16 +238,16 @@ Cipher Scheme::imult(Cipher& cipher) {
 	ZZX bxres, axres, axtmp, bxtmp;
 
 	Ring2Utils::multByMonomial(axtmp, cipher.ax, params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(axtmp, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(axtmp, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::multByMonomial(bxtmp, cipher.bx, params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(bxtmp, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(bxtmp, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::multByMonomial(axres, cipher.ax, 3 * params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(axres, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(axres, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::multByMonomial(bxres, cipher.bx, 3 * params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(bxres, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(bxres, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::addAndEqual(axres, axtmp, qi, params.N);
 	Ring2Utils::addAndEqual(bxres, bxtmp, qi, params.N);
@@ -263,16 +263,16 @@ void Scheme::imultAndEqual(Cipher& cipher) {
 	ZZX axtmp, bxtmp;
 
 	Ring2Utils::multByMonomial(axtmp, cipher.ax, params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(axtmp, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(axtmp, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::multByMonomial(bxtmp, cipher.bx, params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(bxtmp, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(bxtmp, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::multByMonomialAndEqual(cipher.ax, 3 * params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(cipher.ax, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(cipher.ax, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::multByMonomialAndEqual(cipher.bx, 3 * params.N / 4, params.N);
-	Ring2Utils::multByConstAndEqual(cipher.bx, aux.psqrt2, qi, params.N);
+	Ring2Utils::multByConstAndEqual(cipher.bx, aux.poversqrt2, qi, params.N);
 
 	Ring2Utils::addAndEqual(cipher.ax, axtmp, qi, params.N);
 	Ring2Utils::addAndEqual(cipher.bx, bxtmp, qi, params.N);

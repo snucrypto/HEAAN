@@ -203,14 +203,14 @@ public:
 	void conjugateAndEqual(Cipher& cipher);
 
 	/**
-	 * multiplication by i (imaginary 1) in cipher
+	 * multiplication by i (imaginary unit) in cipher
 	 * @param[in] cipher(m)
 	 * @return cipher(i * m)
 	 */
 	Cipher imult(Cipher& cipher);
 
 	/**
-	 * multiplication by i (imaginary 1) in cipher
+	 * multiplication by i (imaginary unit) in cipher
 	 * @param[in, out] cipher(m) -> cipher(i * m)
 	 */
 	void imultAndEqual(Cipher& cipher);

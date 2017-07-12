@@ -19,7 +19,7 @@ public:
 	map<string, double*> taylorCoeffsMap; ///< storing taylor coefficients for function calculation
 	map<string, ZZ*> taylorPowsMap; ///< storing taylor coefficients * p for function calculation
 
-	ZZ psqrt2;
+	ZZ poversqrt2; ///< p/sqrt(2) needed for i (imaginary unit) multiplication
 
 	//-----------------------------------------
 
