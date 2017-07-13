@@ -67,6 +67,6 @@ string Params::toString() {
 	ss << " , logl = " << logl;
 	ss << " , logp = " << logp;
 	ss << " , L = " << L;
-	ss <<"]";
+	ss << " ]";
 	return ss.str();
 }
