@@ -77,7 +77,7 @@ Message Scheme::encode(CZZ*& vals, long slots) {
 Cipher Scheme::encryptMsg(Message& msg, long level) {
 	ZZX ax, bx, vx;
 	ZZ qi = getqi(level);
-	NumUtils::sampleBinary(vx, params.N, params.h);
+	NumUtils::sampleZO(vx, params.N, params.N / 2);
 	Ring2Utils::mult(ax, vx, publicKey.ax, qi, params.N);
 	Ring2Utils::mult(bx, vx, publicKey.bx, qi, params.N);
 	Ring2Utils::add(bx, msg.mx, bx, qi, params.N);
