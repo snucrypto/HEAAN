@@ -71,19 +71,43 @@ Cipher* SchemeAlgo::powerExtended(Cipher& cipher, const long& degree) {
 
 Cipher SchemeAlgo::prodOfPo2(Cipher*& ciphers, const long& logDegree) {
 	Cipher* res = ciphers;
-	for (long i = logDegree; i > 0; --i) {
-		long powi = (1 << i);
-		long powih = (powi >> 1);
-		Cipher* cprodvec = new Cipher[powih];
+	for (long i = logDegree - 1; i >= 0; --i) {
+		long powih = (1 << i);
+		Cipher* tmp = new Cipher[powih];
 		NTL_EXEC_RANGE(powih, first, last);
 		for (long j = first; j < last; ++j) {
-			scheme.multAndEqual(res[2 * j], res[2 * j + 1]);
-			cprodvec[j] = scheme.modSwitchOne(cprodvec[j]);
+			tmp[j] = scheme.multAndModSwitchOne(res[2 * j], res[2 * j + 1]);
 		}
 		NTL_EXEC_RANGE_END;
-		res = cprodvec;
+		res = tmp;
 	}
 	return res[0];
+}
+
+Cipher SchemeAlgo::prod(Cipher*& ciphers, const long& degree) {
+	long logDegree = log2(degree) + 1;
+	long idx = 0;
+	bool isinit = false;
+	Cipher res;
+	for (long i = 0; i < logDegree; ++i) {
+		if(bit(degree, i)) {
+			long powi = (1 << i);
+			Cipher* tmp = new Cipher[powi];
+			for (long j = 0; j < powi; ++j) {
+				tmp[j] = ciphers[idx + j];
+			}
+			Cipher iprod = prodOfPo2(tmp, i);
+			if(isinit) {
+				scheme.modEmbedAndEqual(res, iprod.level);
+				scheme.multModSwitchOneAndEqual(res, iprod);
+			} else {
+				res = iprod;
+				isinit = true;
+			}
+			idx += powi;
+		}
+	}
+	return res;
 }
 
 Cipher SchemeAlgo::sum(Cipher*& ciphers, const long& size) {

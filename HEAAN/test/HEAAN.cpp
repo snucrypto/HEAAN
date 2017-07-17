@@ -15,12 +15,14 @@ int main() {
 	 * Params: logN, logl, logp, L, logSlots
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
+
 //	TestScheme::testConjugateBatch(13, 5, 30, 5, 3);
 
 	/*
 	 * Params: logN, logl, logp, L, logSlots
 	 * Suggested: 13, 2, 30, 5, 3
 	 */
+
 //	TestScheme::testimultBatch(13, 5, 30, 5, 3);
 
 	//-----------------------------------------
@@ -37,6 +39,7 @@ int main() {
 	 * Params: logN, logl, logp, L, logSlots
 	 * Suggested: 13, 2, 30, 5, 12
 	 */
+
 //	TestScheme::testSlotsSum(13, 2, 30, 5, 12);
 
 	//-----------------------------------------
@@ -68,6 +71,14 @@ int main() {
 	 */
 
 //	TestScheme::testProdOfPo2Batch(13, 2, 30, 5, 4, 3);
+
+	/*
+	 * Params: logN, logl, logp, L, degree, logSlots
+	 * Suggested: 13, 2, 30, 5, 13, 3
+	 * Suggested: 15, 2, 56, 11, 903, 3
+	 */
+
+//	TestScheme::testProdBatch(13, 2, 30, 5, 13, 3);
 
 	//-----------------------------------------
 
@@ -123,4 +134,3 @@ int main() {
 
 	return 0;
 }
-

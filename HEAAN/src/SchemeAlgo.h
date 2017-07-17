@@ -59,6 +59,14 @@ public:
 	 */
 	Cipher prodOfPo2(Cipher*& ciphers, const long& logDegree);
 
+	/**
+	 * Calculating product of ciphers
+	 * @param[in] [cipher(m_1), cipher(m_2), ... ,cipher(m_{degree})]
+	 * @param[in] degree
+	 * @return cipher(m_1 * m_2 *...*m_{degree})
+	 */
+	Cipher prod(Cipher*& ciphers, const long& degree);
+
 	//-----------------------------------------
 
 	/**

@@ -111,7 +111,6 @@ public:
 	 * @param[in] power degree
 	 * @param[in] log of number of slots
 	 */
-
 	static void testPowerBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
 
 	//-----------------------------------------
@@ -127,11 +126,21 @@ public:
 	 * @param[in] log of number of ciphertexts
 	 * @param[in] log of number of slots
 	 */
-
 	static void testProdOfPo2Batch(long logN, long logl, long logp, long L, long logDegree, long logSlots);
 
+	/**
+	 * Testing product timing of ciphertexts
+	 * array of c_i(m_1, ..., m_slots) -> c(prod_i(m_1), ..., prod_i(m_slots))
+	 * number of levels switched: ceil(log(degree))
+	 * @param[in] logN input parameter for Params class
+	 * @param[in] logl input parameter for Params class
+	 * @param[in] logp input parameter for Params class
+	 * @param[in] L input parameter for Params class
+	 * @param[in] number of ciphertexts
+	 * @param[in] log of number of slots
+	 */
+	static void testProdBatch(long logN, long logl, long logp, long L, long degree, long logSlots);
 	//-----------------------------------------
-
 
 	/**
 	 * Testing inverse timing of ciphertext

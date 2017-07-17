@@ -281,7 +281,7 @@ void TestScheme::testProdOfPo2Batch(long logN, long logl, long logp, long L, lon
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	SetNumThreads(8);
+	SetNumThreads(4);
 	long slots = 1 << logSlots;
 	long degree = 1 << logDegree;
 	Cipher* cvec = new Cipher[degree];
@@ -314,6 +314,51 @@ void TestScheme::testProdOfPo2Batch(long logN, long logl, long logp, long L, lon
 	StringUtils::showcompare(pvec, dvec, slots, "prod");
 	//-----------------------------------------
 	cout << "!!! END TEST PROD OF POWER OF 2 BATCH !!!" << endl;
+}
+
+void TestScheme::testProdBatch(long logN, long logl, long logp, long L, long degree, long logSlots) {
+	cout << "!!! START TEST PROD BATCH !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logl, logp, L);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	SchemeAux schemeaux(params);
+	Scheme scheme(params, publicKey, schemeaux);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	SetNumThreads(4);
+	long slots = 1 << logSlots;
+	Cipher* cvec = new Cipher[degree];
+	CZZ** mvec = new CZZ*[degree];
+	for (long i = 0; i < degree; ++i) {
+		mvec[i] = new CZZ[slots];
+	}
+	CZZ* pvec = new CZZ[slots];
+	for (long i = 0; i < degree; ++i) {
+		for (long j = 0; j < slots; ++j) {
+			mvec[i][j] = EvaluatorUtils::evaluateRandomCircleVal(logp);
+		}
+	}
+	for (long j = 0; j < slots; ++j) {
+		pvec[j] = mvec[0][j];
+		for (long i = 1; i < degree; ++i) {
+			pvec[j] *= mvec[i][j];
+			pvec[j] >>= logp;
+		}
+	}
+	for (long i = 0; i < degree; ++i) {
+		cvec[i] = scheme.encrypt(mvec[i], slots);
+	}
+	//-----------------------------------------
+	timeutils.start("Product batch");
+	Cipher cprod = algo.prod(cvec, degree);
+	timeutils.stop("Product batch");
+	//-----------------------------------------
+	CZZ* dvec = scheme.decrypt(secretKey, cprod);
+	StringUtils::showcompare(pvec, dvec, slots, "prod");
+	//-----------------------------------------
+	cout << "!!! END TEST PROD BATCH !!!" << endl;
 }
 
 //-----------------------------------------

@@ -5,9 +5,9 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cross.exe.debug.1511544641" moduleId="org.eclipse.cdt.core.settings" name="Debug">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/HEAC"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/HEAC/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="HEAC" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/HEAAN"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/HEAAN/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="HEAAN" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -23,7 +23,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.debug.1511544641." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.base.1855068713" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.196664283" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<builder buildPath="${workspace_loc:/HEAC}/Debug" id="cdt.managedbuild.target.gnu.builder.base.857469510" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+							<builder buildPath="${workspace_loc:/HEAAN}/Debug" id="cdt.managedbuild.target.gnu.builder.base.1247505632" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.396807635" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.4915920" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 								<option id="gnu.cpp.compiler.option.optimization.level.1603275777" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.more" valueType="enumerated"/>
@@ -84,14 +84,7 @@
 		<cconfiguration id="cdt.managedbuild.config.gnu.cross.exe.release.2084387388">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cross.exe.release.2084387388" moduleId="org.eclipse.cdt.core.settings" name="Release">
 				<externalSettings>
-					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/cfphecpp"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/HEAC"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/cfphecpp/Release"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/HEAC/Release"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="cfphecpp" srcPrefixMapping="" srcRootPath=""/>
-						<entry flags="RESOLVED" kind="libraryFile" name="HEAC" srcPrefixMapping="" srcRootPath=""/>
-					</externalSetting>
+					<externalSetting/>
 				</externalSettings>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -161,18 +154,7 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
-	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="cfphecpp.cdt.managedbuild.target.gnu.cross.exe.907942353" name="Executable" projectType="cdt.managedbuild.target.gnu.cross.exe"/>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/cfphecpp"/>
-		</configuration>
-		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/cfphecpp"/>
-		</configuration>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="scannerConfiguration">
@@ -201,5 +183,16 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.1511544641;cdt.managedbuild.config.gnu.cross.exe.debug.1511544641.;cdt.managedbuild.tool.gnu.cpp.compiler.base.4915920;cdt.managedbuild.tool.gnu.cpp.compiler.input.182765585">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/cfphecpp"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/cfphecpp"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="cfphecpp.cdt.managedbuild.target.gnu.cross.exe.907942353" name="Executable" projectType="cdt.managedbuild.target.gnu.cross.exe"/>
 	</storageModule>
 </cproject>
