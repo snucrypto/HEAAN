@@ -499,10 +499,12 @@ Cipher Scheme::modEmbedOne(Cipher& cipher) {
 }
 
 void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
-	long newLogqi = getLogqi(newLevel);
-	Ring2Utils::truncateAndEqual(cipher.ax, newLogqi, params.N);
-	Ring2Utils::truncateAndEqual(cipher.bx, newLogqi, params.N);
-	cipher.level = newLevel;
+	if(cipher.level < newLevel) {
+		long newLogqi = getLogqi(newLevel);
+		Ring2Utils::truncateAndEqual(cipher.ax, newLogqi, params.N);
+		Ring2Utils::truncateAndEqual(cipher.bx, newLogqi, params.N);
+		cipher.level = newLevel;
+	}
 }
 
 void Scheme::modEmbedOneAndEqual(Cipher& cipher) {
