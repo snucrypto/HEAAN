@@ -182,9 +182,17 @@ Cipher* SchemeAlgo::encryptSingleArray(CZZ*& vals, long size) {
 }
 
 Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& size) {
-	Cipher* cmulvec = multVec(ciphers1, ciphers2, size);
-	Cipher csum = sum(cmulvec, size);
-	return scheme.modSwitchOne(csum);
+	Cipher cip = scheme.mult(ciphers1[size-1], ciphers2[size-1]);
+
+	NTL_EXEC_RANGE(size-1, first, last);
+	for (long i = first; i < last; ++i) {
+		Cipher cprodi = scheme.mult(ciphers1[i], ciphers2[i]);
+		scheme.addAndEqual(cip, cprodi);
+	}
+	NTL_EXEC_RANGE_END;
+
+	scheme.modSwitchOneAndEqual(cip);
+	return cip;
 }
 //-----------------------------------------
 
