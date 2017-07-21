@@ -49,6 +49,6 @@ static string SIGMOIDBAR  = "Sigmoidbar"; ///< sigmoidbar = 1 - sigmoid(x)
 
 static string SIGMOIDGOOD = "SigmoidGood"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
 static string SIGMOIDBARGOOD = "SigmoidbarGood"; ///< sigmoidbar = 1 - sigmoid(x)
-static string SIGMOIDPRIMEGOOD = "SigmoidprimeGood"; ///< sigmoidbar = -1 / (1 + exp(x))
+static string SIGMOIDPRIMEGOOD = "SigmoidprimeGood"; ///< sigmoidprime = -1 / (1 + exp(x))
 
 #endif /* SCHEME_SCHEMEAUX_H_ */
