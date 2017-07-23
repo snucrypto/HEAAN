@@ -111,16 +111,21 @@ CZZ* Scheme::decode(Message& msg) {
 	long doubleslots = msg.slots * 2;
 	CZZ* fftinv = new CZZ[doubleslots];
 	ZZ qi = getqi(msg.level);
+	long logqi = getLogqi(msg.level);
 
 	long idx = 0;
 	long gap = params.N / doubleslots;
 	for (long i = 0; i < doubleslots; ++i) {
-		CZZ c(msg.mx.rep[idx], ZZ(0));
+		ZZ tmp;
+		if(msg.mx.rep[idx] > 0) {
+			tmp = trunc_ZZ(msg.mx.rep[idx], logqi);
+			if(NumBits(tmp) == logqi) tmp -= qi;
+		} else {
+			tmp = -trunc_ZZ(msg.mx.rep[idx], logqi);
+			if(NumBits(tmp) == logqi) tmp += qi;
+		}
 
-		while(2 * c.r > qi) c.r -= qi;
-		while(2 * c.r < -qi) c.r += qi;
-
-		fftinv[i] = c;
+		fftinv[i] = CZZ(tmp, ZZ(0));
 		idx += gap;
 	}
 	return NumUtils::fftSpecial(fftinv, doubleslots, aux.ksiPows, params.logp);
