@@ -482,7 +482,11 @@ void Ring2Utils::truncateAndEqual(ZZX& p, const long& logMod, const long& degree
 //}
 
 void Ring2Utils::truncate(ZZ& c, const long& logMod) {
-	c = sign(c) * trunc_ZZ(c, logMod);
+	if(c >= 0) {
+		c = trunc_ZZ(c, logMod);
+	} else {
+		c = -trunc_ZZ(c, logMod);
+	}
 }
 
 //void Ring2Utils::truncate(CZZ& c, const long& logMod) {
