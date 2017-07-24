@@ -587,7 +587,7 @@ void TestScheme::testFFTBatch(long logN, long logl, long logp, long L, long logf
 	for (long i = 0; i < slots; ++i) {
 		mvec1[i] = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
 		mvec2[i] = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
-		mvecp[i] = NumUtils::fftFull(mvec1[i], mvec2[i], fftdim, scheme.aux.ksiPows, logp);
+		mvecp[i] = NumUtils::fftFull(mvec1[i], mvec2[i], fftdim, scheme.aux.ksiPowsr, scheme.aux.ksiPowsi, logp);
 	}
 	Cipher* cvec1 = new Cipher[fftdim];
 	Cipher* cvec2 = new Cipher[fftdim];
@@ -647,7 +647,7 @@ void TestScheme::testFFTLazy(long logN, long logl, long logp, long L, long logff
 	long fftdim = 1 << logfftdim;
 	CZZ* mvec1 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
 	CZZ* mvec2 = EvaluatorUtils::evaluateRandomVals(fftdim, logp);
-	CZZ* mvecp = NumUtils::fftFullLazy(mvec1, mvec2, fftdim, scheme.aux.ksiPows, logp);
+	CZZ* mvecp = NumUtils::fftFullLazy(mvec1, mvec2, fftdim, scheme.aux.ksiPowsr, scheme.aux.ksiPowsi, logp);
 	Cipher* cvec1 = algo.encryptSingleArray(mvec1, fftdim);
 	Cipher* cvec2 = algo.encryptSingleArray(mvec2, fftdim);
 	//-----------------------------------------

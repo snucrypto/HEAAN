@@ -15,7 +15,8 @@ class SchemeAux {
 public:
 
 	long logp;
-	CZZ** ksiPows; ///< storing ksi pows for fft calculation
+	RR** ksiPowsr; ///< storing ksi pows for fft calculation
+	RR** ksiPowsi; ///< storing ksi pows for fft calculation
 	map<string, double*> taylorCoeffsMap; ///< storing taylor coefficients for function calculation
 	map<string, ZZ*> taylorPowsMap; ///< storing taylor coefficients * p for function calculation
 

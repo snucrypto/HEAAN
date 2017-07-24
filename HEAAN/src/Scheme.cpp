@@ -66,7 +66,7 @@ Message Scheme::encode(CZZ*& vals, long slots) {
 	long doubleslots = slots * 2;
 	long logDoubleslots = log2(slots) + 1;
 	long gap = (params.N >> logDoubleslots);
-	CZZ* fftInv = NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPows, params.logp);
+	CZZ* fftInv = NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPowsr, aux.ksiPowsi, params.logp);
 	for (long i = 0; i < doubleslots; ++i) {
 		mx.rep[idx] = fftInv[i].r;
 		idx += gap;
@@ -77,7 +77,7 @@ Message Scheme::encode(CZZ*& vals, long slots) {
 Cipher Scheme::encryptMsg(Message& msg, long level) {
 	ZZX ax, bx, vx;
 	ZZ qi = getqi(level);
-	NumUtils::sampleZO(vx, params.N, params.N / 2);
+	NumUtils::sampleZO(vx, params.N, 64);
 	Ring2Utils::mult(ax, vx, publicKey.ax, qi, params.N);
 	Ring2Utils::mult(bx, vx, publicKey.bx, qi, params.N);
 	Ring2Utils::add(bx, msg.mx, bx, qi, params.N);
@@ -128,7 +128,7 @@ CZZ* Scheme::decode(Message& msg) {
 		fftinv[i] = CZZ(tmp, ZZ(0));
 		idx += gap;
 	}
-	return NumUtils::fftSpecial(fftinv, doubleslots, aux.ksiPows, params.logp);
+	return NumUtils::fftSpecial(fftinv, doubleslots, aux.ksiPowsr, aux.ksiPowsi, params.logp);
 }
 
 CZZ* Scheme::decrypt(SecKey& secretKey, Cipher& cipher) {

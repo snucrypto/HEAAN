@@ -2,22 +2,25 @@
 
 #include <NTL/RR.h>
 SchemeAux::SchemeAux(Params& params, bool computeTaylorPows): logp(params.logp) {
-	ksiPows = new CZZ*[params.logN + 2];
+	ksiPowsr = new RR*[params.logN + 2];
+	ksiPowsi = new RR*[params.logN + 2];
 	for (long i = 0; i < params.logN + 2; ++i) {
 		long ipow = (1 << i);
-		CZZ* temp = new CZZ[ipow + 1];
+		RR* tmpr = new RR[ipow + 1];
+		RR* tmpi = new RR[ipow + 1];
 
 		for (long j = 0; j < ipow; ++j) {
 			RR pi = ComputePi_RR();
 			RR angle = 2.0 * pi * j / ipow;
 			RR cosp = cos(angle);
 			RR sinp = sin(angle);
-			cosp.e += logp;
-			sinp.e += logp;
-			temp[j] = CZZ(RoundToZZ(cosp), RoundToZZ(sinp));
+			tmpr[j] = cosp;
+			tmpi[j] = sinp;
 		}
-		temp[ipow] = temp[0];
-		ksiPows[i] = temp;
+		tmpr[ipow] = tmpr[0];
+		tmpi[ipow] = tmpi[0];
+		ksiPowsr[i] = tmpr;
+		ksiPowsi[i] = tmpi;
 	}
 
 	RR sqrt2 = sqrt(to_RR(2.0));
