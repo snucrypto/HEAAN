@@ -75,12 +75,20 @@ Message Scheme::encode(CZZ*& vals, long slots) {
 }
 
 Cipher Scheme::encryptMsg(Message& msg, long level) {
-	ZZX ax, bx, vx;
+	ZZX ax, bx, vx, eax, ebx;
 	ZZ qi = getqi(level);
 	NumUtils::sampleZO(vx, params.N, 64);
+
 	Ring2Utils::mult(ax, vx, publicKey.ax, qi, params.N);
+	NumUtils::sampleGauss(eax, params.N, params.sigma);
+	Ring2Utils::addAndEqual(ax, eax, qi, params.N);
+
 	Ring2Utils::mult(bx, vx, publicKey.bx, qi, params.N);
-	Ring2Utils::add(bx, msg.mx, bx, qi, params.N);
+	NumUtils::sampleGauss(ebx, params.N, params.sigma);
+	Ring2Utils::addAndEqual(bx, ebx, qi, params.N);
+
+	Ring2Utils::addAndEqual(bx, msg.mx, qi, params.N);
+
 	return Cipher(ax, bx, msg.slots, level);
 }
 
