@@ -124,15 +124,8 @@ CZZ* Scheme::decode(Message& msg) {
 	long idx = 0;
 	long gap = params.N / doubleslots;
 	for (long i = 0; i < doubleslots; ++i) {
-		ZZ tmp;
-		if(msg.mx.rep[idx] > 0) {
-			tmp = trunc_ZZ(msg.mx.rep[idx], logqi);
-			if(NumBits(tmp) == logqi) tmp -= qi;
-		} else {
-			tmp = -trunc_ZZ(msg.mx.rep[idx], logqi);
-			if(NumBits(tmp) == logqi) tmp += qi;
-		}
-
+		ZZ tmp = msg.mx.rep[idx] % qi;
+		if(NumBits(tmp) == logqi) tmp -= qi;
 		fftinv[i] = CZZ(tmp, ZZ(0));
 		idx += gap;
 	}
@@ -445,25 +438,25 @@ void Scheme::multByMonomialAndEqual(Cipher& cipher, const long& degree) {
 //-----------------------------------------
 
 Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
-	long logqi = getLogqi(cipher.level);
+	ZZ qi = getqi(cipher.level);
 	ZZX ax, bx;
 
-	Ring2Utils::leftShift(ax, cipher.ax, bits, logqi, params.N);
-	Ring2Utils::leftShift(bx, cipher.bx, bits, logqi, params.N);
+	Ring2Utils::leftShift(ax, cipher.ax, bits, qi, params.N);
+	Ring2Utils::leftShift(bx, cipher.bx, bits, qi, params.N);
 
 	return Cipher(ax, bx, cipher.slots, cipher.level);
 }
 
 void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
-	long logqi = getLogqi(cipher.level);
-	Ring2Utils::leftShiftAndEqual(cipher.ax, bits, logqi, params.N);
-	Ring2Utils::leftShiftAndEqual(cipher.bx, bits, logqi, params.N);
+	ZZ qi = getqi(cipher.level);
+	Ring2Utils::leftShiftAndEqual(cipher.ax, bits, qi, params.N);
+	Ring2Utils::leftShiftAndEqual(cipher.bx, bits, qi, params.N);
 }
 
 void Scheme::doubleAndEqual(Cipher& cipher) {
-	long logqi = getLogqi(cipher.level);
-	Ring2Utils::doubleAndEqual(cipher.ax, logqi, params.N);
-	Ring2Utils::doubleAndEqual(cipher.bx, logqi, params.N);
+	ZZ qi = getqi(cipher.level);
+	Ring2Utils::doubleAndEqual(cipher.ax, qi, params.N);
+	Ring2Utils::doubleAndEqual(cipher.bx, qi, params.N);
 }
 
 //-----------------------------------------
@@ -498,12 +491,16 @@ void Scheme::modSwitchOneAndEqual(Cipher& cipher) {
 //-----------------------------------------
 
 Cipher Scheme::modEmbed(Cipher& cipher, long newLevel) {
-	long newLogqi = getLogqi(newLevel);
-	ZZX bx, ax;
-	Ring2Utils::truncate(ax, cipher.ax, newLogqi, params.N);
-	Ring2Utils::truncate(bx, cipher.bx, newLogqi, params.N);
-
-	return Cipher(ax, bx, cipher.slots, newLevel);
+	if(cipher.level < newLevel) {
+		ZZ newqi = getqi(newLevel);
+		ZZX bx, ax;
+		Ring2Utils::mod(ax, cipher.ax, newqi, params.N);
+		Ring2Utils::mod(bx, cipher.bx, newqi, params.N);
+		return Cipher(ax, bx, cipher.slots, newLevel);
+	} else {
+		Cipher c = cipher;
+		return c;
+	}
 }
 
 Cipher Scheme::modEmbedOne(Cipher& cipher) {
@@ -513,9 +510,9 @@ Cipher Scheme::modEmbedOne(Cipher& cipher) {
 
 void Scheme::modEmbedAndEqual(Cipher& cipher, long newLevel) {
 	if(cipher.level < newLevel) {
-		long newLogqi = getLogqi(newLevel);
-		Ring2Utils::truncateAndEqual(cipher.ax, newLogqi, params.N);
-		Ring2Utils::truncateAndEqual(cipher.bx, newLogqi, params.N);
+		ZZ newqi = getqi(newLevel);
+		Ring2Utils::modAndEqual(cipher.ax, newqi, params.N);
+		Ring2Utils::modAndEqual(cipher.bx, newqi, params.N);
 		cipher.level = newLevel;
 	}
 }

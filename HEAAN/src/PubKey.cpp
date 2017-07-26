@@ -21,7 +21,7 @@ PubKey::PubKey(Params& params, SecKey& secretKey) {
 		ZZX spow;
 		long ipow = (1 << i);
 		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[params.logN - 1][ipow], params.q, params.N);
-		Ring2Utils::leftShiftAndEqual(spow, params.logP, params.logPq, params.N);
+		Ring2Utils::leftShiftAndEqual(spow, params.logP, params.Pq, params.N);
 		NumUtils::sampleUniform2(axKeySwitch[i], params.N, params.logPq);
 		NumUtils::sampleGauss(ex, params.N, params.sigma);
 		Ring2Utils::addAndEqual(ex, spow, params.Pq, params.N);
@@ -32,7 +32,7 @@ PubKey::PubKey(Params& params, SecKey& secretKey) {
 	//-----------------------------------------
 
 	Ring2Utils::mult(sxsx, secretKey.sx, secretKey.sx, params.q, params.N);
-	Ring2Utils::leftShiftAndEqual(sxsx, params.logP, params.logPq, params.N);
+	Ring2Utils::leftShiftAndEqual(sxsx, params.logP, params.Pq, params.N);
 	NumUtils::sampleUniform2(axStar, params.N, params.logPq);
 	NumUtils::sampleGauss(ex, params.N, params.sigma);
 	Ring2Utils::addAndEqual(ex, sxsx, params.Pq, params.N);
@@ -41,7 +41,7 @@ PubKey::PubKey(Params& params, SecKey& secretKey) {
 
 	ZZX sxconj;
 	Ring2Utils::conjugate(sxconj, secretKey.sx, params.N);
-	Ring2Utils::leftShiftAndEqual(sxconj, params.logP, params.logPq, params.N);
+	Ring2Utils::leftShiftAndEqual(sxconj, params.logP, params.Pq, params.N);
 	NumUtils::sampleUniform2(axConj, params.N, params.logPq);
 	NumUtils::sampleGauss(ex, params.N, params.sigma);
 	Ring2Utils::addAndEqual(ex, sxconj, params.Pq, params.N);

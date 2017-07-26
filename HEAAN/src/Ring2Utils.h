@@ -13,6 +13,10 @@ class Ring2Utils {
 
 		//-----------------------------------------
 
+		static void mod(ZZX& res, ZZX& p, ZZ& mod, const long& degree);
+
+		static void modAndEqual(ZZX& p, ZZ& mod, const long& degree);
+
 		/**
 		 * addition in ring Z_q[X] / (X^N + 1)
 		 * @param[out] p1 + p2 in Z_q[X] / (X^N + 1)
@@ -241,29 +245,29 @@ class Ring2Utils {
 		 * @param[out] p * 2^b in Z_q[X] / (X^N + 1)
 		 * @param[in] p in Z_q[X] / (X^N + 1)
 		 * @param[in] degree b
-		 * @param[in] logmod log(q)
+		 * @param[in] mod q
 		 * @param[in] degree N
 		 */
-		static void leftShift(ZZX& res, ZZX& p, const long& bits, const long& logMod, const long& degree);
+		static void leftShift(ZZX& res, ZZX& p, const long& bits, ZZ& mod, const long& degree);
 
-//		static void leftShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree);
+//		static void leftShift(CZZX& res, CZZX& p, const long& bits, ZZ& mod, const long& degree);
 
 		/**
 		 * multiplication by 2^b in ring Z_q[X] / (X^N + 1)
 		 * @param[in, out] p -> p * 2^b in Z_q[X] / (X^N + 1)
 		 * @param[in] degree b
-		 * @param[in] logmod log(q)
+		 * @param[in] mod q
 		 * @param[in] degree N
 		 */
-		static void leftShiftAndEqual(ZZX& p, const long& bits, const long& logMod, const long& degree);
+		static void leftShiftAndEqual(ZZX& p, const long& bits, ZZ& mod, const long& degree);
 
 		/**
 		 * multiplication by 2 in ring Z_q[X] / (X^N + 1)
 		 * @param[in, out] p -> 2p in Z_q[X] / (X^N + 1)
-		 * @param[in] logmod log(q)
+		 * @param[in] mod q
 		 * @param[in] degree N
 		 */
-		static void doubleAndEqual(ZZX& p, const long& logMod, const long& degree);
+		static void doubleAndEqual(ZZX& p, ZZ& mod, const long& degree);
 //		static void leftShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree);
 
 		//-----------------------------------------
@@ -330,34 +334,6 @@ class Ring2Utils {
 		static ZZX innerProduct(ZZX*& pvec1, ZZX*& pvec2, const long& size, ZZ& mod, const long& degree);
 		//-----------------------------------------
 
-		/**
-		 * truncate p in Z[X] / (X^N + 1)
-		 * @param[out] truncated p in Z_q[X] / (X^N + 1)
-		 * @param[in] p in Z[X] / (X^N + 1)
-		 * @param[in] logmod log(q)
-		 * @param[in] degree N
-		 */
-		static void truncate(ZZX& res, ZZX& p, const long& logMod, const long& degree);
-//		static void truncate(CZZX& res, CZZX& p, const long& logMod, const long& degree);
-
-		/**
-		 * truncate p in Z[X] / (X^N + 1)
-		 * @param[in,out] p -> p in Z_q[X] / (X^N + 1)
-		 * @param[in] logmod log(q)
-		 * @param[in] degree N
-		 */
-		static void truncateAndEqual(ZZX& p, const long& logMod, const long& degree);
-//		static void truncateAndEqual(CZZX& p, const long& logMod, const long& degree);
-
-		/**
-		 * truncate p in Z
-		 * @param[in,out] p -> truncated p in Z_q
-		 * @param[in] logmod log(q)
-		 */
-		static void truncate(ZZ& res, const long& logMod);
-//		static void truncate(CZZ& res, const long& logMod);
-
-		//-----------------------------------------
 };
 
 #endif /* POLYSCHEME_ZRINGUTILS_H_ */

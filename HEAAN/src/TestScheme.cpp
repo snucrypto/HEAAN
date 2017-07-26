@@ -413,8 +413,8 @@ void TestScheme::testLogarithmBatch(long logN, long logl, long logp, long L, lon
 	CZZ* mvec = new CZZ[slots];
 	CZZ* mlog = new CZZ[slots];
 	for (long i = 0; i < slots; ++i) {
-		double mr = (double)arc4random() / RAND_MAX / 20;
-		double mi = (double)arc4random() / RAND_MAX / 20;
+		double mr = (double)rand() / RAND_MAX / 20;
+		double mi = (double)rand() / RAND_MAX / 20;
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, logp);
 		mlog[i] = EvaluatorUtils::evaluateLogarithm(1 + mr, mi, logp);
 	}
