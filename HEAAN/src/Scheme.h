@@ -268,6 +268,10 @@ public:
 	 */
 	void multByConstAndEqual(Cipher& cipher, ZZ& cnst);
 
+	Cipher multByPoly(Cipher& cipher, ZZX& poly);
+
+	void multByPolyAndEqual(Cipher& cipher, ZZX& poly);
+
 	/**
 	 * constant multiplication by slots
 	 * @param[in] cipher(m_1, ..., m_slots)

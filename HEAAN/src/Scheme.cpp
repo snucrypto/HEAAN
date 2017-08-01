@@ -399,6 +399,20 @@ void Scheme::multByConstAndEqual(Cipher& cipher, ZZ& cnst) {
 	Ring2Utils::multByConstAndEqual(cipher.bx, cnst, qi, params.N);
 }
 
+Cipher Scheme::multByPoly(Cipher& cipher, ZZX& poly) {
+	ZZ qi = getqi(cipher.level);
+	ZZX axres, bxres;
+	Ring2Utils::mult(axres, cipher.ax, poly, qi, params.N);
+	Ring2Utils::mult(bxres, cipher.bx, poly, qi, params.N);
+	return Cipher(axres, bxres, cipher.slots, cipher.level);
+}
+
+void Scheme::multByPolyAndEqual(Cipher& cipher, ZZX& poly) {
+	ZZ qi = getqi(cipher.level);
+	Ring2Utils::multAndEqual(cipher.ax, poly, qi, params.N);
+	Ring2Utils::multAndEqual(cipher.bx, poly, qi, params.N);
+}
+
 Cipher Scheme::multByConstBySlots(Cipher& cipher, CZZ*& cnstvec) {
 	ZZ qi = getqi(cipher.level);
 	CZZ* gcnstvec = groupidx(cnstvec, cipher.slots);
