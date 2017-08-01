@@ -562,8 +562,8 @@ Cipher Scheme::leftRotateByPo2(Cipher& cipher, long& logrotSlots) {
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
 	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axKeySwitch[logrotSlots], Pqi, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxKeySwitch[logrotSlots], Pqi, params.N);
+	Ring2Utils::mult(axres, bxres, publicKey.axLeftRot[logrotSlots], Pqi, params.N);
+	Ring2Utils::multAndEqual(bxres, publicKey.bxLeftRot[logrotSlots], Pqi, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logP, params.N);
@@ -583,8 +583,52 @@ void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots) {
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
 	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axKeySwitch[logrotSlots], Pqi, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxKeySwitch[logrotSlots], Pqi, params.N);
+	Ring2Utils::mult(axres, bxres, publicKey.axLeftRot[logrotSlots], Pqi, params.N);
+	Ring2Utils::multAndEqual(bxres, publicKey.bxLeftRot[logrotSlots], Pqi, params.N);
+
+	Ring2Utils::rightShiftAndEqual(axres, params.logP, params.N);
+	Ring2Utils::rightShiftAndEqual(bxres, params.logP, params.N);
+
+	Ring2Utils::addAndEqual(bxres, bxrot, qi, params.N);
+
+	cipher.ax = axres;
+	cipher.bx = bxres;
+}
+
+Cipher Scheme::rightRotateByPo2(Cipher& cipher, long& logrotSlots) {
+	ZZ qi = getqi(cipher.level);
+	ZZ Pqi = getPqi(cipher.level);
+
+	ZZX bxrot, bxres, axres;
+
+	long rotSlots = params.N/2 - (1 << logrotSlots);
+
+	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
+	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
+
+	Ring2Utils::mult(axres, bxres, publicKey.axRightRot[logrotSlots], Pqi, params.N);
+	Ring2Utils::multAndEqual(bxres, publicKey.bxRightRot[logrotSlots], Pqi, params.N);
+
+	Ring2Utils::rightShiftAndEqual(axres, params.logP, params.N);
+	Ring2Utils::rightShiftAndEqual(bxres, params.logP, params.N);
+
+	Ring2Utils::addAndEqual(bxres, bxrot, qi, params.N);
+	return Cipher(axres, bxres, cipher.slots, cipher.level);
+}
+
+void Scheme::rightRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots) {
+	ZZ qi = getqi(cipher.level);
+	ZZ Pqi = getPqi(cipher.level);
+
+	ZZX bxrot, bxres, axres;
+
+	long rotSlots = params.N/2 - (1 << logrotSlots);
+
+	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
+	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[params.logN - 1][rotSlots], params.q, params.N);
+
+	Ring2Utils::mult(axres, bxres, publicKey.axRightRot[logrotSlots], Pqi, params.N);
+	Ring2Utils::multAndEqual(bxres, publicKey.bxRightRot[logrotSlots], Pqi, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logP, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logP, params.N);
@@ -607,6 +651,22 @@ void Scheme::leftRotateAndEqual(Cipher& cipher, long& rotSlots) {
 	for (long i = 0; i < logrotSlots; ++i) {
 		if(bit(remrotSlots, i)) {
 			leftRotateByPo2AndEqual(cipher, i);
+		}
+	}
+}
+
+Cipher Scheme::rightRotate(Cipher& cipher, long& rotSlots) {
+	Cipher res = cipher;
+	rightRotateAndEqual(res, rotSlots);
+	return res;
+}
+
+void Scheme::rightRotateAndEqual(Cipher& cipher, long& rotSlots) {
+	long remrotSlots = rotSlots % cipher.slots;
+	long logrotSlots = log2(remrotSlots) + 1;
+	for (long i = 0; i < logrotSlots; ++i) {
+		if(bit(remrotSlots, i)) {
+			rightRotateByPo2AndEqual(cipher, i);
 		}
 	}
 }

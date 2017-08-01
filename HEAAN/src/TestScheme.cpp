@@ -115,8 +115,8 @@ void TestScheme::testimultBatch(long logN, long logl, long logp, long L, long lo
 	cout << "!!! END TEST i MULTIPLICATION BATCH !!!" << endl;
 }
 
-void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots) {
-	cout << "!!! START TEST LEFT ROTATE BY POWER OF 2 BATCH !!!" << endl;
+void TestScheme::testRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots, bool isLeft) {
+	cout << "!!! START TEST ROTATE BY POWER OF 2 BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -131,19 +131,29 @@ void TestScheme::testLeftRotateByPo2Batch(long logN, long logl, long logp, long 
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
-	timeutils.start("Left Rotate by power of 2 batch");
-	scheme.leftRotateByPo2AndEqual(cipher, rotlogSlots);
-	timeutils.stop("Left Rotate by power of 2 batch");
+	if(isLeft) {
+		timeutils.start("Left Rotate by power of 2 batch");
+		scheme.leftRotateByPo2AndEqual(cipher, rotlogSlots);
+		timeutils.stop("Left Rotate by power of 2 batch");
+	} else {
+		timeutils.start("Right Rotate by power of 2 batch");
+		scheme.rightRotateByPo2AndEqual(cipher, rotlogSlots);
+		timeutils.stop("Right Rotate by power of 2 batch");
+	}
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
-	EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
+	if(isLeft) {
+		EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
+	} else {
+		EvaluatorUtils::rightRotateAndEqual(mvec, slots, rotSlots);
+	}
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
-	cout << "!!! END TEST LEFT ROTATE BY POWER OF 2 BATCH !!!" << endl;
+	cout << "!!! END TEST ROTATE BY POWER OF 2 BATCH !!!" << endl;
 }
 
-void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, long rotSlots, long logSlots) {
-	cout << "!!! START TEST LEFT ROTATE BATCH !!!" << endl;
+void TestScheme::testRotateBatch(long logN, long logl, long logp, long L, long rotSlots, long logSlots, bool isLeft) {
+	cout << "!!! START TEST ROTATE BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logl, logp, L);
@@ -157,15 +167,25 @@ void TestScheme::testLeftRotateBatch(long logN, long logl, long logp, long L, lo
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, logp);
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
-	timeutils.start("Left rotate batch");
-	scheme.leftRotateAndEqual(cipher, rotSlots);
-	timeutils.stop("Left rotate batch");
+	if(isLeft) {
+		timeutils.start("Left rotate batch");
+		scheme.leftRotateAndEqual(cipher, rotSlots);
+		timeutils.stop("Left rotate batch");
+	} else {
+		timeutils.start("Right rotate batch");
+		scheme.rightRotateAndEqual(cipher, rotSlots);
+		timeutils.stop("Right rotate batch");
+	}
 	//-----------------------------------------
 	CZZ* dvec = scheme.decrypt(secretKey, cipher);
-	EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
+	if(isLeft) {
+		EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
+	} else {
+		EvaluatorUtils::rightRotateAndEqual(mvec, slots, rotSlots);
+	}
 	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
-	cout << "!!! END TEST LEFT ROTATE BATCH !!!" << endl;
+	cout << "!!! END TEST ROTATE BATCH !!!" << endl;
 }
 
 void TestScheme::testSlotsSum(long logN, long logl, long logp, long L, long logSlots) {

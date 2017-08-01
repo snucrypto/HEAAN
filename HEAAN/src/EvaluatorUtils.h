@@ -248,6 +248,7 @@ public:
 	 */
 	static void leftRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize);
 
+	static void rightRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize);
 	//-----------------------------------------
 };
 

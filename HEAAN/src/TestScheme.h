@@ -55,7 +55,7 @@ public:
 	 * @param[in] log of rotation number
 	 * @param[in] log of number of slots
 	 */
-	static void testLeftRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots);
+	static void testRotateByPo2Batch(long logN, long logl, long logp, long L, long rotlogSlots, long logSlots, bool isLeft);
 
 	/**
 	 * Testing left rotation timing in the ciphertext
@@ -68,7 +68,7 @@ public:
 	 * @param[in] rotation number
 	 * @param[in] log of number of slots
 	 */
-	static void testLeftRotateBatch(long logN, long logl, long logp, long L, long rotSlots, long logSlots);
+	static void testRotateBatch(long logN, long logl, long logp, long L, long rotSlots, long logSlots, bool isLeft);
 
 	/**
 	 * Testing slot summation timing in the ciphertext

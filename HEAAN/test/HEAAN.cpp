@@ -28,12 +28,12 @@ int main() {
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, rotlogSlots, logSlots
-	 * Suggested: 13, 2, 30, 5, 2, 5
+	 * Params: logN, logl, logp, L, rotlogSlots, logSlots, isLeft
+	 * Suggested: 13, 2, 30, 5, 2, 5, true
 	 */
 
-//	TestScheme::testLeftRotateByPo2Batch(13, 2, 30, 5, 2, 5);
-//	TestScheme::testLeftRotateBatch(13, 2, 30, 5, 17, 5);
+//	TestScheme::testRotateByPo2Batch(13, 2, 30, 5, 2, 5, true);
+//	TestScheme::testRotateBatch(13, 2, 30, 5, 17, 5, true);
 
 	/*
 	 * Params: logN, logl, logp, L, logSlots

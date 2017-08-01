@@ -20,8 +20,11 @@ public:
 	ZZX axConj; ///<< auxiliary information for conjugation
 	ZZX bxConj; ///<< auxiliary information for conjugation
 
-	ZZX* axKeySwitch; ///< auxiliary information for rotation
-	ZZX* bxKeySwitch; ///< auxiliary information for rotation
+	ZZX* axLeftRot; ///< auxiliary information for rotation
+	ZZX* bxLeftRot; ///< auxiliary information for rotation
+
+	ZZX* axRightRot; ///< auxiliary information for rotation
+	ZZX* bxRightRot; ///< auxiliary information for rotation
 
 	//-----------------------------------------
 

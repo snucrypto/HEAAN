@@ -415,6 +415,7 @@ public:
 	 * @return cipher(m(v_{1+2^logsteps}, v_{2+2^logsteps}, ..., v_{slots+2^logsteps})
 	 */
 	Cipher leftRotateByPo2(Cipher& cipher, long& logrotSlots);
+
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in, out] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1+2^logsteps}, v_{2+2^logsteps}, ..., v_{slots+2^logsteps})
@@ -422,6 +423,10 @@ public:
 	 * @return
 	 */
 	void leftRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots);
+
+	Cipher rightRotateByPo2(Cipher& cipher, long& logrotSlots);
+
+	void rightRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -437,6 +442,10 @@ public:
 	 * @param[in] rotation slots
 	 */
 	void leftRotateAndEqual(Cipher& cipher, long& rotSlots);
+
+	Cipher rightRotate(Cipher& cipher, long& rotSlots);
+
+	void rightRotateAndEqual(Cipher& cipher, long& rotSlots);
 
 	//-----------------------------------------
 

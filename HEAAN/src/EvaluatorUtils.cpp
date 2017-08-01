@@ -201,3 +201,15 @@ void EvaluatorUtils::leftRotateAndEqual(CZZ*& vals, const long& size, const long
 	}
 	vals = tmp;
 }
+
+void EvaluatorUtils::rightRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize) {
+	long remrotSize = rotSize % size;
+	CZZ* tmp = new CZZ[size];
+	for (long i = 0; i < size - remrotSize; ++i) {
+		tmp[i + remrotSize] = vals[i];
+	}
+	for (long i = size - remrotSize; i < size; ++i) {
+		tmp[i + remrotSize - size] = vals[i];
+	}
+	vals = tmp;
+}
