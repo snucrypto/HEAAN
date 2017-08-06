@@ -40,7 +40,9 @@ void SchemeAux::precomputeTaylorPows() {
 
 	double* sigGoodCoeffs = new double[8]{0.5,0.216884,0,0.00819276,0,0.000165861,0,-0.00000119581};
 	double* sigbarGoodCoeffs = new double[8]{0.5,-0.216884,0,-0.00819276,0,-0.000165861,0,0.00000119581};
-	double* sigprimeGoodCoeffs = new double[8]{-0.5,0.216884,0,0.00819276,0,0.000165861,0,-0.00000119581};
+	double* sigprimeGoodCoeffs7 = new double[8]{-0.5,0.216884,0,0.00819276,0,0.000165861,0,-0.00000119581};
+	double* sigprimeGoodCoeffs3 = new double[4]{-0.5,0.216884,0,0.00819276};
+	double* sigprimeGoodCoeffs1 = new double[2]{-0.5,0.25};
 
 	insertTaylorPows(LOGARITHM, logCoeffs, 11);
 	insertTaylorPows(EXPONENT, expCoeffs, 11);
@@ -49,7 +51,7 @@ void SchemeAux::precomputeTaylorPows() {
 
 	insertTaylorPows(SIGMOIDGOOD, sigGoodCoeffs, 8);
 	insertTaylorPows(SIGMOIDBARGOOD, sigbarGoodCoeffs, 8);
-	insertTaylorPows(SIGMOIDPRIMEGOOD, sigprimeGoodCoeffs, 8);
+	insertTaylorPows(SIGMOIDPRIMEGOOD7, sigprimeGoodCoeffs7, 8);
 }
 
 void SchemeAux::insertTaylorPows(string& name, double*& coeffs, long size) {
