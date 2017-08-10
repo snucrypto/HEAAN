@@ -19,53 +19,59 @@ public:
 	/**
 	 * Calculating power of 2 cipher
 	 * @param[in] cipher(m)
+	 * @param[in] precision of initial m
 	 * @param[in] logdeg
 	 * @return cipher(m^2^logdeg)
 	 */
-	Cipher powerOf2(Cipher& cipher, const long& logDegree);
+	Cipher powerOf2(Cipher& cipher, const long& precisionBits, const long& logDegree);
 
 	/**
 	 * Calculating and storing all power of 2 ciphers up to 2^logdeg
 	 * @param[in] cipher(m)
+	 * @param[in] precision of initial m
 	 * @param[in] logdeg
 	 * @return [cipher(m), cipher(m^2), cipher(m^4), ... , cipher(m^2^logdeg)]
 	 */
-	Cipher* powerOf2Extended(Cipher& cipher, const long& logDegree);
+	Cipher* powerOf2Extended(Cipher& cipher, const long& precisionBits, const long& logDegree);
 
 	//-----------------------------------------
 
 	/**
 	 * Calculating power of cipher
 	 * @param[in] cipher(m)
+	 * @param[in] precision of initial m
 	 * @param[in] deg
 	 * @return cipher(m^deg)
 	 */
-	Cipher power(Cipher& cipher, const long& degree);
+	Cipher power(Cipher& cipher, const long& precisionBits, const long& degree);
 	/**
 	 * Calculating and storing powers of cipher up to deg
 	 * @param[in] cipher(m)
+	 * @param[in] precision of initial m
 	 * @param[in] deg
 	 * @return [cipher(m), cipher(m^2), ... , cipher(m^deg)]
 	 */
-	Cipher* powerExtended(Cipher& cipher, const long& degree);
+	Cipher* powerExtended(Cipher& cipher, const long& precisionBits, const long& degree);
 
 	//-----------------------------------------
 
 	/**
 	 * Calculating product of ciphers, number of ciphers here is power of 2
 	 * @param[in] [cipher(m_1), cipher(m_2), ... ,cipher(m_{2^logdeg})]
+	 * @param[in] precision of initial m_i
 	 * @param[in] logdeg
 	 * @return cipher(m_1 * m_2 *...*m_{2^logdeg})
 	 */
-	Cipher prodOfPo2(Cipher*& ciphers, const long& logDegree);
+	Cipher prodOfPo2(Cipher*& ciphers, const long& precisionBits, const long& logDegree);
 
 	/**
 	 * Calculating product of ciphers
 	 * @param[in] [cipher(m_1), cipher(m_2), ... ,cipher(m_{degree})]
+	 * @param[in] precision of initial m_i
 	 * @param[in] degree
 	 * @return cipher(m_1 * m_2 *...*m_{degree})
 	 */
-	Cipher prod(Cipher*& ciphers, const long& degree);
+	Cipher prod(Cipher*& ciphers, const long& precisionBits, const long& degree);
 
 	//-----------------------------------------
 
@@ -81,9 +87,9 @@ public:
 	 * Calculating distance of ciphers
 	 * @param[in] cipher(m_1, m_2, ..., m_slots)
 	 * @param[in] cipher(m'_1, m'_2, ..., m'_slots)
-	 * @return cipher(sum((m_i-m'_i)^2) / p)
+	 * @return cipher(sum((m_i-m'_i)^2) >> precisionBits)
 	 */
-	Cipher distance(Cipher& cipher1, Cipher& cipher2);
+	Cipher distance(Cipher& cipher1, Cipher& cipher2, const long& precisionBits);
 	//-----------------------------------------
 
 	/**
@@ -107,18 +113,20 @@ public:
 	 * Pairwise ciphers multiplication and modulus switching
 	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
 	 * @param[in] [cipher(n_1), cipher(n_2),...,cipher(n_size)]
+	 * @param[in] precision of initial m_i, n_i
 	 * @param[in] size
 	 * @return [cipher(m_1 * n_1 / p), cipher(m_2 * n_2 / p),...,cipher(m_size * n_size / p)] one level higher
 	 */
-	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
+	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& precisionBits, const long& size);
 
 	/**
 	 * Pairwise ciphers multiplication and modulus switching
 	 * @param[in, out] [cipher(m_1), cipher(m_2),...,cipher(m_size)] -> [cipher(m_1 * n_1 / p), cipher(m_2 * n_2 / p),...,cipher(m_size * n_size / p)]
 	 * @param[in] [cipher(n_1), cipher(n_2),...,cipher(n_size)]
+	 * @param[in] precision of initial m_i, n_i
 	 * @param[in] size
 	 */
-	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
+	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& precisionBits, const long& size);
 
 	//-----------------------------------------
 
@@ -144,28 +152,31 @@ public:
 	 * Calculating inner product of ciphers
 	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
 	 * @param[in] [cipher(n_1), cipher(n_2),...,cipher(n_size)]
+	 * @param[in] precision of initial m_i, n_i
 	 * @param[in] size
 	 * @return cipher(m_1 * n_1 + m_2 * n_2 + ... + m_size * n_size)
 	 */
-	Cipher innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
+	Cipher innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& precision, const long& size);
 
 	//-----------------------------------------
 
 	/**
 	 * Calculating inverse of a cipher, using steps number of approximations
 	 * @param[in] cipher(m)
+	 * @param[in] precision of initial m
 	 * @param[in] steps
-	 * @return cipher(p^2 / m)
+	 * @return cipher(1 / m << (2 * precisionBits))
 	 */
-	Cipher inverse(Cipher& cipher, const long& stepsNum);
+	Cipher inverse(Cipher& cipher, const long& precisionBits, const long& stepsNum);
 
 	/**
 	 * Calculating and storing inverse of a cipher at each step up to stepsNum
 	 * @param[in] cipher(m)
+	 * @param[in] precision of initial m
 	 * @param[in] steps
-	 * @return [cipher(p^2 / m), ... ,cipher(p^2 / m)]
+	 * @return [cipher(1 / m << (2 * precisionBits)), ... ,cipher(1 / m << (2 * precisionBits))]
 	 */
-	Cipher* inverseExtended(Cipher& cipher, const long& stepsNum);
+	Cipher* inverseExtended(Cipher& cipher, const long& precisionBits, const long& stepsNum);
 
 	//-----------------------------------------
 
@@ -173,34 +184,38 @@ public:
 	 * Calculating function using Taylor Series approximation, more information in SchemeAux
 	 * @param[in] cipher(m)
 	 * @param[in] funcName
-	 * @param[in] degee
+	 * @param[in] precision of initial m
+	 * @param[in] degree
 	 * @return cipher(funcName(m))
 	 */
-	Cipher function(Cipher& cipher, string& funcName, const long& degree);
+	Cipher function(Cipher& cipher, string& funcName, const long& precisionBits, const long& degree);
 
 	/**
 	 * Calculating function using Taylor Series approximation, more information in SchemeAux
 	 * @param[in] cipher(m)
 	 * @param[in] funcName
+	 * @param[in] precision of initial m
 	 * @param[in] degee
 	 * @return cipher(funcName(m) * p), but saves one level
 	 */
-	Cipher functionLazy(Cipher& cipher, string& funcName, const long& degree);
+	Cipher functionLazy(Cipher& cipher, string& funcName, const long& precisionBits, const long& degree);
 
 	/**
 	 * Calculating function using Taylor Series approximation, and storing intermediate results
 	 * @param[in] cipher(m)
 	 * @param[in] funcName
+	 * @param[in] precision of initial m
 	 * @param[in] degee
 	 * @return [cipher(funcName(m)), ... ,cipher(funcName(m))]
 	 */
-	Cipher* functionExtended(Cipher& cipher, string& funcName, const long& degree);
+	Cipher* functionExtended(Cipher& cipher, string& funcName, const long& precisionBits, const long& degree);
 
 	//-----------------------------------------
 
 	/**
 	 * Calculating fft of ciphers
 	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
+	 * @param[in] precision of initial m_i
 	 * @param[in] size is a power of 2
 	 * @param[in] boolean is forward?
 	 * @return [cipher(fft_1), ... ,cipher(fft_size)]
@@ -210,6 +225,7 @@ public:
 	/**
 	 * Calculating fft of ciphers
 	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
+	 * @param[in] precision of initial m_i
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fft_1), ... ,cipher(fft_size)]
 	 */
@@ -218,6 +234,7 @@ public:
 	/**
 	 * Calculating fft inverse of ciphers
 	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
+	 * @param[in] precision of initial m_i
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fftinv_1), ... ,cipher(fftinv_size)]
 	 */
@@ -226,6 +243,7 @@ public:
 	/**
 	 * Calculating fft inverse of ciphers
 	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
+	 * @param[in] precision of initial m_i
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fftinv_1 * size), ... ,cipher(fftinv_size * size)] but saves level
 	 */
@@ -235,11 +253,6 @@ public:
 	 * auxiliary operation for multithreading
 	 */
 	void butOperation(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift);
-
-	/**
-	 * auxiliary operation for multithreading
-	 */
-	void rescale(Cipher& c, long& bits);
 
 	//-----------------------------------------
 

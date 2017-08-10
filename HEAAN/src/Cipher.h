@@ -16,21 +16,19 @@ public:
 	ZZX ax;
 	ZZX bx;
 
+	ZZ mod; ///< mod in cipher
+	long cbits; ///< bits in cipher
 	long slots; ///< number of slots
-	long level; ///< level of ciphertext
 
 	//-----------------------------------------
 
 	/**
 	 * Ciphertext = (bx = mx + ex - ax * sx, ax) for secret key sx and error ex
+	 * @param[in] bits: bits in cipher
 	 * @param[in] slots: number of slots
-	 * @param[in] level: ciphertext level
 	 */
-	Cipher(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), long slots = 1, long level = 1) : ax(ax), bx(bx), slots(slots) , level(level) {}
+	Cipher(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), ZZ mod = ZZ::zero(), long cbits = 0, long slots = 1) : ax(ax), bx(bx), mod(mod), cbits(cbits), slots(slots) {}
 
-	//-----------------------------------------
-
-	string toString();
 };
 
 #endif /* SCHEME_CIPHER_H_ */

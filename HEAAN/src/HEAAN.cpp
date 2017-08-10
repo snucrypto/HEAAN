@@ -5,132 +5,128 @@ int main() {
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, logSlots
-	 * Suggested: 13, 2, 30, 5, 3
+	 * Params: logN, logq, precisionBits, logSlots
+	 * Suggested: 13, 65, 30, 3
 	 */
 
-//	TestScheme::testEncodeBatch(13, 5, 30, 5, 3);
+//	TestScheme::testEncodeBatch(13, 65, 30, 3);
 
 	/*
-	 * Params: logN, logl, logp, L, logSlots
-	 * Suggested: 13, 2, 30, 5, 3
+	 * Params: logN, logq, precisionBits, logSlots
+	 * Suggested: 13, 65, 30, 3
 	 */
 
-//	TestScheme::testConjugateBatch(13, 5, 30, 5, 3);
+//	TestScheme::testConjugateBatch(13, 65, 30, 3);
 
 	/*
-	 * Params: logN, logl, logp, L, logSlots
-	 * Suggested: 13, 2, 30, 5, 3
+	 * Params: logN, logq, precisionBits, logSlots
+	 * Suggested: 13, 65, 30, 3
 	 */
 
-//	TestScheme::testimultBatch(13, 5, 30, 5, 3);
+//	TestScheme::testimultBatch(13, 65, 30, 3);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, rotlogSlots, logSlots, isLeft
-	 * Suggested: 13, 2, 30, 5, 2, 5, true
+	 * Params: logN, logq, precisionBits, rotlogSlots, logSlots, isLeft
+	 * Suggested: 13, 65, 30, 2, 5, true
 	 */
 
-//	TestScheme::testRotateByPo2Batch(13, 2, 30, 5, 2, 5, true);
-//	TestScheme::testRotateBatch(13, 2, 30, 5, 17, 5, true);
+//	TestScheme::testRotateByPo2Batch(13, 65, 30, 2, 5, true);
+//	TestScheme::testRotateBatch(13, 65, 30, 17, 5, true);
 
 	/*
-	 * Params: logN, logl, logp, L, logSlots
-	 * Suggested: 13, 2, 30, 5, 12
+	 * Params: logN, logq, precisionBits, logSlots
+	 * Suggested: 13, 65, 30, 3
 	 */
 
-//	TestScheme::testSlotsSum(13, 2, 30, 5, 12);
+//	TestScheme::testSlotsSum(13, 65, 30, 3);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, logDegree, logSlots
-	 * Suggested: 13, 2, 30, 5, 4, 3
-	 * Suggested: 15, 2, 56, 11, 10, 3
+	 * Params: logN, logq, precisionBits, logDegree, logSlots
+	 * Suggested: 13, 155, 30, 4, 3
+	 * Suggested: 15, 618, 56, 10, 3
 	 */
 
-//	TestScheme::testPowerOf2Batch(13, 2, 30, 5, 4, 3);
+//	TestScheme::testPowerOf2Batch(13, 155, 30, 4, 3);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, degree, logSlots
-	 * Suggested: 13, 2, 30, 5, 13, 3
-	 * Suggested: 15, 2, 56, 11, 903, 3
+	 * Params: logN, logq, precisionBits, degree, logSlots
+	 * Suggested: 13, 155, 30, 13, 3
+	 * Suggested: 15, 618, 56, 903, 3
 	 */
 
-//	TestScheme::testPowerBatch(15, 4, 56, 11, 903, 3);
+//	TestScheme::testPowerBatch(15, 618, 56, 903, 3);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, logDegree, logSlots
-	 * Suggested: 13, 2, 30, 5, 4, 3
-	 * Suggested: 15, 2, 56, 11, 10, 3
+	 * Params: logN, logq, precisionBits, logDegree, logSlots
+	 * Suggested: 13, 155, 30, 4, 3
+	 * Suggested: 15, 618, 56, 10, 3
 	 */
 
-//	TestScheme::testProdOfPo2Batch(13, 2, 30, 5, 4, 3);
+//	TestScheme::testProdOfPo2Batch(13, 155, 30, 4, 3);
 
 	/*
-	 * Params: logN, logl, logp, L, degree, logSlots
-	 * Suggested: 13, 2, 30, 5, 13, 3
-	 * Suggested: 15, 2, 56, 11, 903, 3
+	 * Params: logN, logq, precisionBits, degree, logSlots
+	 * Suggested: 13, 155, 30, 13, 3
+	 * Suggested: 15, 618, 56, 903, 3
 	 */
 
-//	TestScheme::testProdBatch(13, 2, 30, 5, 13, 3);
+//	TestScheme::testProdBatch(13, 155, 30, 13, 3);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, invSteps, logSlots
-	 * Suggested: 14, 3, 25, 10, 8, 3
-	 * Suggested: 15, 3, 32, 10, 8, 3
+	 * Params: logN, logq, precisionBits, invSteps, logSlots
+	 * Suggested: 14, 255, 25, 8, 3
+	 * Suggested: 15, 325, 32, 8, 3
 	 */
 
-//	TestScheme::testInverseBatch(14, 3, 25, 10, 8, 3);
+//	TestScheme::testInverseBatch(14, 285, 25, 8, 3);
 
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, degree, logSlots
-	 * Suggested: 13, 2, 30, 5, 8, 3
+	 * Params: logN, logq, long precisionBits, degree, logSlots
+	 * Suggested: 13, 155, 30, 7, 3
 	 */
 
-//	TestScheme::testLogarithmBatch(13, 2, 30, 5, 8, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logl, logp, L, degree, logSlots
-	 * Suggested: 13, 2, 30, 5, 7, 3
-	 * Suggested: 13, 37, 30, 4, 7, 3 (for lazy)
-	 */
-
-//	TestScheme::testExponentBatch(13, 2, 30, 5, 7, 3);
-//	TestScheme::testExponentBatchLazy(13, 32, 30, 4, 7, 3);
+//	TestScheme::testLogarithmBatch(13, 155, 30, 7, 3);
 
 	//-----------------------------------------
 
 	/*
 	 * Params: logN, logl, logp, L, degree, logSlots
-	 * Suggested: 13, 2, 30, 5, 7, 3
-	 * Suggested: 13, 32, 30, 4, 7, 3 (for lazy)
+	 * Suggested: 13, 155, 30, 7, 3
 	 */
 
-//	TestScheme::testSigmoidBatch(13, 2, 30, 5, 7, 3);
-//	TestScheme::testSigmoidBatchLazy(13, 32, 30, 4, 7, 3);
+//	TestScheme::testExponentBatch(13, 155, 30, 7, 3);
+
+	//-----------------------------------------
+
+	/*
+	 * Params: logN, logl, logp, L, degree, logSlots
+	 * Suggested: 13, 155, 30, 7, 3
+	 */
+
+//	TestScheme::testSigmoidBatch(13, 155, 30, 7, 3);
+//	TestScheme::testSigmoidBatchLazy(13, 155, 30, 7, 3);
 
 	//-----------------------------------------
 
 	/*
 	 * Params: logN, logl, logp, L, logfftdim, logSlots
-	 * Suggested: 14, 7, 48, 3, 4, 3;
-	 * Suggested: 14, 55, 48, 2, 4 (for lazy)
+	 * Suggested: 13, 155, 48, 4, 3;
 	 */
 
-//	TestScheme::testFFTBatch(13, 7, 48, 3, 4, 3);
-//	TestScheme::testFFTLazy(13, 55, 48, 2, 4);
+//	TestScheme::testFFTBatch(13, 155, 48, 4, 3);
+//	TestScheme::testFFTLazy(13, 155, 48, 4);
 
 	return 0;
 }

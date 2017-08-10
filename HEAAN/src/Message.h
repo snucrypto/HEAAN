@@ -11,21 +11,20 @@ public:
 
 	ZZX mx; ///< message mod X^N + 1
 
+	ZZ mod;
+	long cbits; ///< bits in cipher
 	long slots; ///< number of slots
-	long level; ///< level of message
 
 	//-----------------------------------------
 
 	/**
 	 * Message: mx
+	 * @param[in] polynomial mx
+	 * @param[in] bits: bits in cipher
 	 * @param[in] slots: number of slots
-	 * @param[in] level: message level
 	 */
-	Message(ZZX mx = ZZX::zero(), long slots = 1, long level = 1) : mx(mx), slots(slots), level(level) {}
+	Message(ZZX mx = ZZX::zero(), ZZ mod = ZZ::zero(), long cbits = 0, long slots = 1) : mx(mx), mod(mod), cbits(cbits), slots(slots) {}
 
-	//-----------------------------------------
-
-	string toString();
 };
 
 #endif /* SCHEME_MESSAGE_H_ */

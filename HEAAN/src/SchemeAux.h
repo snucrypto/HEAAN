@@ -14,33 +14,18 @@ using namespace NTL;
 class SchemeAux {
 public:
 
-	long logp;
+	long precisionBits;
+
 	RR** ksiPowsr; ///< storing ksi pows for fft calculation
 	RR** ksiPowsi; ///< storing ksi pows for fft calculation
 	map<string, double*> taylorCoeffsMap; ///< storing taylor coefficients for function calculation
-	map<string, ZZ*> taylorPowsMap; ///< storing taylor coefficients * p for function calculation
-
-	ZZ poversqrt2; ///< p/sqrt(2) needed for i (imaginary unit) multiplication
 
 	//-----------------------------------------
 
-	SchemeAux(Params& params, bool computeTaylorPows = true);
+	SchemeAux(Params& params, long precisionBits);
 
 	//-----------------------------------------
 
-	/**
-	 * precomputing information about taylor power series for logarithm, exponent sigmoid and (1 - sigmoid) functions
-	 * this information needed for evaluating corresponding functions in encrypted state
-	 */
-	void precomputeTaylorPows();
-
-	/**
-	 * adding information about taylor power series for a function needed for evaluating this function in encrypted state
-	 * @param[in] function name
-	 * @param[in] array of taylor serires coefficients of a function
-	 * @param[in] size of an array
-	 */
-	void insertTaylorPows(string& name, double*& coeffs, long size);
 };
 
 static string LOGARITHM = "Logarithm"; ///< log(x)

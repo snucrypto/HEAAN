@@ -61,7 +61,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return pre fft
 	 */
-	static CZZ* fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp, const bool& isForward);
+	static CZZ* fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits, const bool& isForward);
 
 	/**
 	 * calculates fft in Z_q[X] / (X^N + 1)
@@ -71,7 +71,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return fft
 	 */
-	static CZZ* fft(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp);
+	static CZZ* fft(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits);
 
 	/**
 	 * calculates fft inverse in Z_q[X] / (X^N + 1)
@@ -81,7 +81,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return fft inverse
 	 */
-	static CZZ* fftInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp);
+	static CZZ* fftInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits);
 
 	/**
 	 * calculates fft inverse without last division by size in Z_q[X] / (X^N + 1)
@@ -91,7 +91,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return fft inverse without last division by size
 	 */
-	static CZZ* fftInvLazy(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp);
+	static CZZ* fftInvLazy(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits);
 
 	/**
 	 * calculates full fft flow in Z_q[X] / (X^N + 1)
@@ -102,7 +102,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return full fft flow
 	 */
-	static CZZ* fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp);
+	static CZZ* fftFull(CZZ*& vals1, CZZ*& vals2, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits);
 
 	/**
 	 * calculates full fft flow without last division by size in Z_q[X] / (X^N + 1)
@@ -113,7 +113,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return full fft flow without last division by size
 	 */
-	static CZZ* fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp);
+	static CZZ* fftFullLazy(CZZ*& vals1, CZZ*& vals2, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits);
 
 	//-----------------------------------------
 
@@ -125,7 +125,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return special fft
 	 */
-	static CZZ* fftSpecial(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp);
+	static CZZ* fftSpecial(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits);
 
 	/**
 	 * calculates special fft inverse in Z_q[X] / (X^N + 1) needed for encoding/decoding
@@ -135,7 +135,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return special fft inverse
 	 */
-	static CZZ* fftSpecialInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& logp);
+	static CZZ* fftSpecialInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const long& bits);
 
 	//-----------------------------------------
 };

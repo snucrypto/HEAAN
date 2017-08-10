@@ -18,31 +18,9 @@ public:
 	PubKey& publicKey;
 	SchemeAux& aux;
 
-	//-----------------------------------------
 
 	Scheme(Params& params, PubKey& publicKey, SchemeAux& schemeaux) : params(params), publicKey(publicKey), aux(schemeaux) {};
 
-	//-----------------------------------------
-
-	/**
-	 * @param[in] level
-	 * @return modulus of given level
-	 */
-	ZZ getqi(long& level);
-
-	/**
-	 * @param[in] level
-	 * @return big modulus of given level
-	 */
-	ZZ getPqi(long& level);
-
-	/**
-	 * @param level
-	 * @return log of modulus of given level
-	 */
-	long getLogqi(long& level);
-
-	//-----------------------------------------
 
 	/**
 	 * regroup vals indexes (i) -> (3^i mod slots) and add conjugates
@@ -73,11 +51,19 @@ public:
 	/**
 	 * encodes regrouped vals into ZZX using fft inverse
 	 * @param[in] vals
+	 * @param[in] cbits of message
+	 * @param[in] slots
+	 * @return Message ZZX slots and level
+	 */
+	Message encodeWithBits(CZZ*& vals, long cbits, long slots);
+
+	/**
+	 * encodes regrouped vals into ZZX using fft inverse
+	 * @param[in] vals
 	 * @param[in] slots
 	 * @return Message ZZX slots and level
 	 */
 	Message encode(CZZ*& vals, long slots);
-
 	/**
 	 * decodes ZZX into regrouped vals using fft
 	 * @param[in] message
@@ -88,12 +74,12 @@ public:
 	//-----------------------------------------
 
 	/**
-	 * encrypts message in RLWE instance bx = ax * sx + ex + mx mod qi
+	 * encrypts message in RLWE instance bx = ax * sx + ex + mx mod 2^bits
 	 * @param[in] message
-	 * @param[in] level
+	 * @param[in] bits
 	 * @return cipher
 	 */
-	Cipher encryptMsg(Message& msg, long level = 1);
+	Cipher encryptMsg(Message& msg);
 
 	/**
 	 * decrypts cipher
@@ -108,11 +94,19 @@ public:
 	/**
 	 * All encryption process: regroup vals with adding conjugates, encode and encrypts
 	 * @param[in] vals
+	 * @param[in] cbits
 	 * @param[in] slots
-	 * @param[in] level
 	 * @return cipher
 	 */
-	Cipher encrypt(CZZ*& vals, long slots, long level = 1);
+	Cipher encryptWithBits(CZZ*& vals, long cbits, long slots);
+
+	/**
+	 * All encryption process: regroup vals with adding conjugates, encode and encrypts
+	 * @param[in] vals
+	 * @param[in] slots
+	 * @return cipher
+	 */
+	Cipher encrypt(CZZ*& vals, long slots);
 
 	/**
 	 * All decryption process: decrypt, decode, and degroup vals with removing conjugates
@@ -126,10 +120,17 @@ public:
 	/**
 	 * encrypt with only one value
 	 * @param[in] val
-	 * @param[in] level
+	 * @param[in] cbits
 	 * @return cipher
 	 */
-	Cipher encryptSingle(CZZ& val, long level = 1);
+	Cipher encryptSingleWithBits(CZZ& val, long cbits);
+
+	/**
+	 * encrypt with only one value
+	 * @param[in] val
+	 * @return cipher
+	 */
+	Cipher encryptSingle(CZZ& val);
 
 	/**
 	 * decrypt with advance knowledge that slots = 1;
@@ -207,13 +208,13 @@ public:
 	 * @param[in] cipher(m)
 	 * @return cipher(i * m)
 	 */
-	Cipher imult(Cipher& cipher);
+	Cipher imult(Cipher& cipher, const long& precisionBits);
 
 	/**
 	 * multiplication by i (imaginary unit) in cipher
 	 * @param[in, out] cipher(m) -> cipher(i * m)
 	 */
-	void imultAndEqual(Cipher& cipher);
+	void imultAndEqual(Cipher& cipher, const long& precisionBits);
 
 	//-----------------------------------------
 
@@ -268,8 +269,19 @@ public:
 	 */
 	void multByConstAndEqual(Cipher& cipher, ZZ& cnst);
 
+	/**
+	 * polynomial multiplication
+	 * @param[in] cipher(m)
+	 * @param[in] polynomial
+	 * @return cipher(m * poly)
+	 */
 	Cipher multByPoly(Cipher& cipher, ZZX& poly);
 
+	/**
+	 * polynomial multiplication
+	 * @param[in, out] cipher(m) -> cipher(m * poly)
+	 * @param[in] polynomial
+	 */
 	void multByPolyAndEqual(Cipher& cipher, ZZX& poly);
 
 	/**
@@ -289,8 +301,6 @@ public:
 	 */
 	void multByConstBySlotsAndEqual(Cipher& cipher, CZZ*& cnstvec);
 
-	//-----------------------------------------
-
 	/**
 	 * X^degree multiplication
 	 * @param[in] cipher(m)
@@ -305,8 +315,6 @@ public:
 	 * @param[in] degree
 	 */
 	void multByMonomialAndEqual(Cipher& cipher, const long& degree);
-
-	//-----------------------------------------
 
 	/**
 	 * 2^bits multiplication
@@ -329,84 +337,35 @@ public:
 	 */
 	void doubleAndEqual(Cipher& cipher);
 
-	//-----------------------------------------
-
 	/**
 	 * modulus switching procedure
 	 * @param[in] cipher(m)
-	 * @param[in] new level
-	 * @return cipher(m/p^(newlevel-oldlevel)) with new level
+	 * @param[in] bitsDown
+	 * @return cipher(m/2^bitsDown) with new cbits
 	 */
-	Cipher modSwitch(Cipher& cipher, long newLevel);
+	Cipher modSwitch(Cipher& cipher, long bitsDown);
 
 	/**
 	 * modulus switching procedure
-	 * @param[in, out] cipher(m) -> cipher(m/p^(newlevel-oldlevel)) with new level
-	 * @param[in] new level
+	 * @param[in, out] cipher(m) -> cipher(m/2^bitsDown) with new cbits
+	 * @param[in] bitsDown
 	 */
-	void modSwitchAndEqual(Cipher& cipher, long newLevel);
-
-	/**
-	 * modulus switching procedure
-	 * @param[in] cipher(m)
-	 * @return cipher(m/p) with one level up
-	 */
-	Cipher modSwitchOne(Cipher& cipher);
-
-	/**
-	 * modulus switching procedure
-	 * @param[in, out] cipher(m) -> cipher(m/p) with one level up
-	 */
-	void modSwitchOneAndEqual(Cipher& cipher);
-
-	//-----------------------------------------
+	void modSwitchAndEqual(Cipher& cipher, long bitsDown);
 
 	/**
 	 * modulus embedding procedure
 	 * @param[in] cipher(m)
-	 * @param[in] new level
-	 * @return cipher(m) with new level
+	 * @param[in] new cbits
+	 * @return cipher(m) with new cbits
 	 */
-	Cipher modEmbed(Cipher& cipher, long newLevel);
+	Cipher modEmbed(Cipher& cipher, long bitsDown);
 
 	/**
 	 * modulus embedding procedure
-	 * @param[in, out] cipher(m) -> cipher(m) with new level
-	 * @param[in] new level
+	 * @param[in, out] cipher(m) -> cipher(m) with new cbits
+	 * @param[in] new cbits
 	 */
-	void modEmbedAndEqual(Cipher& cipher, long newLevel);
-
-	/**
-	 * modulus embedding procedure
-	 * @param[in] cipher(m)
-	 * @return cipher(m) with one level up
-	 */
-	Cipher modEmbedOne(Cipher& cipher);
-
-	/**
-	 * modulus embedding procedure
-	 * @param[in, out] cipher(m) -> cipher(m) with one level up
-	 */
-	void modEmbedOneAndEqual(Cipher& cipher);
-
-	//-----------------------------------------
-
-	/**
-	 * multiplication of ciphers and modulus switching procedure
-	 * @param[in] cipher(m1)
-	 * @param[in] cipher(m2)
-	 * @return cipher(m1 * m2 / p) with one level up
-	 */
-	Cipher multAndModSwitchOne(Cipher& cipher1, Cipher& cipher2);
-
-	/**
-	 * multiplication of ciphers and modulus switching procedure
-	 * @param[in, out] cipher(m1) -> cipher(m1 * m2 / p) with one level up
-	 * @param[in] cipher(m2)
-	 */
-	void multModSwitchOneAndEqual(Cipher& cipher1, Cipher& cipher2);
-
-	//-----------------------------------------
+	void modEmbedAndEqual(Cipher& cipher, long bitsDown);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -424,8 +383,20 @@ public:
 	 */
 	void leftRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots);
 
+	/**
+	 * calculates cipher of array with rotated indexes
+	 * @param[in] cipher(m(v_1, v_2, ..., v_slots))
+	 * @param[in] log of rotation slots
+	 * @return cipher(m(v_{1-2^logsteps}, v_{2-2^logsteps}, ..., v_{slots-2^logsteps})
+	 */
 	Cipher rightRotateByPo2(Cipher& cipher, long& logrotSlots);
 
+	/**
+	 * calculates cipher of array with rotated indexes
+	 * @param[in, out] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1-2^logsteps}, v_{2-2^logsteps}, ..., v_{slots-2^logsteps})
+	 * @param[in] log of rotation slots
+	 * @return
+	 */
 	void rightRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots);
 
 	/**
@@ -443,11 +414,20 @@ public:
 	 */
 	void leftRotateAndEqual(Cipher& cipher, long& rotSlots);
 
+	/**
+	 * calculates cipher of array with rotated indexes
+	 * @param[in] cipher(m(v_1, v_2, ..., v_slots))
+	 * @param[in] rotation slots
+	 * @return cipher(m(v_{1-steps}, v_{2-steps}, ..., v_{slots-steps})
+	 */
 	Cipher rightRotate(Cipher& cipher, long& rotSlots);
 
+	/**
+	 * calculates cipher of array with rotated indexes
+	 * @param[in] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1-steps}, v_{2-steps}, ..., v_{slots-steps})
+	 * @param[in] rotation slots
+	 */
 	void rightRotateAndEqual(Cipher& cipher, long& rotSlots);
-
-	//-----------------------------------------
 
 };
 
