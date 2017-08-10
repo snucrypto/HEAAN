@@ -28,8 +28,9 @@ SchemeAux::SchemeAux(Params& params, long precisionBits): precisionBits(precisio
 	taylorCoeffsMap.insert(pair<string, double*>(SIGMOID, new double[11]{1./2,1./4,0,-1./48,0,1./480,0,-17./80640,0,31./1451520,0}));
 	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDBAR, new double[11]{1./2,-1./4,0,1./48,0,-1./480,0,17./80640,0,-31./1451520,0}));
 
-	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDGOOD, new double[8]{0.5,0.216884,0,0.00819276,0,0.000165861,0,-0.00000119581}));
-	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDBARGOOD, new double[8]{0.5,-0.216884,0,-0.00819276,0,-0.000165861,0,0.00000119581}));
-	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDPRIMEGOOD7, new double[8]{-0.5,0.216884,0,0.00819276,0,0.000165861,0,-0.00000119581}));
-	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDPRIMEGOOD3, new double[4]{-0.5,0.18,0,-0.003}));
+	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDGOOD, new double[8]{0.5,0.216884,0,-0.00819276,0,0.000165861,0,-0.00000119581}));
+	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDBARGOOD, new double[8]{0.5,-0.216884,0,0.00819276,0,-0.000165861,0,0.00000119581}));
+	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDPRIMEGOOD7, new double[8]{-0.5,0.216884,0,-0.00819276,0,0.000165861,0,-0.00000119581}));
+	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDPRIMEGOOD5, new double[6]{-0.5,0.2166,0,-0.0077,0,0.00011}));
+	taylorCoeffsMap.insert(pair<string, double*>(SIGMOIDPRIMEGOOD3, new double[4]{-0.5,0.19,0,-0.0035}));
 }
