@@ -12,6 +12,24 @@
 #include "SchemeAux.h"
 #include "SecKey.h"
 
+Cipher* SchemeAlgo::encryptSingleArray(CZZ*& vals, long size) {
+	Cipher* res = new Cipher[size];
+	for (long i = 0; i < size; ++i) {
+		res[i] = scheme.encryptSingle(vals[i]);
+	}
+	return res;
+}
+
+CZZ* SchemeAlgo::decryptSingleArray(SecKey& secretKey, Cipher*& ciphers, long size) {
+	CZZ* res = new CZZ[size];
+	for (int i = 0; i < size; ++i) {
+		Message msg = scheme.decryptMsg(secretKey, ciphers[i]);
+		CZZ* gvals = scheme.decode(msg);
+		res[i] = gvals[0];
+	}
+	return res;
+}
+
 Cipher SchemeAlgo::powerOf2(Cipher& cipher, const long& precisionBits, const long& logDegree) {
 	Cipher res = cipher;
 	for (long i = 0; i < logDegree; ++i) {
@@ -176,24 +194,6 @@ void SchemeAlgo::multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, 
 	NTL_EXEC_RANGE_END;
 }
 
-CZZ* SchemeAlgo::decryptSingleArray(SecKey& secretKey, Cipher*& ciphers, long size) {
-	CZZ* res = new CZZ[size];
-	for (int i = 0; i < size; ++i) {
-		Message msg = scheme.decryptMsg(secretKey, ciphers[i]);
-		CZZ* gvals = scheme.decode(msg);
-		res[i] = gvals[0];
-	}
-	return res;
-}
-
-Cipher* SchemeAlgo::encryptSingleArray(CZZ*& vals, long size) {
-	Cipher* res = new Cipher[size];
-	for (long i = 0; i < size; ++i) {
-		res[i] = scheme.encryptSingle(vals[i]);
-	}
-	return res;
-}
-
 Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& precisionBits, const long& size) {
 	Cipher cip = scheme.mult(ciphers1[size-1], ciphers2[size-1]);
 
@@ -207,6 +207,25 @@ Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& p
 	scheme.modSwitchAndEqual(cip, precisionBits);
 	return cip;
 }
+
+Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long& slots) {
+	long logslots = log2(slots);
+	Cipher res = cipher;
+	for (long i = 0; i < logslots; ++i) {
+		Cipher rot = scheme.leftRotateByPo2(cipher, i);
+		scheme.addAndEqual(res, rot);
+	}
+	return res;
+}
+
+void SchemeAlgo::partialSlotsSumAndEqual(Cipher& cipher, const long& slots) {
+	long logslots = log2(slots);
+	for (long i = 0; i < logslots; ++i) {
+		Cipher rot = scheme.leftRotateByPo2(cipher, i);
+		scheme.addAndEqual(cipher, rot);
+	}
+}
+
 //-----------------------------------------
 
 Cipher SchemeAlgo::inverse(Cipher& cipher, const long& precisionBits, const long& steps) {
@@ -382,22 +401,4 @@ void SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
 
 void SchemeAlgo::fftInvLazy(Cipher*& ciphers, const long& size) {
 	return fftRaw(ciphers, size, false);
-}
-
-Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long& slots) {
-	long logslots = log2(slots);
-	Cipher res = cipher;
-	for (long i = 0; i < logslots; ++i) {
-		Cipher rot = scheme.leftRotateByPo2(cipher, i);
-		scheme.addAndEqual(res, rot);
-	}
-	return res;
-}
-
-void SchemeAlgo::partialSlotsSumAndEqual(Cipher& cipher, const long& slots) {
-	long logslots = log2(slots);
-	for (long i = 0; i < logslots; ++i) {
-		Cipher rot = scheme.leftRotateByPo2(cipher, i);
-		scheme.addAndEqual(cipher, rot);
-	}
 }

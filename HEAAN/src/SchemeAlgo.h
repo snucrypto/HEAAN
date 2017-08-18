@@ -17,6 +17,22 @@ public:
 	//-----------------------------------------
 
 	/**
+	 * encrypting array of vals, each to one cipher
+	 * @param[in] [m_1, m_2,...,m_size]
+	 * @param[in] size
+	 * @return [cipher(m_1), cipher(m_2),...,cipher(m_size)]
+	 */
+	Cipher* encryptSingleArray(CZZ*& vals, long size);
+
+	/**
+	 * decrypting array of ciphers with single val encrypted in each
+	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
+	 * @param[in] size
+	 * @return [m_1, m_2,...,m_size]
+	 */
+	CZZ* decryptSingleArray(SecKey& secretKey, Cipher*& ciphers, long size);
+
+	/**
 	 * Calculating power of 2 cipher
 	 * @param[in] cipher(m)
 	 * @param[in] precision of initial m
@@ -132,24 +148,6 @@ public:
 	//-----------------------------------------
 
 	/**
-	 * encrypting array of vals, each to one cipher
-	 * @param[in] [m_1, m_2,...,m_size]
-	 * @param[in] size
-	 * @return [cipher(m_1), cipher(m_2),...,cipher(m_size)]
-	 */
-	Cipher* encryptSingleArray(CZZ*& vals, long size);
-
-	/**
-	 * decrypting array of ciphers with single val encrypted in each
-	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
-	 * @param[in] size
-	 * @return [m_1, m_2,...,m_size]
-	 */
-	CZZ* decryptSingleArray(SecKey& secretKey, Cipher*& ciphers, long size);
-
-	//-----------------------------------------
-
-	/**
 	 * Calculating inner product of ciphers
 	 * @param[in] [cipher(m_1), cipher(m_2),...,cipher(m_size)]
 	 * @param[in] [cipher(n_1), cipher(n_2),...,cipher(n_size)]
@@ -158,6 +156,22 @@ public:
 	 * @return cipher(m_1 * n_1 + m_2 * n_2 + ... + m_size * n_size)
 	 */
 	Cipher innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& precision, const long& size);
+
+	/**
+	 * Calculating cipher of partial sums
+	 * @param[in] cipher(m_1, m_2,..., m_size)
+	 * @param[in] slots summed in partial sums
+	 * @return cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
+	 *
+	 */
+	Cipher partialSlotsSum(Cipher& cipher, const long& slots);
+
+	/**
+	 * Calculating cipher of partial sums
+	 * @param[in, out] cipher(m_1, m_2,..., m_size) -> cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
+	 * @param[in] slots summed in partial sums
+	 */
+	void partialSlotsSumAndEqual(Cipher& cipher, const long& slots);
 
 	//-----------------------------------------
 
@@ -249,24 +263,6 @@ public:
 	 * @return [cipher(fftinv_1 * size), ... ,cipher(fftinv_size * size)] but saves level
 	 */
 	void fftInvLazy(Cipher*& ciphers, const long& size);
-
-	//-----------------------------------------
-
-	/**
-	 * Calculating cipher of partial sums
-	 * @param[in] cipher(m_1, m_2,..., m_size)
-	 * @param[in] slots summed in partial sums
-	 * @return cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
-	 *
-	 */
-	Cipher partialSlotsSum(Cipher& cipher, const long& slots);
-
-	/**
-	 * Calculating cipher of partial sums
-	 * @param[in, out] cipher(m_1, m_2,..., m_size) -> cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
-	 * @param[in] slots summed in partial sums
-	 */
-	void partialSlotsSumAndEqual(Cipher& cipher, const long& slots);
 
 	//-----------------------------------------
 

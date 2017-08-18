@@ -126,7 +126,7 @@ int main() {
 	 */
 
 //	TestScheme::testFFTBatch(13, 155, 48, 6, 3);
-	TestScheme::testFFTLazy(13, 155, 48, 6);
+//	TestScheme::testFFTLazy(13, 155, 48, 6);
 
 	return 0;
 }
