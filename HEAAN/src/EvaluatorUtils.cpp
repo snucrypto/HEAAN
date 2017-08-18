@@ -3,28 +3,6 @@
 #include <cmath>
 #include <cstdlib>
 
-void EvaluatorUtils::evaluateDoubleVal(double& xr, double& xi, CZZ& x, const long& bits) {
-	RR xxr = to_RR(x.r);
-	xxr.e -= bits;
-	xr = to_double(xxr);
-
-	RR xxi = to_RR(x.i);
-	xxi.e -= bits;
-	xi = to_double(xxi);
-}
-
-
-void EvaluatorUtils::evaluateDoubleVals(double*& xvecr, double*& xveci, CZZ*& xvec, const long size, const long& bits) {
-	for (long i = 0; i < size; ++i) {
-		RR xxvecr = to_RR(xvec[i].r);
-		xxvecr.e -= bits;
-		xvecr[i] = to_double(xxvecr);
-		RR xxveci = to_RR(xvec[i].i);
-		xxveci.e -= bits;
-		xveci[i] = to_double(xxveci);
-	}
-}
-
 ZZ EvaluatorUtils::evaluateVal(const double& x, const long& bits) {
 	return evaluateVal(to_RR(x), bits);
 }
@@ -201,24 +179,23 @@ void EvaluatorUtils::leftShiftAndEqual(CZZ*& vals, const long& size, const long&
 
 void EvaluatorUtils::leftRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize) {
 	long remrotSize = rotSize % size;
-	CZZ* tmp = new CZZ[size];
-	for (long i = 0; i < size - remrotSize; ++i) {
-		tmp[i] = vals[i + remrotSize];
+	if(remrotSize != 0) {
+		long divisor = GCD(remrotSize, size);
+		long steps = size / divisor;
+		for (long i = 0; i < divisor; ++i) {
+			CZZ tmp = vals[i];
+			long idx = i;
+			for (long j = 0; j < steps - 1; ++j) {
+				vals[idx] = vals[(idx + remrotSize) % size];
+				idx = (idx + remrotSize) % size;
+			}
+			vals[idx] = tmp;
+		}
 	}
-	for (long i = size - remrotSize; i < size; ++i) {
-		tmp[i] = vals[i + remrotSize - size];
-	}
-	vals = tmp;
 }
 
 void EvaluatorUtils::rightRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize) {
 	long remrotSize = rotSize % size;
-	CZZ* tmp = new CZZ[size];
-	for (long i = 0; i < size - remrotSize; ++i) {
-		tmp[i + remrotSize] = vals[i];
-	}
-	for (long i = size - remrotSize; i < size; ++i) {
-		tmp[i + remrotSize - size] = vals[i];
-	}
-	vals = tmp;
+	long leftremrotSize = (size - remrotSize) % size;
+	leftRotateAndEqual(vals, size, leftremrotSize);
 }

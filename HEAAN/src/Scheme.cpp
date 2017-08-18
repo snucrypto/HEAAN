@@ -44,32 +44,34 @@ CZZ* Scheme::degroupidx(CZZ*& vals, long slots) {
 
 //-----------------------------------------
 
-Message Scheme::encodeWithBits(CZZ*& vals, long cbits, long slots) {
+Message Scheme::encodeWithBits(CZZ* vals, long cbits, long slots) {
 	ZZX mx;
 	mx.SetLength(params.N);
 	ZZ mod = power2_ZZ(cbits);
 	long idx = 0;
-	long doubleslots = slots * 2;
+	long doubleslots = slots << 1;
 	long logDoubleslots = log2(slots) + 1;
 	long gap = (params.N >> logDoubleslots);
-	CZZ* fftInv = NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPowsr, aux.ksiPowsi, aux.precisionBits);
+	NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
 	for (long i = 0; i < doubleslots; ++i) {
-		mx.rep[idx] = fftInv[i].r;
+		mx.rep[idx] = vals[i].r;
 		idx += gap;
 	}
 	return Message(mx, mod, cbits, slots);
 }
 
-Message Scheme::encode(CZZ*& vals, long slots) {
+Message Scheme::encode(CZZ* vals, long slots) {
 	ZZX mx;
 	mx.SetLength(params.N);
 	long idx = 0;
-	long doubleslots = slots * 2;
+	long doubleslots = slots << 1;
 	long logDoubleslots = log2(slots) + 1;
 	long gap = (params.N >> logDoubleslots);
-	CZZ* fftInv = NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPowsr, aux.ksiPowsi, aux.precisionBits);
+
+	NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
+
 	for (long i = 0; i < doubleslots; ++i) {
-		mx.rep[idx] = fftInv[i].r;
+		mx.rep[idx] = vals[i].r;
 		idx += gap;
 	}
 	return Message(mx, params.q, params.logq, slots);
@@ -138,7 +140,8 @@ CZZ* Scheme::decode(Message& msg) {
 		fftinv[i] = CZZ(tmp, ZZ(0));
 		idx += gap;
 	}
-	return NumUtils::fftSpecial(fftinv, doubleslots, aux.ksiPowsr, aux.ksiPowsi, aux.precisionBits);
+	NumUtils::fftSpecial(fftinv, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
+	return fftinv;
 }
 
 CZZ* Scheme::decrypt(SecKey& secretKey, Cipher& cipher) {
@@ -200,6 +203,11 @@ Cipher Scheme::sub(Cipher& cipher1, Cipher& cipher2) {
 void Scheme::subAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	Ring2Utils::subAndEqual(cipher1.ax, cipher2.ax, cipher1.mod, params.N);
 	Ring2Utils::subAndEqual(cipher1.bx, cipher2.bx, cipher1.mod, params.N);
+}
+
+void Scheme::subAndEqual2(Cipher& cipher1, Cipher& cipher2) {
+	Ring2Utils::subAndEqual2(cipher1.ax, cipher2.ax, cipher1.mod, params.N);
+	Ring2Utils::subAndEqual2(cipher1.bx, cipher2.bx, cipher1.mod, params.N);
 }
 
 Cipher Scheme::conjugate(Cipher& cipher) {

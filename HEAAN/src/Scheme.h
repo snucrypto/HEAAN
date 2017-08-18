@@ -55,7 +55,7 @@ public:
 	 * @param[in] slots
 	 * @return Message ZZX slots and level
 	 */
-	Message encodeWithBits(CZZ*& vals, long cbits, long slots);
+	Message encodeWithBits(CZZ* vals, long cbits, long slots);
 
 	/**
 	 * encodes regrouped vals into ZZX using fft inverse
@@ -63,7 +63,7 @@ public:
 	 * @param[in] slots
 	 * @return Message ZZX slots and level
 	 */
-	Message encode(CZZ*& vals, long slots);
+	Message encode(CZZ* vals, long slots);
 	/**
 	 * decodes ZZX into regrouped vals using fft
 	 * @param[in] message
@@ -189,6 +189,13 @@ public:
 	 * @param[in] cipher(m2)
 	 */
 	void subAndEqual(Cipher& cipher1, Cipher& cipher2);
+
+	/**
+	 * substraction of ciphers
+	 * @param[in] cipher(m1)
+	 * @param[in, out] cipher(m2) -> cipher(m1 - m2)
+	 */
+	void subAndEqual2(Cipher& cipher1, Cipher& cipher2);
 
 	/**
 	 * conjugation in cipher

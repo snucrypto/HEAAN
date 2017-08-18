@@ -125,8 +125,8 @@ int main() {
 	 * Suggested: 13, 155, 48, 4, 3;
 	 */
 
-//	TestScheme::testFFTBatch(13, 155, 48, 4, 3);
-//	TestScheme::testFFTLazy(13, 155, 48, 4);
+//	TestScheme::testFFTBatch(13, 155, 48, 6, 3);
+	TestScheme::testFFTLazy(13, 155, 48, 6);
 
 	return 0;
 }

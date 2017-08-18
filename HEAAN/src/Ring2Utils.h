@@ -84,6 +84,15 @@ class Ring2Utils {
 		static void subAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree);
 
 		/**
+		 * substraction in ring Z_q[X] / (X^N + 1)
+		 * @param[in] p1 in Z_q[X] / (X^N + 1)
+		 * @param[in, out] p2 -> p1 - p2 in Z_q[X] / (X^N + 1)
+		 * @param[in] mod q
+		 * @param[in] degree N
+		 */
+		static void subAndEqual2(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree);
+
+		/**
 		 * conjugation
 		 * @param[out] conj(p) in Z_q[X] / (X^N + 1)
 		 * @param[in] p in Z_q[X] / (X^N + 1)

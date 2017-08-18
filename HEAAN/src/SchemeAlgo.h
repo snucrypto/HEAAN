@@ -44,6 +44,7 @@ public:
 	 * @return cipher(m^deg)
 	 */
 	Cipher power(Cipher& cipher, const long& precisionBits, const long& degree);
+
 	/**
 	 * Calculating and storing powers of cipher up to deg
 	 * @param[in] cipher(m)
@@ -220,7 +221,7 @@ public:
 	 * @param[in] boolean is forward?
 	 * @return [cipher(fft_1), ... ,cipher(fft_size)]
 	 */
-	Cipher* fftRaw(Cipher*& ciphers, const long& size, const bool& isForward);
+	void fftRaw(Cipher*& ciphers, const long& size, const bool& isForward);
 
 	/**
 	 * Calculating fft of ciphers
@@ -229,7 +230,7 @@ public:
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fft_1), ... ,cipher(fft_size)]
 	 */
-	Cipher* fft(Cipher*& ciphers, const long& size);
+	void fft(Cipher*& ciphers, const long& size);
 
 	/**
 	 * Calculating fft inverse of ciphers
@@ -238,7 +239,7 @@ public:
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fftinv_1), ... ,cipher(fftinv_size)]
 	 */
-	Cipher* fftInv(Cipher*& ciphers, const long& size);
+	void fftInv(Cipher*& ciphers, const long& size);
 
 	/**
 	 * Calculating fft inverse of ciphers
@@ -247,12 +248,7 @@ public:
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fftinv_1 * size), ... ,cipher(fftinv_size * size)] but saves level
 	 */
-	Cipher* fftInvLazy(Cipher*& ciphers, const long& size);
-
-	/**
-	 * auxiliary operation for multithreading
-	 */
-	void butOperation(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift);
+	void fftInvLazy(Cipher*& ciphers, const long& size);
 
 	//-----------------------------------------
 

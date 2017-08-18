@@ -1,10 +1,10 @@
 #include "SchemeAux.h"
 
 #include <NTL/RR.h>
-SchemeAux::SchemeAux(Params& params, long precisionBits): precisionBits(precisionBits) {
-	ksiPowsr = new RR*[params.logN + 2];
-	ksiPowsi = new RR*[params.logN + 2];
-	for (long i = 0; i < params.logN + 2; ++i) {
+SchemeAux::SchemeAux(long& logN) {
+	ksiPowsr = new RR*[logN + 2];
+	ksiPowsi = new RR*[logN + 2];
+	for (long i = 0; i < logN + 2; ++i) {
 		long ipow = (1 << i);
 		RR* tmpr = new RR[ipow + 1];
 		RR* tmpi = new RR[ipow + 1];

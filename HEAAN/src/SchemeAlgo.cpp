@@ -1,15 +1,16 @@
 #include "SchemeAlgo.h"
 
-#include <NTL/ZZ.h>
 #include <NTL/BasicThreadPool.h>
+#include <NTL/ZZ.h>
 #include <cmath>
-#include <future>
 #include <map>
-#include <thread>
 
+#include "CZZ.h"
+#include "EvaluatorUtils.h"
+#include "Message.h"
 #include "Params.h"
 #include "SchemeAux.h"
-#include "EvaluatorUtils.h"
+#include "SecKey.h"
 
 Cipher SchemeAlgo::powerOf2(Cipher& cipher, const long& precisionBits, const long& logDegree) {
 	Cipher res = cipher;
@@ -335,71 +336,51 @@ Cipher* SchemeAlgo::functionExtended(Cipher& cipher, string& funcName, const lon
 	return res;
 }
 
-//-----------------------------------------
-
-Cipher* SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isForward) {
-
-	if(size == 1) {
-		return ciphers;
+void SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isForward) {
+	for (long i = 1, j = 0; i < size; ++i) {
+		long bit = size >> 1;
+		for (; j >= bit; bit>>=1) {
+			j -= bit;
+		}
+		j += bit;
+		if(i < j) {
+			Cipher tmp = ciphers[i];
+			ciphers[i] = ciphers[j];
+			ciphers[j] = tmp;
+		}
 	}
 
-	long sizeh = size >> 1;
-
-	Cipher* sub1 = new Cipher[sizeh];
-	Cipher* sub2 = new Cipher[sizeh];
-
-	for (long i = 0; i < sizeh; ++i) {
-		sub1[i] = ciphers[2 * i];
-		sub2[i] = ciphers[2 * i + 1];
+	for (long len = 2; len <= size; len <<= 1) {
+		long shift = isForward ? ((scheme.params.N / len) << 1) : ((scheme.params.N - scheme.params.N / len) << 1);
+		for (long i = 0; i < size; i += len) {
+			NTL_EXEC_RANGE(len / 2, first, last);
+			for (long j = first; j < last; ++j) {
+				Cipher u = ciphers[i + j];
+				scheme.multByMonomialAndEqual(ciphers[i + j + len / 2], shift * j);
+				scheme.addAndEqual(ciphers[i + j], ciphers[i + j + len / 2]);
+				scheme.subAndEqual2(u, ciphers[i + j + len / 2]);
+			}
+			NTL_EXEC_RANGE_END;
+		}
 	}
-
-	future<Cipher*> f1 = async(&SchemeAlgo::fftRaw, this, ref(sub1), ref(sizeh), ref(isForward));
-	future<Cipher*> f2 = async(&SchemeAlgo::fftRaw, this, ref(sub2), ref(sizeh), ref(isForward));
-
-	Cipher* y1 = f1.get();
-	Cipher* y2 = f2.get();
-
-	long shift = isForward ? ((scheme.params.N / size) << 1) : ((scheme.params.N - scheme.params.N / size) << 1);
-
-	Cipher* res = new Cipher[size];
-
-	thread* thpool = new thread[sizeh];
-	for (long i = 0; i < sizeh; ++i) {
-		thpool[i] = thread(&SchemeAlgo::butOperation, this, ref(res[i]), ref(res[i + sizeh]), ref(y1[i]), ref(y2[i]), shift * i);
-	}
-	for (long i = 0; i < sizeh; ++i) {
-		thpool[i].join();
-	}
-
-	return res;
 }
 
-void SchemeAlgo::butOperation(Cipher& res1, Cipher& res2, Cipher& y1, Cipher& y2, long shift) {
-	scheme.multByMonomialAndEqual(y2, shift);
-	res1 = y1;
-	scheme.addAndEqual(res1, y2);
-	res2 = y1;
-	scheme.subAndEqual(res2, y2);
+void SchemeAlgo::fft(Cipher*& ciphers, const long& size) {
+	fftRaw(ciphers, size, true);
 }
 
-Cipher* SchemeAlgo::fft(Cipher*& ciphers, const long& size) {
-	return fftRaw(ciphers, size, true);
-}
-
-Cipher* SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
-	Cipher* fftInv = fftRaw(ciphers, size, false);
+void SchemeAlgo::fftInv(Cipher*& ciphers, const long& size) {
+	fftRaw(ciphers, size, false);
 	long logsize = log2(size);
 
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {
-		scheme.modSwitchAndEqual(fftInv[i], logsize);
+		scheme.modSwitchAndEqual(ciphers[i], logsize);
 	}
 	NTL_EXEC_RANGE_END;
-
-	return fftInv;
 }
 
-Cipher* SchemeAlgo::fftInvLazy(Cipher*& ciphers, const long& size) {
+void SchemeAlgo::fftInvLazy(Cipher*& ciphers, const long& size) {
 	return fftRaw(ciphers, size, false);
 }
 

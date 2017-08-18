@@ -76,6 +76,13 @@ void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	p1.normalize();
 }
 
+void Ring2Utils::subAndEqual2(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
+	for (long i = 0; i < degree; ++i) {
+		AddMod(p2.rep[i], p1.rep[i], -p2.rep[i], mod);
+	}
+	p2.normalize();
+}
+
 void Ring2Utils::conjugate(ZZX& res, ZZX& p, const long& degree) {
 	res.SetLength(degree);
 	res.rep[0] = p.rep[0];

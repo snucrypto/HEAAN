@@ -13,16 +13,6 @@ static RR const Pi = ComputePi_RR();
 class EvaluatorUtils {
 public:
 
-	//-----------------------------------------
-
-	/**
-	 * evaluates double values x.r >> bits, x.i >> bits
-	 * @param[out] real part x.r >> bits
-	 * @param[out] imaginary part x.i >> bits
-	 * @param[in] shifting bits
-	 */
-	static void evaluateDoubleVal(double& xr, double& xi, CZZ& x, const long& bits);
-
 	/**
 	 * evaluates RR values x.r >> bits, x.i >> bits
 	 * @param[out] real part x.r >> bits
@@ -30,14 +20,6 @@ public:
 	 * @param[in] shifting bits
 	 */
 	static void evaluateRRVal(RR& xr, RR& xi, CZZ& x, const long& bits);
-
-	/**
-	 * evaluates arrays of double values [xvec.r/p], [xvec.i/p]
-	 * @param[out] real part x.r >> bits
-	 * @param[out] imaginary part x.i >> bits
-	 * @param[in] shifting bits
-	 */
-	static void evaluateDoubleVals(double*& xvecr, double*& xveci, CZZ*& xvec, const long size, const long& bits);
 
 	/**
 	 * evaluates value xr << bits

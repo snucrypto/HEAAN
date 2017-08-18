@@ -14,15 +14,13 @@ using namespace NTL;
 class SchemeAux {
 public:
 
-	long precisionBits;
-
 	RR** ksiPowsr; ///< storing ksi pows for fft calculation
 	RR** ksiPowsi; ///< storing ksi pows for fft calculation
 	map<string, double*> taylorCoeffsMap; ///< storing taylor coefficients for function calculation
 
 	//-----------------------------------------
 
-	SchemeAux(Params& params, long precisionBits);
+	SchemeAux(long& logN);
 
 	//-----------------------------------------
 
