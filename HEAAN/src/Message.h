@@ -25,6 +25,7 @@ public:
 	 */
 	Message(ZZX mx = ZZX::zero(), ZZ mod = ZZ::zero(), long cbits = 0, long slots = 1) : mx(mx), mod(mod), cbits(cbits), slots(slots) {}
 
+	Message(const Message& o) : mx(o.mx), mod(o.mod), cbits(o.cbits), slots(o.slots) {}
 };
 
 #endif /* SCHEME_MESSAGE_H_ */

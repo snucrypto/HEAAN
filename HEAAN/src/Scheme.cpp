@@ -26,8 +26,7 @@ CZZ* Scheme::groupidx(CZZ*& vals, long slots) {
 }
 
 CZZ* Scheme::groupidx(CZZ& val) {
-	CZZ* res;
-	res = new CZZ[2];
+	CZZ* res = new CZZ[2];
 	res[0] = val;
 	res[1] = val.conjugate();
 	return res;
@@ -44,7 +43,7 @@ CZZ* Scheme::degroupidx(CZZ*& vals, long slots) {
 
 //-----------------------------------------
 
-Message Scheme::encodeWithBits(CZZ* vals, long cbits, long slots) {
+Message Scheme::encodeWithBits(CZZ*& gvals, long cbits, long slots) {
 	ZZX mx;
 	mx.SetLength(params.N);
 	ZZ mod = power2_ZZ(cbits);
@@ -52,15 +51,15 @@ Message Scheme::encodeWithBits(CZZ* vals, long cbits, long slots) {
 	long doubleslots = slots << 1;
 	long logDoubleslots = log2(slots) + 1;
 	long gap = (params.N >> logDoubleslots);
-	NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
+	NumUtils::fftSpecialInv(gvals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
 	for (long i = 0; i < doubleslots; ++i) {
-		mx.rep[idx] = vals[i].r;
+		mx.rep[idx] = gvals[i].r;
 		idx += gap;
 	}
 	return Message(mx, mod, cbits, slots);
 }
 
-Message Scheme::encode(CZZ* vals, long slots) {
+Message Scheme::encode(CZZ*& gvals, long slots) {
 	ZZX mx;
 	mx.SetLength(params.N);
 	long idx = 0;
@@ -68,10 +67,10 @@ Message Scheme::encode(CZZ* vals, long slots) {
 	long logDoubleslots = log2(slots) + 1;
 	long gap = (params.N >> logDoubleslots);
 
-	NumUtils::fftSpecialInv(vals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
+	NumUtils::fftSpecialInv(gvals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
 
 	for (long i = 0; i < doubleslots; ++i) {
-		mx.rep[idx] = vals[i].r;
+		mx.rep[idx] = gvals[i].r;
 		idx += gap;
 	}
 	return Message(mx, params.q, params.logq, slots);
@@ -97,24 +96,28 @@ Cipher Scheme::encryptMsg(Message& msg) {
 Cipher Scheme::encryptWithBits(CZZ*& vals, long cbits, long slots) {
 	CZZ* gvals = groupidx(vals, slots);
 	Message msg = encodeWithBits(gvals, cbits, slots);
+	delete[] gvals;
 	return encryptMsg(msg);
 }
 
 Cipher Scheme::encrypt(CZZ*& vals, long slots) {
 	CZZ* gvals = groupidx(vals, slots);
 	Message msg = encode(gvals, slots);
+	delete[] gvals;
 	return encryptMsg(msg);
 }
 
 Cipher Scheme::encryptSingleWithBits(CZZ& val, long cbits) {
 	CZZ* gvals = groupidx(val);
 	Message msg = encodeWithBits(gvals, cbits, 1);
+	delete[] gvals;
 	return encryptMsg(msg);
 }
 
 Cipher Scheme::encryptSingle(CZZ& val) {
 	CZZ* gvals = groupidx(val);
 	Message msg = encode(gvals, 1);
+	delete[] gvals;
 	return encryptMsg(msg);
 }
 
@@ -153,7 +156,9 @@ CZZ* Scheme::decrypt(SecKey& secretKey, Cipher& cipher) {
 CZZ Scheme::decryptSingle(SecKey& secretKey, Cipher& cipher) {
 	Message msg = decryptMsg(secretKey, cipher);
 	CZZ* gvals = decode(msg);
-	return gvals[0];
+	CZZ res = gvals[0];
+	delete[] gvals;
+	return res;
 }
 
 //-----------------------------------------

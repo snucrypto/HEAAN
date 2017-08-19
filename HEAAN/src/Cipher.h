@@ -29,6 +29,8 @@ public:
 	 */
 	Cipher(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), ZZ mod = ZZ::zero(), long cbits = 0, long slots = 1) : ax(ax), bx(bx), mod(mod), cbits(cbits), slots(slots) {}
 
+	Cipher(const Cipher& o) : ax(o.ax), bx(o.bx), mod(o.mod), cbits(o.cbits), slots(o.slots) {}
+
 };
 
 #endif /* SCHEME_CIPHER_H_ */

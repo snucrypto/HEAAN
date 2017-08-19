@@ -55,7 +55,7 @@ public:
 	 * @param[in] slots
 	 * @return Message ZZX slots and level
 	 */
-	Message encodeWithBits(CZZ* vals, long cbits, long slots);
+	Message encodeWithBits(CZZ*& gvals, long cbits, long slots);
 
 	/**
 	 * encodes regrouped vals into ZZX using fft inverse
@@ -63,7 +63,7 @@ public:
 	 * @param[in] slots
 	 * @return Message ZZX slots and level
 	 */
-	Message encode(CZZ* vals, long slots);
+	Message encode(CZZ*& gvals, long slots);
 	/**
 	 * decodes ZZX into regrouped vals using fft
 	 * @param[in] message
