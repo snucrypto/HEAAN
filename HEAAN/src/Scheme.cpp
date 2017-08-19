@@ -150,7 +150,9 @@ CZZ* Scheme::decode(Message& msg) {
 CZZ* Scheme::decrypt(SecKey& secretKey, Cipher& cipher) {
 	Message msg = decryptMsg(secretKey, cipher);
 	CZZ* gvals = decode(msg);
-	return degroupidx(gvals, msg.slots);
+	CZZ* res = degroupidx(gvals, msg.slots);
+	delete[] gvals;
+	return res;
 }
 
 CZZ Scheme::decryptSingle(SecKey& secretKey, Cipher& cipher) {
