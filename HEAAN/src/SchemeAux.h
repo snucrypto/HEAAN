@@ -29,12 +29,12 @@ public:
 static string LOGARITHM = "Logarithm"; ///< log(x)
 static string EXPONENT  = "Exponent"; ///< exp(x)
 static string SIGMOID   = "Sigmoid"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
-static string SIGMOIDBAR  = "Sigmoidbar"; ///< sigmoidbar = 1 - sigmoid(x)
 
-static string SIGMOIDGOOD = "SigmoidGood"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
-static string SIGMOIDBARGOOD = "SigmoidbarGood"; ///< sigmoidbar = 1 - sigmoid(x)
-static string SIGMOIDPRIMEGOOD7 = "SigmoidprimeGood7"; ///< sigmoidprime = -1 / (1 + exp(x))
-static string SIGMOIDPRIMEGOOD5 = "SigmoidprimeGood5"; ///< sigmoidprime = -1 / (1 + exp(x))
-static string SIGMOIDPRIMEGOOD3 = "SigmoidprimeGood3"; ///< sigmoidprime = -1 / (1 + exp(x))
+//static string SIGMOIDBAR  = "Sigmoidbar"; ///< sigmoidbar = 1 - sigmoid(x)
+//static string SIGMOIDGOOD = "SigmoidGood"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
+//static string SIGMOIDBARGOOD = "SigmoidbarGood"; ///< sigmoidbar = 1 - sigmoid(x)
+//static string SIGMOIDPRIMEGOOD7 = "SigmoidprimeGood7"; ///< sigmoidprime = -1 / (1 + exp(x))
+//static string SIGMOIDPRIMEGOOD5 = "SigmoidprimeGood5"; ///< sigmoidprime = -1 / (1 + exp(x))
+//static string SIGMOIDPRIMEGOOD3 = "SigmoidprimeGood3"; ///< sigmoidprime = -1 / (1 + exp(x))
 
 #endif /* SCHEME_SCHEMEAUX_H_ */
