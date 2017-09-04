@@ -11,7 +11,6 @@ public:
 
 	long logN; ///< N is a power of 2 that corresponds to the ring Z[X] / (X^N + 1)
 	long logq; ///< q corresponds to the highest modulus
-	bool isGauss; ///< if distribution of secret key should be gaussian or from set {-1, 0, 1} with hamming weight h
 	double sigma; ///< sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
 	long h; ///< hamming weight of secret key
 
@@ -31,7 +30,7 @@ public:
 	 *@param[in] q is a power of 2 that corresponds to the highest modulus
 	 *@param[in] sigma corresponds to standard deviation for error and secret key coefficients generation from Gaussian distribution
 	 */
-	Params(long logN, long logq, bool isGauss = true, double sigma = 3.2, long h = 64);
+	Params(long logN, long logq, double sigma = 3.2, long h = 64);
 
 
 	/**

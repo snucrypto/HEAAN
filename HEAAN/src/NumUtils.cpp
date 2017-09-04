@@ -24,7 +24,7 @@ void NumUtils::sampleGauss(ZZX& res, const long& size, const double& stdev) {
 	}
 }
 
-void NumUtils::sampleZO(ZZX& res, const long& size, const long& h) {
+void NumUtils::sampleHWT(ZZX& res, const long& size, const long& h) {
 	res.SetLength(size);
 	long idx = 0;
 	while(idx < h) {
@@ -33,6 +33,15 @@ void NumUtils::sampleZO(ZZX& res, const long& size, const long& h) {
 			res.rep[i] = (0 == ( rand() % 2 )) ? ZZ(1) : ZZ(-1);
 			idx++;
 		}
+	}
+	res.normalize();
+}
+
+void NumUtils::sampleZO(ZZX& res, const long& size) {
+	res.SetLength(size);
+	ZZ tmp = RandomBits_ZZ(2 * size);
+	for (long i = 0; i < size; ++i) {
+		res.rep[i] = (bit(tmp, 2 * i) == 0) ? ZZ(0) : (bit(tmp, 2 * i + 1) == 0) ? ZZ(1) : ZZ(-1);
 	}
 	res.normalize();
 }

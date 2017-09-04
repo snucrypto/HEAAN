@@ -26,7 +26,14 @@ public:
 	 * @param[in] long polynomial degree
 	 * @param[in] number of nonzero coefficients
 	 */
-	static void sampleZO(ZZX& res, const long& size, const long& h);
+	static void sampleHWT(ZZX& res, const long& size, const long& h);
+
+	/**
+	 * samples polynomial with random {-1,0,1} coefficients
+	 * @param[out] ZZX polynomial
+	 * @param[in] long polynomial degree
+	 */
+	static void sampleZO(ZZX& res, const long& size);
 
 	/**
 	 * samples polynomial with random {0,1} coefficients
