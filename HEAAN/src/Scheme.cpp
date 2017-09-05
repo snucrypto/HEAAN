@@ -124,7 +124,6 @@ Cipher Scheme::encryptSingle(CZZ& val) {
 
 Message Scheme::decryptMsg(SecKey& secretKey, Cipher& cipher) {
 	ZZX mx;
-	mx.SetLength(params.N);
 	Ring2Utils::mult(mx, cipher.ax, secretKey.sx, cipher.mod, params.N);
 	Ring2Utils::addAndEqual(mx, cipher.bx, cipher.mod, params.N);
 	return Message(mx, cipher.mod, cipher.cbits, cipher.slots);
