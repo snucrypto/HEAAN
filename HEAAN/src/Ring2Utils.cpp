@@ -7,14 +7,12 @@ void Ring2Utils::mod(ZZX& res, ZZX& p, ZZ& mod, const long& degree) {
 	for (long i = 0; i < degree; ++i) {
 		res.rep[i] = p.rep[i] % mod;
 	}
-	res.normalize();
 }
 
 void Ring2Utils::modAndEqual(ZZX& p, ZZ& mod, const long& degree) {
 	for (long i = 0; i < degree; ++i) {
 		p.rep[i] %= mod;
 	}
-	p.normalize();
 }
 
 void Ring2Utils::add(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
@@ -22,7 +20,6 @@ void Ring2Utils::add(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	for (long i = 0; i < degree; ++i) {
 		AddMod(res.rep[i], p1.rep[i], p2.rep[i], mod);
 	}
-	res.normalize();
 }
 
 ZZX Ring2Utils::add(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
@@ -40,7 +37,6 @@ void Ring2Utils::addAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	for (long i = 0; i < degree; ++i) {
 		AddMod(p1.rep[i], p1.rep[i], p2.rep[i], mod);
 	}
-	p1.normalize();
 }
 
 //void Ring2Utils::addAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
@@ -55,7 +51,6 @@ void Ring2Utils::sub(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	for (long i = 0; i < degree; ++i) {
 		AddMod(res.rep[i], p1.rep[i], -p2.rep[i], mod);
 	}
-	res.normalize();
 }
 
 ZZX Ring2Utils::sub(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
@@ -73,14 +68,12 @@ void Ring2Utils::subAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	for (long i = 0; i < degree; ++i) {
 		AddMod(p1.rep[i], p1.rep[i], -p2.rep[i], mod);
 	}
-	p1.normalize();
 }
 
 void Ring2Utils::subAndEqual2(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 	for (long i = 0; i < degree; ++i) {
 		AddMod(p2.rep[i], p1.rep[i], -p2.rep[i], mod);
 	}
-	p2.normalize();
 }
 
 void Ring2Utils::conjugate(ZZX& res, ZZX& p, const long& degree) {
@@ -89,7 +82,6 @@ void Ring2Utils::conjugate(ZZX& res, ZZX& p, const long& degree) {
 	for (long i = 1; i < degree; ++i) {
 		res.rep[i] = -p.rep[degree - i];
 	}
-	res.normalize();
 }
 
 void Ring2Utils::conjugateAndEqual(ZZX& p, const long& degree) {
@@ -99,7 +91,6 @@ void Ring2Utils::conjugateAndEqual(ZZX& p, const long& degree) {
 		p.rep[degree - i] = tmp;
 	}
 	p.rep[degree / 2] = -p.rep[degree / 2];
-	p.normalize();
 }
 
 //void Ring2Utils::subAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
@@ -119,7 +110,6 @@ void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 		p.rep[i + degree] %= mod;
 		SubMod(res.rep[i], p.rep[i], p.rep[i + degree], mod);
 	}
-	res.normalize();
 }
 
 ZZX Ring2Utils::mult(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
@@ -158,7 +148,6 @@ void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 		p.rep[i + degree] %= mod;
 		SubMod(p1.rep[i], p.rep[i], p.rep[i + degree], mod);
 	}
-	p1.normalize();
 }
 
 //void Ring2Utils::multAndEqual(CZZX& p1, CZZX& p2, ZZ& mod, const long& degree) {
@@ -195,7 +184,6 @@ void Ring2Utils::square(ZZX& res, ZZX& p, ZZ& mod, const long& degree) {
 		pp.rep[i + degree] %= mod;
 		AddMod(res.rep[i], pp.rep[i], -pp.rep[i + degree], mod);
 	}
-	res.normalize();
 }
 
 ZZX Ring2Utils::square(ZZX& p, ZZ& mod, const long& degree) {
@@ -224,7 +212,6 @@ void Ring2Utils::squareAndEqual(ZZX& p, ZZ& mod, const long& degree) {
 		pp.rep[i + degree] %= mod;
 		AddMod(p.rep[i], pp.rep[i], -pp.rep[i + degree], mod);
 	}
-	p.normalize();
 }
 
 //void Ring2Utils::squareAndEqual(CZZX& p, ZZ& mod, const long& degree) {
@@ -259,7 +246,6 @@ void Ring2Utils::multByMonomial(ZZX& res, ZZX& p, const long& monomialDeg, const
 	for (long i = shift; i < degree; ++i) {
 		res.rep[i] = tmpx.rep[i - shift];
 	}
-	res.normalize();
 }
 
 ZZX Ring2Utils::multByMonomial(ZZX& p, const long& monomialDeg, const long& degree) {
@@ -289,7 +275,6 @@ void Ring2Utils::multByMonomialAndEqual(ZZX& p, const long& monomialDeg, const l
 	for (long i = shift; i < degree; ++i) {
 		p.rep[i] = tmpx.rep[i - shift];
 	}
-	p.normalize();
 }
 
 //void Ring2Utils::multByMonomialAndEqual(CZZX& p, const long& monomialDeg, const long& degree) {
@@ -304,7 +289,6 @@ void Ring2Utils::multByConst(ZZX& res, ZZX& p, const ZZ& cnst, ZZ& mod, const lo
 	for (long i = 0; i < degree; ++i) {
 		MulMod(res.rep[i], p.rep[i], cnst, mod);
 	}
-	res.normalize();
 }
 
 ZZX Ring2Utils::multByConst(ZZX& p, const ZZ& cnst, ZZ& mod, const long& degree) {
@@ -338,7 +322,6 @@ void Ring2Utils::multByConstAndEqual(ZZX& p, const ZZ& cnst, ZZ& mod, const long
 	for (long i = 0; i < degree; ++i) {
 		MulMod(p.rep[i], p.rep[i], cnst, mod);
 	}
-	p.normalize();
 }
 
 //void Ring2Utils::multByConstAndEqual(CZZX& p, const ZZ& cnst, ZZ& mod, const long& degree) {
@@ -370,7 +353,6 @@ void Ring2Utils::leftShift(ZZX& res, ZZX& p, const long& bits, ZZ& mod, const lo
 		res.rep[i] = p.rep[i] << bits;
 		res.rep[i] %= mod;
 	}
-	res.normalize();
 }
 
 //void Ring2Utils::leftShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree) {
@@ -383,7 +365,6 @@ void Ring2Utils::leftShiftAndEqual(ZZX& p, const long& bits, ZZ& mod, const long
 		p.rep[i] <<= bits;
 		p.rep[i] %= mod;
 	}
-	p.normalize();
 }
 
 void Ring2Utils::doubleAndEqual(ZZX& p, ZZ& mod, const long& degree) {
@@ -391,7 +372,6 @@ void Ring2Utils::doubleAndEqual(ZZX& p, ZZ& mod, const long& degree) {
 		p.rep[i] <<= 1;
 		p.rep[i] %= mod;
 	}
-	p.normalize();
 }
 
 //void Ring2Utils::leftShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree) {
@@ -406,7 +386,6 @@ void Ring2Utils::rightShift(ZZX& res, ZZX& p, const long& bits, const long& degr
 	for (long i = 0; i < degree; ++i) {
 		res.rep[i] = p.rep[i] >> bits;
 	}
-	res.normalize();
 }
 
 //void Ring2Utils::rightShift(CZZX& res, CZZX& p, const long& bits, const long& logMod, const long& degree) {
@@ -418,7 +397,6 @@ void Ring2Utils::rightShiftAndEqual(ZZX& p, const long& bits, const long& degree
 	for (long i = 0; i < degree; ++i) {
 		p.rep[i] >>= bits;
 	}
-	p.normalize();
 }
 
 //void Ring2Utils::rightShiftAndEqual(CZZX& p, const long& bits, const long& logMod, const long& degree) {
@@ -439,7 +417,6 @@ void Ring2Utils::inpower(ZZX& res, ZZX& p, const long& pow, ZZ& mod, const long&
 			AddMod(res.rep[shift % degree], res.rep[shift % degree], -p.rep[i], mod);
 		}
 	}
-	res.normalize();
 }
 
 ZZX Ring2Utils::inpower(ZZX& p, const long& pow, ZZ& mod, const long& degree) {
@@ -459,9 +436,6 @@ ZZX* Ring2Utils::bitDecomposition(ZZX& p, const long& logMod, const long& degree
 		for (long i = 0; i < logMod; ++i) {
 			res[i].rep[j] = bit(coeff, j);
 		}
-	}
-	for (long i = 0; i < logMod; ++i) {
-		res[i].normalize();
 	}
 	return res;
 }

@@ -184,14 +184,12 @@ Cipher Scheme::addConst(Cipher& cipher, ZZ& cnst) {
 	ZZX bx = cipher.bx;
 
 	AddMod(bx.rep[0], cipher.bx.rep[0], cnst, cipher.mod);
-	bx.normalize();
 	return Cipher(ax, bx, cipher.mod, cipher.cbits, cipher.slots);
 }
 
 void Scheme::addConstAndEqual(Cipher& cipher, ZZ& cnst) {
 	ZZ mod = power2_ZZ(cipher.cbits);
 	AddMod(cipher.bx.rep[0], cipher.bx.rep[0], cnst, mod);
-	cipher.bx.normalize();
 }
 
 //-----------------------------------------

@@ -35,7 +35,6 @@ void NumUtils::sampleHWT(ZZX& res, const long& size, const long& h) {
 			idx++;
 		}
 	}
-	res.normalize();
 }
 
 void NumUtils::sampleZO(ZZX& res, const long& size) {
@@ -44,7 +43,6 @@ void NumUtils::sampleZO(ZZX& res, const long& size) {
 	for (long i = 0; i < size; ++i) {
 		res.rep[i] = (bit(tmp, 2 * i) == 0) ? ZZ(0) : (bit(tmp, 2 * i + 1) == 0) ? ZZ(1) : ZZ(-1);
 	}
-	res.normalize();
 }
 
 void NumUtils::sampleBinary(ZZX& res, const long& size, const long& h) {
@@ -57,7 +55,6 @@ void NumUtils::sampleBinary(ZZX& res, const long& size, const long& h) {
 			idx++;
 		}
 	}
-	res.normalize();
 }
 
 void NumUtils::sampleBinary(ZZX& res, const long& size) {
@@ -66,7 +63,6 @@ void NumUtils::sampleBinary(ZZX& res, const long& size) {
 	for (long i = 0; i < size; ++i) {
 		res.rep[i] = (bit(tmp, i) == 0) ? ZZ(0) : ZZ(1);
 	}
-	res.normalize();
 }
 
 void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& logBnd) {
@@ -74,7 +70,6 @@ void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& logBnd) {
 	for (long i = 0; i < size; i++) {
 		res.rep[i] = RandomBits_ZZ(logBnd);
 	}
-	res.normalize();
 }
 
 void NumUtils::fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const bool& isForward) {
