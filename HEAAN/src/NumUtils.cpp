@@ -27,10 +27,11 @@ void NumUtils::sampleGauss(ZZX& res, const long& size, const double& stdev) {
 void NumUtils::sampleHWT(ZZX& res, const long& size, const long& h) {
 	res.SetLength(size);
 	long idx = 0;
+	ZZ tmp = RandomBits_ZZ(h);
 	while(idx < h) {
 		long i = RandomBnd(size);
 		if(res.rep[i] == 0) {
-			res.rep[i] = (0 == ( rand() % 2 )) ? ZZ(1) : ZZ(-1);
+			res.rep[i] = (bit(tmp, idx) == 0) ? ZZ(1) : ZZ(-1);
 			idx++;
 		}
 	}
@@ -61,8 +62,9 @@ void NumUtils::sampleBinary(ZZX& res, const long& size, const long& h) {
 
 void NumUtils::sampleBinary(ZZX& res, const long& size) {
 	res.SetLength(size);
+	ZZ tmp = RandomBits_ZZ(size);
 	for (long i = 0; i < size; ++i) {
-		res.rep[i] = (rand() % 2) ? ZZ(0) : ZZ(1);
+		res.rep[i] = (bit(tmp, i) == 0) ? ZZ(0) : ZZ(1);
 	}
 	res.normalize();
 }
@@ -83,9 +85,7 @@ void NumUtils::fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPow
 		}
 		j += bit;
 		if(i < j) {
-			CZZ tmp = vals[i];
-			vals[i] = vals[j];
-			vals[j] = tmp;
+			swap(vals[i], vals[j]);
 		}
 	}
 	if(isForward) {

@@ -363,9 +363,7 @@ void SchemeAlgo::fftRaw(Cipher*& ciphers, const long& size, const bool& isForwar
 		}
 		j += bit;
 		if(i < j) {
-			Cipher tmp = ciphers[i];
-			ciphers[i] = ciphers[j];
-			ciphers[j] = tmp;
+			swap(ciphers[i], ciphers[j]);
 		}
 	}
 
