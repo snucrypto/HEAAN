@@ -4,8 +4,8 @@
 #include <cmath>
 #include <sstream>
 
-Params::Params(long logN, long logq, bool isGauss, double sigma, long h) :
-			logN(logN), logq(logq), isGauss(isGauss), sigma(sigma), h(h) {
+Params::Params(long logN, long logq, double sigma, long h) :
+			logN(logN), logq(logq), sigma(sigma), h(h) {
 	//-----------------------------------------
 	N = 1 << logN;
 	logqq = 2 * logq;

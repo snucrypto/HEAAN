@@ -78,8 +78,7 @@ Message Scheme::encode(CZZ*& gvals, long slots) {
 
 Cipher Scheme::encryptMsg(Message& msg) {
 	ZZX ax, bx, vx, eax, ebx;
-	NumUtils::sampleZO(vx, params.N, 64);
-
+	NumUtils::sampleZO(vx, params.N);
 	Ring2Utils::mult(ax, vx, publicKey.ax, msg.mod, params.N);
 	NumUtils::sampleGauss(eax, params.N, params.sigma);
 	Ring2Utils::addAndEqual(ax, eax, msg.mod, params.N);
