@@ -3,5 +3,5 @@
 #include "NumUtils.h"
 
 SecKey::SecKey(Params& params) {
-	NumUtils::sampleBinary(sx, params.N, params.h);
+	NumUtils::sampleHWT(sx, params.N, params.h);
 }
