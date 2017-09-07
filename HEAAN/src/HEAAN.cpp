@@ -132,7 +132,8 @@ int main() {
 	 * Params: logN, logl, logp, L, logSlots, logfftdim, logHdim
 	 * Suggested: 13, 170, 50, 3, 4, 2;
 	 */
-//	TestScheme::testFFTBatchLazyMultipleHadamard(13, 170, 50, 3, 4, 2);
+	TestScheme::testFFTBatchLazyMultipleHadamard(14, 120, 50, 3, 13, 1);
 
+//	TestScheme::testFFTestimator(14, 220, 50, 2, 13, 3);
 	return 0;
 }

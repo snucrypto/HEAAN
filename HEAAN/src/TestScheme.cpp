@@ -644,6 +644,8 @@ void TestScheme::testFFTBatch(long logN, long logq, long precisionBits, long log
 		}
 		cvec1[j] = scheme.encrypt(mvals1, slots);
 		cvec2[j] = scheme.encrypt(mvals2, slots);
+		delete[] mvals1;
+		delete[] mvals2;
 	}
 
 	for (long i = 0; i < slots; ++i) {
@@ -667,6 +669,8 @@ void TestScheme::testFFTBatch(long logN, long logq, long precisionBits, long log
 	timeutils.start("ciphers hadamard mult batch");
 	algo.multModSwitchAndEqualVec(cvec1, cvec2, precisionBits, fftdim);
 	timeutils.stop("ciphers hadamard mult batch");
+	//-----------------------------------------
+	delete[] cvec2;
 	//-----------------------------------------
 	timeutils.start("ciphers fft inverse batch");
 	algo.fftInv(cvec1, fftdim);
@@ -719,6 +723,8 @@ void TestScheme::testFFTBatchLazy(long logN, long logq, long precisionBits, long
 		}
 		cvec1[j] = scheme.encrypt(mvals1, slots);
 		cvec2[j] = scheme.encrypt(mvals2, slots);
+		delete[] mvals1;
+		delete[] mvals2;
 	}
 
 	for (long i = 0; i < slots; ++i) {
@@ -742,6 +748,8 @@ void TestScheme::testFFTBatchLazy(long logN, long logq, long precisionBits, long
 	timeutils.start("ciphers hadamard mult");
 	algo.multModSwitchAndEqualVec(cvec1, cvec2, precisionBits, fftdim);
 	timeutils.stop("ciphers hadamard mult");
+	//-----------------------------------------
+	delete[] cvec2;
 	//-----------------------------------------
 	timeutils.start("ciphers fft inverse lazy");
 	algo.fftInvLazy(cvec1, fftdim);
@@ -793,6 +801,7 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logq, long pre
 				mvals[i] = mvecs[h][i][j];
 			}
 			cvecs[h][j] = scheme.encrypt(mvals, slots);
+			delete[] mvals;
 		}
 		for (long i = 0; i < slots; ++i) {
 			NumUtils::fft(mvecs[h][i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
@@ -815,6 +824,13 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logq, long pre
 		NumUtils::fftInvLazy(mvecs[0][i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
 	}
 
+	for (long h = 1; h < hdim; ++h) {
+		for (long i = 0; i < slots; ++i) {
+			delete[] mvecs[h][i];
+		}
+		delete[] mvecs[h];
+	}
+
 	for (long h = 0; h < hdim; ++h) {
 		timeutils.start("ciphers fft");
 		algo.fft(cvecs[h], fftdim );
@@ -826,6 +842,7 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logq, long pre
 			timeutils.start("ciphers hadamard mult");
 			algo.multModSwitchAndEqualVec(cvecs[h], cvecs[h+spow], precisionBits, fftdim);
 			timeutils.stop("ciphers hadamard mult");
+			delete[] cvecs[h+spow];
 		}
 	}
 
@@ -845,4 +862,61 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logq, long pre
 	}
 	//-----------------------------------------
 	cout << "!!! END TEST FFT BATCH LAZY MULTIPLE HADAMARD !!!" << endl;
+}
+
+void TestScheme::testFFTestimator(long logN, long logq, long precisionBits, long logSlots, long logfftdim, long logHdim) {
+	cout << "!!! START TEST FFT ESTIMATOR !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logq);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	SchemeAux schemeaux(logN);
+	Scheme scheme(params, publicKey, schemeaux);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	SetNumThreads(8);
+	//-----------------------------------------
+	long fftdim = 1 << logfftdim;
+	long slots = 1 << logSlots;
+	CZZ** mvec1 = new CZZ*[slots];
+	CZZ** mvec2 = new CZZ*[slots];
+
+	for (long i = 0; i < slots; ++i) {
+		mvec1[i] = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
+		mvec2[i] = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
+	}
+
+	Cipher* cvec1 = new Cipher[fftdim];
+	Cipher* cvec2 = new Cipher[fftdim];
+	for (long j = 0; j < fftdim; ++j) {
+		CZZ* mvals1 = new CZZ[slots];
+		CZZ* mvals2	= new CZZ[slots];
+		for (long i = 0; i < slots; ++i) {
+			mvals1[i] = mvec1[i][j];
+			mvals2[i] = mvec2[i][j];
+		}
+		cvec1[j] = scheme.encrypt(mvals1, slots);
+		cvec2[j] = scheme.encrypt(mvals2, slots);
+	}
+
+	//-----------------------------------------
+	timeutils.start("ciphers fft 1");
+	algo.fft(cvec1, fftdim);
+	timeutils.stop("ciphers fft 1");
+	//-----------------------------------------
+	for (int h = 0; h < logHdim; ++h) {
+		timeutils.start("ciphers hadamard mult");
+		algo.multModSwitchAndEqualVec(cvec1, cvec2, precisionBits, fftdim);
+		timeutils.stop("ciphers hadamard mult");
+		for (int i = 0; i < slots; ++i) {
+			scheme.modEmbedAndEqual(cvec2[i], precisionBits);
+		}
+	}
+	//-----------------------------------------
+	timeutils.start("ciphers fft inverse lazy");
+	algo.fftInvLazy(cvec1, fftdim);
+	timeutils.stop("ciphers fft inverse lazy");
+	//-----------------------------------------
+	cout << "!!! END TEST FFT ESTIMATOR !!!" << endl;
 }
