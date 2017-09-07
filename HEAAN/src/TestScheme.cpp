@@ -234,18 +234,42 @@ void TestScheme::testPowerOf2Batch(long logN, long logq, long precisionBits, lon
 	long slots = 1 << logSlots;
 	CZZ* mvec = new CZZ[slots];
 	CZZ* mpow = new CZZ[slots];
+
+	CZZ** mpows = new CZZ*[logDegree + 1];
+	for (long i = 0; i < logDegree + 1; ++i) {
+		mpows[i] = new CZZ[slots];
+	}
+
 	for (long i = 0; i < slots; ++i) {
 		RR angle = random_RR();
 		RR mr = cos(angle * 2 * Pi);
 		RR mi = sin(angle * 2 * Pi);
 		mvec[i] = EvaluatorUtils::evaluateVal(mr, mi, precisionBits);
 		mpow[i] = EvaluatorUtils::evaluatePow2(mr, mi, logDegree, precisionBits);
+		for (int j = 0; j < logDegree + 1; ++j) {
+			mpows[j][i] = EvaluatorUtils::evaluatePow2(mr, mi, j, precisionBits);
+		}
 	}
 	Cipher cipher = scheme.encrypt(mvec, slots);
 	//-----------------------------------------
 	timeutils.start("Power of 2 batch");
 	Cipher cpow = algo.powerOf2(cipher, precisionBits, logDegree);
 	timeutils.stop("Power of 2 batch");
+
+	timeutils.start("Decrypting and calculating errors");
+	Cipher* cpows = algo.powerOf2Extended(cipher, precisionBits, logDegree);
+	for (long i = 0; i < logDegree + 1; ++i) {
+		CZZ* dpowi = scheme.decrypt(secretKey, cpows[i]);
+		RR tmps = to_RR(dpowi[0].r * dpowi[0].r + dpowi[0].i * dpowi[0].i);
+		CZZ tmp =  mpows[i][0] - dpowi[0];
+		tmp *= dpowi[0].conjugate();
+		RR er = to_RR(tmp.r) / tmps;
+		RR ei = to_RR(tmp.i) / tmps;
+		RR en = sqrt(er * er + ei * ei);
+		cout << "degree 2^" << i << ": er: " << er << ", ei: " << ei  << ", norm of e: "<< en << endl;
+	}
+	timeutils.stop("Decrypting and calculating errors");
+
 	//-----------------------------------------
 	CZZ* dpow = scheme.decrypt(secretKey, cpow);
 	StringUtils::showcompare(mpow, dpow, slots, "pow");

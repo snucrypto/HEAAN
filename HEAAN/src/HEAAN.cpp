@@ -50,7 +50,7 @@ int main() {
 	 * Suggested: 15, 618, 56, 10, 3
 	 */
 
-//	TestScheme::testPowerOf2Batch(13, 155, 30, 4, 3);
+	TestScheme::testPowerOf2Batch(13, 155, 30, 4, 3);
 
 	//-----------------------------------------
 

@@ -202,8 +202,8 @@ public:
 	 * number of levels switched: 2
 	 * @param[in] logN input parameter for Params class
 	 * @param[in] logq input parameter for Params class
-	 * @param[in] log of fft dimension
 	 * @param[in] log of number of slots
+	 * @param[in] log of fft dimension
 	 */
 	static void testFFTBatch(long logN, long logq, long precisionBits, long logfftdim, long logSlots);
 
@@ -213,12 +213,23 @@ public:
 	 * number of levels switched: 1
 	 * @param[in] logN input parameter for Params class
 	 * @param[in] logq input parameter for Params class
-	 * @param[in] log of fft dimension
 	 * @param[in] log of number of slots
+	 * @param[in] log of fft dimension
 	 */
 	static void testFFTBatchLazy(long logN, long logq, long precisionBits, long logSlots, long logfftdim);
 
+	/**
+	 * Testing full fft pipeline timing of several ciphertext arrays with multiple hadamard multipications
+	 * fftinvlazy( mult ( fft(c_1, ..., c_slots), fft(c_1, ..., c_slots) ) )
+	 * number of levels switched: 1
+	 * @param[in] logN input parameter for Params class
+	 * @param[in] logq input parameter for Params class
+	 * @param[in] log of number of slots
+	 * @param[in] log of fft dimension
+	 * @param[in] log of number of arrays
+	 */
 	static void testFFTBatchLazyMultipleHadamard(long logN, long logq, long precisionBits, long logSlots, long logfftdim, long logHdim);
+
 	//-----------------------------------------
 };
 
