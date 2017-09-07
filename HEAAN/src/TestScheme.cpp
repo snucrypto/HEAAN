@@ -879,25 +879,16 @@ void TestScheme::testFFTestimator(long logN, long logq, long precisionBits, long
 	//-----------------------------------------
 	long fftdim = 1 << logfftdim;
 	long slots = 1 << logSlots;
-	CZZ** mvec1 = new CZZ*[slots];
-	CZZ** mvec2 = new CZZ*[slots];
-
-	for (long i = 0; i < slots; ++i) {
-		mvec1[i] = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
-		mvec2[i] = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
-	}
 
 	Cipher* cvec1 = new Cipher[fftdim];
 	Cipher* cvec2 = new Cipher[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
-		CZZ* mvals1 = new CZZ[slots];
-		CZZ* mvals2	= new CZZ[slots];
-		for (long i = 0; i < slots; ++i) {
-			mvals1[i] = mvec1[i][j];
-			mvals2[i] = mvec2[i][j];
-		}
-		cvec1[j] = scheme.encrypt(mvals1, slots);
-		cvec2[j] = scheme.encrypt(mvals2, slots);
+		CZZ* tmp1 = EvaluatorUtils::evaluateRandomVals(slots, precisionBits);
+		cvec1[j] = scheme.encrypt(tmp1, slots);
+		delete[] tmp1;
+		CZZ* tmp2 = EvaluatorUtils::evaluateRandomVals(slots, precisionBits);
+		cvec2[j] = scheme.encrypt(tmp2, slots);
+		delete[] tmp2;
 	}
 
 	//-----------------------------------------
@@ -913,6 +904,7 @@ void TestScheme::testFFTestimator(long logN, long logq, long precisionBits, long
 			scheme.modEmbedAndEqual(cvec2[i], precisionBits);
 		}
 	}
+	delete[] cvec2;
 	//-----------------------------------------
 	timeutils.start("ciphers fft inverse lazy");
 	algo.fftInvLazy(cvec1, fftdim);
