@@ -50,7 +50,7 @@ int main() {
 	 * Suggested: 15, 618, 56, 10, 3
 	 */
 
-//	TestScheme::testPowerOf2Batch(13, 155, 30, 4, 3);
+//	TestScheme::testPowerOf2Batch(15, 618, 56, 10, 14);
 
 	//-----------------------------------------
 
@@ -122,18 +122,17 @@ int main() {
 
 	/*
 	 * Params: logN, logl, logp, L, logSlots, logfftdim
-	 * Suggested: 13, 155, 48, 3, 4;
+	 * Suggested: 13, 120, 50, 3, 4;
 	 */
 
 //	TestScheme::testFFTBatch(13, 120, 50, 3, 4);
-//	TestScheme::testFFTBatchLazy(13, 120, 50, 3, 4);
+//	TestScheme::testFFTBatchLazy(13, 120, 50, 3, 12);
 
 	/*
 	 * Params: logN, logl, logp, L, logSlots, logfftdim, logHdim
 	 * Suggested: 13, 170, 50, 3, 4, 2;
 	 */
-//	TestScheme::testFFTBatchLazyMultipleHadamard(14, 120, 50, 3, 13, 1);
+//	TestScheme::testFFTBatchLazyMultipleHadamard(13, 122, 50, 3, 13, 1);
 
-	TestScheme::testFFTestimator(14, 220, 50, 2, 13, 3);
 	return 0;
 }

@@ -230,7 +230,6 @@ public:
 	 */
 	static void testFFTBatchLazyMultipleHadamard(long logN, long logq, long precisionBits, long logSlots, long logfftdim, long logHdim);
 
-	static void testFFTestimator(long logN, long logq, long precisionBits, long logSlots, long logfftdim, long logHdim);
 	//-----------------------------------------
 };
 
