@@ -121,12 +121,18 @@ int main() {
 	//-----------------------------------------
 
 	/*
-	 * Params: logN, logl, logp, L, logfftdim, logSlots
-	 * Suggested: 13, 155, 48, 4, 3;
+	 * Params: logN, logl, logp, L, logSlots, logfftdim
+	 * Suggested: 13, 155, 48, 3, 4;
 	 */
 
-//	TestScheme::testFFTBatch(13, 155, 48, 6, 3);
-//	TestScheme::testFFTLazy(13, 155, 48, 6);
+//	TestScheme::testFFTBatch(13, 120, 50, 3, 4);
+//	TestScheme::testFFTBatchLazy(13, 120, 50, 3, 4);
+
+	/*
+	 * Params: logN, logl, logp, L, logSlots, logfftdim, logHdim
+	 * Suggested: 13, 170, 50, 3, 4, 2;
+	 */
+//	TestScheme::testFFTBatchLazyMultipleHadamard(13, 170, 50, 3, 4, 2);
 
 	return 0;
 }

@@ -586,7 +586,7 @@ void TestScheme::testSigmoidBatchLazy(long logN, long logq, long precisionBits, 
 
 //-----------------------------------------
 
-void TestScheme::testFFTBatch(long logN, long logq, long precisionBits, long logfftdim, long logSlots) {
+void TestScheme::testFFTBatch(long logN, long logq, long precisionBits, long logSlots, long logfftdim) {
 	cout << "!!! START TEST FFT BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
@@ -661,8 +661,8 @@ void TestScheme::testFFTBatch(long logN, long logq, long precisionBits, long log
 	cout << "!!! END TEST FFT BATCH !!!" << endl;
 }
 
-void TestScheme::testFFTLazy(long logN, long logq, long precisionBits, long logfftdim) {
-	cout << "!!! START TEST FFT LAZY !!!" << endl;
+void TestScheme::testFFTBatchLazy(long logN, long logq, long precisionBits, long logSlots, long logfftdim) {
+	cout << "!!! START TEST FFT BATCH LAZY !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
 	Params params(logN, logq);
@@ -675,19 +675,37 @@ void TestScheme::testFFTLazy(long logN, long logq, long precisionBits, long logf
 	SetNumThreads(8);
 	//-----------------------------------------
 	long fftdim = 1 << logfftdim;
-	CZZ* mvec1 = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
-	CZZ* mvec2 = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
+	long slots = 1 << logSlots;
+	CZZ** mvec1 = new CZZ*[slots];
+	CZZ** mvec2 = new CZZ*[slots];
 
-	Cipher* cvec1 = algo.encryptSingleArray(mvec1, fftdim);
-	Cipher* cvec2 = algo.encryptSingleArray(mvec2, fftdim);
-
-	NumUtils::fft(mvec1, fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
-	NumUtils::fft(mvec2, fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
-	for (long i = 0; i < fftdim; ++i) {
-		mvec1[i] *= mvec2[i];
-		mvec1[i] >>= precisionBits;
+	for (long i = 0; i < slots; ++i) {
+		mvec1[i] = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
+		mvec2[i] = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
 	}
-	NumUtils::fftInvLazy(mvec1, fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+
+	Cipher* cvec1 = new Cipher[fftdim];
+	Cipher* cvec2 = new Cipher[fftdim];
+	for (long j = 0; j < fftdim; ++j) {
+		CZZ* mvals1 = new CZZ[slots];
+		CZZ* mvals2	= new CZZ[slots];
+		for (long i = 0; i < slots; ++i) {
+			mvals1[i] = mvec1[i][j];
+			mvals2[i] = mvec2[i][j];
+		}
+		cvec1[j] = scheme.encrypt(mvals1, slots);
+		cvec2[j] = scheme.encrypt(mvals2, slots);
+	}
+
+	for (long i = 0; i < slots; ++i) {
+		NumUtils::fft(mvec1[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		NumUtils::fft(mvec2[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		for (long j = 0; j < fftdim; ++j) {
+			mvec1[i][j] *= mvec2[i][j];
+			mvec1[i][j] >>= precisionBits;
+		}
+		NumUtils::fftInvLazy(mvec1[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+	}
 	//-----------------------------------------
 	timeutils.start("ciphers fft 1");
 	algo.fft(cvec1, fftdim);
@@ -705,8 +723,102 @@ void TestScheme::testFFTLazy(long logN, long logq, long precisionBits, long logf
 	algo.fftInvLazy(cvec1, fftdim);
 	timeutils.stop("ciphers fft inverse lazy");
 	//-----------------------------------------
-	CZZ* dvec1 = algo.decryptSingleArray(secretKey, cvec1, fftdim);
-	StringUtils::showcompare(mvec1, dvec1, fftdim, "fft");
+	CZZ** dvec1 = new CZZ*[fftdim];
+	for (long j = 0; j < fftdim; ++j) {
+		dvec1[j] = scheme.decrypt(secretKey, cvec1[j]);
+	}
+	for (long i = 0; i < slots; ++i) {
+		for (long j = 0; j < fftdim; ++j) {
+			StringUtils::showcompare(mvec1[i][j], dvec1[j][i], "fft");
+		}
+	}
 	//-----------------------------------------
-	cout << "!!! END TEST FFT LAZY !!!" << endl;
+	cout << "!!! END TEST FFT BATCH LAZY !!!" << endl;
+}
+
+void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logq, long precisionBits, long logSlots, long logfftdim, long logHdim) {
+	cout << "!!! START TEST FFT BATCH LAZY MULTIPLE HADAMARD !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logq);
+	SecKey secretKey(params);
+	PubKey publicKey(params, secretKey);
+	SchemeAux schemeaux(logN);
+	Scheme scheme(params, publicKey, schemeaux);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	SetNumThreads(8);
+	//-----------------------------------------
+	long fftdim = 1 << logfftdim;
+	long hdim = 1 << logHdim;
+	long slots = 1 << logSlots;
+	CZZ*** mvecs = new CZZ**[hdim];
+	Cipher** cvecs = new Cipher*[hdim];
+	for (long h = 0; h < hdim; ++h) {
+		mvecs[h] = new CZZ*[slots];
+
+		for (long i = 0; i < slots; ++i) {
+			mvecs[h][i] = EvaluatorUtils::evaluateRandomVals(fftdim, precisionBits);
+		}
+
+		cvecs[h] = new Cipher[fftdim];
+
+		for (long j = 0; j < fftdim; ++j) {
+			CZZ* mvals = new CZZ[slots];
+			for (long i = 0; i < slots; ++i) {
+				mvals[i] = mvecs[h][i][j];
+			}
+			cvecs[h][j] = scheme.encrypt(mvals, slots);
+		}
+		for (long i = 0; i < slots; ++i) {
+			NumUtils::fft(mvecs[h][i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		}
+	}
+
+	for (long i = 0; i < slots; ++i) {
+		for (long j = 0; j < fftdim; ++j) {
+			for (long s = logHdim - 1; s >= 0; --s) {
+				long spow = 1 << s;
+				for (long h = 0; h < spow; ++h) {
+					mvecs[h][i][j] *= mvecs[h+spow][i][j];
+					mvecs[h][i][j] >>= precisionBits;
+				}
+			}
+		}
+	}
+
+	for (long i = 0; i < slots; ++i) {
+		NumUtils::fftInvLazy(mvecs[0][i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+	}
+
+	for (long h = 0; h < hdim; ++h) {
+		timeutils.start("ciphers fft");
+		algo.fft(cvecs[h], fftdim );
+		timeutils.stop("ciphers fft");
+	}
+	for (long s = logHdim - 1; s >= 0; --s) {
+		long spow = 1 << s;
+		for (long h = 0; h < spow; ++h) {
+			timeutils.start("ciphers hadamard mult");
+			algo.multModSwitchAndEqualVec(cvecs[h], cvecs[h+spow], precisionBits, fftdim);
+			timeutils.stop("ciphers hadamard mult");
+		}
+	}
+
+	timeutils.start("ciphers fft inverse lazy");
+	algo.fftInvLazy(cvecs[0], fftdim);
+	timeutils.stop("ciphers fft inverse lazy");
+
+	//-----------------------------------------
+	CZZ** dvec1 = new CZZ*[fftdim];
+	for (long j = 0; j < fftdim; ++j) {
+		dvec1[j] = scheme.decrypt(secretKey, cvecs[0][j]);
+	}
+	for (long i = 0; i < slots; ++i) {
+		for (long j = 0; j < fftdim; ++j) {
+			StringUtils::showcompare(mvecs[0][i][j], dvec1[j][i], "fft");
+		}
+	}
+	//-----------------------------------------
+	cout << "!!! END TEST FFT BATCH LAZY MULTIPLE HADAMARD !!!" << endl;
 }

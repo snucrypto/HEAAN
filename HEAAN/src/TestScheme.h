@@ -216,8 +216,9 @@ public:
 	 * @param[in] log of fft dimension
 	 * @param[in] log of number of slots
 	 */
-	static void testFFTLazy(long logN, long logq, long precisionBits, long logfftdim);
+	static void testFFTBatchLazy(long logN, long logq, long precisionBits, long logSlots, long logfftdim);
 
+	static void testFFTBatchLazyMultipleHadamard(long logN, long logq, long precisionBits, long logSlots, long logfftdim, long logHdim);
 	//-----------------------------------------
 };
 
