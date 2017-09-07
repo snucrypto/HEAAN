@@ -1,6 +1,8 @@
 #ifndef UTILS_STRINGUTILS_H_
 #define UTILS_STRINGUTILS_H_
 
+#include <iostream>
+
 #include "CZZ.h"
 
 class StringUtils {

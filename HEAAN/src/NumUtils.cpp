@@ -1,7 +1,12 @@
 #include "NumUtils.h"
 
+#include <NTL/RR.h>
+#include <NTL/ZZ.h>
+#include <NTL/ZZX.h>
 #include <cassert>
 #include <cmath>
+
+#include "CZZ.h"
 
 void NumUtils::sampleGauss(ZZX& res, const long& size, const double& stdev) {
 	static double const Pi = 4.0 * atan(1.0);

@@ -1,6 +1,7 @@
 #ifndef SCHEME_MESSAGE_H_
 #define SCHEME_MESSAGE_H_
 
+#include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 
 using namespace std;

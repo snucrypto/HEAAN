@@ -1,6 +1,5 @@
 #include "SchemeAux.h"
 
-#include <NTL/RR.h>
 SchemeAux::SchemeAux(long& logN) {
 	ksiPowsr = new RR*[logN + 2];
 	ksiPowsi = new RR*[logN + 2];

@@ -1,16 +1,15 @@
 #include "Scheme.h"
 
+#include <NTL/RR.h>
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 #include <cmath>
-#include <vector>
 
-#include "CZZ.h"
-#include "NumUtils.h"
-#include "Ring2Utils.h"
-#include "StringUtils.h"
 #include "EvaluatorUtils.h"
+#include "NumUtils.h"
 #include "Params.h"
+#include "PubKey.h"
+#include "Ring2Utils.h"
 
 using namespace std;
 using namespace NTL;

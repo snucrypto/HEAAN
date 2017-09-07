@@ -1,7 +1,6 @@
 #include "CZZ.h"
-
 #include <sstream>
-#include <string>
+
 
 CZZ CZZ::operator+(const CZZ& o) {
 	ZZ resr = r + o.r;

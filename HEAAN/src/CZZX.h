@@ -1,8 +1,8 @@
 #ifndef UTILS_CZZX_H_
 #define UTILS_CZZX_H_
 
-#include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
+#include <iostream>
 
 #include "CZZ.h"
 

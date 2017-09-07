@@ -2,6 +2,7 @@
 #define UTILS_CZZ_H_
 
 #include <NTL/ZZ.h>
+#include <iostream>
 
 using namespace std;
 using namespace NTL;

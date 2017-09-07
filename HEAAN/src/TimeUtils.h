@@ -1,9 +1,7 @@
 #ifndef POLYSCHEME_TIMEUTILS_H_
 #define POLYSCHEME_TIMEUTILS_H_
 
-#include <string>
-#include <vector>
-#include <sys/time.h>
+#include <iostream>
 
 struct timeval;
 

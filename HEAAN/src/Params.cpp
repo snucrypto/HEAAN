@@ -1,8 +1,6 @@
 #include "Params.h"
 
-#include <NTL/tools.h>
 #include <cmath>
-#include <sstream>
 
 Params::Params(long logN, long logq, double sigma, long h) :
 			logN(logN), logq(logq), sigma(sigma), h(h) {

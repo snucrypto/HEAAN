@@ -1,7 +1,7 @@
 #include "CZZX.h"
 
+#include <NTL/ZZ.h>
 #include <sstream>
-#include <string>
 
 CZZX CZZX::operator+(const CZZX& o) {
 	ZZX resr = rx + o.rx;

@@ -1,7 +1,6 @@
 #ifndef UTILS_EVALUATORUTILS_H_
 #define UTILS_EVALUATORUTILS_H_
 
-#include <NTL/ZZ.h>
 #include <NTL/RR.h>
 
 #include "CZZ.h"
