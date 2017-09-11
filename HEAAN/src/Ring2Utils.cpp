@@ -176,8 +176,8 @@ void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long& degree) {
 void Ring2Utils::square(ZZX& res, ZZX& p, ZZ& mod, const long& degree) {
 	res.SetLength(degree);
 	ZZX pp;
-	pp.SetLength(2 * degree);
 	mul(pp, p, p);
+	pp.SetLength(2 * degree);
 
 	for (long i = 0; i < degree; ++i) {
 		pp.rep[i] %= mod;
@@ -204,8 +204,8 @@ ZZX Ring2Utils::square(ZZX& p, ZZ& mod, const long& degree) {
 
 void Ring2Utils::squareAndEqual(ZZX& p, ZZ& mod, const long& degree) {
 	ZZX pp;
-	pp.SetLength(2 * degree);
 	mul(pp, p, p);
+	pp.SetLength(2 * degree);
 
 	for (long i = 0; i < degree; ++i) {
 		pp.rep[i] %= mod;
