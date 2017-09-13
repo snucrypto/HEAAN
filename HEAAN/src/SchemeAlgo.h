@@ -39,7 +39,7 @@ public:
 	 * @param[in] logdeg
 	 * @return cipher(m^2^logdeg)
 	 */
-	Cipher powerOf2(Cipher& cipher, const long& precisionBits, const long& logDegree);
+	Cipher powerOf2(Cipher& cipher, const long precisionBits, const long logDegree);
 
 	/**
 	 * Calculating and storing all power of 2 ciphers up to 2^logdeg
@@ -48,7 +48,7 @@ public:
 	 * @param[in] logdeg
 	 * @return [cipher(m), cipher(m^2), cipher(m^4), ... , cipher(m^2^logdeg)]
 	 */
-	Cipher* powerOf2Extended(Cipher& cipher, const long& precisionBits, const long& logDegree);
+	Cipher* powerOf2Extended(Cipher& cipher, const long precisionBits, const long logDegree);
 
 	//-----------------------------------------
 
@@ -59,7 +59,7 @@ public:
 	 * @param[in] deg
 	 * @return cipher(m^deg)
 	 */
-	Cipher power(Cipher& cipher, const long& precisionBits, const long& degree);
+	Cipher power(Cipher& cipher, const long precisionBits, const long degree);
 
 	/**
 	 * Calculating and storing powers of cipher up to deg
@@ -68,7 +68,7 @@ public:
 	 * @param[in] deg
 	 * @return [cipher(m), cipher(m^2), ... , cipher(m^deg)]
 	 */
-	Cipher* powerExtended(Cipher& cipher, const long& precisionBits, const long& degree);
+	Cipher* powerExtended(Cipher& cipher, const long precisionBits, const long degree);
 
 	//-----------------------------------------
 
@@ -79,7 +79,7 @@ public:
 	 * @param[in] logdeg
 	 * @return cipher(m_1 * m_2 *...*m_{2^logdeg})
 	 */
-	Cipher prodOfPo2(Cipher*& ciphers, const long& precisionBits, const long& logDegree);
+	Cipher prodOfPo2(Cipher*& ciphers, const long precisionBits, const long logDegree);
 
 	/**
 	 * Calculating product of ciphers
@@ -88,7 +88,7 @@ public:
 	 * @param[in] degree
 	 * @return cipher(m_1 * m_2 *...*m_{degree})
 	 */
-	Cipher prod(Cipher*& ciphers, const long& precisionBits, const long& degree);
+	Cipher prod(Cipher*& ciphers, const long precisionBits, const long degree);
 
 	//-----------------------------------------
 
@@ -98,7 +98,7 @@ public:
 	 * @param[in] size
 	 * @return cipher(m_1 + m_2 + ... + m_size)
 	 */
-	Cipher sum(Cipher*& ciphers, const long& size);
+	Cipher sum(Cipher*& ciphers, const long size);
 
 	/**
 	 * Calculating distance of ciphers
@@ -106,7 +106,7 @@ public:
 	 * @param[in] cipher(m'_1, m'_2, ..., m'_slots)
 	 * @return cipher(sum((m_i-m'_i)^2) >> precisionBits)
 	 */
-	Cipher distance(Cipher& cipher1, Cipher& cipher2, const long& precisionBits);
+	Cipher distance(Cipher& cipher1, Cipher& cipher2, const long precisionBits);
 	//-----------------------------------------
 
 	/**
@@ -116,7 +116,7 @@ public:
 	 * @param[in] size
 	 * @return [cipher(m_1 * n_1), cipher(m_2 * n_2),...,cipher(m_size * n_size)]
 	 */
-	Cipher* multVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
+	Cipher* multVec(Cipher*& ciphers1, Cipher*& ciphers2, const long size);
 
 	/**
 	 * Pairwise ciphers multiplication
@@ -124,7 +124,7 @@ public:
 	 * @param[in] [cipher(n_1), cipher(n_2),...,cipher(n_size)]
 	 * @param[in] size
 	 */
-	void multAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& size);
+	void multAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long size);
 
 	/**
 	 * Pairwise ciphers multiplication and modulus switching
@@ -134,7 +134,7 @@ public:
 	 * @param[in] size
 	 * @return [cipher(m_1 * n_1 / p), cipher(m_2 * n_2 / p),...,cipher(m_size * n_size / p)] one level higher
 	 */
-	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& precisionBits, const long& size);
+	Cipher* multAndModSwitchVec(Cipher*& ciphers1, Cipher*& ciphers2, const long precisionBits, const long size);
 
 	/**
 	 * Pairwise ciphers multiplication and modulus switching
@@ -143,7 +143,7 @@ public:
 	 * @param[in] precision of initial m_i, n_i
 	 * @param[in] size
 	 */
-	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long& precisionBits, const long& size);
+	void multModSwitchAndEqualVec(Cipher*& ciphers1, Cipher*& ciphers2, const long precisionBits, const long size);
 
 	//-----------------------------------------
 
@@ -155,7 +155,7 @@ public:
 	 * @param[in] size
 	 * @return cipher(m_1 * n_1 + m_2 * n_2 + ... + m_size * n_size)
 	 */
-	Cipher innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long& precision, const long& size);
+	Cipher innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long precision, const long size);
 
 	/**
 	 * Calculating cipher of partial sums
@@ -164,14 +164,14 @@ public:
 	 * @return cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
 	 *
 	 */
-	Cipher partialSlotsSum(Cipher& cipher, const long& slots);
+	Cipher partialSlotsSum(Cipher& cipher, const long slots);
 
 	/**
 	 * Calculating cipher of partial sums
 	 * @param[in, out] cipher(m_1, m_2,..., m_size) -> cipher(m_1 + ... + m_slots, m_2 + ... + m_{slots + 1},...,m_size + m_1 + ... + m_{slots - 1})
 	 * @param[in] slots summed in partial sums
 	 */
-	void partialSlotsSumAndEqual(Cipher& cipher, const long& slots);
+	void partialSlotsSumAndEqual(Cipher& cipher, const long slots);
 
 	//-----------------------------------------
 
@@ -182,7 +182,7 @@ public:
 	 * @param[in] steps
 	 * @return cipher(1 / m << (2 * precisionBits))
 	 */
-	Cipher inverse(Cipher& cipher, const long& precisionBits, const long& stepsNum);
+	Cipher inverse(Cipher& cipher, const long precisionBits, const long steps);
 
 	/**
 	 * Calculating and storing inverse of a cipher at each step up to stepsNum
@@ -191,7 +191,7 @@ public:
 	 * @param[in] steps
 	 * @return [cipher(1 / m << (2 * precisionBits)), ... ,cipher(1 / m << (2 * precisionBits))]
 	 */
-	Cipher* inverseExtended(Cipher& cipher, const long& precisionBits, const long& stepsNum);
+	Cipher* inverseExtended(Cipher& cipher, const long precisionBits, const long steps);
 
 	//-----------------------------------------
 
@@ -203,7 +203,7 @@ public:
 	 * @param[in] degree
 	 * @return cipher(funcName(m))
 	 */
-	Cipher function(Cipher& cipher, string& funcName, const long& precisionBits, const long& degree);
+	Cipher function(Cipher& cipher, string& funcName, const long precisionBits, const long degree);
 
 	/**
 	 * Calculating function using Taylor Series approximation, more information in SchemeAux
@@ -213,7 +213,7 @@ public:
 	 * @param[in] degee
 	 * @return cipher(funcName(m) * p), but saves one level
 	 */
-	Cipher functionLazy(Cipher& cipher, string& funcName, const long& precisionBits, const long& degree);
+	Cipher functionLazy(Cipher& cipher, string& funcName, const long precisionBits, const long degree);
 
 	/**
 	 * Calculating function using Taylor Series approximation, and storing intermediate results
@@ -223,7 +223,7 @@ public:
 	 * @param[in] degee
 	 * @return [cipher(funcName(m)), ... ,cipher(funcName(m))]
 	 */
-	Cipher* functionExtended(Cipher& cipher, string& funcName, const long& precisionBits, const long& degree);
+	Cipher* functionExtended(Cipher& cipher, string& funcName, const long precisionBits, const long degree);
 
 	//-----------------------------------------
 
@@ -235,7 +235,7 @@ public:
 	 * @param[in] boolean is forward?
 	 * @return [cipher(fft_1), ... ,cipher(fft_size)]
 	 */
-	void fftRaw(Cipher*& ciphers, const long& size, const bool& isForward);
+	void fftRaw(Cipher*& ciphers, const long size, const bool isForward);
 
 	/**
 	 * Calculating fft of ciphers
@@ -244,7 +244,7 @@ public:
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fft_1), ... ,cipher(fft_size)]
 	 */
-	void fft(Cipher*& ciphers, const long& size);
+	void fft(Cipher*& ciphers, const long size);
 
 	/**
 	 * Calculating fft inverse of ciphers
@@ -253,7 +253,7 @@ public:
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fftinv_1), ... ,cipher(fftinv_size)]
 	 */
-	void fftInv(Cipher*& ciphers, const long& size);
+	void fftInv(Cipher*& ciphers, const long size);
 
 	/**
 	 * Calculating fft inverse of ciphers
@@ -262,7 +262,7 @@ public:
 	 * @param[in] size is a power of 2
 	 * @return [cipher(fftinv_1 * size), ... ,cipher(fftinv_size * size)] but saves level
 	 */
-	void fftInvLazy(Cipher*& ciphers, const long& size);
+	void fftInvLazy(Cipher*& ciphers, const long size);
 
 	//-----------------------------------------
 

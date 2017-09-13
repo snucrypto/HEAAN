@@ -250,7 +250,7 @@ void Scheme::conjugateAndEqual(Cipher& cipher) {
 	cipher.bx = bxres;
 }
 
-Cipher Scheme::imult(Cipher& cipher, const long& precisionBits) {
+Cipher Scheme::imult(Cipher& cipher, const long precisionBits) {
 	ZZ tmp = EvaluatorUtils::evaluateVal(sqrt(to_RR(2.0)), precisionBits - 1);
 
 	ZZX bxres, axres, axtmp, bxtmp;
@@ -275,7 +275,7 @@ Cipher Scheme::imult(Cipher& cipher, const long& precisionBits) {
 	return res;
 }
 
-void Scheme::imultAndEqual(Cipher& cipher, const long& precisionBits) {
+void Scheme::imultAndEqual(Cipher& cipher, const long precisionBits) {
 
 	ZZ tmp = EvaluatorUtils::evaluateVal(sqrt(to_RR(2.0)), precisionBits - 1);
 
@@ -441,7 +441,7 @@ void Scheme::multByConstBySlotsAndEqual(Cipher& cipher, CZZ*& cnstvec) {
 
 //-----------------------------------------
 
-Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
+Cipher Scheme::multByMonomial(Cipher& cipher, const long degree) {
 	ZZX ax, bx;
 
 	Ring2Utils::multByMonomial(ax, cipher.ax, degree, params.N);
@@ -450,14 +450,14 @@ Cipher Scheme::multByMonomial(Cipher& cipher, const long& degree) {
 	return Cipher(ax, bx, cipher.mod, cipher.cbits, cipher.slots);
 }
 
-void Scheme::multByMonomialAndEqual(Cipher& cipher, const long& degree) {
+void Scheme::multByMonomialAndEqual(Cipher& cipher, const long degree) {
 	Ring2Utils::multByMonomialAndEqual(cipher.ax, degree, params.N);
 	Ring2Utils::multByMonomialAndEqual(cipher.bx, degree, params.N);
 }
 
 //-----------------------------------------
 
-Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
+Cipher Scheme::leftShift(Cipher& cipher, long bits) {
 	ZZX ax, bx;
 
 	Ring2Utils::leftShift(ax, cipher.ax, bits, cipher.mod, params.N);
@@ -466,7 +466,7 @@ Cipher Scheme::leftShift(Cipher& cipher, long& bits) {
 	return Cipher(ax, bx, cipher.mod, cipher.cbits, cipher.slots);
 }
 
-void Scheme::leftShiftAndEqual(Cipher& cipher, long& bits) {
+void Scheme::leftShiftAndEqual(Cipher& cipher, long bits) {
 	Ring2Utils::leftShiftAndEqual(cipher.ax, bits, cipher.mod, params.N);
 	Ring2Utils::leftShiftAndEqual(cipher.bx, bits, cipher.mod, params.N);
 }
@@ -514,7 +514,7 @@ void Scheme::modEmbedAndEqual(Cipher& cipher, long bitsDown) {
 
 //-----------------------------------------
 
-Cipher Scheme::leftRotateByPo2(Cipher& cipher, long& logrotSlots) {
+Cipher Scheme::leftRotateByPo2(Cipher& cipher, long logrotSlots) {
 	ZZ Pmod = cipher.mod << params.logq;
 
 	ZZX bxrot, bxres, axres;
@@ -534,7 +534,7 @@ Cipher Scheme::leftRotateByPo2(Cipher& cipher, long& logrotSlots) {
 	return Cipher(axres, bxres, cipher.mod, cipher.cbits, cipher.slots);
 }
 
-void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots) {
+void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long logrotSlots) {
 	ZZ Pmod = cipher.mod << params.logq;
 
 	ZZX bxrot, bxres, axres;
@@ -556,7 +556,7 @@ void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots) {
 	cipher.bx = bxres;
 }
 
-Cipher Scheme::rightRotateByPo2(Cipher& cipher, long& logrotSlots) {
+Cipher Scheme::rightRotateByPo2(Cipher& cipher, long logrotSlots) {
 	ZZ Pmod = cipher.mod << params.logq;
 
 	ZZX bxrot, bxres, axres;
@@ -576,7 +576,7 @@ Cipher Scheme::rightRotateByPo2(Cipher& cipher, long& logrotSlots) {
 	return Cipher(axres, bxres, cipher.mod, cipher.cbits, cipher.slots);
 }
 
-void Scheme::rightRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots) {
+void Scheme::rightRotateByPo2AndEqual(Cipher& cipher, long logrotSlots) {
 	ZZ Pmod = cipher.mod << params.logq;
 
 	ZZX bxrot, bxres, axres;
@@ -598,13 +598,13 @@ void Scheme::rightRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots) {
 	cipher.bx = bxres;
 }
 
-Cipher Scheme::leftRotate(Cipher& cipher, long& rotSlots) {
+Cipher Scheme::leftRotate(Cipher& cipher, long rotSlots) {
 	Cipher res = cipher;
 	leftRotateAndEqual(res, rotSlots);
 	return res;
 }
 
-void Scheme::leftRotateAndEqual(Cipher& cipher, long& rotSlots) {
+void Scheme::leftRotateAndEqual(Cipher& cipher, long rotSlots) {
 	long remrotSlots = rotSlots % cipher.slots;
 	long logrotSlots = log2(remrotSlots) + 1;
 	for (long i = 0; i < logrotSlots; ++i) {
@@ -614,13 +614,13 @@ void Scheme::leftRotateAndEqual(Cipher& cipher, long& rotSlots) {
 	}
 }
 
-Cipher Scheme::rightRotate(Cipher& cipher, long& rotSlots) {
+Cipher Scheme::rightRotate(Cipher& cipher, long rotSlots) {
 	Cipher res = cipher;
 	rightRotateAndEqual(res, rotSlots);
 	return res;
 }
 
-void Scheme::rightRotateAndEqual(Cipher& cipher, long& rotSlots) {
+void Scheme::rightRotateAndEqual(Cipher& cipher, long rotSlots) {
 	long remrotSlots = rotSlots % cipher.slots;
 	long logrotSlots = log2(remrotSlots) + 1;
 	for (long i = 0; i < logrotSlots; ++i) {

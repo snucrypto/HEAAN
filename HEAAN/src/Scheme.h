@@ -215,13 +215,13 @@ public:
 	 * @param[in] cipher(m)
 	 * @return cipher(i * m)
 	 */
-	Cipher imult(Cipher& cipher, const long& precisionBits);
+	Cipher imult(Cipher& cipher, const long precisionBits);
 
 	/**
 	 * multiplication by i (imaginary unit) in cipher
 	 * @param[in, out] cipher(m) -> cipher(i * m)
 	 */
-	void imultAndEqual(Cipher& cipher, const long& precisionBits);
+	void imultAndEqual(Cipher& cipher, const long precisionBits);
 
 	//-----------------------------------------
 
@@ -314,14 +314,14 @@ public:
 	 * @param[in] degree
 	 * @return cipher(m * X^degree)
 	 */
-	Cipher multByMonomial(Cipher& cipher, const long& degree);
+	Cipher multByMonomial(Cipher& cipher, const long degree);
 
 	/**
 	 * X^degree multiplication
 	 * @param[in, out] cipher(m) -> cipher(m * X^degree)
 	 * @param[in] degree
 	 */
-	void multByMonomialAndEqual(Cipher& cipher, const long& degree);
+	void multByMonomialAndEqual(Cipher& cipher, const long degree);
 
 	/**
 	 * 2^bits multiplication
@@ -329,14 +329,14 @@ public:
 	 * @param[in] bits
 	 * @return cipher(m * 2^bits)
 	 */
-	Cipher leftShift(Cipher& cipher, long& bits);
+	Cipher leftShift(Cipher& cipher, long bits);
 
 	/**
 	 * 2^bits multiplication
 	 * @param[in, out] cipher(m) -> cipher(m * 2^bits)
 	 * @param[in] bits
 	 */
-	void leftShiftAndEqual(Cipher& cipher, long& bits);
+	void leftShiftAndEqual(Cipher& cipher, long bits);
 
 	/**
 	 * doubles
@@ -380,7 +380,7 @@ public:
 	 * @param[in] log of rotation slots
 	 * @return cipher(m(v_{1+2^logsteps}, v_{2+2^logsteps}, ..., v_{slots+2^logsteps})
 	 */
-	Cipher leftRotateByPo2(Cipher& cipher, long& logrotSlots);
+	Cipher leftRotateByPo2(Cipher& cipher, long logrotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -388,7 +388,7 @@ public:
 	 * @param[in] log of rotation slots
 	 * @return
 	 */
-	void leftRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots);
+	void leftRotateByPo2AndEqual(Cipher& cipher, long logrotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -396,7 +396,7 @@ public:
 	 * @param[in] log of rotation slots
 	 * @return cipher(m(v_{1-2^logsteps}, v_{2-2^logsteps}, ..., v_{slots-2^logsteps})
 	 */
-	Cipher rightRotateByPo2(Cipher& cipher, long& logrotSlots);
+	Cipher rightRotateByPo2(Cipher& cipher, long logrotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -404,7 +404,7 @@ public:
 	 * @param[in] log of rotation slots
 	 * @return
 	 */
-	void rightRotateByPo2AndEqual(Cipher& cipher, long& logrotSlots);
+	void rightRotateByPo2AndEqual(Cipher& cipher, long logrotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -412,14 +412,14 @@ public:
 	 * @param[in] rotation slots
 	 * @return cipher(m(v_{1+steps}, v_{2+steps}, ..., v_{slots+steps})
 	 */
-	Cipher leftRotate(Cipher& cipher, long& rotSlots);
+	Cipher leftRotate(Cipher& cipher, long rotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1+steps}, v_{2+steps}, ..., v_{slots+steps})
 	 * @param[in] rotation slots
 	 */
-	void leftRotateAndEqual(Cipher& cipher, long& rotSlots);
+	void leftRotateAndEqual(Cipher& cipher, long rotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
@@ -427,14 +427,14 @@ public:
 	 * @param[in] rotation slots
 	 * @return cipher(m(v_{1-steps}, v_{2-steps}, ..., v_{slots-steps})
 	 */
-	Cipher rightRotate(Cipher& cipher, long& rotSlots);
+	Cipher rightRotate(Cipher& cipher, long rotSlots);
 
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in] cipher(m(v_1, v_2, ..., v_slots)) -> cipher(m(v_{1-steps}, v_{2-steps}, ..., v_{slots-steps})
 	 * @param[in] rotation slots
 	 */
-	void rightRotateAndEqual(Cipher& cipher, long& rotSlots);
+	void rightRotateAndEqual(Cipher& cipher, long rotSlots);
 
 };
 
