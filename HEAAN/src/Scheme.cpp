@@ -422,6 +422,7 @@ void Scheme::multByPolyAndEqual(Cipher& cipher, ZZX& poly) {
 Cipher Scheme::multByConstBySlots(Cipher& cipher, CZZ*& cnstvec) {
 	CZZ* gcnstvec = groupidx(cnstvec, cipher.slots);
 	Message msg = encode(gcnstvec, cipher.slots);
+	delete[] gcnstvec;
 
 	ZZX axres, bxres;
 	Ring2Utils::mult(axres, cipher.ax, msg.mx, cipher.mod, params.N);
@@ -432,6 +433,7 @@ Cipher Scheme::multByConstBySlots(Cipher& cipher, CZZ*& cnstvec) {
 void Scheme::multByConstBySlotsAndEqual(Cipher& cipher, CZZ*& cnstvec) {
 	CZZ* gcnstvec = groupidx(cnstvec, cipher.slots);
 	Message msg = encode(gcnstvec, cipher.slots);
+	delete[] gcnstvec;
 
 	Ring2Utils::multAndEqual(cipher.ax, msg.mx, cipher.mod, params.N);
 	Ring2Utils::multAndEqual(cipher.bx, msg.mx, cipher.mod, params.N);
