@@ -50,7 +50,7 @@ Message Scheme::encodeWithBits(CZZ*& gvals, long cbits, long slots) {
 	long doubleslots = slots << 1;
 	long logDoubleslots = log2(slots) + 1;
 	long gap = (params.N >> logDoubleslots);
-	NumUtils::fftSpecialInv(gvals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
+	NumUtils::fftSpecialInv(gvals, doubleslots, aux);
 	for (long i = 0; i < doubleslots; ++i) {
 		mx.rep[idx] = gvals[i].r;
 		idx += gap;
@@ -66,7 +66,7 @@ Message Scheme::encode(CZZ*& gvals, long slots) {
 	long logDoubleslots = log2(slots) + 1;
 	long gap = (params.N >> logDoubleslots);
 
-	NumUtils::fftSpecialInv(gvals, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
+	NumUtils::fftSpecialInv(gvals, doubleslots, aux);
 
 	for (long i = 0; i < doubleslots; ++i) {
 		mx.rep[idx] = gvals[i].r;
@@ -140,7 +140,7 @@ CZZ* Scheme::decode(Message& msg) {
 		fftinv[i] = CZZ(tmp, ZZ(0));
 		idx += gap;
 	}
-	NumUtils::fftSpecial(fftinv, doubleslots, aux.ksiPowsr, aux.ksiPowsi);
+	NumUtils::fftSpecial(fftinv, doubleslots, aux);
 	return fftinv;
 }
 

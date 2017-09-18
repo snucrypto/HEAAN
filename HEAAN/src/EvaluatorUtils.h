@@ -3,11 +3,10 @@
 
 #include <NTL/RR.h>
 
+#include "SchemeAux.h"
 #include "CZZ.h"
 
 using namespace NTL;
-
-static RR const Pi = ComputePi_RR();
 
 class EvaluatorUtils {
 public:
@@ -76,6 +75,7 @@ public:
 	 */
 	static CZZ* evaluateRandomVals(const long& size, const long& bits);
 
+	static CZZ* evaluateRandomZZVals(const long& size, const long& bits);
 	//-----------------------------------------
 
 	/**

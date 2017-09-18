@@ -77,7 +77,7 @@ void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& logBnd) {
 	}
 }
 
-void NumUtils::fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const bool& isForward) {
+void NumUtils::fftRaw(CZZ*& vals, const long& size, SchemeAux& aux, const bool& isForward) {
 	for (long i = 1, j = 0; i < size; ++i) {
 		long bit = size >> 1;
 		for (; j >= bit; bit>>=1) {
@@ -90,14 +90,14 @@ void NumUtils::fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPow
 	}
 	if(isForward) {
 		for (long len = 2; len <= size; len <<= 1) {
-			long loglen = log2(len);
+			long MoverLen = aux.M / len;
 			for (long i = 0; i < size; i += len) {
 				for (long j = 0; j < len / 2; ++j) {
 					CZZ u = vals[i + j];
 					CZZ v = vals[i + j + len / 2];
-					RR tmp1 = to_RR(v.r) * (ksiPowsr[loglen][j] + ksiPowsi[loglen][j]);
-					RR tmpr = tmp1 - to_RR(v.r + v.i) * ksiPowsi[loglen][j];
-					RR tmpi = tmp1 + to_RR(v.i - v.r) * ksiPowsr[loglen][j];
+					RR tmp1 = to_RR(v.r) * (aux.ksiPowsr[j * MoverLen] + aux.ksiPowsi[j * MoverLen]);
+					RR tmpr = tmp1 - to_RR(v.r + v.i) * aux.ksiPowsi[j * MoverLen];
+					RR tmpi = tmp1 + to_RR(v.i - v.r) * aux.ksiPowsr[j * MoverLen];
 					v.r = to_ZZ(tmpr);
 					v.i = to_ZZ(tmpi);
 					vals[i + j] = u + v;
@@ -107,14 +107,14 @@ void NumUtils::fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPow
 		}
 	} else {
 		for (long len = 2; len <= size; len <<= 1) {
-			long loglen = log2(len);
+			long MoverLen = aux.M / len;
 			for (long i = 0; i < size; i += len) {
 				for (long j = 0; j < len / 2; ++j) {
 					CZZ u = vals[i + j];
 					CZZ v = vals[i + j + len / 2];
-					RR tmp1 = to_RR(v.r) * (ksiPowsr[loglen][len -j] + ksiPowsi[loglen][len - j]);
-					RR tmpr = tmp1 - to_RR(v.r + v.i) * ksiPowsi[loglen][len - j];
-					RR tmpi = tmp1 + to_RR(v.i - v.r) * ksiPowsr[loglen][len - j];
+					RR tmp1 = to_RR(v.r) * (aux.ksiPowsr[(len - j) * MoverLen] + aux.ksiPowsi[(len - j) * MoverLen]);
+					RR tmpr = tmp1 - to_RR(v.r + v.i) * aux.ksiPowsi[(len - j) * MoverLen];
+					RR tmpi = tmp1 + to_RR(v.i - v.r) * aux.ksiPowsr[(len - j) * MoverLen];
 					v.r = to_ZZ(tmpr);
 					v.i = to_ZZ(tmpi);
 					vals[i + j] = u + v;
@@ -125,23 +125,23 @@ void NumUtils::fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPow
 	}
 }
 
-void NumUtils::fft(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi) {
-	fftRaw(vals, size, ksiPowsr, ksiPowsi, true);
+void NumUtils::fft(CZZ*& vals, const long& size, SchemeAux& aux) {
+	fftRaw(vals, size, aux, true);
 }
 
-void NumUtils::fftInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi) {
-	fftRaw(vals, size, ksiPowsr, ksiPowsi, false);
+void NumUtils::fftInv(CZZ*& vals, const long& size, SchemeAux& aux) {
+	fftRaw(vals, size, aux, false);
 	long logSize = log2(size);
 	for (long i = 0; i < size; ++i) {
 		vals[i] >>= logSize;
 	}
 }
 
-void NumUtils::fftInvLazy(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi) {
-	fftRaw(vals, size, ksiPowsr, ksiPowsi, false);
+void NumUtils::fftInvLazy(CZZ*& vals, const long& size, SchemeAux& aux) {
+	fftRaw(vals, size, aux, false);
 }
 
-void NumUtils::fftSpecial(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi) {
+void NumUtils::fftSpecial(CZZ*& vals, const long& size, SchemeAux& aux) {
 	for (int i = 1, j = 0; i < size; ++i) {
 		long bit = size >> 1;
 		for (; j>=bit; bit>>=1) {
@@ -154,13 +154,14 @@ void NumUtils::fftSpecial(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ks
 	}
 	for (long len = 2; len <= size; len <<= 1) {
 		long loglen = log2(len);
+		long Mover2Len = aux.M / len / 2;
 		for (long i = 0; i < size; i += len) {
 			for (long j = 0; j < len / 2; ++j) {
 				CZZ u = vals[i + j];
 				CZZ v = vals[i + j + len / 2];
-				RR tmp1 = to_RR(v.r) * (ksiPowsr[loglen + 1][2 * j + 1] + ksiPowsi[loglen + 1][2 * j + 1]);
-				RR tmpr = tmp1 - to_RR(v.r + v.i) * ksiPowsi[loglen + 1][2 * j + 1];
-				RR tmpi = tmp1 + to_RR(v.i - v.r) * ksiPowsr[loglen + 1][2 * j + 1];
+				RR tmp1 = to_RR(v.r) * (aux.ksiPowsr[(2 * j + 1) * Mover2Len] + aux.ksiPowsi[(2 * j + 1) * Mover2Len]);
+				RR tmpr = tmp1 - to_RR(v.r + v.i) * aux.ksiPowsi[(2 * j + 1) * Mover2Len];
+				RR tmpi = tmp1 + to_RR(v.i - v.r) * aux.ksiPowsr[(2 * j + 1) * Mover2Len];
 				v.r = to_ZZ(tmpr);
 				v.i = to_ZZ(tmpi);
 				vals[i + j] = u + v;
@@ -170,13 +171,14 @@ void NumUtils::fftSpecial(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ks
 	}
 }
 
-void NumUtils::fftSpecialInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi) {
-	fftRaw(vals, size, ksiPowsr, ksiPowsi, false);
+void NumUtils::fftSpecialInv(CZZ*& vals, const long& size, SchemeAux& aux) {
+	fftRaw(vals, size, aux, false);
 	long logsize = log2(size);
+	long Mover2size = aux.M / size / 2;
 	for (long i = 0; i < size; ++i) {
-		RR tmp1 = to_RR(vals[i].r) * (ksiPowsr[logsize + 1][2 * size - i] + ksiPowsi[logsize + 1][2 * size - i]);
-		RR tmpr = tmp1 - to_RR(vals[i].r + vals[i].i) * ksiPowsi[logsize + 1][2 * size - i];
-		RR tmpi = tmp1 + to_RR(vals[i].i - vals[i].r) * ksiPowsr[logsize + 1][2 * size - i];
+		RR tmp1 = to_RR(vals[i].r) * (aux.ksiPowsr[(2 * size - i) * Mover2size] + aux.ksiPowsi[(2 * size - i) * Mover2size]);
+		RR tmpr = tmp1 - to_RR(vals[i].r + vals[i].i) * aux.ksiPowsi[(2 * size - i) * Mover2size];
+		RR tmpi = tmp1 + to_RR(vals[i].i - vals[i].r) * aux.ksiPowsr[(2 * size - i) * Mover2size];
 		vals[i].r = to_ZZ(tmpr);
 		vals[i].i = to_ZZ(tmpi);
 		vals[i] >>= logsize;

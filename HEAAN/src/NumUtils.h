@@ -3,6 +3,7 @@
 
 #include <NTL/ZZX.h>
 #include <NTL/RR.h>
+#include "SchemeAux.h"
 #include "CZZ.h"
 
 using namespace NTL;
@@ -68,7 +69,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @return pre fft
 	 */
-	static void fftRaw(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi, const bool& isForward);
+	static void fftRaw(CZZ*& vals, const long& size, SchemeAux& aux, const bool& isForward);
 
 	/**
 	 * calculates fft in Z_q[X] / (X^N + 1)
@@ -77,7 +78,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @param[in] auxiliary information
 	 */
-	static void fft(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi);
+	static void fft(CZZ*& vals, const long& size, SchemeAux& aux);
 
 	/**
 	 * calculates fft inverse in Z_q[X] / (X^N + 1)
@@ -86,7 +87,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @param[in] auxiliary information
 	 */
-	static void fftInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi);
+	static void fftInv(CZZ*& vals, const long& size, SchemeAux& aux);
 
 	/**
 	 * calculates fft inverse without last division by size in Z_q[X] / (X^N + 1)
@@ -95,7 +96,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @param[in] auxiliary information
 	 */
-	static void fftInvLazy(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi);
+	static void fftInvLazy(CZZ*& vals, const long& size, SchemeAux& aux);
 
 	//-----------------------------------------
 
@@ -106,7 +107,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @param[in] auxiliary information
 	 */
-	static void fftSpecial(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi);
+	static void fftSpecial(CZZ*& vals, const long& size, SchemeAux& aux);
 
 	/**
 	 * calculates special fft inverse in Z_q[X] / (X^N + 1) needed for encoding/decoding
@@ -115,7 +116,7 @@ public:
 	 * @param[in] auxiliary information
 	 * @param[in] auxiliary information
 	 */
-	static void fftSpecialInv(CZZ*& vals, const long& size, RR**& ksiPowsr, RR**& ksiPowsi);
+	static void fftSpecialInv(CZZ*& vals, const long& size, SchemeAux& aux);
 
 	//-----------------------------------------
 };

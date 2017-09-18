@@ -632,13 +632,13 @@ void TestScheme::testFFTBatch(long logN, long logq, long precisionBits, long log
 	}
 
 	for (long i = 0; i < slots; ++i) {
-		NumUtils::fft(mvec1[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
-		NumUtils::fft(mvec2[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		NumUtils::fft(mvec1[i], fftdim, schemeaux);
+		NumUtils::fft(mvec2[i], fftdim, schemeaux);
 		for (long j = 0; j < fftdim; ++j) {
 			mvec1[i][j] *= mvec2[i][j];
 			mvec1[i][j] >>= precisionBits;
 		}
-		NumUtils::fftInv(mvec1[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		NumUtils::fftInv(mvec1[i], fftdim, schemeaux);
 	}
 	//-----------------------------------------
 	timeutils.start("ciphers fft 1 batch");
@@ -711,13 +711,13 @@ void TestScheme::testFFTBatchLazy(long logN, long logq, long precisionBits, long
 	}
 
 	for (long i = 0; i < slots; ++i) {
-		NumUtils::fft(mvec1[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
-		NumUtils::fft(mvec2[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		NumUtils::fft(mvec1[i], fftdim, schemeaux);
+		NumUtils::fft(mvec2[i], fftdim, schemeaux);
 		for (long j = 0; j < fftdim; ++j) {
 			mvec1[i][j] *= mvec2[i][j];
 			mvec1[i][j] >>= precisionBits;
 		}
-		NumUtils::fftInvLazy(mvec1[i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		NumUtils::fftInvLazy(mvec1[i], fftdim, schemeaux);
 	}
 	//-----------------------------------------
 	timeutils.start("ciphers fft 1");
@@ -787,7 +787,7 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logq, long pre
 			delete[] mvals;
 		}
 		for (long i = 0; i < slots; ++i) {
-			NumUtils::fft(mvecs[h][i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+			NumUtils::fft(mvecs[h][i], fftdim, schemeaux);
 		}
 	}
 
@@ -804,7 +804,7 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logq, long pre
 	}
 
 	for (long i = 0; i < slots; ++i) {
-		NumUtils::fftInvLazy(mvecs[0][i], fftdim, schemeaux.ksiPowsr, schemeaux.ksiPowsi);
+		NumUtils::fftInvLazy(mvecs[0][i], fftdim, schemeaux);
 	}
 
 	for (long h = 1; h < hdim; ++h) {

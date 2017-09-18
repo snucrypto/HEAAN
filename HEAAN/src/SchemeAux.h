@@ -11,11 +11,14 @@
 using namespace std;
 using namespace NTL;
 
+static RR const Pi = ComputePi_RR();
+
 class SchemeAux {
 public:
 
-	RR** ksiPowsr; ///< storing ksi pows for fft calculation
-	RR** ksiPowsi; ///< storing ksi pows for fft calculation
+	long M;
+	RR* ksiPowsr; ///< storing ksi pows for fft calculation
+	RR* ksiPowsi; ///< storing ksi pows for fft calculation
 	map<string, double*> taylorCoeffsMap; ///< storing taylor coefficients for function calculation
 
 	//-----------------------------------------

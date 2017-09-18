@@ -48,6 +48,14 @@ CZZ* EvaluatorUtils::evaluateRandomVals(const long& size, const long& bits) {
 	return res;
 }
 
+CZZ* EvaluatorUtils::evaluateRandomZZVals(const long& size, const long& bits) {
+	CZZ* res = new CZZ[size];
+	for (long i = 0; i < size; i++) {
+		res[i].r = RandomBits_ZZ(bits);
+	}
+	return res;
+}
+
 CZZ EvaluatorUtils::evaluatePow(const double& xr, const double& xi, const long& degree, const long& bits) {
 	long logDegree = log2(degree);
 	long po2Degree = 1 << logDegree;
