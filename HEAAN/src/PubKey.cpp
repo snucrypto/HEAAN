@@ -20,7 +20,7 @@ PubKey::PubKey(Params& params, SecKey& secretKey) {
 	for (long i = 0; i < (params.logN - 1); ++i) {
 		ZZX spow;
 		long ipow = (1 << i);
-		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[params.logN - 1][ipow], params.q, params.N);
+		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[ipow], params.q, params.N);
 		Ring2Utils::leftShiftAndEqual(spow, params.logq, params.qq, params.N);
 		NumUtils::sampleUniform2(axLeftRot[i], params.N, params.logqq);
 		NumUtils::sampleGauss(ex, params.N, params.sigma);
@@ -35,7 +35,7 @@ PubKey::PubKey(Params& params, SecKey& secretKey) {
 	for (long i = 0; i < (params.logN - 1); ++i) {
 		ZZX spow;
 		long ipow = params.N/2 - (1 << i);
-		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[params.logN - 1][ipow], params.q, params.N);
+		Ring2Utils::inpower(spow, secretKey.sx, params.rotGroup[ipow], params.q, params.N);
 		Ring2Utils::leftShiftAndEqual(spow, params.logq, params.qq, params.N);
 		NumUtils::sampleUniform2(axRightRot[i], params.N, params.logqq);
 		NumUtils::sampleGauss(ex, params.N, params.sigma);

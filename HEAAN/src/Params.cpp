@@ -10,21 +10,14 @@ Params::Params(long logN, long logq, double sigma, long h) :
 	q = power2_ZZ(logq);
 	qq = power2_ZZ(logqq);
 
-	rotGroup = new long*[logN];
-	rotGroupInv = new long*[logN];
+	rotGroup = new long[N / 2];
 
-	for (long i = 0; i < logN; ++i) {
-		long ipow = 1 << i;
-		long ipow2 = ipow << 2;
-		rotGroup[i] = new long[ipow];
-		rotGroupInv[i] = new long[ipow];
-		long val = 1;
-		for (long j = 0; j < ipow; ++j) {
-			rotGroup[i][j] = val;
-			rotGroupInv[i][j] = ipow2 - val;
-			val *= 3;
-			val %= ipow2;
-		}
+	long val = 1;
+	long N2 = N << 1;
+	for (long i = 0; i < N / 2; ++i) {
+		rotGroup[i] = val;
+		val *= 3;
+		val %= N2;
 	}
 }
 

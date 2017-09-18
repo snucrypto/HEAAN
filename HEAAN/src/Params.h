@@ -21,8 +21,7 @@ public:
 	ZZ q;
 	ZZ qq;
 
-	long** rotGroup; ///< auxiliary information about rotation group indexes for batch encoding
-	long** rotGroupInv; ///< auxiliary information about rotation group indexes for batch encoding
+	long* rotGroup; ///< auxiliary information about rotation group indexes for batch encoding
 
 
 	/**
