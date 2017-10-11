@@ -16,7 +16,6 @@ using namespace NTL;
 
 CZZ* Scheme::groupidx(CZZ*& vals, long slots) {
 	CZZ* res = new CZZ[slots * 2];
-	long logslots = log2(slots);
 	for (long i = 0; i < slots; ++i) {
 		long idx = (params.rotGroup[i] % (4 * slots) - 1) / 2;
 		res[idx] = vals[i];
@@ -33,7 +32,6 @@ CZZ* Scheme::groupidx(CZZ& val) {
 }
 
 CZZ* Scheme::degroupidx(CZZ*& vals, long slots) {
-	long logslots = log2(slots);
 	CZZ* res = new CZZ[slots];
 	for (long i = 0; i < slots; ++i) {
 		long idx = (params.rotGroup[i] % (4 * slots) - 1) / 2;
@@ -50,8 +48,7 @@ Message Scheme::encodeWithBits(CZZ*& gvals, long cbits, long slots) {
 	ZZ mod = power2_ZZ(cbits);
 	long idx = 0;
 	long doubleslots = slots << 1;
-	long logDoubleslots = log2(slots) + 1;
-	long gap = (params.N >> logDoubleslots);
+	long gap = params.N / slots / 2;
 	NumUtils::fftSpecialInv(gvals, doubleslots, aux);
 	for (long i = 0; i < doubleslots; ++i) {
 		mx.rep[idx] = gvals[i].r;
@@ -65,8 +62,7 @@ Message Scheme::encode(CZZ*& gvals, long slots) {
 	mx.SetLength(params.N);
 	long idx = 0;
 	long doubleslots = slots << 1;
-	long logDoubleslots = log2(slots) + 1;
-	long gap = (params.N >> logDoubleslots);
+	long gap = params.N / slots / 2;
 
 	NumUtils::fftSpecialInv(gvals, doubleslots, aux);
 
@@ -608,7 +604,7 @@ Cipher Scheme::leftRotate(Cipher& cipher, long rotSlots) {
 
 void Scheme::leftRotateAndEqual(Cipher& cipher, long rotSlots) {
 	long remrotSlots = rotSlots % cipher.slots;
-	long logrotSlots = log2(remrotSlots) + 1;
+	long logrotSlots = log2((double)remrotSlots) + 1;
 	for (long i = 0; i < logrotSlots; ++i) {
 		if(bit(remrotSlots, i)) {
 			leftRotateByPo2AndEqual(cipher, i);
@@ -624,7 +620,7 @@ Cipher Scheme::rightRotate(Cipher& cipher, long rotSlots) {
 
 void Scheme::rightRotateAndEqual(Cipher& cipher, long rotSlots) {
 	long remrotSlots = rotSlots % cipher.slots;
-	long logrotSlots = log2(remrotSlots) + 1;
+	long logrotSlots = log2((double)remrotSlots) + 1;
 	for (long i = 0; i < logrotSlots; ++i) {
 		if(bit(remrotSlots, i)) {
 			rightRotateByPo2AndEqual(cipher, i);
