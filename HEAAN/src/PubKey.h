@@ -15,11 +15,12 @@ public:
 
 	map<long, RLWE> keyMap;
 	map<long, RLWE> leftRotKeyMap;
-	map<long, RLWE> linKeyMap;
 
 	//-----------------------------------------
 
 	PubKey(Params& params, SecKey& secretKey);
+
+	//-----------------------------------------
 
 	void addEncKey(Params& params, SecKey& secretKey);
 	void addConjKey(Params& params, SecKey& secretKey);
@@ -29,15 +30,12 @@ public:
 	void addLeftRotKeys(Params& params, SecKey& secretKey);
 	void addRightRotKeys(Params& params, SecKey& secretKey);
 
-	void addBootKeys(Params& params, SecKey& secretKey, long l);
-
-	//-----------------------------------------
-
+	void addBootKeys(Params& params, SecKey& secretKey, long size);
+	void addSortKeys(Params& params, SecKey& secretKey, long size);
 };
 
 static long ENCRYPTION = 0;
 static long MULTIPLICATION  = 1;
 static long CONJUGATION = 2;
-
 
 #endif /* SCHEME_PUBKEY_H_ */

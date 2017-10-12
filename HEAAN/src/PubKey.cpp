@@ -77,10 +77,10 @@ void PubKey::addRightRotKeys(Params& params, SecKey& secretKey) {
 	}
 }
 
-void PubKey::addBootKeys(Params& params, SecKey& secretKey, long l) {
-	long lpow = 1 << l;
-	long k = 1 << (l/2);
-	long m = lpow / k;
+void PubKey::addBootKeys(Params& params, SecKey& secretKey, long size) {
+	long sizeh = size/2;
+	long k = 1 << sizeh;
+	long m = 1 << (size - sizeh);
 
 	for (long i = 1; i < k; ++i) {
 		if(leftRotKeyMap.find(i) == leftRotKeyMap.end()) {
@@ -93,5 +93,13 @@ void PubKey::addBootKeys(Params& params, SecKey& secretKey, long l) {
 			addLeftRotKey(params, secretKey, idx);
 		}
 	}
-
 }
+
+void PubKey::addSortKeys(Params& params, SecKey& secretKey, long size) {
+	for (long i = 0; i < size; ++i) {
+		if(leftRotKeyMap.find(i) == leftRotKeyMap.end()) {
+			addLeftRotKey(params, secretKey, i);
+		}
+	}
+}
+
