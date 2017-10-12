@@ -14,8 +14,8 @@ class PubKey {
 public:
 
 	map<long, RLWE> keyMap;
-
 	map<long, RLWE> leftRotKeyMap;
+	map<long, RLWE> linKeyMap;
 
 	//-----------------------------------------
 
@@ -28,6 +28,8 @@ public:
 	void addLeftRotKey(Params& params, SecKey& secretKey, long rot);
 	void addLeftRotKeys(Params& params, SecKey& secretKey);
 	void addRightRotKeys(Params& params, SecKey& secretKey);
+
+	void addBootKeys(Params& params, SecKey& secretKey, long l);
 
 	//-----------------------------------------
 

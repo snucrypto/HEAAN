@@ -560,19 +560,16 @@ void Scheme::modEmbedAndEqual(Cipher& cipher, long bitsDown) {
 	Ring2Utils::modAndEqual(cipher.bx, cipher.mod, params.N);
 }
 
-//-----------------------------------------
-
-Cipher Scheme::leftRotateByPo2(Cipher& cipher, long logrotSlots) {
+Cipher Scheme::leftRotateFast(Cipher& cipher, long rotSlots) {
 	ZZ Pmod = cipher.mod << params.logq;
 
 	ZZX bxrot, bxres, axres;
-
-	long rotSlots = (1 << logrotSlots);
 
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
 	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
 
 	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
+
 	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
 	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
 
@@ -581,76 +578,48 @@ Cipher Scheme::leftRotateByPo2(Cipher& cipher, long logrotSlots) {
 
 	Ring2Utils::addAndEqual(bxres, bxrot, cipher.mod, params.N);
 	return Cipher(axres, bxres, cipher.mod, cipher.cbits, cipher.slots);
+}
+
+void Scheme::leftRotateAndEqualFast(Cipher& cipher, long rotSlots) {
+	ZZ Pmod = cipher.mod << params.logq;
+
+	ZZX bxrot, bxres, axres;
+
+	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
+	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
+
+	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
+
+	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
+	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
+
+	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
+	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
+
+	Ring2Utils::addAndEqual(bxres, bxrot, cipher.mod, params.N);
+
+	cipher.ax = axres;
+	cipher.bx = bxres;
+}
+
+Cipher Scheme::leftRotateByPo2(Cipher& cipher, long logrotSlots) {
+	long rotSlots = (1 << logrotSlots);
+	return leftRotateFast(cipher, rotSlots);
 }
 
 void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long logrotSlots) {
-	ZZ Pmod = cipher.mod << params.logq;
-
-	ZZX bxrot, bxres, axres;
-
 	long rotSlots = (1 << logrotSlots);
-
-	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
-	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
-
-	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
-
-	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
-
-	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
-	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
-
-	Ring2Utils::addAndEqual(bxres, bxrot, cipher.mod, params.N);
-
-	cipher.ax = axres;
-	cipher.bx = bxres;
+	leftRotateAndEqualFast(cipher, rotSlots);
 }
 
 Cipher Scheme::rightRotateByPo2(Cipher& cipher, long logrotSlots) {
-	ZZ Pmod = cipher.mod << params.logq;
-
-	ZZX bxrot, bxres, axres;
-
 	long rotSlots = params.N/2 - (1 << logrotSlots);
-
-	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
-	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
-
-	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
-
-	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
-
-	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
-	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
-
-	Ring2Utils::addAndEqual(bxres, bxrot, cipher.mod, params.N);
-	return Cipher(axres, bxres, cipher.mod, cipher.cbits, cipher.slots);
+	return leftRotateFast(cipher, rotSlots);
 }
 
 void Scheme::rightRotateByPo2AndEqual(Cipher& cipher, long logrotSlots) {
-	ZZ Pmod = cipher.mod << params.logq;
-
-	ZZX bxrot, bxres, axres;
-
 	long rotSlots = params.N/2 - (1 << logrotSlots);
-
-	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
-
-	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
-	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
-
-	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
-
-	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
-	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
-
-	Ring2Utils::addAndEqual(bxres, bxrot, cipher.mod, params.N);
-
-	cipher.ax = axres;
-	cipher.bx = bxres;
+	leftRotateAndEqualFast(cipher, rotSlots);
 }
 
 Cipher Scheme::leftRotate(Cipher& cipher, long rotSlots) {

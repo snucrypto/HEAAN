@@ -411,6 +411,9 @@ public:
 	 */
 	void rightRotateByPo2AndEqual(Cipher& cipher, long logrotSlots);
 
+	Cipher leftRotateFast(Cipher& cipher, long rotSlots);
+	void leftRotateAndEqualFast(Cipher& cipher, long rotSlots);
+
 	/**
 	 * calculates cipher of array with rotated indexes
 	 * @param[in] cipher(m(v_1, v_2, ..., v_slots))

@@ -209,10 +209,9 @@ Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long pr
 }
 
 Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long slots) {
-	long logslots = log2((double)slots);
 	Cipher res = cipher;
-	for (long i = 0; i < logslots; ++i) {
-		Cipher rot = scheme.leftRotateByPo2(cipher, i);
+	for (long i = 1; i < slots; i <<= 1) {
+		Cipher rot = scheme.leftRotateFast(cipher, i);
 		scheme.addAndEqual(res, rot);
 	}
 	return res;
@@ -220,8 +219,8 @@ Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long slots) {
 
 void SchemeAlgo::partialSlotsSumAndEqual(Cipher& cipher, const long slots) {
 	long logslots = log2((double)slots);
-	for (long i = 0; i < logslots; ++i) {
-		Cipher rot = scheme.leftRotateByPo2(cipher, i);
+	for (long i = 1; i < slots; i <<= 1) {
+		Cipher rot = scheme.leftRotateFast(cipher, i);
 		scheme.addAndEqual(cipher, rot);
 	}
 }
