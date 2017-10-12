@@ -2,7 +2,9 @@
 #define SCHEME_PUBKEY_H_
 
 #include <NTL/ZZX.h>
+#include <map>
 
+#include "RLWE.h"
 #include "SecKey.h"
 
 using namespace std;
@@ -11,27 +13,29 @@ using namespace NTL;
 class PubKey {
 public:
 
-	ZZX ax; ///<< information for symmetric encryption
-	ZZX bx; ///<< information for symmetric encryption
+	map<long, RLWE> keyMap;
 
-	ZZX axStar; ///<< auxiliary information for multiplication
-	ZZX bxStar; ///<< auxiliary information for multiplication
-
-	ZZX axConj; ///<< auxiliary information for conjugation
-	ZZX bxConj; ///<< auxiliary information for conjugation
-
-	ZZX* axLeftRot; ///< auxiliary information for rotation
-	ZZX* bxLeftRot; ///< auxiliary information for rotation
-
-	ZZX* axRightRot; ///< auxiliary information for rotation
-	ZZX* bxRightRot; ///< auxiliary information for rotation
+	map<long, RLWE> leftRotKeyMap;
 
 	//-----------------------------------------
 
 	PubKey(Params& params, SecKey& secretKey);
 
+	void addEncKey(Params& params, SecKey& secretKey);
+	void addConjKey(Params& params, SecKey& secretKey);
+	void addMultKey(Params& params, SecKey& secretKey);
+
+	void addLeftRotKey(Params& params, SecKey& secretKey, long rot);
+	void addLeftRotKeys(Params& params, SecKey& secretKey);
+	void addRightRotKeys(Params& params, SecKey& secretKey);
+
 	//-----------------------------------------
 
 };
+
+static long ENCRYPTION = 0;
+static long MULTIPLICATION  = 1;
+static long CONJUGATION = 2;
+
 
 #endif /* SCHEME_PUBKEY_H_ */

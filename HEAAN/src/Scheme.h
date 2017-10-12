@@ -23,7 +23,7 @@ public:
 
 
 	/**
-	 * regroup vals indexes (i) -> (3^i mod slots) and add conjugates
+	 * regroup vals indexes (i) -> (5^i mod slots) and add conjugates
 	 * @param[in] vals
 	 * @param[in] slots
 	 * @return regrouped vals with conjugates
@@ -39,7 +39,7 @@ public:
 	CZZ* groupidx(CZZ& val);
 
 	/**
-	 * degroup vals indexes (3^i mod N) -> (i) and remove conjugates
+	 * degroup vals indexes (5^i mod N) -> (i) and remove conjugates
 	 * @param[in] vals
 	 * @param[in] slots
 	 * @return degrouped vals without conjugates
@@ -57,6 +57,8 @@ public:
 	 */
 	Message encodeWithBits(CZZ*& gvals, long cbits, long slots);
 
+	Message encodeSingleWithBits(CZZ& val, long cbits);
+
 	/**
 	 * encodes regrouped vals into ZZX using fft inverse
 	 * @param[in] vals
@@ -64,6 +66,9 @@ public:
 	 * @return Message ZZX slots and level
 	 */
 	Message encode(CZZ*& gvals, long slots);
+
+	Message encodeSingle(CZZ& val);
+
 	/**
 	 * decodes ZZX into regrouped vals using fft
 	 * @param[in] message

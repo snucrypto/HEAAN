@@ -62,6 +62,7 @@ void TestScheme::testConjugateBatch(long logN, long logq, long precisionBits, lo
 	SchemeAux schemeaux(logN);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
+	publicKey.addConjKey(params, secretKey);
 	//-----------------------------------------
 	long slots = (1 << logSlots);
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, precisionBits);
@@ -122,6 +123,7 @@ void TestScheme::testRotateByPo2Batch(long logN, long logq, long precisionBits, 
 	SchemeAux schemeaux(logN);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
+	publicKey.addLeftRotKeys(params, secretKey);
 	//-----------------------------------------
 	long slots = (1 << logSlots);
 	long rotSlots = (1 << rotlogSlots);
@@ -159,6 +161,8 @@ void TestScheme::testRotateBatch(long logN, long logq, long precisionBits, long 
 	SchemeAux schemeaux(logN);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
+	publicKey.addLeftRotKeys(params, secretKey);
+	publicKey.addRightRotKeys(params, secretKey);
 	//-----------------------------------------
 	long slots = (1 << logSlots);
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, precisionBits);
@@ -195,6 +199,7 @@ void TestScheme::testSlotsSum(long logN, long logq, long precisionBits, long log
 	SchemeAux schemeaux(logN);
 	Scheme scheme(params, publicKey, schemeaux);
 	SchemeAlgo algo(scheme);
+	publicKey.addLeftRotKeys(params, secretKey);
 	//-----------------------------------------
 	long slots = (1 << logSlots);
 	CZZ* mvec = EvaluatorUtils::evaluateRandomVals(slots, precisionBits);

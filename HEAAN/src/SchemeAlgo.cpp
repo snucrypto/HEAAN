@@ -52,7 +52,7 @@ Cipher* SchemeAlgo::powerOf2Extended(Cipher& cipher, const long precisionBits, c
 //-----------------------------------------
 
 Cipher SchemeAlgo::power(Cipher& cipher, const long precisionBits, const long degree) {
-	long logDegree = log2(degree);
+	long logDegree = log2((double)degree);
 	long po2Degree = 1 << logDegree;
 
 	Cipher res = powerOf2(cipher, precisionBits, logDegree);
@@ -69,7 +69,7 @@ Cipher SchemeAlgo::power(Cipher& cipher, const long precisionBits, const long de
 
 Cipher* SchemeAlgo::powerExtended(Cipher& cipher, const long precisionBits, const long degree) {
 	Cipher* res = new Cipher[degree];
-	long logDegree = log2(degree);
+	long logDegree = log2((double)degree);
 	Cipher* cpows = powerOf2Extended(cipher, precisionBits, logDegree);
 	long idx = 0;
 	for (long i = 0; i < logDegree; ++i) {
@@ -112,7 +112,7 @@ Cipher SchemeAlgo::prodOfPo2(Cipher*& ciphers, const long precisionBits, const l
 }
 
 Cipher SchemeAlgo::prod(Cipher*& ciphers, const long precisionBits, const long degree) {
-	long logDegree = log2(degree) + 1;
+	long logDegree = log2((double)degree) + 1;
 	long idx = 0;
 	bool isinit = false;
 	Cipher res;
@@ -209,7 +209,7 @@ Cipher SchemeAlgo::innerProd(Cipher*& ciphers1, Cipher*& ciphers2, const long pr
 }
 
 Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long slots) {
-	long logslots = log2(slots);
+	long logslots = log2((double)slots);
 	Cipher res = cipher;
 	for (long i = 0; i < logslots; ++i) {
 		Cipher rot = scheme.leftRotateByPo2(cipher, i);
@@ -219,7 +219,7 @@ Cipher SchemeAlgo::partialSlotsSum(Cipher& cipher, const long slots) {
 }
 
 void SchemeAlgo::partialSlotsSumAndEqual(Cipher& cipher, const long slots) {
-	long logslots = log2(slots);
+	long logslots = log2((double)slots);
 	for (long i = 0; i < logslots; ++i) {
 		Cipher rot = scheme.leftRotateByPo2(cipher, i);
 		scheme.addAndEqual(cipher, rot);
@@ -388,7 +388,7 @@ void SchemeAlgo::fft(Cipher*& ciphers, const long size) {
 
 void SchemeAlgo::fftInv(Cipher*& ciphers, const long size) {
 	fftRaw(ciphers, size, false);
-	long logsize = log2(size);
+	long logsize = log2((double)size);
 
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {

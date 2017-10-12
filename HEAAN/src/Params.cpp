@@ -23,6 +23,6 @@ Params::Params(long logN, long logq, double sigma, long h) :
 
 long Params::suggestlogN(long lambda, long logq) {
 	long res = 2 * logq * (lambda + 110) / 7.2;
-	double logres = log2(res);
+	double logres = log2((double)res);
 	return (long)ceil(logres);
 }

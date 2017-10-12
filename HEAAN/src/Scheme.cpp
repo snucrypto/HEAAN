@@ -17,7 +17,7 @@ using namespace NTL;
 CZZ* Scheme::groupidx(CZZ*& vals, long slots) {
 	CZZ* res = new CZZ[slots * 2];
 	for (long i = 0; i < slots; ++i) {
-		long idx = (params.rotGroup[i] % (4 * slots) - 1) / 2;
+		long idx = (params.rotGroup[i] % (slots << 2) - 1) / 2;
 		res[idx] = vals[i];
 		res[2 * slots - idx - 1] = vals[i].conjugate();
 	}
@@ -34,7 +34,7 @@ CZZ* Scheme::groupidx(CZZ& val) {
 CZZ* Scheme::degroupidx(CZZ*& vals, long slots) {
 	CZZ* res = new CZZ[slots];
 	for (long i = 0; i < slots; ++i) {
-		long idx = (params.rotGroup[i] % (4 * slots) - 1) / 2;
+		long idx = (params.rotGroup[i] % (slots << 2) - 1) / 2;
 		res[i] = vals[idx];
 	}
 	return res;
@@ -42,27 +42,59 @@ CZZ* Scheme::degroupidx(CZZ*& vals, long slots) {
 
 //-----------------------------------------
 
-Message Scheme::encodeWithBits(CZZ*& gvals, long cbits, long slots) {
+Message Scheme::encodeWithBits(CZZ*& vals, long cbits, long slots) {
+	long doubleslots = slots << 1;
+	CZZ* gvals = new CZZ[doubleslots];
+	for (long i = 0; i < slots; ++i) {
+		long idx = (params.rotGroup[i] % (slots << 2) - 1) / 2;
+		gvals[idx] = vals[i];
+		gvals[doubleslots - idx - 1] = vals[i].conjugate();
+	}
 	ZZX mx;
 	mx.SetLength(params.N);
 	ZZ mod = power2_ZZ(cbits);
 	long idx = 0;
-	long doubleslots = slots << 1;
-	long gap = params.N / slots / 2;
+	long gap = params.N / doubleslots;
 	NumUtils::fftSpecialInv(gvals, doubleslots, aux);
 	for (long i = 0; i < doubleslots; ++i) {
 		mx.rep[idx] = gvals[i].r;
 		idx += gap;
 	}
+	delete[] gvals;
 	return Message(mx, mod, cbits, slots);
 }
 
-Message Scheme::encode(CZZ*& gvals, long slots) {
+Message Scheme::encodeSingleWithBits(CZZ& val, long cbits) {
+	CZZ* gvals = new CZZ[2];
+	gvals[0] = val;
+	gvals[1] = val.conjugate();
+	ZZX mx;
+	mx.SetLength(params.N);
+	ZZ mod = power2_ZZ(cbits);
+	long idx = 0;
+	long gap = params.N / 2;
+	NumUtils::fftSpecialInv(gvals, 2, aux);
+	for (long i = 0; i < 2; ++i) {
+		mx.rep[idx] = gvals[i].r;
+		idx += gap;
+	}
+	delete[] gvals;
+	return Message(mx, mod, cbits, 1);
+}
+
+Message Scheme::encode(CZZ*& vals, long slots) {
+	long doubleslots = slots << 1;
+	CZZ* gvals = new CZZ[doubleslots];
+	for (long i = 0; i < slots; ++i) {
+		long idx = (params.rotGroup[i] % (slots << 2) - 1) / 2;
+		gvals[idx] = vals[i];
+		gvals[doubleslots - idx - 1] = vals[i].conjugate();
+	}
+
 	ZZX mx;
 	mx.SetLength(params.N);
 	long idx = 0;
-	long doubleslots = slots << 1;
-	long gap = params.N / slots / 2;
+	long gap = params.N / doubleslots;
 
 	NumUtils::fftSpecialInv(gvals, doubleslots, aux);
 
@@ -70,17 +102,40 @@ Message Scheme::encode(CZZ*& gvals, long slots) {
 		mx.rep[idx] = gvals[i].r;
 		idx += gap;
 	}
+	delete[] gvals;
 	return Message(mx, params.q, params.logq, slots);
+}
+
+Message Scheme::encodeSingle(CZZ& val) {
+	CZZ* gvals = new CZZ[2];
+	gvals[0] = val;
+	gvals[1] = val.conjugate();
+
+	ZZX mx;
+	mx.SetLength(params.N);
+	long idx = 0;
+	long gap = params.N / 2;
+
+	NumUtils::fftSpecialInv(gvals, 2, aux);
+
+	for (long i = 0; i < 2; ++i) {
+		mx.rep[idx] = gvals[i].r;
+		idx += gap;
+	}
+	delete[] gvals;
+	return Message(mx, params.q, params.logq, 1);
 }
 
 Cipher Scheme::encryptMsg(Message& msg) {
 	ZZX ax, bx, vx, eax, ebx;
 	NumUtils::sampleZO(vx, params.N);
-	Ring2Utils::mult(ax, vx, publicKey.ax, msg.mod, params.N);
+	RLWE key = publicKey.keyMap.at(ENCRYPTION);
+
+	Ring2Utils::mult(ax, vx, key.ax, msg.mod, params.N);
 	NumUtils::sampleGauss(eax, params.N, params.sigma);
 	Ring2Utils::addAndEqual(ax, eax, msg.mod, params.N);
 
-	Ring2Utils::mult(bx, vx, publicKey.bx, msg.mod, params.N);
+	Ring2Utils::mult(bx, vx, key.bx, msg.mod, params.N);
 	NumUtils::sampleGauss(ebx, params.N, params.sigma);
 	Ring2Utils::addAndEqual(bx, ebx, msg.mod, params.N);
 
@@ -90,30 +145,22 @@ Cipher Scheme::encryptMsg(Message& msg) {
 }
 
 Cipher Scheme::encryptWithBits(CZZ*& vals, long cbits, long slots) {
-	CZZ* gvals = groupidx(vals, slots);
-	Message msg = encodeWithBits(gvals, cbits, slots);
-	delete[] gvals;
+	Message msg = encodeWithBits(vals, cbits, slots);
 	return encryptMsg(msg);
 }
 
 Cipher Scheme::encrypt(CZZ*& vals, long slots) {
-	CZZ* gvals = groupidx(vals, slots);
-	Message msg = encode(gvals, slots);
-	delete[] gvals;
+	Message msg = encode(vals, slots);
 	return encryptMsg(msg);
 }
 
 Cipher Scheme::encryptSingleWithBits(CZZ& val, long cbits) {
-	CZZ* gvals = groupidx(val);
-	Message msg = encodeWithBits(gvals, cbits, 1);
-	delete[] gvals;
+	Message msg = encodeSingleWithBits(val, cbits);
 	return encryptMsg(msg);
 }
 
 Cipher Scheme::encryptSingle(CZZ& val) {
-	CZZ* gvals = groupidx(val);
-	Message msg = encode(gvals, 1);
-	delete[] gvals;
+	Message msg = encodeSingle(val);
 	return encryptMsg(msg);
 }
 
@@ -218,8 +265,10 @@ Cipher Scheme::conjugate(Cipher& cipher) {
 	Ring2Utils::conjugate(bxconj, cipher.bx, params.N);
 	Ring2Utils::conjugate(bxres, cipher.ax, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axConj, Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxConj, Pmod, params.N);
+	RLWE key = publicKey.keyMap.at(CONJUGATION);
+
+	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
+	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
@@ -236,8 +285,9 @@ void Scheme::conjugateAndEqual(Cipher& cipher) {
 	Ring2Utils::conjugate(bxconj, cipher.bx, params.N);
 	Ring2Utils::conjugate(bxres, cipher.ax, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axConj, Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxConj, Pmod, params.N);
+	RLWE key = publicKey.keyMap.at(CONJUGATION);
+	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
+	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
@@ -307,8 +357,9 @@ Cipher Scheme::mult(Cipher& cipher1, Cipher& cipher2) {
 	ZZX bxbx = Ring2Utils::mult(cipher1.bx, cipher2.bx, cipher1.mod, params.N);
 	ZZX axax = Ring2Utils::mult(cipher1.ax, cipher2.ax, cipher1.mod, params.N);
 
-	ZZX axmult = Ring2Utils::mult(axax, publicKey.axStar, Pmod, params.N);
-	ZZX bxmult = Ring2Utils::mult(axax, publicKey.bxStar, Pmod, params.N);
+	RLWE key = publicKey.keyMap.at(MULTIPLICATION);
+	ZZX axmult = Ring2Utils::mult(axax, key.ax, Pmod, params.N);
+	ZZX bxmult = Ring2Utils::mult(axax, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axmult, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxmult, params.logq, params.N);
@@ -331,8 +382,9 @@ void Scheme::multAndEqual(Cipher& cipher1, Cipher& cipher2) {
 	ZZX bxbx = Ring2Utils::mult(cipher1.bx, cipher2.bx, cipher1.mod, params.N);
 	ZZX axax = Ring2Utils::mult(cipher1.ax, cipher2.ax, cipher1.mod, params.N);
 
-	cipher1.ax = Ring2Utils::mult(axax, publicKey.axStar, Pmod, params.N);
-	cipher1.bx = Ring2Utils::mult(axax, publicKey.bxStar, Pmod, params.N);
+	RLWE key = publicKey.keyMap.at(MULTIPLICATION);
+	cipher1.ax = Ring2Utils::mult(axax, key.ax, Pmod, params.N);
+	cipher1.bx = Ring2Utils::mult(axax, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(cipher1.ax, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(cipher1.bx, params.logq, params.N);
@@ -355,8 +407,9 @@ Cipher Scheme::square(Cipher& cipher) {
 	Ring2Utils::addAndEqual(axbx, axbx, cipher.mod, params.N);
 	Ring2Utils::square(axax, cipher.ax, cipher.mod, params.N);
 
-	Ring2Utils::mult(axmult, axax, publicKey.axStar, Pmod, params.N);
-	Ring2Utils::mult(bxmult, axax, publicKey.bxStar, Pmod, params.N);
+	RLWE key = publicKey.keyMap.at(MULTIPLICATION);
+	Ring2Utils::mult(axmult, axax, key.ax, Pmod, params.N);
+	Ring2Utils::mult(bxmult, axax, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axmult, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxmult, params.logq, params.N);
@@ -377,8 +430,9 @@ void Scheme::squareAndEqual(Cipher& cipher) {
 	Ring2Utils::addAndEqual(axbx, axbx, cipher.mod, params.N);
 	Ring2Utils::square(axax, cipher.ax, cipher.mod, params.N);
 
-	Ring2Utils::mult(axmult, axax, publicKey.axStar, Pmod, params.N);
-	Ring2Utils::mult(bxmult, axax, publicKey.bxStar, Pmod, params.N);
+	RLWE key = publicKey.keyMap.at(MULTIPLICATION);
+	Ring2Utils::mult(axmult, axax, key.ax, Pmod, params.N);
+	Ring2Utils::mult(bxmult, axax, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axmult, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxmult, params.logq, params.N);
@@ -418,9 +472,7 @@ void Scheme::multByPolyAndEqual(Cipher& cipher, ZZX& poly) {
 }
 
 Cipher Scheme::multByConstBySlots(Cipher& cipher, CZZ*& cnstvec) {
-	CZZ* gcnstvec = groupidx(cnstvec, cipher.slots);
-	Message msg = encode(gcnstvec, cipher.slots);
-	delete[] gcnstvec;
+	Message msg = encode(cnstvec, cipher.slots);
 
 	ZZX axres, bxres;
 	Ring2Utils::mult(axres, cipher.ax, msg.mx, cipher.mod, params.N);
@@ -429,9 +481,7 @@ Cipher Scheme::multByConstBySlots(Cipher& cipher, CZZ*& cnstvec) {
 }
 
 void Scheme::multByConstBySlotsAndEqual(Cipher& cipher, CZZ*& cnstvec) {
-	CZZ* gcnstvec = groupidx(cnstvec, cipher.slots);
-	Message msg = encode(gcnstvec, cipher.slots);
-	delete[] gcnstvec;
+	Message msg = encode(cnstvec, cipher.slots);
 
 	Ring2Utils::multAndEqual(cipher.ax, msg.mx, cipher.mod, params.N);
 	Ring2Utils::multAndEqual(cipher.bx, msg.mx, cipher.mod, params.N);
@@ -522,8 +572,9 @@ Cipher Scheme::leftRotateByPo2(Cipher& cipher, long logrotSlots) {
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
 	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axLeftRot[logrotSlots], Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxLeftRot[logrotSlots], Pmod, params.N);
+	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
+	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
+	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
@@ -542,8 +593,10 @@ void Scheme::leftRotateByPo2AndEqual(Cipher& cipher, long logrotSlots) {
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
 	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axLeftRot[logrotSlots], Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxLeftRot[logrotSlots], Pmod, params.N);
+	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
+
+	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
+	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
@@ -564,8 +617,10 @@ Cipher Scheme::rightRotateByPo2(Cipher& cipher, long logrotSlots) {
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
 	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axRightRot[logrotSlots], Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxRightRot[logrotSlots], Pmod, params.N);
+	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
+
+	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
+	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
@@ -581,11 +636,13 @@ void Scheme::rightRotateByPo2AndEqual(Cipher& cipher, long logrotSlots) {
 
 	long rotSlots = params.N/2 - (1 << logrotSlots);
 
+	RLWE key = publicKey.leftRotKeyMap.at(rotSlots);
+
 	Ring2Utils::inpower(bxrot, cipher.bx, params.rotGroup[rotSlots], params.q, params.N);
 	Ring2Utils::inpower(bxres, cipher.ax, params.rotGroup[rotSlots], params.q, params.N);
 
-	Ring2Utils::mult(axres, bxres, publicKey.axRightRot[logrotSlots], Pmod, params.N);
-	Ring2Utils::multAndEqual(bxres, publicKey.bxRightRot[logrotSlots], Pmod, params.N);
+	Ring2Utils::mult(axres, bxres, key.ax, Pmod, params.N);
+	Ring2Utils::multAndEqual(bxres, key.bx, Pmod, params.N);
 
 	Ring2Utils::rightShiftAndEqual(axres, params.logq, params.N);
 	Ring2Utils::rightShiftAndEqual(bxres, params.logq, params.N);
