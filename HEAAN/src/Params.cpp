@@ -1,28 +1,12 @@
 #include "Params.h"
 
-#include <cmath>
 
-Params::Params(long logN, long logq, double sigma, long h) :
-			logN(logN), logq(logq), sigma(sigma), h(h) {
-	//-----------------------------------------
+Params::Params(long logN, long logQ, double sigma, long h) : logN(logN), logQ(logQ), sigma(sigma), h(h) {
 	N = 1 << logN;
-	logqq = 2 * logq;
-	q = power2_ZZ(logq);
-	qq = power2_ZZ(logqq);
-
-	rotGroup = new long[N / 2];
-
-	long val = 1;
-	long N2 = N << 1;
-	for (long i = 0; i < N / 2; ++i) {
-		rotGroup[i] = val;
-		val *= 5;
-		val %= N2;
-	}
 }
 
-long Params::suggestlogN(long lambda, long logq) {
-	long res = 2 * logq * (lambda + 110) / 7.2;
-	double logres = log2((double)res);
-	return (long)ceil(logres);
+long Params::suggestlogN(long lambda, long logQ) {
+	long NBnd = ceil(logQ * (lambda + 110) / 3.6);
+	double logNBnd = log2((double)NBnd);
+	return (long)ceil(logNBnd);
 }

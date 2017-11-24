@@ -1,10 +1,12 @@
-#ifndef UTILS_CZZX_H_
-#define UTILS_CZZX_H_
+#ifndef HEAAN_CZZX_H_
+#define HEAAN_CZZX_H_
 
 #include <NTL/ZZX.h>
-#include <iostream>
+#include <NTL/ZZ.h>
 
+#include "Common.h"
 #include "CZZ.h"
+
 
 using namespace std;
 using namespace NTL;
@@ -49,4 +51,4 @@ void SetCoeff(CZZX& cx, long s, CZZ& c);
 void GetCoeff(CZZ& c, CZZX& cx, long s);
 long deg(CZZX& cx);
 
-#endif /* UTILS_CZZX_H_ */
+#endif

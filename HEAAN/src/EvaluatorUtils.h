@@ -1,9 +1,10 @@
-#ifndef UTILS_EVALUATORUTILS_H_
-#define UTILS_EVALUATORUTILS_H_
+#ifndef HEAAN_EVALUATORUTILS_H_
+#define HEAAN_EVALUATORUTILS_H_
 
 #include <NTL/RR.h>
+#include <NTL/ZZ.h>
 
-#include "SchemeAux.h"
+#include "Context.h"
 #include "CZZ.h"
 
 using namespace NTL;
@@ -11,248 +12,375 @@ using namespace NTL;
 class EvaluatorUtils {
 public:
 
-	/**
-	 * evaluates RR values x.r >> bits, x.i >> bits
-	 * @param[out] real part x.r >> bits
-	 * @param[out] imaginary part x.i >> bits
-	 * @param[in] shifting bits
-	 */
-	static void evaluateRRVal(RR& xr, RR& xi, CZZ& x, const long& bits);
+
+	//----------------------------------------------------------------------------------
+	//   ZZ & CZZ TO DOUBLE
+	//----------------------------------------------------------------------------------
+
 
 	/**
-	 * evaluates value xr << bits
-	 * @param[in] x
-	 * @param[in] bits
-	 * @return x << bits
+	 * evaluates double value (x >> logp)
+	 * @param[in] x: ZZ scaled up value
+	 * @param[in] logp: log of precision
+	 * @return x >> logp
 	 */
-	static ZZ evaluateVal(const double& x, const long& bits);
+	static double evalReal(const ZZ& x, const long& logp);
 
 	/**
-	 * evaluates value xr << bits
-	 * @param[in] x
-	 * @param[in] bits
-	 * @return x << bits
+	 * evaluates double value (x >> logp)
+	 * @param[out] res: double value (x >> logp)
+	 * @param[in] x: ZZ scaled up value
+	 * @param[in] logp: log of precision
 	 */
-	static ZZ evaluateVal(const RR& x, const long& bits);
+	static void evalReal(double& res, const ZZ& x, const long& logp);
 
 	/**
-	 * evaluates Z[i] value (xr + i * xi) << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value (xr + i * xi) << bits
+	 * evaluates real part of (x >> logp)
+	 * @param[in] x: CZZ scaled up value
+	 * @param[in] logp: log of precision
+	 * @return real part of (x >> logp)
 	 */
-	static CZZ evaluateVal(const double& xr, const double& xi, const long& bits);
+	static double evalReal(const CZZ& x, const long& logp);
 
 	/**
-	 * evaluates Z[i] value (xr + i * xi) << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value (xr + i * xi) << bits
+	 * evaluates real part of (x >> logp)
+	 * @param[out] res: real part of (x >> logp)
+	 * @param[in] x: CZZ scaled up value
+	 * @param[in] logp: log of precision
 	 */
-	static CZZ evaluateVal(const RR& xr, const RR& xi, const long& bits);
+	static void evalReal(double& res, const CZZ& x, const long& logp);
+
+	/**
+	 * evaluates real and imaginary part of (x >> logp)
+	 * @param[out] resx: real part of (x >> logp)
+	 * @param[out] resi: imaginary part of (x >> logp)
+	 * @param[in] x: CZZ scaled up value
+	 * @param[in] logp: scaled bits
+	 */
+	static void evalComplex(double& resx, double& resi, const CZZ& x, const long& logp);
+
+	/**
+	 * evaluates double array of values xarray[i] >> logp
+	 * @param[out] res: double array
+	 * @param[in] xarray: ZZ scaled up array
+	 * @param[in] size: array size
+	 * @param[in] logp: log of precision
+	 */
+	static void evalRealArray(double*& res, const ZZ*& xarray, const long& size, const long& logp);
+
+	/**
+	 * evaluates double array of values xarray[i] >> logp
+	 * @param[in] xarray: ZZ scaled up array
+	 * @param[in] size: array size
+	 * @param[in] logp: log of precision
+	 * @return double array of values xarray[i] >> logp
+	 */
+	static double* evalRealArray(const ZZ*& xarray, const long& size, const long& logp);
+
+	/**
+	 * evaluates double array of real part of values xarray[i] >> logp
+	 * @param[out] res: double array of real part
+	 * @param[in] xarray: CZZ scaled up array
+	 * @param[in] size: array size
+	 * @param[in] logp: log of precision
+	 */
+	static void evalRealArray(double*& res, const CZZ*& xarray, const long& size, const long& logp);
+
+	/**
+	 * evaluates double array of real part of values xarray[i] >> logp
+	 * @param[in] xarray: CZZ scaled up array
+	 * @param[in] size: array size
+	 * @param[in] logp: log of precision
+	 * @return double array of real part of values xarray[i] >> logp
+	 */
+	static double* evalRealArray(const CZZ*& xarray, const long& size, const long& logp);
+
+	/**
+	 * evaluates double array of real and imaginary parts of values xarray[i] >> logp
+	 * @param[out] resx: double array of real part
+	 * @param[out] resi: double array of imaginary part
+	 * @param[in] xarray: CZZ scaled up array
+	 * @param[in] size: array size
+	 * @param[in] logp: log of precision
+	 */
+	static void evalComplexArray(double*& resx, double*& resi, const CZZ*& xarray, const long& size, const long& logp);
+
+
+	//----------------------------------------------------------------------------------
+	//   DOUBLE & RR TO ZZ & CZZ
+	//----------------------------------------------------------------------------------
+
+
+	/**
+	 * evaluates value x << logp
+	 * @param[in] x: double value
+	 * @param[in] logp: log of precision
+	 * @return x << logp
+	 */
+	static ZZ evalZZ(const double& x, const long& logp);
+
+	/**
+	 * evaluates value x << logp
+	 * @param[in] x: double value
+	 * @param[in] logp: log of precision
+	 * @return x << logp
+	 */
+	static ZZ evalZZ(const RR& x, const long& logp);
+
+	/**
+	 * evaluates Z[i] value (xr + i * xi) << logp
+	 * @param[in] xr: double real part
+	 * @param[in] xi: double imaginary part
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value (xr + i * xi) << logp
+	 */
+	static CZZ evalCZZ(const double& xr, const double& xi, const long& logp);
+
+	/**
+	 * evaluates Z[i] value (xr + i * xi) << logp
+	 * @param[in] xr: RR real part
+	 * @param[in] xi: RR imaginary part
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value (xr + i * xi) << logp
+	 */
+	static CZZ evalCZZ(const RR& xr, const RR& xi, const long& logp);
+
+
+	//----------------------------------------------------------------------------------
+	//   RANDOM
+	//----------------------------------------------------------------------------------
+
 
 	/**
 	 * evaluates random bits in Z[i]
-	 * @param[in] bits
+	 * @param[in] logp: number of bits
 	 * @return random bits in Z[i]
 	 */
-	static CZZ evaluateRandomVal(const long& bits);
+	static CZZ evalRandCZZ(const long& logp);
+
+	/**
+	 * evaluates random bits in Z as CZZ
+	 * @param[in] logp: number of bits
+	 * @return random bits in Z as CZZ
+	 */
+	static CZZ evalRandCZZ0(const long& logp);
 
 	/**
 	 * evaluates random bits in Z[i]
-	 * @param[in] bits
+	 * @param[in] logp: number of bits
 	 * @return random bits in Z[i]
 	 */
-	static CZZ evaluateRandomCircleVal(const long& bits);
+	static CZZ evalRandCZZCircle(const long& logp);
 
 	/**
 	 * evaluates array of random bits in Z[i]
-	 * @param[in] size of array
-	 * @param[in] bits
+	 * @param[in] size: array size
+	 * @param[in] logp: number of bits
 	 * @return array of random bits in Z[i]
 	 */
-	static CZZ* evaluateRandomVals(const long& size, const long& bits);
-
-	static CZZ* evaluateRandomZZVals(const long& size, const long& bits);
-	//-----------------------------------------
+	static ZZ* evalRandZZArray(const long& size, const long& logp);
 
 	/**
-	 * evaluates Z[i] value (xr + i * xi)^d << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] power degree
-	 * @param[in] bits
-	 * @return Z[i] value (xr + i * xi)^d << bits
+	 * evaluates array of random bits in Z[i]
+	 * @param[in] size: array size
+	 * @param[in] logp: number of bits
+	 * @return array of random bits in Z[i]
 	 */
-	static CZZ evaluatePow(const double& xr, const double& xi, const long& degree, const long& bits);
+	static CZZ* evalRandCZZArray(const long& size, const long& logp);
 
 	/**
-	 * evaluates Z[i] value (xr + i * xi)^d << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] power degree
-	 * @param[in] bits
-	 * @return Z[i] value (xr + i * xi)^d << bits
+	 * evaluates array of random bits in Z as CZZ
+	 * @param[in] size: array size
+	 * @param[in] logp: number of bits
+	 * @return array of random bits in Z as CZZ
 	 */
-	static CZZ evaluatePow(const RR& xr, const RR& xi, const long& degree, const long& bits);
+	static CZZ* evalRandCZZ0Array(const long& size, const long& logp);
+
+
+	//----------------------------------------------------------------------------------
+	//   POWERS
+	//----------------------------------------------------------------------------------
+
 
 	/**
-	 * evaluates Z[i] value (xr + i * xi)^d << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] log(degree)
-	 * @param[in] bits
-	 * @return Z[i] value (xr + i * xi)^d << bits
+	 * evaluates Z[i] value (xr + i * xi)^d << logp
+	 * @param[in] xr: real part
+	 * @param[in] xi: imaginary part
+	 * @param[in] degree: power degree
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value (xr + i * xi)^d << logp
 	 */
-	static CZZ evaluatePow2(const double& xr, const double& xi, const long& logDegree, const long& bits);
+	static CZZ evalCZZPow(const double& xr, const double& xi, const long& degree, const long& logp);
 
 	/**
-	 * evaluates Z[i] value (xr + i * xi)^d << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] log(degree)
-	 * @param[in] bits
-	 * @return Z[i] value (xr + i * xi)^d << bits
+	 * evaluates Z[i] value (xr + i * xi)^d << logp
+	 * @param[in] xr: real part
+	 * @param[in] xi: imaginary part
+	 * @param[in] degree: power degree
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value (xr + i * xi)^d << logp
 	 */
-	static CZZ evaluatePow2(const RR& xr, const RR& xi, const long& logDegree, const long& bits);
-
-	//-----------------------------------------
+	static CZZ evalCZZPow(const RR& xr, const RR& xi, const long& degree, const long& logp);
 
 	/**
-	 * evaluates array of Z[i] values (xr + i * xi)^j << bits for j=1,...,d
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] power degree
-	 * @param[in] bits
-	 * @return array of Z[i] values (xr + i * xi)^j << bits for j=1,...,d
+	 * evaluates Z[i] value (xr + i * xi)^d << logp
+	 * @param[in] xr: real part
+	 * @param[in] xi: imaginary part
+	 * @param[in] logDegree: log of degree
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value (xr + i * xi)^d << logp
 	 */
-	static CZZ* evaluatePowvec(const double& xr, const double& xi, const long& degree, const long& bits);
+	static CZZ evalCZZPow2(const double& xr, const double& xi, const long& logDegree, const long& logp);
 
 	/**
-	 * evaluates array of Z[i] values (xr + i * xi)^j << bits for j=1,...,d
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] power degree
-	 * @param[in] bits
-	 * @return array of Z[i] values (xr + i * xi)^j << bits for j=1,...,d
+	 * evaluates Z[i] value (xr + i * xi)^d << logp
+	 * @param[in] xr: real part
+	 * @param[in] xi: imaginary part
+	 * @param[in] logDegree: log(degree)
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value (xr + i * xi)^d << logp
 	 */
-	static CZZ* evaluatePowvec(const RR& xr, const RR& xi, const long& degree, const long& bits);
+	static CZZ evalCZZPow2(const RR& xr, const RR& xi, const long& logDegree, const long& logp);
 
 	/**
-	 * evaluates array of Z[i] values (xr + i * xi)^j << bits for j=1,2,2^2,...,d
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] log(d)
-	 * @param[in] bits
-	 * @return array of Z[i] values (xr + i * xi)^j << bits for j=1,2,2^2,...,d
+	 * evaluates array of Z[i] values (xr + i * xi)^j << logp for j=1,...,d
+	 * @param[in] xr: real part
+	 * @param[in] xi: imaginary part
+	 * @param[in] degree: power degree
+	 * @param[in] logp: log of precision
+	 * @return array of Z[i] values (xr + i * xi)^j << logp for j=1,...,d
 	 */
-	static CZZ* evaluatePow2vec(const double& xr, const double& xi, const long& logDegree, const long& bits);
+	static CZZ* evalCZZPowArray(const double& xr, const double& xi, const long& degree, const long& logp);
 
 	/**
-	 * evaluates array of Z[i] values (xr + i * xi)^j << bits for j=1,2,2^2,...,d
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] log(d)
-	 * @param[in] bits
-	 * @return array of Z[i] values (xr + i * xi)^j << bits for j=1,2,2^2,...,d
+	 * evaluates array of Z[i] values (xr + i * xi)^j << logp for j=1,...,d
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] degree: power degree
+	 * @param[in] logp: log of precision
+	 * @return array of Z[i] values (xr + i * xi)^j << logp for j=1,...,d
 	 */
-	static CZZ* evaluatePow2vec(const RR& xr, const RR& xi, const long& logDegree, const long& bits);
-
-	//-----------------------------------------
+	static CZZ* evalCZZPowArray(const RR& xr, const RR& xi, const long& degree, const long& logp);
 
 	/**
-	 * evaluates Z[i] value 1 / (xr + i * xi) << (2 * bits)
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value 1 / (xr + i * xi) << (2 * bits)
+	 * evaluates array of Z[i] values (xr + i * xi)^j << logp for j=1,2,2^2,...,d
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logDegree: log of degree
+	 * @param[in] logp: log of precision
+	 * @return array of Z[i] values (xr + i * xi)^j << logp for j=1,2,2^2,...,d
 	 */
-	static CZZ evaluateInverse(const double& xr, const double& xi, const long& bits);
+	static CZZ* evalCZZPow2Array(const double& xr, const double& xi, const long& logDegree, const long& logp);
 
 	/**
-	 * evaluates Z[i] value 1 / (xr + i * xi) << (2 * bits)
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] log(p)
-	 * @return Z[i] value 1 / (xr + i * xi) << (2 * bits)
+	 * evaluates array of Z[i] values (xr + i * xi)^j << logp for j=1,2,2^2,...,d
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logDegree: log of degree
+	 * @param[in] logp: log of precision
+	 * @return array of Z[i] values (xr + i * xi)^j << logp for j=1,2,2^2,...,d
 	 */
-	static CZZ evaluateInverse(const RR& xr, const RR& xi, const long& bits);
+	static CZZ* evalCZZPow2Array(const RR& xr, const RR& xi, const long& logDegree, const long& logp);
+
+
+	//----------------------------------------------------------------------------------
+	//   FUNCTIONS
+	//----------------------------------------------------------------------------------
+
 
 	/**
-	 * evaluates Z[i] value log(xr + i * xi) << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value log(xr + i * xi) << bits
+	 * evaluates Z[i] value 1 / (xr + i * xi) << (2 * logp)
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value 1 / (xr + i * xi) << (2 * logp)
 	 */
-	static CZZ evaluateLogarithm(const double& xr, const double& xi, const long& bits);
+	static CZZ evalCZZInv(const double& xr, const double& xi, const long& logp);
 
 	/**
-	 * evaluates Z[i] value exp(xr + i * xi) << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value exp(xr + i * xi) << bits
+	 * evaluates Z[i] value 1 / (xr + i * xi) << (2 * logp)
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value 1 / (xr + i * xi) << (2 * logp)
 	 */
-	static CZZ evaluateExponent(const double& xr, const double& xi, const long& bits);
+	static CZZ evalCZZInv(const RR& xr, const RR& xi, const long& logp);
 
 	/**
-	 * evaluates Z[i] value exp(xr + i * xi) << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value exp(xr + i * xi) << bits
+	 * evaluates Z[i] value log(xr + i * xi) << logp
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value log(xr + i * xi) << logp
 	 */
-	static CZZ evaluateExponent(const RR& xr, const RR& xi, const long& bits);
+	static CZZ evalCZZLog(const double& xr, const double& xi, const long& logp);
 
 	/**
-	 * evaluates Z[i] value sigmoid(xr + i * xi) << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value sigmoid(xr + i * xi) << bits
+	 * evaluates Z[i] value exp(xr + i * xi) << logp
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value exp(xr + i * xi) << logp
 	 */
-	static CZZ evaluateSigmoid(const double& xr, const double& xi, const long& bits);
+	static CZZ evalCZZExp(const double& xr, const double& xi, const long& logp);
 
 	/**
-	 * evaluates Z[i] value sigmoid(xr + i * xi) << bits
-	 * @param[in] real part
-	 * @param[in] imaginary part
-	 * @param[in] bits
-	 * @return Z[i] value sigmoid(xr + i * xi) << bits
+	 * evaluates Z[i] value exp(xr + i * xi) << logp
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value exp(xr + i * xi) << logp
 	 */
-	static CZZ evaluateSigmoid(const RR& xr, const RR& xi, const long& bits);
+	static CZZ evalCZZExp(const RR& xr, const RR& xi, const long& logp);
 
-	//-----------------------------------------
+	/**
+	 * evaluates Z[i] value sigmoid(xr + i * xi) << logp
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value sigmoid(xr + i * xi) << logp
+	 */
+	static CZZ evalCZZSigmoid(const double& xr, const double& xi, const long& logp);
+
+	/**
+	 * evaluates Z[i] value sigmoid(xr + i * xi) << logp
+	 * @param[in] xr: real part of input
+	 * @param[in] xi: imaginary part of input
+	 * @param[in] logp: log of precision
+	 * @return Z[i] value sigmoid(xr + i * xi) << logp
+	 */
+	static CZZ evalCZZSigmoid(const RR& xr, const RR& xi, const long& logp);
 
 	/**
 	 * left shift array of values by bits
-	 * @param[in, out] array of values
-	 * @param[in] array size
-	 * @param[in] bits
+	 * @param[in, out] vals: array of values
+	 * @param[in] size: array size
+	 * @param[in] bits: shift bits
 	 */
 	static void leftShiftAndEqual(CZZ*& vals, const long& size, const long& bits);
 
-	//-----------------------------------------
+
+	//----------------------------------------------------------------------------------
+	//   ROTATIONS
+	//----------------------------------------------------------------------------------
+
 
 	/**
 	 * left indexes rotation of values
-	 * @param[in, out] array of values
-	 * @param[in] array size
-	 * @param[in] rotation size
+	 * @param[in, out] vals: array of values
+	 * @param[in] size: array size
+	 * @param[in] rotSize: rotation size
 	 */
 	static void leftRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize);
 
 	/**
 	 * right indexes rotation of values
-	 * @param[in, out] array of values
-	 * @param[in] array size
-	 * @param[in] rotation size
+	 * @param[in, out] vals: array of values
+	 * @param[in] size: array size
+	 * @param[in] rotSize: rotation size
 	 */
 	static void rightRotateAndEqual(CZZ*& vals, const long& size, const long& rotSize);
-	//-----------------------------------------
+
 };
 
-#endif /* UTILS_EVALUATORUTILS_H_ */
+#endif

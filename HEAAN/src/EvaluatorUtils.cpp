@@ -1,163 +1,220 @@
 #include "EvaluatorUtils.h"
 
-#include <NTL/ZZ.h>
-#include <cmath>
-
-ZZ EvaluatorUtils::evaluateVal(const double& x, const long& bits) {
-	return evaluateVal(to_RR(x), bits);
+double EvaluatorUtils::evalReal(const ZZ& x, const long& logp) {
+	RR xp = to_RR(x);
+	xp.e -= logp;
+	return to_double(xp);
 }
 
-ZZ EvaluatorUtils::evaluateVal(const RR& x, const long& bits) {
-	RR xp = MakeRR(x.x, x.e + bits);
+void EvaluatorUtils::evalReal(double& res, const ZZ& x, const long& logp) {
+	res = evalReal(x, logp);
+}
+
+double EvaluatorUtils::evalReal(const CZZ& x, const long& logp) {
+	return evalReal(x.r, logp);
+}
+
+void EvaluatorUtils::evalReal(double& res, const CZZ& x, const long& logp) {
+	res = evalReal(x.r, logp);
+}
+
+void EvaluatorUtils::evalComplex(double& resx, double& resi, const CZZ& x, const long& logp) {
+	resx = evalReal(x.r, logp);
+	resi = evalReal(x.i, logp);
+}
+
+void EvaluatorUtils::evalRealArray(double*& res, const ZZ*& xarray, const long& size, const long& logp) {
+	for (long i = 0; i < size; ++i) {
+		res[i] = evalReal(xarray[i], logp);
+	}
+}
+
+double* EvaluatorUtils::evalRealArray(const ZZ*& xarray, const long& size, const long& logp) {
+	double* res = new double[size];
+	evalRealArray(res, xarray, size, logp);
+	return res;
+}
+
+void EvaluatorUtils::evalRealArray(double*& res, const CZZ*& xarray, const long& size, const long& logp) {
+	for (long i = 0; i < size; ++i) {
+		res[i] = evalReal(xarray[i].r, logp);
+	}
+}
+
+double* EvaluatorUtils::evalRealArray(const CZZ*& xarray, const long& size, const long& logp) {
+	double* res = new double[size];
+	evalRealArray(res, xarray, size, logp);
+	return res;
+}
+
+void EvaluatorUtils::evalComplexArray(double*& resx, double*& resi, const CZZ*& xarray, const long& size, const long& logp) {
+	for (long i = 0; i < size; ++i) {
+		resx[i] = evalReal(xarray[i].r, logp);
+		resi[i] = evalReal(xarray[i].i, logp);
+	}
+}
+
+ZZ EvaluatorUtils::evalZZ(const double& x, const long& logp) {
+	return evalZZ(to_RR(x), logp);
+}
+
+ZZ EvaluatorUtils::evalZZ(const RR& x, const long& logp) {
+	RR xp = MakeRR(x.x, x.e + logp);
 	return RoundToZZ(xp);
 }
 
-CZZ EvaluatorUtils::evaluateVal(const double& xr, const double& xi, const long& bits) {
-	return evaluateVal(to_RR(xr), to_RR(xi), bits);
+CZZ EvaluatorUtils::evalCZZ(const double& xr, const double& xi, const long& logp) {
+	return evalCZZ(to_RR(xr), to_RR(xi), logp);
 }
 
-CZZ EvaluatorUtils::evaluateVal(const RR& xr, const RR& xi, const long& bits) {
-	RR xrp = MakeRR(xr.x, xr.e + bits);
-	RR xip = MakeRR(xi.x, xi.e + bits);
+CZZ EvaluatorUtils::evalCZZ(const RR& xr, const RR& xi, const long& logp) {
+	RR xrp = MakeRR(xr.x, xr.e + logp);
+	RR xip = MakeRR(xi.x, xi.e + logp);
 	return CZZ(RoundToZZ(xrp), RoundToZZ(xip));
 }
 
-void EvaluatorUtils::evaluateRRVal(RR& xr, RR& xi, CZZ& x, const long& bits) {
-	xr = to_RR(x.r);
-	xr.e -= bits;
-	xi = to_RR(x.i);
-	xr.e -= bits;
+CZZ EvaluatorUtils::evalRandCZZ(const long& logp) {
+	return CZZ(RandomBits_ZZ(logp), RandomBits_ZZ(logp));
 }
 
-CZZ EvaluatorUtils::evaluateRandomVal(const long& bits) {
-	return CZZ(RandomBits_ZZ(bits), RandomBits_ZZ(bits));
+CZZ EvaluatorUtils::evalRandCZZ0(const long& logp) {
+	return CZZ(RandomBits_ZZ(logp));
 }
 
-CZZ EvaluatorUtils::evaluateRandomCircleVal(const long& bits) {
+CZZ EvaluatorUtils::evalRandCZZCircle(const long& logp) {
 	RR angle = random_RR();
 	RR mr = cos(angle * 2 * Pi);
 	RR mi = sin(angle * 2 * Pi);
-	return evaluateVal(mr, mi, bits);
+	return evalCZZ(mr, mi, logp);
 }
 
-CZZ* EvaluatorUtils::evaluateRandomVals(const long& size, const long& bits) {
+ZZ* EvaluatorUtils::evalRandZZArray(const long& size, const long& logp) {
+	ZZ* res = new ZZ[size];
+	for (long i = 0; i < size; i++) {
+		res[i] = RandomBits_ZZ(logp);
+	}
+	return res;
+}
+
+CZZ* EvaluatorUtils::evalRandCZZArray(const long& size, const long& logp) {
 	CZZ* res = new CZZ[size];
 	for (long i = 0; i < size; i++) {
-		res[i] = CZZ(RandomBits_ZZ(bits), RandomBits_ZZ(bits));
+		res[i].r = RandomBits_ZZ(logp);
+		res[i].i = RandomBits_ZZ(logp);
 	}
 	return res;
 }
 
-CZZ* EvaluatorUtils::evaluateRandomZZVals(const long& size, const long& bits) {
+CZZ* EvaluatorUtils::evalRandCZZ0Array(const long& size, const long& logp) {
 	CZZ* res = new CZZ[size];
 	for (long i = 0; i < size; i++) {
-		res[i].r = RandomBits_ZZ(bits);
+		res[i].r = RandomBits_ZZ(logp);
 	}
 	return res;
 }
 
-CZZ EvaluatorUtils::evaluatePow(const double& xr, const double& xi, const long& degree, const long& bits) {
+CZZ EvaluatorUtils::evalCZZPow(const double& xr, const double& xi, const long& degree, const long& logp) {
 	long logDegree = log2(degree);
 	long po2Degree = 1 << logDegree;
-	CZZ res = evaluatePow2(xr, xi, logDegree, bits);
+	CZZ res = evalCZZPow2(xr, xi, logDegree, logp);
 	long remDegree = degree - po2Degree;
 	if(remDegree > 0) {
-		CZZ tmp = evaluatePow(xr, xi, remDegree, bits);
+		CZZ tmp = evalCZZPow(xr, xi, remDegree, logp);
 		res *= tmp;
-		res >>= bits;
+		res >>= logp;
 	}
 	return res;
 }
 
-CZZ EvaluatorUtils::evaluatePow(const RR& xr, const RR& xi, const long& degree, const long& bits) {
+CZZ EvaluatorUtils::evalCZZPow(const RR& xr, const RR& xi, const long& degree, const long& logp) {
 	long logDegree = log2(degree);
 	long po2Degree = 1 << logDegree;
-	CZZ res = evaluatePow2(xr, xi, logDegree, bits);
+	CZZ res = evalCZZPow2(xr, xi, logDegree, logp);
 	long remDegree = degree - po2Degree;
 	if(remDegree > 0) {
-		CZZ tmp = evaluatePow(xr, xi, remDegree, bits);
+		CZZ tmp = evalCZZPow(xr, xi, remDegree, logp);
 		res *= tmp;
-		res >>= bits;
+		res >>= logp;
 	}
 	return res;
 }
 
-CZZ EvaluatorUtils::evaluatePow2(const double& xr, const double& xi, const long& logDegree, const long& bits) {
-	return evaluatePow2(to_RR(xr), to_RR(xi), logDegree, bits);
+CZZ EvaluatorUtils::evalCZZPow2(const double& xr, const double& xi, const long& logDegree, const long& logp) {
+	return evalCZZPow2(to_RR(xr), to_RR(xi), logDegree, logp);
 }
 
-CZZ EvaluatorUtils::evaluatePow2(const RR& xr, const RR& xi, const long& logDegree, const long& bits) {
-	CZZ res = evaluateVal(xr, xi, bits);
+CZZ EvaluatorUtils::evalCZZPow2(const RR& xr, const RR& xi, const long& logDegree, const long& logp) {
+	CZZ res = evalCZZ(xr, xi, logp);
 	for (int i = 0; i < logDegree; ++i) {
 		res *= res;
-		res >>= bits;
+		res >>= logp;
 	}
 	return res;
 }
 
-CZZ* EvaluatorUtils::evaluatePowvec(const double& xr, const double& xi, const long& degree, const long& bits) {
-	return  evaluatePowvec(to_RR(xr), to_RR(xi), degree, bits);
+CZZ* EvaluatorUtils::evalCZZPowArray(const double& xr, const double& xi, const long& degree, const long& logp) {
+	return  evalCZZPowArray(to_RR(xr), to_RR(xi), degree, logp);
 }
 
-CZZ* EvaluatorUtils::evaluatePowvec(const RR& xr, const RR& xi, const long& degree, const long& bits) {
+CZZ* EvaluatorUtils::evalCZZPowArray(const RR& xr, const RR& xi, const long& degree, const long& logp) {
 	CZZ* res = new CZZ[degree];
-	CZZ m = evaluateVal(xr, xi, bits);
+	CZZ m = evalCZZ(xr, xi, logp);
 	res[0] = m;
 	for (long i = 0; i < degree - 1; ++i) {
-		res[i + 1] = (res[i] * m) >> bits;
+		res[i + 1] = (res[i] * m) >> logp;
 	}
 	return res;
 }
 
-CZZ* EvaluatorUtils::evaluatePow2vec(const double& xr, const double& xi, const long& logDegree, const long& bits) {
-	return evaluatePow2vec(to_RR(xr), to_RR(xi), logDegree, bits);
+CZZ* EvaluatorUtils::evalCZZPow2Array(const double& xr, const double& xi, const long& logDegree, const long& logp) {
+	return evalCZZPow2Array(to_RR(xr), to_RR(xi), logDegree, logp);
 }
 
-CZZ* EvaluatorUtils::evaluatePow2vec(const RR& xr, const RR& xi, const long& logDegree, const long& bits) {
+CZZ* EvaluatorUtils::evalCZZPow2Array(const RR& xr, const RR& xi, const long& logDegree, const long& logp) {
 	CZZ* res = new CZZ[logDegree + 1];
-	CZZ m = evaluateVal(xr, xi, bits);
+	CZZ m = evalCZZ(xr, xi, logp);
 	res[0] = m;
 	for (long i = 0; i < logDegree; ++i) {
-		res[i + 1] = (res[i] * res[i]) >> bits;
+		res[i + 1] = (res[i] * res[i]) >> logp;
 	}
 	return res;
 }
 
-CZZ EvaluatorUtils::evaluateInverse(const double& xr, const double& xi, const long& bits) {
-	return evaluateInverse(to_RR(xr), to_RR(xi), bits);
+CZZ EvaluatorUtils::evalCZZInv(const double& xr, const double& xi, const long& logp) {
+	return evalCZZInv(to_RR(xr), to_RR(xi), logp);
 }
 
-CZZ EvaluatorUtils::evaluateInverse(const RR& xr, const RR& xi, const long& bits) {
+CZZ EvaluatorUtils::evalCZZInv(const RR& xr, const RR& xi, const long& logp) {
 	RR xinvr = xr / (xr * xr + xi * xi);
 	RR xinvi = -xi / (xr * xr + xi * xi);
 
-	return evaluateVal(xinvr, xinvi, bits);
+	return evalCZZ(xinvr, xinvi, logp);
 }
 
-CZZ EvaluatorUtils::evaluateLogarithm(const double& xr, const double& xi, const long& bits) {
+CZZ EvaluatorUtils::evalCZZLog(const double& xr, const double& xi, const long& logp) {
 	double xlogr = log(xr * xr + xi * xi) / 2;
 	double xlogi = atan(xi / xr);
 
-	return evaluateVal(xlogr, xlogi, bits);
+	return evalCZZ(xlogr, xlogi, logp);
 }
 
-CZZ EvaluatorUtils::evaluateExponent(const double& xr, const double& xi, const long& bits) {
+CZZ EvaluatorUtils::evalCZZExp(const double& xr, const double& xi, const long& logp) {
 	double xrexp = exp(xr);
 	double xexpr = xrexp * cos(xi);
 	double xexpi = xrexp * sin(xi);
 
-	return evaluateVal(xexpr, xexpi, bits);
+	return evalCZZ(xexpr, xexpi, logp);
 }
 
-CZZ EvaluatorUtils::evaluateExponent(const RR& xr, const RR& xi, const long& bits) {
+CZZ EvaluatorUtils::evalCZZExp(const RR& xr, const RR& xi, const long& logp) {
 	RR xrexp = exp(xr);
 	RR xexpr = xrexp * cos(xi);
 	RR xexpi = xrexp * sin(xi);
 
-	return evaluateVal(xexpr, xexpi, bits);
+	return evalCZZ(xexpr, xexpi, logp);
 }
 
-CZZ EvaluatorUtils::evaluateSigmoid(const double& xr, const double& xi, const long& bits) {
+CZZ EvaluatorUtils::evalCZZSigmoid(const double& xr, const double& xi, const long& logp) {
 	double xrexp = exp(xr);
 	double xexpr = xrexp * cos(xi);
 	double xexpi = xrexp * sin(xi);
@@ -165,10 +222,10 @@ CZZ EvaluatorUtils::evaluateSigmoid(const double& xr, const double& xi, const lo
 	double xsigmoidr = (xexpr * (xexpr + 1) + (xexpi * xexpi)) / ((xexpr + 1) * (xexpr + 1) + (xexpi * xexpi));
 	double xsigmoidi = xexpi / ((xexpr + 1) * (xexpr + 1) + (xexpi * xexpi));
 
-	return evaluateVal(xsigmoidr, xsigmoidi, bits);
+	return evalCZZ(xsigmoidr, xsigmoidi, logp);
 }
 
-CZZ EvaluatorUtils::evaluateSigmoid(const RR& xr, const RR& xi, const long& bits) {
+CZZ EvaluatorUtils::evalCZZSigmoid(const RR& xr, const RR& xi, const long& logp) {
 	RR xrexp = exp(xr);
 	RR xexpr = xrexp * cos(xi);
 	RR xexpi = xrexp * sin(xi);
@@ -176,7 +233,7 @@ CZZ EvaluatorUtils::evaluateSigmoid(const RR& xr, const RR& xi, const long& bits
 	RR xsigmoidr = (xexpr * (xexpr + 1) + (xexpi * xexpi)) / ((xexpr + 1) * (xexpr + 1) + (xexpi * xexpi));
 	RR xsigmoidi = xexpi / ((xexpr + 1) * (xexpr + 1) + (xexpi * xexpi));
 
-	return evaluateVal(xsigmoidr, xsigmoidi, bits);
+	return evalCZZ(xsigmoidr, xsigmoidi, logp);
 }
 
 void EvaluatorUtils::leftShiftAndEqual(CZZ*& vals, const long& size, const long& bits) {
