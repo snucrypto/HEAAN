@@ -10,4 +10,8 @@ This library is written by c++ and using NTL library (http://www.shoup.net/ntl/)
 
 ## How to use this library?
 ### 1. Build a static library/Running test functions
-You can make a sample test program with test/HEAAN.cpp by typing ./run in the main directory. We checked the sample program was working well on Ubuntu 16.04.2 LTS. You need to install NTL (with GMP), pThread, libraries before starting 'run'. After successful compilation, you can see 'a.out' file in test directory. You also can find a static library (heaan.a) in test directory. 
+You can make a static library by typing make all in the /lib directory. After successful compilation you can find a static libarary libheaan.a in /lib directory.
+
+You can run a sample test program with /src/HEAAN.cpp by uncommenting tests you need and typing make all in the /run directory. After successful compilation, you can see HEAAN file in /run directory. You need type ./HEAAN for running the code.
+
+We checked the sample program was working well on Ubuntu 16.04.2 LTS. You need to install NTL (with GMP), pThread, libraries. 
