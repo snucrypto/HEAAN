@@ -73,6 +73,47 @@ CZZ EvaluatorUtils::evalCZZ(const RR& xr, const RR& xi, const long& logp) {
 	return CZZ(RoundToZZ(xrp), RoundToZZ(xip));
 }
 
+CZZ EvaluatorUtils::evalCZZ0(const double& xr, const long& logp) {
+	return evalCZZ0(to_RR(xr), logp);
+}
+
+CZZ EvaluatorUtils::evalCZZ0(const RR& xr, const long& logp) {
+	RR xrp = MakeRR(xr.x, xr.e + logp);
+	return CZZ(RoundToZZ(xrp));
+}
+
+CZZ* EvaluatorUtils::evalCZZArray(double*& xr, double*& xi, const long& size, const long& logp) {
+	CZZ* res = new CZZ[size];
+	for (long i = 0; i < size; ++i) {
+		res[i] = evalCZZ(xr[i], xi[i], logp);
+	}
+	return res;
+}
+
+CZZ* EvaluatorUtils::evalCZZArray(RR*& xr, RR*& xi, const long& size, const long& logp) {
+	CZZ* res = new CZZ[size];
+	for (long i = 0; i < size; ++i) {
+		res[i] = evalCZZ(xr[i], xi[i], logp);
+	}
+	return res;
+}
+
+CZZ* EvaluatorUtils::evalCZZ0Array(double*& xr, const long& size, const long& logp) {
+	CZZ* res = new CZZ[size];
+	for (long i = 0; i < size; ++i) {
+		res[i] = evalCZZ0(xr[i], logp);
+	}
+	return res;
+}
+
+CZZ* EvaluatorUtils::evalCZZ0Array(RR*& xr, const long& size, const long& logp) {
+	CZZ* res = new CZZ[size];
+	for (long i = 0; i < size; ++i) {
+		res[i] = evalCZZ0(xr[i], logp);
+	}
+	return res;
+}
+
 CZZ EvaluatorUtils::evalRandCZZ(const long& logp) {
 	return CZZ(RandomBits_ZZ(logp), RandomBits_ZZ(logp));
 }

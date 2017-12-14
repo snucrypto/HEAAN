@@ -145,6 +145,60 @@ public:
 	 */
 	static CZZ evalCZZ(const RR& xr, const RR& xi, const long& logp);
 
+	/**
+	 * evaluates Z value xr << logp as CZZ value
+	 * @param[in] xr: double real part
+	 * @param[in] logp: log of precision
+	 * @return Z value xr << logp
+	 */
+	static CZZ evalCZZ0(const double& xr, const long& logp);
+
+	/**
+	 * evaluates Z value xr << logp as CZZ value
+	 * @param[in] xr: RR real part
+	 * @param[in] logp: log of precision
+	 * @return Z value xr << logp
+	 */
+	static CZZ evalCZZ0(const RR& xr, const long& logp);
+
+	/**
+	 * evaluates array of Z[i] values (xr + i * xi) << logp
+	 * @param[in] xr: double array of real parts
+	 * @param[in] xr: double array of imaginary parts
+	 * @param[in] size: array size
+	 * @param[in] logp: number of bits
+	 * @return array of Z[i] values (xr + i * xi) << logp
+	 */
+	static CZZ* evalCZZArray(double*& xr, double*& xi, const long& size, const long& logp);
+
+	/**
+	 * evaluates array of Z[i] values (xr + i * xi) << logp
+	 * @param[in] xr: RR array of real parts
+	 * @param[in] xr: RR array of imaginary parts
+	 * @param[in] size: array size
+	 * @param[in] logp: number of bits
+	 * @return array of Z[i] values (xr + i * xi) << logp
+	 */
+	static CZZ* evalCZZArray(RR*& xr, RR*& xi, const long& size, const long& logp);
+
+	/**
+	 * evaluates array of Z values xr << logp as CZZ array
+	 * @param[in] xr: double array of real parts
+	 * @param[in] size: array size
+	 * @param[in] logp: number of bits
+	 * @return array of Z values xr << logp as CZZ array
+	 */
+	static CZZ* evalCZZ0Array(double*& xr, const long& size, const long& logp);
+
+	/**
+	 * evaluates array of Z values xr << logp as CZZ array
+	 * @param[in] xr: RR array of real parts
+	 * @param[in] size: array size
+	 * @param[in] logp: number of bits
+	 * @return array of Z values xr << logp as CZZ array
+	 */
+	static CZZ* evalCZZ0Array(RR*& xr, const long& size, const long& logp);
+
 
 	//----------------------------------------------------------------------------------
 	//   RANDOM
