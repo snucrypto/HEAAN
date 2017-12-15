@@ -24,7 +24,7 @@ public:
 	 * @param[in] size: polynomial degree
 	 * @param[in] stdev: standard deviation
 	 */
-	static void sampleGauss(ZZX& res, const long& size, const double& stdev);
+	static void sampleGauss(ZZX& res, const long size, const double stdev);
 
 	/**
 	 * samples polynomial with random {-1,0,1} coefficients
@@ -32,14 +32,14 @@ public:
 	 * @param[in] size: polynomial degree
 	 * @param[in] h: number of nonzero coefficients
 	 */
-	static void sampleHWT(ZZX& res, const long& size, const long& h);
+	static void sampleHWT(ZZX& res, const long size, const long h);
 
 	/**
 	 * samples polynomial with random {-1,0,1} coefficients
 	 * @param[out] res: ZZX polynomial
 	 * @param[in] size: polynomial degree
 	 */
-	static void sampleZO(ZZX& res, const long& size);
+	static void sampleZO(ZZX& res, const long size);
 
 	/**
 	 * samples polynomial with random {0,1} coefficients
@@ -47,14 +47,14 @@ public:
 	 * @param[in] size: polynomial degree
 	 * @param[in] h: number of nonzero coefficients
 	 */
-	static void sampleBinary(ZZX& res, const long& size, const long& h);
+	static void sampleBinary(ZZX& res, const long size, const long h);
 
 	/**
 	 * samples polynomial with random {0,1} coefficients
 	 * @param[out] res: ZZX polynomial
 	 * @param[in] size: polynomial degree
 	 */
-	static void sampleBinary(ZZX& res, const long& size);
+	static void sampleBinary(ZZX& res, const long size);
 
 	/**
 	 * samples polynomial with random uniform coefficients in [0, 2^bits-1]
@@ -62,7 +62,7 @@ public:
 	 * @param[in] size: polynomial degree
 	 * @param[in] bits: number of bits
 	 */
-	static void sampleUniform2(ZZX& res, const long& size, const long& bits);
+	static void sampleUniform2(ZZX& res, const long size, const long bits);
 
 
 	//----------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ public:
 	 * @param[in] ksiPowsi: precomputed powers of units of unity
 	 * @param[in] M: M = 2N
 	 */
-	static void fftRaw(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M, const bool& isForward);
+	static void fftRaw(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M, const bool isForward);
 
 	/**
 	 * calculates fft in Z_q[X] / (X^N + 1)
@@ -88,7 +88,7 @@ public:
 	 * @param[in] ksiPowsi: precomputed powers of units of unity
 	 * @param[in] M: M = 2N
 	 */
-	static void fft(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M);
+	static void fft(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M);
 
 	/**
 	 * calculates fft inverse in Z_q[X] / (X^N + 1)
@@ -98,7 +98,7 @@ public:
 	 * @param[in] ksiPowsi: precomputed powers of units of unity
 	 * @param[in] M: M = 2N
 	 */
-	static void fftInv(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M);
+	static void fftInv(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M);
 
 	/**
 	 * calculates fft inverse without last division by size in Z_q[X] / (X^N + 1)
@@ -108,7 +108,7 @@ public:
 	 * @param[in] ksiPowsi: precomputed powers of units of unity
 	 * @param[in] M: M = 2N
 	 */
-	static void fftInvLazy(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M);
+	static void fftInvLazy(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M);
 
 	//-----------------------------------------
 
@@ -120,7 +120,7 @@ public:
 	 * @param[in] ksiPowsi: precomputed powers of units of unity
 	 * @param[in] M: M = 2N
 	 */
-	static void fftSpecial(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M);
+	static void fftSpecial(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M);
 
 	/**
 	 * calculates special fft inverse in Z_q[X] / (X^N + 1) for encoding/decoding
@@ -130,7 +130,7 @@ public:
 	 * @param[in] ksiPowsi: precomputed powers of units of unity
 	 * @param[in] M: M = 2N
 	 */
-	static void fftSpecialInv(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M);
+	static void fftSpecialInv(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M);
 
 	//-----------------------------------------
 };

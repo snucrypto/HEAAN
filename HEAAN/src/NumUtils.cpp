@@ -1,7 +1,7 @@
 #include "NumUtils.h"
 
 
-void NumUtils::sampleGauss(ZZX& res, const long& size, const double& stdev) {
+void NumUtils::sampleGauss(ZZX& res, const long size, const double stdev) {
 	static double const Pi = 4.0 * atan(1.0);
 	static long const bignum = 0xfffffff;
 	res.SetLength(size);
@@ -22,7 +22,7 @@ void NumUtils::sampleGauss(ZZX& res, const long& size, const double& stdev) {
 	}
 }
 
-void NumUtils::sampleHWT(ZZX& res, const long& size, const long& h) {
+void NumUtils::sampleHWT(ZZX& res, const long size, const long h) {
 	res.SetLength(size);
 	long idx = 0;
 	ZZ tmp = RandomBits_ZZ(h);
@@ -35,7 +35,7 @@ void NumUtils::sampleHWT(ZZX& res, const long& size, const long& h) {
 	}
 }
 
-void NumUtils::sampleZO(ZZX& res, const long& size) {
+void NumUtils::sampleZO(ZZX& res, const long size) {
 	res.SetLength(size);
 	ZZ tmp = RandomBits_ZZ(2 * size);
 	for (long i = 0; i < size; ++i) {
@@ -43,7 +43,7 @@ void NumUtils::sampleZO(ZZX& res, const long& size) {
 	}
 }
 
-void NumUtils::sampleBinary(ZZX& res, const long& size, const long& h) {
+void NumUtils::sampleBinary(ZZX& res, const long size, const long h) {
 	res.SetLength(size);
 	long idx = 0;
 	while(idx < h) {
@@ -55,7 +55,7 @@ void NumUtils::sampleBinary(ZZX& res, const long& size, const long& h) {
 	}
 }
 
-void NumUtils::sampleBinary(ZZX& res, const long& size) {
+void NumUtils::sampleBinary(ZZX& res, const long size) {
 	res.SetLength(size);
 	ZZ tmp = RandomBits_ZZ(size);
 	for (long i = 0; i < size; ++i) {
@@ -63,14 +63,14 @@ void NumUtils::sampleBinary(ZZX& res, const long& size) {
 	}
 }
 
-void NumUtils::sampleUniform2(ZZX& res, const long& size, const long& bits) {
+void NumUtils::sampleUniform2(ZZX& res, const long size, const long bits) {
 	res.SetLength(size);
 	for (long i = 0; i < size; i++) {
 		res.rep[i] = RandomBits_ZZ(bits);
 	}
 }
 
-void NumUtils::fftRaw(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M, const bool& isForward) {
+void NumUtils::fftRaw(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M, const bool isForward) {
 	for (long i = 1, j = 0; i < size; ++i) {
 		long bit = size >> 1;
 		for (; j >= bit; bit>>=1) {
@@ -118,22 +118,22 @@ void NumUtils::fftRaw(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR
 	}
 }
 
-void NumUtils::fft(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M) {
+void NumUtils::fft(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M) {
 	fftRaw(vals, size, ksiPowsr, ksiPowsi, M, true);
 }
 
-void NumUtils::fftInv(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M) {
+void NumUtils::fftInv(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M) {
 	fftRaw(vals, size, ksiPowsr, ksiPowsi, M, false);
 	for (long i = 0; i < size; ++i) {
 		vals[i] /= size;
 	}
 }
 
-void NumUtils::fftInvLazy(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M) {
+void NumUtils::fftInvLazy(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M) {
 	fftRaw(vals, size, ksiPowsr, ksiPowsi, M, false);
 }
 
-void NumUtils::fftSpecial(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M) {
+void NumUtils::fftSpecial(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M) {
 	for (int i = 1, j = 0; i < size; ++i) {
 		long bit = size >> 1;
 		for (; j>=bit; bit>>=1) {
@@ -162,7 +162,7 @@ void NumUtils::fftSpecial(CZZ*& vals, const long& size, const RR* ksiPowsr, cons
 	}
 }
 
-void NumUtils::fftSpecialInv(CZZ*& vals, const long& size, const RR* ksiPowsr, const RR* ksiPowsi, const long& M) {
+void NumUtils::fftSpecialInv(CZZ* vals, const long size, const RR* ksiPowsr, const RR* ksiPowsi, const long M) {
 	fftRaw(vals, size, ksiPowsr, ksiPowsi, M, false);
 	long doublesize = size << 1;
 	long Mover2size = M / doublesize;
