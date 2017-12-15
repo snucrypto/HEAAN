@@ -12,14 +12,14 @@ public:
 	 * @param[in] vals: long array
 	 * @param[in] size: array size
 	 */
-	static void show(long*& vals, long size);
+	static void show(long* vals, long size);
 
 	/**
 	 * prints in console array
 	 * @param[in] vals: CZZ array
 	 * @param[in] size: array size
 	 */
-	static void show(CZZ*& vals, long size);
+	static void show(CZZ* vals, long size);
 
 	/**
 	 * prints in console val1, val2 and (val1-val2)
@@ -36,7 +36,7 @@ public:
 	 * @param[in] size: array size
 	 * @param[in] prefix: string prefix
 	 */
-	static void showcompare(CZZ*& vals1, CZZ*& vals2, long size, string prefix);
+	static void showcompare(CZZ* vals1, CZZ* vals2, long size, string prefix);
 
 	/**
 	 * prints in console pairwise val1[i], val2 and (val1[i]-val2)
@@ -45,7 +45,7 @@ public:
 	 * @param[in] size: array size
 	 * @param[in] prefix: string prefix
 	 */
-	static void showcompare(CZZ*& vals1, CZZ& val2, long size, string prefix);
+	static void showcompare(CZZ* vals1, CZZ& val2, long size, string prefix);
 
 	/**
 	 * prints in console pairwise val1, val2[i] and (val1-val2[i])
@@ -54,7 +54,7 @@ public:
 	 * @param[in] size: array size
 	 * @param[in] prefix: string prefix
 	 */
-	static void showcompare(CZZ& val1, CZZ*& vals2, long size, string prefix);
+	static void showcompare(CZZ& val1, CZZ* vals2, long size, string prefix);
 
 };
 

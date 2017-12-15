@@ -1,7 +1,7 @@
 #include "SchemeAlgo.h"
 
 
-Ciphertext* SchemeAlgo::encryptSingleArray(CZZ*& vals, long size) {
+Ciphertext* SchemeAlgo::encryptSingleArray(CZZ* vals, long size) {
 	Ciphertext* res = new Ciphertext[size];
 	for (long i = 0; i < size; ++i) {
 		res[i] = scheme.encryptSingle(vals[i], scheme.context.logQ);
@@ -9,7 +9,7 @@ Ciphertext* SchemeAlgo::encryptSingleArray(CZZ*& vals, long size) {
 	return res;
 }
 
-CZZ* SchemeAlgo::decryptSingleArray(SecretKey& secretKey, Ciphertext*& ciphers, long size) {
+CZZ* SchemeAlgo::decryptSingleArray(SecretKey& secretKey, Ciphertext* ciphers, long size) {
 	CZZ* res = new CZZ[size];
 	for (int i = 0; i < size; ++i) {
 		res[i] = scheme.decryptSingle(secretKey, ciphers[i]);
@@ -82,7 +82,7 @@ Ciphertext* SchemeAlgo::powerExtended(Ciphertext& cipher, const long logp, const
 
 //-----------------------------------------
 
-Ciphertext SchemeAlgo::prodOfPo2(Ciphertext*& ciphers, const long logp, const long logDegree) {
+Ciphertext SchemeAlgo::prodOfPo2(Ciphertext* ciphers, const long logp, const long logDegree) {
 	Ciphertext* res = ciphers;
 	for (long i = logDegree - 1; i >= 0; --i) {
 		long powih = (1 << i);
@@ -98,7 +98,7 @@ Ciphertext SchemeAlgo::prodOfPo2(Ciphertext*& ciphers, const long logp, const lo
 	return res[0];
 }
 
-Ciphertext SchemeAlgo::prod(Ciphertext*& ciphers, const long logp, const long degree) {
+Ciphertext SchemeAlgo::prod(Ciphertext* ciphers, const long logp, const long degree) {
 	long logDegree = log2((double)degree) + 1;
 	long idx = 0;
 	bool isinit = false;
@@ -126,7 +126,7 @@ Ciphertext SchemeAlgo::prod(Ciphertext*& ciphers, const long logp, const long de
 	return res;
 }
 
-Ciphertext SchemeAlgo::sum(Ciphertext*& ciphers, const long size) {
+Ciphertext SchemeAlgo::sum(Ciphertext* ciphers, const long size) {
 	Ciphertext res = ciphers[0];
 	for (long i = 1; i < size; ++i) {
 		scheme.addAndEqual(res, ciphers[i]);
@@ -142,7 +142,7 @@ Ciphertext SchemeAlgo::distance(Ciphertext& cipher1, Ciphertext& cipher2, const 
 	return cres;
 }
 
-Ciphertext* SchemeAlgo::multVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long size) {
+Ciphertext* SchemeAlgo::multVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long size) {
 	Ciphertext* res = new Ciphertext[size];
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {
@@ -152,7 +152,7 @@ Ciphertext* SchemeAlgo::multVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, co
 	return res;
 }
 
-void SchemeAlgo::multAndEqualVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long size) {
+void SchemeAlgo::multAndEqualVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long size) {
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {
 		scheme.multAndEqual(ciphers1[i], ciphers2[i]);
@@ -161,7 +161,7 @@ void SchemeAlgo::multAndEqualVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, c
 }
 
 
-Ciphertext* SchemeAlgo::multAndModSwitchVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long precisionBits, const long size) {
+Ciphertext* SchemeAlgo::multAndModSwitchVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long precisionBits, const long size) {
 	Ciphertext* res = new Ciphertext[size];
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {
@@ -172,7 +172,7 @@ Ciphertext* SchemeAlgo::multAndModSwitchVec(Ciphertext*& ciphers1, Ciphertext*& 
 	return res;
 }
 
-void SchemeAlgo::multModSwitchAndEqualVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long precisionBits, const long size) {
+void SchemeAlgo::multModSwitchAndEqualVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long precisionBits, const long size) {
 	NTL_EXEC_RANGE(size, first, last);
 	for (long i = first; i < last; ++i) {
 		scheme.multAndEqual(ciphers1[i], ciphers2[i]);
@@ -181,7 +181,7 @@ void SchemeAlgo::multModSwitchAndEqualVec(Ciphertext*& ciphers1, Ciphertext*& ci
 	NTL_EXEC_RANGE_END;
 }
 
-Ciphertext SchemeAlgo::innerProd(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long logp, const long size) {
+Ciphertext SchemeAlgo::innerProd(Ciphertext* ciphers1, Ciphertext* ciphers2, const long logp, const long size) {
 	Ciphertext cip = scheme.mult(ciphers1[size-1], ciphers2[size-1]);
 
 	NTL_EXEC_RANGE(size-1, first, last);
@@ -340,7 +340,7 @@ Ciphertext* SchemeAlgo::functionExtended(Ciphertext& cipher, string& funcName, c
 	return res;
 }
 
-void SchemeAlgo::fftRaw(Ciphertext*& ciphers, const long size, const bool isForward) {
+void SchemeAlgo::fftRaw(Ciphertext* ciphers, const long size, const bool isForward) {
 	for (long i = 1, j = 0; i < size; ++i) {
 		long bit = size >> 1;
 		for (; j >= bit; bit>>=1) {
@@ -367,11 +367,11 @@ void SchemeAlgo::fftRaw(Ciphertext*& ciphers, const long size, const bool isForw
 	}
 }
 
-void SchemeAlgo::fft(Ciphertext*& ciphers, const long size) {
+void SchemeAlgo::fft(Ciphertext* ciphers, const long size) {
 	fftRaw(ciphers, size, true);
 }
 
-void SchemeAlgo::fftInv(Ciphertext*& ciphers, const long size) {
+void SchemeAlgo::fftInv(Ciphertext* ciphers, const long size) {
 	fftRaw(ciphers, size, false);
 	long logsize = log2((double)size);
 
@@ -382,6 +382,6 @@ void SchemeAlgo::fftInv(Ciphertext*& ciphers, const long size) {
 	NTL_EXEC_RANGE_END;
 }
 
-void SchemeAlgo::fftInvLazy(Ciphertext*& ciphers, const long size) {
+void SchemeAlgo::fftInvLazy(Ciphertext* ciphers, const long size) {
 	return fftRaw(ciphers, size, false);
 }

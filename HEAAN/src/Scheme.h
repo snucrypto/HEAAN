@@ -90,7 +90,7 @@ public:
 	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return message
 	 */
-	Plaintext encode(CZZ*& vals, long slots, long logq, bool isComplex = true);
+	Plaintext encode(CZZ* vals, long slots, long logq, bool isComplex = true);
 
 	/**
 	 * decodes a ZZX polynomial into an array of CZZ values using special fft
@@ -144,7 +144,7 @@ public:
 	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return ciphertext
 	 */
-	Ciphertext encrypt(CZZ*& vals, long slots, long logq, bool isComplex = true);
+	Ciphertext encrypt(CZZ* vals, long slots, long logq, bool isComplex = true);
 
 	/**
 	 * decrypts ciphertext into message and then decodes it into array of CZZ values

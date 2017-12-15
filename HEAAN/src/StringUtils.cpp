@@ -1,7 +1,7 @@
 #include "StringUtils.h"
 
 
-void StringUtils::show(long*& vals, long size) {
+void StringUtils::show(long* vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {
 		cout << vals[i] << ", ";
@@ -9,7 +9,7 @@ void StringUtils::show(long*& vals, long size) {
 	cout << "]" << endl;
 }
 
-void StringUtils::show(CZZ*& vals, long size) {
+void StringUtils::show(CZZ* vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {
 		cout << vals[i].toString() << ", ";
@@ -27,7 +27,7 @@ void StringUtils::showcompare(CZZ& val1, CZZ& val2, string prefix) {
 	cout << "---------------------" << endl;
 }
 
-void StringUtils::showcompare(CZZ*& vals1, CZZ*& vals2, long size, string prefix) {
+void StringUtils::showcompare(CZZ* vals1, CZZ* vals2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << vals1[i].toString() << endl;
@@ -37,7 +37,7 @@ void StringUtils::showcompare(CZZ*& vals1, CZZ*& vals2, long size, string prefix
 	}
 }
 
-void StringUtils::showcompare(CZZ*& vals1, CZZ& val2, long size, string prefix) {
+void StringUtils::showcompare(CZZ* vals1, CZZ& val2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << vals1[i].toString() << endl;
@@ -47,7 +47,7 @@ void StringUtils::showcompare(CZZ*& vals1, CZZ& val2, long size, string prefix) 
 	}
 }
 
-void StringUtils::showcompare(CZZ& val1, CZZ*& vals2, long size, string prefix) {
+void StringUtils::showcompare(CZZ& val1, CZZ* vals2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << val1.toString() << endl;

@@ -31,7 +31,7 @@ public:
 	 * @param[in] size: array size
 	 * @return [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
 	 */
-	Ciphertext* encryptSingleArray(CZZ*& vals, long size);
+	Ciphertext* encryptSingleArray(CZZ* vals, long size);
 
 	/**
 	 * decrypting array of ciphertexts with single value encrypted in each
@@ -40,7 +40,7 @@ public:
 	 * @param[in] size: array size
 	 * @return [m_1, m_2,...,m_size]
 	 */
-	CZZ* decryptSingleArray(SecretKey& secretKey, Ciphertext*& ciphers, long size);
+	CZZ* decryptSingleArray(SecretKey& secretKey, Ciphertext* ciphers, long size);
 
 
 	//----------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ public:
 	 * @param[in] logDegree: log of degree
 	 * @return ciphertext(m_1 * m_2 *...*m_{degree})
 	 */
-	Ciphertext prodOfPo2(Ciphertext*& ciphers, const long logp, const long logDegree);
+	Ciphertext prodOfPo2(Ciphertext* ciphers, const long logp, const long logDegree);
 
 	/**
 	 * Calculating product of ciphertexts
@@ -100,7 +100,7 @@ public:
 	 * @param[in] degree: array size
 	 * @return ciphertext(m_1 * m_2 *...*m_{degree})
 	 */
-	Ciphertext prod(Ciphertext*& ciphers, const long logp, const long degree);
+	Ciphertext prod(Ciphertext* ciphers, const long logp, const long degree);
 
 
 	//----------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ public:
 	 * @param[in] size: array size
 	 * @return ciphertext(m_1 + m_2 + ... + m_size)
 	 */
-	Ciphertext sum(Ciphertext*& ciphers, const long size);
+	Ciphertext sum(Ciphertext* ciphers, const long size);
 
 	/**
 	 * Calculating distance of vectors encrypted in ciphertexts
@@ -131,7 +131,7 @@ public:
 	 * @param[in] size: array size
 	 * @return [ciphertext(m_1 * n_1), ciphertext(m_2 * n_2),...,ciphertext(m_size * n_size)]
 	 */
-	Ciphertext* multVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long size);
+	Ciphertext* multVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long size);
 
 	/**
 	 * Pairwise ciphertexts multiplication
@@ -139,7 +139,7 @@ public:
 	 * @param[in] ciphers2: [ciphertext(n_1), ciphertext(n_2),...,ciphertext(n_size)]
 	 * @param[in] size: array size
 	 */
-	void multAndEqualVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long size);
+	void multAndEqualVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long size);
 
 	/**
 	 * Pairwise ciphers multiplication and modulus switching
@@ -150,7 +150,7 @@ public:
 	 * @param[in] size: array size
 	 * @return [ciphertext(m_1 * n_1 / p), ciphertext(m_2 * n_2 / p),...,ciphertext(m_size * n_size / p)]
 	 */
-	Ciphertext* multAndModSwitchVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long logp, const long size);
+	Ciphertext* multAndModSwitchVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long logp, const long size);
 
 	/**
 	 * Pairwise ciphertexts multiplication and modulus switching
@@ -159,7 +159,7 @@ public:
 	 * @param[in] logp: log of precision
 	 * @param[in] size: array size
 	 */
-	void multModSwitchAndEqualVec(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long logp, const long size);
+	void multModSwitchAndEqualVec(Ciphertext* ciphers1, Ciphertext* ciphers2, const long logp, const long size);
 
 	/**
 	 * Calculating inner product of ciphertexts
@@ -169,7 +169,7 @@ public:
 	 * @param[in] size: array size
 	 * @return ciphertext(m_1 * n_1 + m_2 * n_2 + ... + m_size * n_size)
 	 */
-	Ciphertext innerProd(Ciphertext*& ciphers1, Ciphertext*& ciphers2, const long logp, const long size);
+	Ciphertext innerProd(Ciphertext* ciphers1, Ciphertext* ciphers2, const long logp, const long size);
 
 	/**
 	 * Calculating ciphertext of partial sums
@@ -254,14 +254,14 @@ public:
 	 * @param[in] isForward: switching between fft and fft inverse
 	 * @return [ciphertext(fft_1), ... ,ciphertext(fft_size)]
 	 */
-	void fftRaw(Ciphertext*& ciphers, const long size, const bool isForward);
+	void fftRaw(Ciphertext* ciphers, const long size, const bool isForward);
 
 	/**
 	 * Calculating fft of ciphertexts
 	 * @param[in] [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
 	 * @return [ciphertext(fft_1), ... ,ciphertext(fft_size)]
 	 */
-	void fft(Ciphertext*& ciphers, const long size);
+	void fft(Ciphertext* ciphers, const long size);
 
 	/**
 	 * Calculating fft inverse of ciphertexts
@@ -269,7 +269,7 @@ public:
 	 * @param[in] size: array size (power-of-two)
 	 * @return [ciphertext(fftinv_1), ... ,ciphertext(fftinv_size)]
 	 */
-	void fftInv(Ciphertext*& ciphers, const long size);
+	void fftInv(Ciphertext* ciphers, const long size);
 
 	/**
 	 * Calculating fft inverse of ciphertexts
@@ -277,7 +277,7 @@ public:
 	 * @param[in] size: array size (power-of-two)
 	 * @return [ciphertext(fftinv_1 * size), ... ,ciphertext(fftinv_size * size)] but saves level
 	 */
-	void fftInvLazy(Ciphertext*& ciphers, const long size);
+	void fftInvLazy(Ciphertext* ciphers, const long size);
 
 };
 
