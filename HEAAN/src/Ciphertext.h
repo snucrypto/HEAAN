@@ -1,6 +1,8 @@
 #ifndef HEAAN_CIPHERTEXT_H_
 #define HEAAN_CIPHERTEXT_H_
 
+#include <fstream>
+
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 
@@ -34,6 +36,8 @@ public:
 	Ciphertext(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), ZZ q = ZZ::zero(), long logq = 0, long slots = 1, bool isComplex = true) : ax(ax), bx(bx), q(q), logq(logq), slots(slots), isComplex(isComplex) {}
 
 	Ciphertext(const Ciphertext& o) : ax(o.ax), bx(o.bx), q(o.q), logq(o.logq), slots(o.slots), isComplex(o.isComplex) {}
+
+	void Write(int ciphertextID);
 
 };
 

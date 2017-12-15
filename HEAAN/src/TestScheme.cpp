@@ -831,3 +831,26 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logQ, long log
 	cout << "!!! END TEST FFT BATCH LAZY MULTIPLE HADAMARD !!!" << endl;
 }
 
+void TestScheme::testCiphertextWriteAndRead(long logN, long logQ, long logp, long logSlots) {
+	cout << "!!! START TEST WRITE AND READ !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Params params(logN, logQ);
+	Context context(params);
+	SecretKey secretKey(params);
+	Scheme scheme(secretKey, context);
+	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
+	//-----------------------------------------
+	timeutils.start("Encrypt batch");
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	timeutils.stop("Encrypt batch");
+	//-----------------------------------------
+	timeutils.start("Output Ciphertext as txt file");
+	cipher.Write(20250);
+	timeutils.stop("Output Ciphertext as txt file");
+	//-----------------------------------------
+	cout << "!!! END TEST WRITE AND READ !!!" << endl;
+}

@@ -255,6 +255,14 @@ public:
 	 */
 	static void testFFTBatchLazyMultipleHadamard(long logN, long logQ, long logp, long logSlots, long logfftdim, long logHdim);
 
+	/**
+	 * Testing Write and Read functions for Ciphertext
+	 * @param[in] logN: input parameter for Params class
+	 * @param[in] logQ: input parameter for Params class
+	 * @param[in] logp: log of precision
+	 * @param[in] logSlots: log of number of slots
+	 */
+	static void testCiphertextWriteAndRead(long logN, long logQ, long logp, long logSlots);
 };
 
 #endif
