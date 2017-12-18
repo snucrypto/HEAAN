@@ -1,10 +1,12 @@
 #ifndef HEAAN_CIPHERTEXT_H_
 #define HEAAN_CIPHERTEXT_H_
 
-#include <fstream>
-
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
+
+#include <fstream>
+
+//#include "Functions.h"
 
 using namespace std;
 using namespace NTL;
@@ -41,6 +43,17 @@ public:
 
 	void Read(int ciphertextID);
 
+	ZZ stringToNumber(string str)
+	{
+		ZZ number = conv<ZZ>(str[0] - '0');
+   		long len = str.length();
+	    for(long i = 1; i < len; i++)
+	    {
+	        number *= 10;
+	        number += conv<ZZ>(str[i] - '0');
+	    }
+	    return number;
+	}
 };
 
 #endif

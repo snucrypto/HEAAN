@@ -5,7 +5,6 @@
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 
-
 #include "Common.h"
 #include "CZZ.h"
 #include "SecretKey.h"

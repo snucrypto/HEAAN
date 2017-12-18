@@ -3,6 +3,9 @@
 
 #include <NTL/ZZX.h>
 
+#include <fstream>
+
+//#include "Functions.h"
 #include "Params.h"
 #include "NumUtils.h"
 
@@ -17,6 +20,9 @@ public:
 
 	SecretKey(Params& params);
 
+	void Write(int SecretKeyID);
+
+	void Read(int SecretKeyID);
 };
 
 #endif

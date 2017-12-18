@@ -841,6 +841,10 @@ void TestScheme::testCiphertextWriteAndRead(long logN, long logQ, long logp, lon
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
+	// Write SecretKey and delete it //
+	int secretKeyID = rand();
+	secretKey.Write(secretKeyID);
+	//-----------------------------------------
 	long slots = (1 << logSlots);
 	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
 	//-----------------------------------------
@@ -848,20 +852,47 @@ void TestScheme::testCiphertextWriteAndRead(long logN, long logQ, long logp, lon
 	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
 	timeutils.stop("Encrypt batch");
 	//-----------------------------------------
-	timeutils.start("Write Ciphertext as txt file");
-	cipher.Write(20250);
-	timeutils.stop("Write Ciphertext as txt file");
+	timeutils.start("Write Ciphertext");
+	int CiphertextID = rand();
+	cipher.Write(CiphertextID);
+	timeutils.stop("Write Ciphertext");
 	//-----------------------------------------
-	timeutils.start("Read Ciphertext as txt file");
+	timeutils.start("Read Ciphertext");
 	Ciphertext newcipher;
-	newcipher.Read(20250);
-	timeutils.stop("Read Ciphertext as txt file");
+	newcipher.Read(CiphertextID);
+	timeutils.stop("Read Ciphertext");
 	//-----------------------------------------
+	
+	// check //
+	if(newcipher.ax != cipher.ax || newcipher.bx != cipher.bx || newcipher.logq != cipher.logq || newcipher.slots != cipher.slots || newcipher.q != cipher.q) {
+		cerr << "Write and Read for ciphertext does not work" << endl;
+		cout << "difference ax = " << newcipher.ax - cipher.ax << endl;
+		cout << "difference bx = " << newcipher.ax - cipher.bx << endl;
+	}
+	else {
+		cout << "Write and Read for ciphertext works well" << endl;
+	}
+
+	//-----------------------------------------
+	SecretKey newsecretKey(params);
+	newsecretKey.Read(secretKeyID);
+	
+	// check //
+	if(secretKey.sx != newsecretKey.sx) {
+		cout << "Write and Read for sk does not work" << endl;
+	}
+	else {
+		cout << "Write and Read for sk works well" << endl;
+	}
+
 	timeutils.start("Decrypt batch");
-	CZZ* dvec = scheme.decrypt(secretKey, cipher);
+	CZZ* dvec1 = scheme.decrypt(newsecretKey, cipher);
+	timeutils.stop("Decrypt batch");
+	timeutils.start("Decrypt batch");
+	CZZ* dvec2 = scheme.decrypt(newsecretKey, newcipher);
 	timeutils.stop("Decrypt batch");
 	//-----------------------------------------
-	StringUtils::showcompare(mvec, dvec, slots, "val");
+	StringUtils::showcompare(dvec1, dvec2, slots, "val");
 	//-----------------------------------------
 	cout << "!!! END TEST WRITE AND READ !!!" << endl;
 }
