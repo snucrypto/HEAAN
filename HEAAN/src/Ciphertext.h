@@ -39,6 +39,8 @@ public:
 
 	void Write(int ciphertextID);
 
+	void Read(int ciphertextID);
+
 };
 
 #endif

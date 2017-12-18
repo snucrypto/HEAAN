@@ -848,9 +848,20 @@ void TestScheme::testCiphertextWriteAndRead(long logN, long logQ, long logp, lon
 	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
 	timeutils.stop("Encrypt batch");
 	//-----------------------------------------
-	timeutils.start("Output Ciphertext as txt file");
+	timeutils.start("Write Ciphertext as txt file");
 	cipher.Write(20250);
-	timeutils.stop("Output Ciphertext as txt file");
+	timeutils.stop("Write Ciphertext as txt file");
+	//-----------------------------------------
+	timeutils.start("Read Ciphertext as txt file");
+	Ciphertext newcipher;
+	newcipher.Read(20250);
+	timeutils.stop("Read Ciphertext as txt file");
+	//-----------------------------------------
+	timeutils.start("Decrypt batch");
+	CZZ* dvec = scheme.decrypt(secretKey, cipher);
+	timeutils.stop("Decrypt batch");
+	//-----------------------------------------
+	StringUtils::showcompare(mvec, dvec, slots, "val");
 	//-----------------------------------------
 	cout << "!!! END TEST WRITE AND READ !!!" << endl;
 }
