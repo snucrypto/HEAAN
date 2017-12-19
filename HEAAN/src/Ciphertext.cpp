@@ -1,11 +1,11 @@
 #include "Ciphertext.h"
 
-void Ciphertext::Write(int ciphertextID)
+void Ciphertext::Write(string filename)
 {
 	ofstream myfile;
-	myfile.open("Ciphertext" + to_string(ciphertextID) + ".txt");
+	myfile.open("Ciphertext" + filename + ".txt");
 	myfile << "Ciphertext Information" << endl;
-	myfile << "ID = " << ciphertextID << endl;
+	myfile << "filename = " << filename << endl;
 	myfile << deg(ax) << endl;
 	myfile << deg(bx) << endl;
 	myfile << this->q << endl;
@@ -26,9 +26,9 @@ void Ciphertext::Write(int ciphertextID)
 	myfile.close();
 }
 
-void Ciphertext::Read(int ciphertextID)
+void Ciphertext::Read(string filename)
 {
-	ifstream myfile("Ciphertext" + to_string(ciphertextID) + ".txt");
+	ifstream myfile("Ciphertext" + filename + ".txt");
 	if(myfile.is_open()) {
 		// kill previous memory
 		this->ax.kill();

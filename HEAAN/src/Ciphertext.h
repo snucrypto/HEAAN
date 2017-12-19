@@ -39,9 +39,9 @@ public:
 
 	Ciphertext(const Ciphertext& o) : ax(o.ax), bx(o.bx), q(o.q), logq(o.logq), slots(o.slots), isComplex(o.isComplex) {}
 
-	void Write(int ciphertextID);
+	void Write(string filename);
 
-	void Read(int ciphertextID);
+	void Read(string filename);
 
 	ZZ stringToNumber(string str)
 	{

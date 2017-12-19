@@ -10,11 +10,11 @@ void StringUtils::show(long* vals, long size) {
 }
 
 void StringUtils::show(CZZ* vals, long size) {
-	cout << "[";
+	cout << "---------------------" << endl;
 	for (long i = 0; i < size; ++i) {
-		cout << vals[i].toString() << ", ";
+		cout << vals[i].toString() << endl;
 	}
-	cout << "]" << endl;
+	cout << "---------------------" << endl;
 }
 
 //-----------------------------------------

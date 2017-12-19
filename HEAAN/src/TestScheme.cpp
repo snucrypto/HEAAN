@@ -854,12 +854,12 @@ void TestScheme::testCiphertextWriteAndRead(long logN, long logQ, long logp, lon
 	//-----------------------------------------
 	timeutils.start("Write Ciphertext");
 	int CiphertextID = rand();
-	cipher.Write(CiphertextID);
+	cipher.Write(to_string(CiphertextID));
 	timeutils.stop("Write Ciphertext");
 	//-----------------------------------------
 	timeutils.start("Read Ciphertext");
 	Ciphertext newcipher;
-	newcipher.Read(CiphertextID);
+	newcipher.Read(to_string(CiphertextID));
 	timeutils.stop("Read Ciphertext");
 	//-----------------------------------------
 	
