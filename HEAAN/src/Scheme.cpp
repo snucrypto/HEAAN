@@ -155,6 +155,21 @@ CZZ Scheme::decodeSingle(Plaintext& msg) {
 	return res;
 }
 
+Ciphertext Scheme::encryptMsgSK(SecretKey& secretKey, Plaintext& msg) {
+	ZZX ax, bx, ex;
+
+	NumUtils::sampleUniform2(ax, context.N, context.logPQ);
+	NumUtils::sampleGauss(ex, context.N, context.sigma);
+	Ring2Utils::mult(bx, secretKey.sx, ax, context.PQ, context.N);
+	Ring2Utils::sub(bx, ex, bx, context.PQ, context.N);
+	Ring2Utils::addAndEqual(bx, msg.mx, context.PQ, context.N);
+
+	Ring2Utils::rightShiftAndEqual(ax, context.logQ, context.N);
+	Ring2Utils::rightShiftAndEqual(bx, context.logQ, context.N);
+
+	return Ciphertext(ax, bx, msg.q, msg.logq, msg.slots, msg.isComplex);
+}
+
 Ciphertext Scheme::encryptMsg(Plaintext& msg) {
 	ZZX ax, bx, vx, eax, ebx;
 	NumUtils::sampleZO(vx, context.N);
@@ -183,6 +198,11 @@ Plaintext Scheme::decryptMsg(SecretKey& secretKey, Ciphertext& cipher) {
 	Ring2Utils::mult(mx, cipher.ax, secretKey.sx, cipher.q, context.N);
 	Ring2Utils::addAndEqual(mx, cipher.bx, cipher.q, context.N);
 	return Plaintext(mx, cipher.q, cipher.logq, cipher.slots, cipher.isComplex);
+}
+
+Ciphertext Scheme::encryptSK(SecretKey& secretKey, CZZ* vals, long slots, long logq, bool isComplex) {
+	Plaintext msg = encode(vals, slots, logq, isComplex);
+	return encryptMsgSK(secretKey, msg);
 }
 
 Ciphertext Scheme::encrypt(CZZ* vals, long slots, long logq, bool isComplex) {

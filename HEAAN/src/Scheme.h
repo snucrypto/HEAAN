@@ -119,6 +119,12 @@ public:
 	//   ENCRYPTION & DECRYPTION
 	//----------------------------------------------------------------------------------
 
+	/**
+	 * encrypts message into ciphertext using secret key information
+	 * @param[in] msg: message
+	 * @return ciphertext
+	 */
+	Ciphertext encryptMsgSK(SecretKey& secretKey, Plaintext& msg);
 
 	/**
 	 * encrypts message into ciphertext using public key encyption
@@ -134,6 +140,16 @@ public:
 	 * @return message
 	 */
 	Plaintext decryptMsg(SecretKey& secretKey, Ciphertext& cipher);
+
+	/**
+	 * encodes array of CZZ into message and then encrypts it into ciphertext using public key encyption
+	 * @param[in] vals: array of CZZ values
+	 * @param[in] slots: array size
+	 * @param[in] logq: log of ciphertext modulus
+	 * @param[in] isComplex: there is an option for encryption single real value
+	 * @return ciphertext
+	 */
+	Ciphertext encryptSK(SecretKey& secretKey, CZZ* vals, long slots, long logq, bool isComplex = true);
 
 	/**
 	 * encodes array of CZZ into message and then encrypts it into ciphertext using public key encyption
