@@ -36,8 +36,6 @@ public:
 	map<string, double*> taylorCoeffsMap; ///< storing taylor coefficients for function calculation
 
 	Context(Params& params);
-
-	virtual ~Context();
 };
 
 #endif /* CONTEXT_H_ */

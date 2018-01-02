@@ -6,8 +6,6 @@
 
 #include <fstream>
 
-//#include "Functions.h"
-
 using namespace std;
 using namespace NTL;
 
@@ -43,17 +41,7 @@ public:
 
 	void Read(string filename);
 
-	ZZ stringToNumber(string str)
-	{
-		ZZ number = conv<ZZ>(str[0] - '0');
-   		long len = str.length();
-	    for(long i = 1; i < len; i++)
-	    {
-	        number *= 10;
-	        number += conv<ZZ>(str[i] - '0');
-	    }
-	    return number;
-	}
+	ZZ stringToNumber(string str);
 };
 
 #endif
