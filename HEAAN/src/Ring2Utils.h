@@ -307,26 +307,6 @@ public:
 	 */
 	static ZZX inpower(ZZX& p, const long pow, ZZ& mod, const long degree);
 
-	/**
-	 * calculates array of polynomials with bits coefficients of coefficients of p
-	 * @param[in] p(X) in Z_q[X] / (X^N + 1)
-	 * @param[in] log of modulus q
-	 * @param[in] degree N
-	 * @result array of ZZX
-	 */
-	static ZZX* bitDecomposition(ZZX& p, const long logMod, const long degree);
-
-	/**
-	 * calculates inner product of two arrays of polynomials in ring Z_q[X] / (X^N + 1)
-	 * @param[in] array pvec1 in (Z_q[X] / (X^N + 1))^size
-	 * @param[in] array pvec2 in (Z_q[X] / (X^N + 1))^size
-	 * @param[in] size of array
-	 * @param[in] mod q
-	 * @param[in] degree N
-	 * @result <pvec1, pvec2>
-	 */
-	static ZZX innerProduct(ZZX* pvec1, ZZX* pvec2, const long size, ZZ& mod, const long degree);
-
 };
 
 #endif

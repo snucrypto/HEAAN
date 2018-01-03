@@ -263,6 +263,8 @@ public:
 	 * @param[in] logSlots: log of number of slots
 	 */
 	static void testCiphertextWriteAndRead(long logN, long logQ, long logp, long logSlots);
+
+	static void test();
 };
 
 #endif

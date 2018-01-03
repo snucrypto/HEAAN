@@ -1,70 +1,70 @@
 #include "Ciphertext.h"
 
-void Ciphertext::Write(string filename)
-{
+void Ciphertext::Write(string filename) {
 	ofstream myfile;
 	myfile.open("Ciphertext" + filename + ".txt");
 	myfile << "Ciphertext Information" << endl;
 	myfile << "filename = " << filename << endl;
 	myfile << deg(ax) << endl;
 	myfile << deg(bx) << endl;
-	myfile << this->q << endl;
-	myfile << this->logq << endl;
-	myfile << this->slots << endl;
+	myfile << q << endl;
+	myfile << logq << endl;
+	myfile << slots << endl;
 	if(isComplex) {
 		myfile << "true" << endl;
-	}
-	else {
+	} else {
 		myfile << "false" << endl;
 	}
-	for(int i = 0; i < deg(ax) + 1; i++) {
+	for(long i = 0; i < deg(ax) + 1; i++) {
 		myfile << ax[i] << endl;
 	}
-	for(int i = 0; i < deg(bx) + 1; i++) {
+	for(long i = 0; i < deg(bx) + 1; i++) {
 		myfile << bx[i] << endl;
 	}
 	myfile.close();
 }
 
-void Ciphertext::Read(string filename)
-{
+void Ciphertext::Read(string filename) {
 	ifstream myfile("Ciphertext" + filename + ".txt");
 	if(myfile.is_open()) {
 		// kill previous memory
-		this->ax.kill();
-		this->bx.kill();
+		ax.kill();
+		bx.kill();
 		// start reading
-		int temp;
+		long temp;
 		string line;
 		// pass first two lines
-		getline(myfile, line); getline(myfile, line);
+		getline(myfile, line);
+		getline(myfile, line);
+
 		// read 3rd line and get degree of ax
 		getline(myfile, line);
-		temp = atoi(line.c_str());
-		this->ax.SetLength(temp + 1);
+		temp = atol(line.c_str());
+		ax.SetLength(temp + 1);
+
 		// read 4th line and get degree of bx
 		getline(myfile, line);
-		temp = atoi(line.c_str());
-		this->bx.SetLength(temp + 1);
+		temp = atol(line.c_str());
+		bx.SetLength(temp + 1);
+
 		// read 5th line and get q
 		getline(myfile, line);
-		this->q = stringToNumber(line);
+		q = stringToNumber(line);
+
 		// read 6th line and get logq
 		getline(myfile, line);
-		temp = atoi(line.c_str());
-		this->logq = temp;
+		temp = atol(line.c_str());
+		logq = temp;
+
 		// read 7th line and get slots
 		getline(myfile, line);
-		temp = atoi(line.c_str());
-		this->slots = temp;
+		temp = atol(line.c_str());
+		slots = temp;
+
 		// read 8th line and get isComplex
 		getline(myfile, line);
-		if(line == "true") {
-			this->isComplex = 1;
-		}
-		else {
-			this->isComplex = 0;
-		}
+		isComplex = line == "true" ? true : false;
+
 		// read other lines and get ax and bx
 		for(long i = 0; i < deg(ax) + 1; i++) {
 			getline(myfile, line);
@@ -77,8 +77,17 @@ void Ciphertext::Read(string filename)
 			bx[i] = conv<ZZ>(line.c_str());
 		}
 		myfile.close();
-	}
-	else {
+	} else {
 		throw std::invalid_argument("Unable to open file");
 	}
+}
+
+ZZ Ciphertext::stringToNumber(string str) {
+	ZZ number = conv<ZZ>(str[0] - '0');
+	long len = str.length();
+	for(long i = 1; i < len; i++) {
+		number *= 10;
+		number += conv<ZZ>(str[i] - '0');
+	}
+	return number;
 }

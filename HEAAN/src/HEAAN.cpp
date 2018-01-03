@@ -9,7 +9,7 @@ int main() {
 	 * Suggested: 13, 65, 30, 3
 	 */
 
-//	TestScheme::testEncodeBatch(13, 65, 30, 4);
+//	TestScheme::testEncodeBatch(16, 1200, 30, 3);
 
 	/*
 	 * Params: logN, logQ, logp, logSlots
@@ -134,7 +134,9 @@ int main() {
 	 */
 //	TestScheme::testFFTBatchLazyMultipleHadamard(13, 140, 42, 3, 3, 2);
 
-	TestScheme::testCiphertextWriteAndRead(10, 65, 30, 2);
+//	TestScheme::testCiphertextWriteAndRead(10, 65, 30, 2);
 	
+//	TestScheme::test();
+
 	return 0;
 }
