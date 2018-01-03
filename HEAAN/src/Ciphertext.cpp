@@ -68,11 +68,13 @@ void Ciphertext::Read(string filename)
 		// read other lines and get ax and bx
 		for(long i = 0; i < deg(ax) + 1; i++) {
 			getline(myfile, line);
-			ax[i] = stringToNumber(line);
+			//ax[i] = stringToNumber(line);
+			ax[i] = conv<ZZ>(line.c_str());
 		}
 		for(long i = 0; i < deg(bx) + 1; i++) {
 			getline(myfile, line);
-			bx[i] = stringToNumber(line);
+			//bx[i] = stringToNumber(line);
+			bx[i] = conv<ZZ>(line.c_str());
 		}
 		myfile.close();
 	}
