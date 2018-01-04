@@ -49,7 +49,7 @@ void Ciphertext::Read(string filename) {
 
 		// read 5th line and get q
 		getline(myfile, line);
-		q = stringToNumber(line);
+		q = conv<ZZ>(line.c_str());
 
 		// read 6th line and get logq
 		getline(myfile, line);
@@ -68,26 +68,14 @@ void Ciphertext::Read(string filename) {
 		// read other lines and get ax and bx
 		for(long i = 0; i < deg(ax) + 1; i++) {
 			getline(myfile, line);
-			//ax[i] = stringToNumber(line);
 			ax[i] = conv<ZZ>(line.c_str());
 		}
 		for(long i = 0; i < deg(bx) + 1; i++) {
 			getline(myfile, line);
-			//bx[i] = stringToNumber(line);
 			bx[i] = conv<ZZ>(line.c_str());
 		}
 		myfile.close();
 	} else {
 		throw std::invalid_argument("Unable to open file");
 	}
-}
-
-ZZ Ciphertext::stringToNumber(string str) {
-	ZZ number = conv<ZZ>(str[0] - '0');
-	long len = str.length();
-	for(long i = 1; i < len; i++) {
-		number *= 10;
-		number += conv<ZZ>(str[i] - '0');
-	}
-	return number;
 }

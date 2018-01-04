@@ -264,7 +264,6 @@ public:
 	 */
 	static void testCiphertextWriteAndRead(long logN, long logQ, long logp, long logSlots);
 
-	static void test();
 };
 
 #endif

@@ -41,7 +41,6 @@ public:
 
 	void Read(string filename);
 
-	ZZ stringToNumber(string str);
 };
 
 #endif
