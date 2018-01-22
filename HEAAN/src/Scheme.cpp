@@ -112,7 +112,7 @@ Plaintext Scheme::encode(CZZ* vals, long slots, long logq, bool isComplex) {
 	return Plaintext(mx, q, logq, slots, isComplex);
 }
 
-CZZ* Scheme::decode(Plaintext& msg) {
+CZZ* Scheme::decodeSmall(Plaintext& msg) {
 	long doubleslots = msg.slots << 1;
 
 	CZZ* fftinv = new CZZ[doubleslots];
@@ -136,7 +136,7 @@ CZZ* Scheme::decode(Plaintext& msg) {
 	return res;
 }
 
-Plaintext Scheme::encodeSingle(CZZ& val, long cbits, bool isComplex) {
+Plaintext Scheme::encodeLargeSingle(CZZ& val, long cbits, bool isComplex) {
 	ZZX mx;
 	mx.SetLength(context.N);
 	ZZ mod = power2_ZZ(cbits);
@@ -147,7 +147,7 @@ Plaintext Scheme::encodeSingle(CZZ& val, long cbits, bool isComplex) {
 	return Plaintext(mx, mod, cbits, 1, isComplex);
 }
 
-CZZ Scheme::decodeSingle(Plaintext& msg) {
+CZZ Scheme::decodeSmallSingle(Plaintext& msg) {
 	CZZ res;
 	ZZ tmp;
 	rem(tmp, msg.mx.rep[0], msg.q);
@@ -179,7 +179,7 @@ Ciphertext Scheme::encryptMsgSK(SecretKey& secretKey, Plaintext& msg) {
 	return Ciphertext(ax, bx, msg.q, msg.logq, msg.slots, msg.isComplex);
 }
 
-Ciphertext Scheme::encryptMsg(Plaintext& msg) {
+Ciphertext Scheme::encryptLargeMsg(Plaintext& msg) {
 	ZZ Pq = msg.q << context.logQ;
 
 	ZZX ax, bx, vx, eax, ebx;
@@ -204,7 +204,7 @@ Ciphertext Scheme::encryptMsg(Plaintext& msg) {
 	return Ciphertext(ax, bx, msg.q, msg.logq, msg.slots, msg.isComplex);
 }
 
-Plaintext Scheme::decryptMsg(SecretKey& secretKey, Ciphertext& cipher) {
+Plaintext Scheme::decryptSmallMsg(SecretKey& secretKey, Ciphertext& cipher) {
 	ZZX mx;
 
 	Ring2Utils::mult(mx, cipher.ax, secretKey.sx, cipher.q, context.N);
@@ -220,22 +220,22 @@ Ciphertext Scheme::encryptSK(SecretKey& secretKey, CZZ* vals, long slots, long l
 
 Ciphertext Scheme::encrypt(CZZ* vals, long slots, long logq, bool isComplex) {
 	Plaintext msg = encode(vals, slots, logq, isComplex);
-	return encryptMsg(msg);
+	return encryptLargeMsg(msg);
 }
 
 CZZ* Scheme::decrypt(SecretKey& secretKey, Ciphertext& cipher) {
-	Plaintext msg = decryptMsg(secretKey, cipher);
-	return decode(msg);
+	Plaintext msg = decryptSmallMsg(secretKey, cipher);
+	return decodeSmall(msg);
 }
 
 Ciphertext Scheme::encryptSingle(CZZ& val, long logq, bool isComplex) {
-	Plaintext msg = encodeSingle(val, logq, isComplex);
-	return encryptMsg(msg);
+	Plaintext msg = encodeLargeSingle(val, logq, isComplex);
+	return encryptLargeMsg(msg);
 }
 
 CZZ Scheme::decryptSingle(SecretKey& secretKey, Ciphertext& cipher) {
-	Plaintext msg = decryptMsg(secretKey, cipher);
-	return decodeSingle(msg);
+	Plaintext msg = decryptSmallMsg(secretKey, cipher);
+	return decodeSmallSingle(msg);
 }
 
 //-----------------------------------------

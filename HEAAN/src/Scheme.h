@@ -96,7 +96,7 @@ public:
 	 * @param[in] msg: message
 	 * @return array of CZZ values
 	 */
-	CZZ* decode(Plaintext& msg);
+	CZZ* decodeSmall(Plaintext& msg);
 
 	/**
 	 * encodes a single CZZ value into a ZZX polynomial using special fft inverse
@@ -105,14 +105,14 @@ public:
 	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return message
 	 */
-	Plaintext encodeSingle(CZZ& val, long logq, bool isComplex = true);
+	Plaintext encodeLargeSingle(CZZ& val, long logq, bool isComplex = true);
 
 	/**
 	 * decodes a ZZX polynomial into a single CZZ value using special fft
 	 * @param[in] msg: message
 	 * @return CZZ value
 	 */
-	CZZ decodeSingle(Plaintext& msg);
+	CZZ decodeSmallSingle(Plaintext& msg);
 
 
 	//----------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ public:
 	 * @param[in] msg: message
 	 * @return ciphertext
 	 */
-	Ciphertext encryptMsg(Plaintext& msg);
+	Ciphertext encryptLargeMsg(Plaintext& msg);
 
 	/**
 	 * decrypts ciphertext into message
@@ -139,7 +139,7 @@ public:
 	 * @param[in] cipher: ciphertext
 	 * @return message
 	 */
-	Plaintext decryptMsg(SecretKey& secretKey, Ciphertext& cipher);
+	Plaintext decryptSmallMsg(SecretKey& secretKey, Ciphertext& cipher);
 
 	/**
 	 * encodes array of CZZ into message and then encrypts it into ciphertext using public key encyption
