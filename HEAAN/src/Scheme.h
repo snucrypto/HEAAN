@@ -1,21 +1,14 @@
 #ifndef HEAAN_SCHEME_H_
 #define HEAAN_SCHEME_H_
 
-#include <NTL/RR.h>
-#include <NTL/ZZ.h>
-#include <NTL/ZZX.h>
-
 #include "Common.h"
-#include "CZZ.h"
-#include "SecretKey.h"
 #include "Ciphertext.h"
-#include "Plaintext.h"
-#include "Key.h"
 #include "Context.h"
-#include "EvaluatorUtils.h"
-#include "NumUtils.h"
-#include "Params.h"
-#include "Ring2Utils.h"
+#include "Key.h"
+#include "Plaintext.h"
+#include "SecretKey.h"
+
+#include <complex>
 
 using namespace std;
 using namespace NTL;
@@ -32,8 +25,9 @@ public:
 	map<long, Key> keyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
 	map<long, Key> leftRotKeyMap; ///< contain left rotation keys, if generated
 
-	Scheme(SecretKey& secretKey, Context& context);
+	Scheme(Context& context);
 
+	Scheme(SecretKey& secretKey, Context& context);
 
 	//----------------------------------------------------------------------------------
 	//   KEYS GENERATION
@@ -80,58 +74,70 @@ public:
 	//   ENCODING & DECODING
 	//----------------------------------------------------------------------------------
 
-
 	/**
-	 * encodes an array of CZZ values into a ZZX polynomial using special fft inverse
-	 * @param[in] vals: array of values
+	 * encodes an array of double values into a ZZX polynomial using special fft inverse
+	 * @param[in] vals: array double of values
 	 * @param[in] slots: size of an array
+	 * @param[in] logp: log of message quantize value
 	 * @param[in] logq: log of ciphertext modulus
-	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return message
 	 */
-	Plaintext encode(CZZ* vals, long slots, long logq, bool isComplex = true);
+	Plaintext encode(double* vals, long slots, long logp, long logq);
 
 	/**
-	 * decodes a ZZX polynomial into an array of CZZ values using special fft
-	 * @param[in] msg: message
-	 * @return array of CZZ values
-	 */
-	CZZ* decodeSmall(Plaintext& msg);
-
-	/**
-	 * encodes a single CZZ value into a ZZX polynomial using special fft inverse
-	 * @param[in] val: CZZ value
+	 * encodes an array of complex values into a ZZX polynomial using special fft inverse
+	 * @param[in] vals: array complex of values
+	 * @param[in] slots: size of an array
+	 * @param[in] logp: log of message quantize value
 	 * @param[in] logq: log of ciphertext modulus
-	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return message
 	 */
-	Plaintext encodeLargeSingle(CZZ& val, long logq, bool isComplex = true);
+	Plaintext encode(complex<double>* vals, long slots, long logp, long logq);
 
 	/**
-	 * decodes a ZZX polynomial into a single CZZ value using special fft
+	 * decodes a ZZX polynomial into an array of complex values using special fft
 	 * @param[in] msg: message
-	 * @return CZZ value
+	 * @return decoded array of complex values
 	 */
-	CZZ decodeSmallSingle(Plaintext& msg);
+	complex<double>* decode(Plaintext& msg);
+
+	/**
+	 * encodes a single double value into a ZZX polynomial using special fft inverse
+	 * @param[in] val: double value
+	 * @param[in] logp: log of message quantize bits
+	 * @param[in] logq: log of ciphertext modulus
+	 * @return message
+	 */
+	Plaintext encodeSingle(double val, long logp, long logq);
+
+	/**
+	 * encodes a single complex value into a ZZX polynomial using special fft inverse
+	 * @param[in] val: complex value
+	 * @param[in] logp: log of message quantize value
+	 * @param[in] logq: log of ciphertext modulus
+	 * @return message
+	 */
+	Plaintext encodeSingle(complex<double> val, long logp, long logq);
+
+	/**
+	 * decodes a ZZX polynomial into a single complex value using special fft
+	 * @param[in] msg: message
+	 * @return decoded complex value
+	 */
+	complex<double> decodeSingle(Plaintext& msg);
 
 
 	//----------------------------------------------------------------------------------
 	//   ENCRYPTION & DECRYPTION
 	//----------------------------------------------------------------------------------
 
-	/**
-	 * encrypts message into ciphertext using secret key information
-	 * @param[in] msg: message
-	 * @return ciphertext
-	 */
-	Ciphertext encryptMsgSK(SecretKey& secretKey, Plaintext& msg);
 
 	/**
 	 * encrypts message into ciphertext using public key encyption
 	 * @param[in] msg: message
 	 * @return ciphertext
 	 */
-	Ciphertext encryptLargeMsg(Plaintext& msg);
+	Ciphertext encryptMsg(Plaintext& msg);
 
 	/**
 	 * decrypts ciphertext into message
@@ -139,58 +145,89 @@ public:
 	 * @param[in] cipher: ciphertext
 	 * @return message
 	 */
-	Plaintext decryptSmallMsg(SecretKey& secretKey, Ciphertext& cipher);
+	Plaintext decryptMsg(SecretKey& secretKey, Ciphertext& cipher);
 
 	/**
-	 * encodes array of CZZ into message and then encrypts it into ciphertext using public key encyption
-	 * @param[in] vals: array of CZZ values
+	 * encodes an array of double values into message and then encrypts it into ciphertext using public key encyption
+	 * @param[in] vals: array of double values
 	 * @param[in] slots: array size
+	 * @param[in] logp: log of message quantize value
 	 * @param[in] logq: log of ciphertext modulus
-	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return ciphertext
 	 */
-	Ciphertext encryptSK(SecretKey& secretKey, CZZ* vals, long slots, long logq, bool isComplex = true);
+	Ciphertext encrypt(double* vals, long slots, long logp, long logq);
 
 	/**
-	 * encodes array of CZZ into message and then encrypts it into ciphertext using public key encyption
-	 * @param[in] vals: array of CZZ values
+	 * encodes an array of complex values into message and then encrypts it into ciphertext using public key encyption
+	 * @param[in] vals: array of complex values
 	 * @param[in] slots: array size
+	 * @param[in] logp: log of message quantize value
 	 * @param[in] logq: log of ciphertext modulus
-	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return ciphertext
 	 */
-	Ciphertext encrypt(CZZ* vals, long slots, long logq, bool isComplex = true);
+	Ciphertext encrypt(complex<double>* vals, long slots, long logp, long logq);
 
 	/**
-	 * decrypts ciphertext into message and then decodes it into array of CZZ values
+	 * encodes an array of zeros into message and then encrypts it into ciphertext using public key encyption
+	 * @param[in] slots: array size
+	 * @param[in] logp: log of message quantize value
+	 * @param[in] logq: log of ciphertext modulus
+	 * @return ciphertext
+	 */
+	Ciphertext encryptZeros(long slots, long logp, long logq);
+
+	/**
+	 * decrypts ciphertext into message and then decodes it into array of complex values
 	 * @param[in] secretKey: secret key
 	 * @param[in] cipher: ciphertext
-	 * @return array of CZZ values
+	 * @return decrypted array of complex values
 	 */
-	CZZ* decrypt(SecretKey& secretKey, Ciphertext& cipher);
+	complex<double>* decrypt(SecretKey& secretKey, Ciphertext& cipher);
 
 	/**
-	 * encodes single CZZ value into a message and then encrypts it into a ciphertext using public key encyption
-	 * @param[in] val: CZZ value
+	 * encodes single double value into a message and then encrypts it into a ciphertext using public key encyption
+	 * @param[in] val: double value
+	 * @param[in] logq: log of message quntize value
 	 * @param[in] logq: log of ciphertext modulus
-	 * @param[in] isComplex: there is an option for encryption single real value
 	 * @return ciphertext
 	 */
-	Ciphertext encryptSingle(CZZ& val, long logq, bool isComplex = true);
+	Ciphertext encryptSingle(double val, long logp, long logq);
 
 	/**
-	 * decrypts ciphertext into message and then decodes it into a single CZZ value
+	 * encodes a single complex value into a message and then encrypts it into a ciphertext using public key encyption
+	 * @param[in] val: complex value
+	 * @param[in] logq: log of message quntize value
+	 * @param[in] logq: log of ciphertext modulus
+	 * @return ciphertext
+	 */
+	Ciphertext encryptSingle(complex<double> val, long logp, long logq);
+
+	/**
+	 * decrypts ciphertext into message and then decodes it into a single complex value
 	 * @param[in] secretKey: secret key
 	 * @param[in] cipher: ciphertext
-	 * @return CZZ value
+	 * @return decrypted complex value
 	 */
-	CZZ decryptSingle(SecretKey& secretKey, Ciphertext& cipher);
+	complex<double> decryptSingle(SecretKey& secretKey, Ciphertext& cipher);
 
 
 	//----------------------------------------------------------------------------------
 	//   HOMOMORPHIC OPERATIONS
 	//----------------------------------------------------------------------------------
 
+
+	/**
+	 * negate the ciphertext
+	 * @param[in] cipher: ciphertext(m)
+	 * @return ciphertext(-m)
+	 */
+	Ciphertext negate(Ciphertext& cipher);
+
+	/**
+	 * negate the ciphertext
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(-m)
+	 */
+	void negateAndEqual(Ciphertext& cipher);
 
 	/**
 	 * addition of ciphertexts
@@ -208,19 +245,55 @@ public:
 	void addAndEqual(Ciphertext& cipher1, Ciphertext& cipher2);
 
 	/**
-	 * constant addition
+	 * quantized constant addition
 	 * @param[in] cipher: ciphertext(m)
 	 * @param[in] cnst: constant
-	 * @return ciphertext(m + constant)
+	 * @param[in] logp: number of quantized bits. If logp < 0 used cipher.logp, else logp
+	 * @return ciphertext(m + cnst * 2^logp)
 	 */
-	Ciphertext addConst(Ciphertext& cipher, ZZ& cnst);
+	Ciphertext addConst(Ciphertext& cipher, double cnst, long logp = -1);
 
 	/**
-	 * constant addition
-	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m + constant)
+	 * quantized constant addition
+	 * @param[in] cipher: ciphertext(m)
 	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits. If logp < 0 used cipher.logp, else logp
+	 * @return ciphertext(m + cnst * 2^logp)
 	 */
-	void addConstAndEqual(Ciphertext& cipher, ZZ& cnst);
+	Ciphertext addConst(Ciphertext& cipher, RR& cnst, long logp = -1);
+
+	/**
+	 * quantized constant addition
+	 * @param[in] cipher: ciphertext(m)
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits. If logp < 0 used cipher.logp, else logp
+	 * @return ciphertext(m + cnst * 2^logp)
+	 */
+	Ciphertext addConst(Ciphertext& cipher, complex<double> cnst, long logp = -1);
+
+	/**
+	 * quantized constant addition
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m + cnst * 2^logp)
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits. If logp < 0 used cipher.logp, else logp
+	 */
+	void addConstAndEqual(Ciphertext& cipher, double cnst, long logp = -1);
+
+	/**
+	 * quantized constant addition
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m + cnst * 2^logp)
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits. If logp < 0 used cipher.logp, else logp
+	 */
+	void addConstAndEqual(Ciphertext& cipher, RR& cnst, long logp = -1);
+
+	/**
+	 * quantized constant addition
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m + cnst * 2^logp)
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits. If logp < 0 used cipher.logp, else logp
+	 */
+	void addConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp = -1);
 
 	/**
 	 * substraction of ciphertexts
@@ -252,10 +325,23 @@ public:
 	Ciphertext imult(Ciphertext& cipher);
 
 	/**
+	 * division by i (imaginary unit) in ciphertext
+	 * @param[in] cipher: ciphertext(m)
+	 * @return ciphertext(m / i)
+	 */
+	Ciphertext idiv(Ciphertext& cipher);
+
+	/**
 	 * multiplication by i (imaginary unit) in ciphertext
 	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(i * m)
 	 */
 	void imultAndEqual(Ciphertext& cipher);
+
+	/**
+	 * division by i (imaginary unit) in ciphertext
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m / i)
+	 */
+	void idivAndEqual(Ciphertext& cipher);
 
 	/**
 	 * multiplication of ciphertexts. This algorithm contain relinearization.
@@ -290,34 +376,72 @@ public:
 	void squareAndEqual(Ciphertext& cipher);
 
 	/**
-	 * constant multiplication
-	 * @param[in] cipher: ciphertext(m)
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m)
 	 * @param[in] cnst: constant
-	 * @return ciphertext(m * constant)
+	 * @param[in] logp: number of quantized bits
+	 * @return ciphertext(m * (cnst * 2^logp))
 	 */
-	Ciphertext multByConst(Ciphertext& cipher, ZZ& cnst);
+	Ciphertext multByConst(Ciphertext& cipher, double cnst, long logp);
 
 	/**
-	 * constant multiplication
-	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * constant)
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m)
 	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits
+	 * @return ciphertext(m * (cnst * 2^logp))
 	 */
-	void multByConstAndEqual(Ciphertext& cipher, ZZ& cnst);
+	Ciphertext multByConst(Ciphertext& cipher, RR& cnst, long logp);
+
+	/**
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m)
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits
+	 * @return ciphertext(m * (cnst * 2^logp))
+	 */
+	Ciphertext multByConst(Ciphertext& cipher, complex<double> cnst, long logp);
+
+	/**
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * (cnst * 2^logp))
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits
+	 */
+	void multByConstAndEqual(Ciphertext& cipher, double cnst, long logp);
+
+	/**
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * (cnst * 2^logp))
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits
+	 */
+	void multByConstAndEqual(Ciphertext& cipher, RR& cnst, long logp);
+
+	/**
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * (cnst * 2^logp))
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits
+	 */
+	void multByConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp);
 
 	/**
 	 * polynomial multiplication
 	 * @param[in] cipher: ciphertext(m)
-	 * @param[in] poly: polynomial, encoding (constant)
-	 * @return ciphertext(m * constant)
+	 * @param[in] poly: polynomial - encoding(cnst)
+	 * @param[in] logp: number of quantized bits
+	 * @return ciphertext(m * cnst)
 	 */
-	Ciphertext multByPoly(Ciphertext& cipher, ZZX& poly);
+	Ciphertext multByPoly(Ciphertext& cipher, ZZX& poly, long logp);
 
 	/**
 	 * polynomial multiplication
-	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * constant)
-	 * @param[in] poly: polynomial, encoding (constant)
+	 * @param[in] cipher: ciphertext(m) -> ciphertext(m * cnst)
+	 * @param[in] poly: polynomial - encoding(cnst)
+	 * @param[in] logp: number of quantized bits
 	 */
-	void multByPolyAndEqual(Ciphertext& cipher, ZZX& poly);
+	void multByPolyAndEqual(Ciphertext& cipher, ZZX& poly, long logp);
 
 	/**
 	 * multiplication by monomial X^degree
@@ -335,31 +459,52 @@ public:
 	void multByMonomialAndEqual(Ciphertext& cipher, const long degree);
 
 	/**
-	 * multiplication by 2^bits
+	 * multiplication by 2^degree
 	 * @param[in] cipher: ciphertext(m)
-	 * @param[in] bits: shift bits
-	 * @return ciphertext(m*2^bits)
+	 * @param[in] degree: power degree
+	 * @return ciphertext(m*2^degree)
 	 */
-	Ciphertext leftShift(Ciphertext& cipher, long bits);
+	Ciphertext multByPo2(Ciphertext& cipher, long degree);
 
 	/**
-	 * multiplication by 2^bits
-	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m*2^bits)
-	 * @param[in] bits: shift bits
+	 * multiplication by 2^degree
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m*2^degree)
+	 * @param[in] degree: power degree
 	 */
-	void leftShiftAndEqual(Ciphertext& cipher, long bits);
+	void multByPo2AndEqual(Ciphertext& cipher, long degree);
 
 	/**
 	 * doubles
 	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(2m)
 	 */
-	void doubleAndEqual(Ciphertext& cipher);
+	void multBy2AndEqual(Ciphertext& cipher);
+
+	/**
+	 * division by 2^degree
+	 * @param[in] cipher: ciphertext(m)
+	 * @param[in] degree: power degree
+	 * @return ciphertext(m / 2^degree)
+	 */
+	Ciphertext divByPo2(Ciphertext& cipher, long degree);
+
+	/**
+	 * division by 2^degree
+	 * @param[in] cipher: ciphertext(m) -> ciphertext(m / 2^degree)
+	 * @param[in] degree: power degree
+	 */
+	void divByPo2AndEqual(Ciphertext& cipher, long degree);
+
+
+	//----------------------------------------------------------------------------------
+	//   RESCALING & MODULUS DOWN
+	//----------------------------------------------------------------------------------
+
 
 	/**
 	 * rescaling procedure
 	 * @param[in] cipher: ciphertext(m)
 	 * @param[in] bitsDown: rescaling bits
-	 * @return ciphertext(m/2^bitsDown) with new modulus (q/2^bitsDown)
+	 * @return ciphertext(m / 2^bitsDown) with new modulus (q / 2^bitsDown)
 	 */
 	Ciphertext reScaleBy(Ciphertext& cipher, long bitsDown);
 
@@ -367,20 +512,20 @@ public:
 	 * rescaling procedure
 	 * @param[in] cipher: ciphertext(m)
 	 * @param[in] newlogq: log of new ciphertext modulus
-	 * @return ciphertext(m*2^newlogq/q) with new modulus (newlogq)
+	 * @return ciphertext(m / 2^(logq - newlogq)) with new modulus (2^newlogq)
 	 */
 	Ciphertext reScaleTo(Ciphertext& cipher, long newlogq);
 
 	/**
 	 * rescaling procedure
-	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m/2^bitsDown) with new modulus (q/2^bitsDown)
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m / 2^bitsDown) with new modulus (q / 2^bitsDown)
 	 * @param[in] bitsDown: rescaling bits
 	 */
 	void reScaleByAndEqual(Ciphertext& cipher, long bitsDown);
 
 	/**
 	 * rescaling procedure
-	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m*2^newlogq/q) with new modulus (newlogq)
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m / 2^(logq - newlogq)) with new modulus (2^newlogq)
 	 * @param[in] newlogq: log ofnew ciphertext modulus
 	 */
 	void reScaleToAndEqual(Ciphertext& cipher, long newlogq);

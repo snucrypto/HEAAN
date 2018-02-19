@@ -3,26 +3,22 @@
 
 #include <NTL/ZZX.h>
 
-#include <fstream>
-
-//#include "Functions.h"
-#include "Params.h"
 #include "NumUtils.h"
-
 
 using namespace std;
 using namespace NTL;
+
 
 class SecretKey {
 public:
 
 	ZZX sx; ///< secret key
 
-	SecretKey(Params& params);
+	SecretKey(long logN, long h = 64);
 
-	void Write(int SecretKeyID);
+	SecretKey(ZZX sx = ZZX::zero()) : sx(sx) {};
+	SecretKey(const SecretKey& o) : sx(o.sx) {};
 
-	void Read(int SecretKeyID);
 };
 
 #endif

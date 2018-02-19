@@ -1,6 +1,11 @@
 #include "Ring2Utils.h"
 
 
+//----------------------------------------------------------------------------------
+//   MODULUS
+//----------------------------------------------------------------------------------
+
+
 void Ring2Utils::mod(ZZX& res, ZZX& p, ZZ& mod, const long degree) {
 	res.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
@@ -13,6 +18,12 @@ void Ring2Utils::modAndEqual(ZZX& p, ZZ& mod, const long degree) {
 		rem(p.rep[i], p.rep[i], mod);
 	}
 }
+
+
+//----------------------------------------------------------------------------------
+//   ADDITION & SUBSTRACTION
+//----------------------------------------------------------------------------------
+
 
 void Ring2Utils::add(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long degree) {
 	res.SetLength(degree);
@@ -58,15 +69,21 @@ void Ring2Utils::subAndEqual2(ZZX& p1, ZZX& p2, ZZ& mod, const long degree) {
 	}
 }
 
+
+//----------------------------------------------------------------------------------
+//   MULTIPLICATION & SQUARING
+//----------------------------------------------------------------------------------
+
+
 void Ring2Utils::mult(ZZX& res, ZZX& p1, ZZX& p2, ZZ& mod, const long degree) {
 	res.SetLength(degree);
-	ZZX p;
-	mul(p, p1, p2);
-	p.SetLength(2 * degree);
+	ZZX pp;
+	mul(pp, p1, p2);
+	pp.SetLength(2 * degree);
 	for (long i = 0; i < degree; ++i) {
-		rem(p.rep[i], p.rep[i], mod);
-		rem(p.rep[i + degree], p.rep[i + degree], mod);
-		SubMod(res.rep[i], p.rep[i], p.rep[i + degree], mod);
+		rem(pp.rep[i], pp.rep[i], mod);
+		rem(pp.rep[i + degree], pp.rep[i + degree], mod);
+		SubMod(res.rep[i], pp.rep[i], pp.rep[i + degree], mod);
 	}
 }
 
@@ -77,14 +94,14 @@ ZZX Ring2Utils::mult(ZZX& p1, ZZX& p2, ZZ& mod, const long degree) {
 }
 
 void Ring2Utils::multAndEqual(ZZX& p1, ZZX& p2, ZZ& mod, const long degree) {
-	ZZX p;
-	mul(p, p1, p2);
-	p.SetLength(2 * degree);
+	ZZX pp;
+	mul(pp, p1, p2);
+	pp.SetLength(2 * degree);
 
 	for (long i = 0; i < degree; ++i) {
-		rem(p.rep[i], p.rep[i], mod);
-		rem(p.rep[i + degree], p.rep[i + degree], mod);
-		SubMod(p1.rep[i], p.rep[i], p.rep[i + degree], mod);
+		rem(pp.rep[i], pp.rep[i], mod);
+		rem(pp.rep[i + degree], pp.rep[i + degree], mod);
+		SubMod(p1.rep[i], pp.rep[i], pp.rep[i + degree], mod);
 	}
 }
 
@@ -219,6 +236,12 @@ void Ring2Utils::rightShiftAndEqual(ZZX& p, const long bits, const long degree) 
 	}
 }
 
+
+//----------------------------------------------------------------------------------
+//   CONJUGATION ROTATION AND OTHER
+//----------------------------------------------------------------------------------
+
+
 void Ring2Utils::conjugate(ZZX& res, ZZX& p, const long degree) {
 	res.SetLength(degree);
 	res.rep[0] = p.rep[0];
@@ -237,6 +260,7 @@ void Ring2Utils::conjugateAndEqual(ZZX& p, const long degree) {
 }
 
 void Ring2Utils::inpower(ZZX& res, ZZX& p, const long pow, ZZ& mod, const long degree) {
+	res.kill();
 	res.SetLength(degree);
 	for (long i = 0; i < degree; ++i) {
 		long ipow = i * pow;

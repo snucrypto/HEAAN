@@ -4,11 +4,12 @@
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <fstream>
 #include <cmath>
 #include <cassert>
 #include <stdexcept>
 #include <string>
 #include <cstdlib>
+#include <vector>
+#include <fstream>
 
 #endif

@@ -1,5 +1,9 @@
 #include "TestScheme.h"
 
+#include <iostream>
+
+using namespace std;
+
 int main() {
 
 	//-----------------------------------------
@@ -8,8 +12,19 @@ int main() {
 	 * Params: logN, logQ, logp, logSlots
 	 * Suggested: 13, 65, 30, 3
 	 */
+//	TestScheme::testEncodeBatch(13, 150, 30, 3);
 
-//	TestScheme::testEncodeBatch(16, 1200, 30, 3);
+	/*
+	 * Params: logN, logQ, logp, isComplex
+	 * Suggested: 13, 65, 30, 3
+	 */
+//	TestScheme::testEncodeSingle(13, 150, 30, false);
+
+	/*
+	 * Params: logN, logQ, logp, isComplex
+	 * Suggested: 13, 65, 30, 3
+	 */
+//	TestScheme::testBasic(13, 150, 30, false);
 
 	/*
 	 * Params: logN, logQ, logp, logSlots
@@ -50,7 +65,7 @@ int main() {
 	 * Suggested: 15, 618, 56, 10, 3
 	 */
 
-//	TestScheme::testPowerOf2Batch(15, 618, 56, 10, 14);
+//	TestScheme::testPowerOf2Batch(13, 155, 30, 4, 3);
 
 	//-----------------------------------------
 
@@ -60,7 +75,7 @@ int main() {
 	 * Suggested: 15, 618, 56, 903, 3
 	 */
 
-//	TestScheme::testPowerBatch(15, 618, 56, 903, 3);
+//	TestScheme::testPowerBatch(13, 155, 30, 13, 3);
 
 	//-----------------------------------------
 
@@ -132,9 +147,15 @@ int main() {
 	 * Params: logN, logQ, logp, logSlots, logFFTdim, logHdim
 	 * Suggested: 13, 140, 42, 3, 3, 2;
 	 */
+
 //	TestScheme::testFFTBatchLazyMultipleHadamard(13, 140, 42, 3, 3, 2);
 
-//	TestScheme::testCiphertextWriteAndRead(10, 65, 30, 2);
+	/*
+	 * Params: logN, logQ, logp, logSlots
+	 * Suggested: 13, 65, 30, 3
+	 */
+
+//	TestScheme::testWriteAndRead(15, 620, 30, 3);
 
 	return 0;
 }

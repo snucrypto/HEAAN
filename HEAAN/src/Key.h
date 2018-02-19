@@ -3,8 +3,14 @@
 
 #include <NTL/ZZX.h>
 
-using namespace NTL;
+#include "Common.h"
 
+using namespace NTL;
+using namespace std;
+
+/**
+ * Key is an RLWE instance (ax, bx = mx + ex - ax * sx) in ring Z_q[X] / (X^N + 1);
+ */
 class Key {
 public:
 

@@ -6,46 +6,116 @@
 
 #include "Common.h"
 #include "Ciphertext.h"
-#include "CZZ.h"
 #include "EvaluatorUtils.h"
 #include "NumUtils.h"
-#include "Params.h"
 #include "Scheme.h"
 #include "SchemeAlgo.h"
 #include "SecretKey.h"
 #include "StringUtils.h"
 #include "TimeUtils.h"
 #include "Context.h"
+#include "SerializationUtils.h"
 
 using namespace std;
 using namespace NTL;
 
-//-----------------------------------------
+
+//----------------------------------------------------------------------------------
+//   STANDARD TESTS
+//----------------------------------------------------------------------------------
+
 
 void TestScheme::testEncodeBatch(long logN, long logQ, long logp, long logSlots) {
 	cout << "!!! START TEST ENCODE BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
-	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	srand(time(NULL));
 	//-----------------------------------------
 	long slots = (1 << logSlots);
-	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
-	//-----------------------------------------
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+
 	timeutils.start("Encrypt batch");
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
 	timeutils.stop("Encrypt batch");
-	//-----------------------------------------
+
 	timeutils.start("Decrypt batch");
-	CZZ* dvec = scheme.decrypt(secretKey, cipher);
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
 	timeutils.stop("Decrypt batch");
-	//-----------------------------------------
+
 	StringUtils::showcompare(mvec, dvec, slots, "val");
-	//-----------------------------------------
+
 	cout << "!!! END TEST ENCODE BATCH !!!" << endl;
+}
+
+void TestScheme::testEncodeSingle(long logN, long logQ, long logp, bool isComplex) {
+	cout << "!!! START TEST ENCODE SINGLE !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
+	Scheme scheme(secretKey, context);
+	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
+	complex<double> mval = EvaluatorUtils::randomComplex();
+
+	timeutils.start("Encrypt Single");
+	Ciphertext cipher = scheme.encryptSingle(mval, logp, logQ);
+	timeutils.stop("Encrypt Single");
+
+	timeutils.start("Decrypt Single");
+	complex<double> dval = scheme.decryptSingle(secretKey, cipher);
+	timeutils.stop("Decrypt Single");
+
+	StringUtils::showcompare(mval, dval, "val");
+
+	cout << "!!! END TEST ENCODE SINGLE !!!" << endl;
+}
+
+void TestScheme::testBasic(long logN, long logQ, long logp, long logSlots) {
+	cout << "!!! START TEST BASIC !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
+	Scheme scheme(secretKey, context);
+	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+	complex<double>* mvec1 = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* mvec2 = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* mvecAdd = new complex<double>[slots];
+	complex<double>* mvecMult = new complex<double>[slots];
+	for(long i = 0; i < slots; i++) {
+		mvecAdd[i] = mvec1[i] + mvec2[i];
+		mvecMult[i] = mvec1[i] * mvec2[i];
+	}
+
+	timeutils.start("Encrypt two batch");
+	Ciphertext cipher1 = scheme.encrypt(mvec1, slots, logp, logQ);
+	Ciphertext cipher2 = scheme.encrypt(mvec2, slots, logp, logQ);
+	timeutils.stop("Encrypt two batch");
+
+	timeutils.start("Homomorphic Addition");
+	Ciphertext addCipher = scheme.add(cipher1, cipher2);
+	timeutils.stop("Homomorphic Addition");
+
+	timeutils.start("Homomorphic Multiplication");
+	Ciphertext multCipher = scheme.mult(cipher1, cipher2);
+	timeutils.stop("Homomorphic Multiplication");
+
+	timeutils.start("Decrypt batch");
+	complex<double>* dvecAdd = scheme.decrypt(secretKey, addCipher);
+	complex<double>* dvecMult = scheme.decrypt(secretKey, multCipher);
+	timeutils.stop("Decrypt batch");
+
+	StringUtils::showcompare(mvecAdd, dvecAdd, slots, "add");
+	StringUtils::showcompare(mvecMult, dvecMult, slots, "mult");
 }
 
 //-----------------------------------------
@@ -53,26 +123,27 @@ void TestScheme::testEncodeBatch(long logN, long logQ, long logp, long logSlots)
 void TestScheme::testConjugateBatch(long logN, long logQ, long logp, long logSlots) {
 	cout << "!!! START TEST CONJUGATE BATCH !!!" << endl;
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
-	SchemeAlgo algo(scheme);
 	scheme.addConjKey(secretKey);
 	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
 	long slots = (1 << logSlots);
-	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
-	CZZ* mvecconj = new CZZ[slots];
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* mvecconj = new complex<double>[slots];
 	for (long i = 0; i < slots; ++i) {
-		mvecconj[i] = mvec[i].conjugate();
+		mvecconj[i] = conj(mvec[i]);
 	}
 
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start("Conjugate batch");
 	Ciphertext cconj = scheme.conjugate(cipher);
 	timeutils.stop("Conjugate batch");
 
-	CZZ* dvecconj = scheme.decrypt(secretKey, cconj);
+	complex<double>* dvecconj = scheme.decrypt(secretKey, cconj);
 
 	StringUtils::showcompare(mvecconj, dvecconj, slots, "conj");
 
@@ -82,26 +153,27 @@ void TestScheme::testConjugateBatch(long logN, long logQ, long logp, long logSlo
 void TestScheme::testimultBatch(long logN, long logQ, long logp, long logSlots) {
 	cout << "!!! START TEST i MULTIPLICATION BATCH !!!" << endl;
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
-	SchemeAlgo algo(scheme);
+	//-----------------------------------------
+	srand(time(NULL));
 	//-----------------------------------------
 	long slots = (1 << logSlots);
-	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
-	CZZ* imvec = new CZZ[slots];
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* imvec = new complex<double>[slots];
 	for (long i = 0; i < slots; ++i) {
-		imvec[i].r = -mvec[i].i;
-		imvec[i].i = mvec[i].r;
+		imvec[i].real(-mvec[i].imag());
+		imvec[i].imag(mvec[i].real());
 	}
 
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start("Multiplication by i batch");
 	Ciphertext icipher = scheme.imult(cipher);
 	timeutils.stop("Multiplication by i batch");
 
-	CZZ* idvec = scheme.decrypt(secretKey, icipher);
+	complex<double>* idvec = scheme.decrypt(secretKey, icipher);
 
 	StringUtils::showcompare(imvec, idvec, slots, "imult");
 
@@ -112,18 +184,18 @@ void TestScheme::testRotateByPo2Batch(long logN, long logQ, long logp, long logR
 	cout << "!!! START TEST ROTATE BY POWER OF 2 BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
-	SchemeAlgo algo(scheme);
 	scheme.addLeftRotKeys(secretKey);
+	//-----------------------------------------
+	srand(time(NULL));
 	//-----------------------------------------
 	long slots = (1 << logSlots);
 	long rotSlots = (1 << logRotSlots);
-	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
-	//-----------------------------------------
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	if(isLeft) {
 		timeutils.start("Left Rotate by power of 2 batch");
 		scheme.leftRotateByPo2AndEqual(cipher, logRotSlots);
@@ -133,14 +205,16 @@ void TestScheme::testRotateByPo2Batch(long logN, long logQ, long logp, long logR
 		scheme.rightRotateByPo2AndEqual(cipher, logRotSlots);
 		timeutils.stop("Right Rotate by power of 2 batch");
 	}
-	//-----------------------------------------
-	CZZ* dvec = scheme.decrypt(secretKey, cipher);
+
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+
 	if(isLeft) {
 		EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
 	} else {
 		EvaluatorUtils::rightRotateAndEqual(mvec, slots, rotSlots);
 	}
-	StringUtils::showcompare(mvec, dvec, slots, "val");
+
+	StringUtils::showcompare(mvec, dvec, slots, "rot");
 	//-----------------------------------------
 	cout << "!!! END TEST ROTATE BY POWER OF 2 BATCH !!!" << endl;
 }
@@ -149,18 +223,18 @@ void TestScheme::testRotateBatch(long logN, long logQ, long logp, long rotSlots,
 	cout << "!!! START TEST ROTATE BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
-	SchemeAlgo algo(scheme);
 	scheme.addLeftRotKeys(secretKey);
 	scheme.addRightRotKeys(secretKey);
 	//-----------------------------------------
-	long slots = (1 << logSlots);
-	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = (1 << logSlots);
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	if(isLeft) {
 		timeutils.start("Left rotate batch");
 		scheme.leftRotateAndEqual(cipher, rotSlots);
@@ -170,15 +244,17 @@ void TestScheme::testRotateBatch(long logN, long logQ, long logp, long rotSlots,
 		scheme.rightRotateAndEqual(cipher, rotSlots);
 		timeutils.stop("Right rotate batch");
 	}
-	//-----------------------------------------
-	CZZ* dvec = scheme.decrypt(secretKey, cipher);
+
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+
 	if(isLeft) {
 		EvaluatorUtils::leftRotateAndEqual(mvec, slots, rotSlots);
 	} else {
 		EvaluatorUtils::rightRotateAndEqual(mvec, slots, rotSlots);
 	}
-	StringUtils::showcompare(mvec, dvec, slots, "val");
-	//-----------------------------------------
+
+	StringUtils::showcompare(mvec, dvec, slots, "rot");
+
 	cout << "!!! END TEST ROTATE BATCH !!!" << endl;
 }
 
@@ -186,73 +262,71 @@ void TestScheme::testSlotsSum(long logN, long logQ, long logp, long logSlots) {
 	cout << "!!! START TEST SLOTS SUM !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	scheme.addLeftRotKeys(secretKey);
 	//-----------------------------------------
-	long slots = (1 << logSlots);
-	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = (1 << logSlots);
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start("slots sum");
 	algo.partialSlotsSumAndEqual(cipher, slots);
 	timeutils.stop("slots sum");
-	//-----------------------------------------
-	CZZ* dvec = scheme.decrypt(secretKey, cipher);
-	CZZ msum = CZZ();
+
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+
+	complex<double> msum;
 	for (long i = 0; i < slots; ++i) {
 		msum += mvec[i];
 	}
+
 	StringUtils::showcompare(msum, dvec, slots, "slotsum");
-	//-----------------------------------------
+
 	cout << "!!! END TEST SLOTS SUM !!!" << endl;
 }
 
 
-//-----------------------------------------
+//----------------------------------------------------------------------------------
+//   POWER & PRODUCT TESTS
+//----------------------------------------------------------------------------------
+
 
 void TestScheme::testPowerOf2Batch(long logN, long logQ, long logp, long logDegree, long logSlots) {
 	cout << "!!! START TEST POWER OF 2 BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
 	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* mpow = new CZZ[slots];
-
-	CZZ** mpows = new CZZ*[logDegree + 1];
-	for (long i = 0; i < logDegree + 1; ++i) {
-		mpows[i] = new CZZ[slots];
-	}
+	long degree = 1 << logDegree;
+	complex<double>* mvec = new complex<double>[slots];
+	complex<double>* mpow = new complex<double>[slots];
 
 	for (long i = 0; i < slots; ++i) {
-		RR angle = random_RR();
-		RR mr = cos(angle * 2 * Pi);
-		RR mi = sin(angle * 2 * Pi);
-		mvec[i] = EvaluatorUtils::evalCZZ(mr, mi, logp);
-		mpow[i] = EvaluatorUtils::evalCZZPow2(mr, mi, logDegree, logp);
-		for (int j = 0; j < logDegree + 1; ++j) {
-			mpows[j][i] = EvaluatorUtils::evalCZZPow2(mr, mi, j, logp);
-		}
+		mvec[i] = EvaluatorUtils::randomCircle();
+		mpow[i] = pow(mvec[i], degree);
 	}
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
-	//-----------------------------------------
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start("Power of 2 batch");
 	Ciphertext cpow = algo.powerOf2(cipher, logp, logDegree);
 	timeutils.stop("Power of 2 batch");
 
-	//-----------------------------------------
-	CZZ* dpow = scheme.decrypt(secretKey, cpow);
-	StringUtils::showcompare(mpow, dpow, slots, "pow");
-	//-----------------------------------------
+	complex<double>* dpow = scheme.decrypt(secretKey, cpow);
+
+	StringUtils::showcompare(mpow, dpow, slots, "pow2");
+
 	cout << "!!! END TEST POWER OF 2 BATCH !!!" << endl;
 }
 
@@ -262,31 +336,30 @@ void TestScheme::testPowerBatch(long logN, long logQ, long logp, long degree, lo
 	cout << "!!! START TEST POWER BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* mpow = new CZZ[slots];
-	for (long i = 0; i < slots; ++i) {
-		RR angle = random_RR();
-		RR mr = cos(angle * 2 * Pi);
-		RR mi = sin(angle * 2 * Pi);
-		mvec[i] = EvaluatorUtils::evalCZZ(mr, mi, logp);
-		mpow[i] = EvaluatorUtils::evalCZZPow(mr, mi, degree, logp);
-	}
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = 1 << logSlots;
+	complex<double>* mvec = EvaluatorUtils::randomCircleArray(slots);
+	complex<double>* mpow = new complex<double>[slots];
+	for (long i = 0; i < slots; ++i) {
+		mpow[i] = pow(mvec[i], degree);
+	}
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start("Power batch");
 	Ciphertext cpow = algo.power(cipher, logp, degree);
 	timeutils.stop("Power batch");
-	//-----------------------------------------
-	CZZ* dpow = scheme.decrypt(secretKey, cpow);
+
+	complex<double>* dpow = scheme.decrypt(secretKey, cpow);
+
 	StringUtils::showcompare(mpow, dpow, slots, "pow");
-	//-----------------------------------------
+
 	cout << "!!! END TEST POWER BATCH !!!" << endl;
 }
 
@@ -296,44 +369,44 @@ void TestScheme::testProdOfPo2Batch(long logN, long logQ, long logp, long logDeg
 	cout << "!!! START TEST PROD OF POWER OF 2 BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 	SetNumThreads(4);
+	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
 	long slots = 1 << logSlots;
 	long degree = 1 << logDegree;
-	Ciphertext* cvec = new Ciphertext[degree];
-	CZZ** mvec = new CZZ*[degree];
+
+	complex<double>** mvec = new complex<double>*[degree];
 	for (long i = 0; i < degree; ++i) {
-		mvec[i] = new CZZ[slots];
+		mvec[i] = EvaluatorUtils::randomCircleArray(slots);
 	}
-	CZZ* pvec = new CZZ[slots];
-	for (long i = 0; i < degree; ++i) {
-		for (long j = 0; j < slots; ++j) {
-			mvec[i][j] = EvaluatorUtils::evalRandCZZCircle(logp);
-		}
-	}
+
+	complex<double>* pvec = new complex<double>[slots];
 	for (long j = 0; j < slots; ++j) {
 		pvec[j] = mvec[0][j];
 		for (long i = 1; i < degree; ++i) {
 			pvec[j] *= mvec[i][j];
-			pvec[j] >>= logp;
 		}
 	}
+
+	Ciphertext* cvec = new Ciphertext[degree];
 	for (long i = 0; i < degree; ++i) {
-		cvec[i] = scheme.encrypt(mvec[i], slots, logQ);
+		cvec[i] = scheme.encrypt(mvec[i], slots, logp, logQ);
 	}
-	//-----------------------------------------
+
 	timeutils.start("Product of power of 2 batch");
 	Ciphertext cprod = algo.prodOfPo2(cvec, logp, logDegree);
 	timeutils.stop("Product of power of 2 batch");
-	//-----------------------------------------
-	CZZ* dvec = scheme.decrypt(secretKey, cprod);
+
+	complex<double>* dvec = scheme.decrypt(secretKey, cprod);
+
 	StringUtils::showcompare(pvec, dvec, slots, "prod");
-	//-----------------------------------------
+
 	cout << "!!! END TEST PROD OF POWER OF 2 BATCH !!!" << endl;
 }
 
@@ -341,143 +414,141 @@ void TestScheme::testProdBatch(long logN, long logQ, long logp, long degree, lon
 	cout << "!!! START TEST PROD BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 	SetNumThreads(4);
+	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
 	long slots = 1 << logSlots;
-	Ciphertext* cvec = new Ciphertext[degree];
-	CZZ** mvec = new CZZ*[degree];
+	complex<double>** mvec = new complex<double>*[degree];
 	for (long i = 0; i < degree; ++i) {
-		mvec[i] = new CZZ[slots];
+		mvec[i] = EvaluatorUtils::randomCircleArray(slots);
 	}
-	CZZ* pvec = new CZZ[slots];
-	for (long i = 0; i < degree; ++i) {
-		for (long j = 0; j < slots; ++j) {
-			mvec[i][j] = EvaluatorUtils::evalRandCZZCircle(logp);
-		}
-	}
+
+	complex<double>* pvec = new complex<double>[slots];
 	for (long j = 0; j < slots; ++j) {
 		pvec[j] = mvec[0][j];
 		for (long i = 1; i < degree; ++i) {
 			pvec[j] *= mvec[i][j];
-			pvec[j] >>= logp;
 		}
 	}
+
+	Ciphertext* cvec = new Ciphertext[degree];
 	for (long i = 0; i < degree; ++i) {
-		cvec[i] = scheme.encrypt(mvec[i], slots, logQ);
+		cvec[i] = scheme.encrypt(mvec[i], slots, logp, logQ);
 	}
-	//-----------------------------------------
+
 	timeutils.start("Product batch");
 	Ciphertext cprod = algo.prod(cvec, logp, degree);
 	timeutils.stop("Product batch");
-	//-----------------------------------------
-	CZZ* dvec = scheme.decrypt(secretKey, cprod);
+
+	complex<double>* dvec = scheme.decrypt(secretKey, cprod);
+
 	StringUtils::showcompare(pvec, dvec, slots, "prod");
-	//-----------------------------------------
+
 	cout << "!!! END TEST PROD BATCH !!!" << endl;
 }
 
-//-----------------------------------------
+
+//----------------------------------------------------------------------------------
+//   FUNCTION TESTS
+//----------------------------------------------------------------------------------
+
 
 void TestScheme::testInverseBatch(long logN, long logQ, long logp, long invSteps, long logSlots) {
 	cout << "!!! START TEST INVERSE BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* minv = new CZZ[slots];
-	for (long i = 0; i < slots; ++i) {
-		RR angle = random_RR() / 20;
-		RR mr = cos(angle * 2 * Pi);
-		RR mi = sin(angle * 2 * Pi);
-		mvec[i] = EvaluatorUtils::evalCZZ(1 - mr, -mi, logp);
-		minv[i] = EvaluatorUtils::evalCZZInv(mr, mi, logp);
-	}
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = 1 << logSlots;
+	complex<double>* mvec = EvaluatorUtils::randomCircleArray(slots, 0.1);
+	complex<double>* minv = new complex<double>[slots];
+	for (long i = 0; i < slots; ++i) {
+		minv[i] = 1. / mvec[i];
+	}
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start("Inverse batch");
 	Ciphertext cinv = algo.inverse(cipher, logp, invSteps);
 	timeutils.stop("Inverse batch");
-	//-----------------------------------------
-	CZZ* dinv = scheme.decrypt(secretKey, cinv);
+
+	complex<double>* dinv = scheme.decrypt(secretKey, cinv);
+
 	StringUtils::showcompare(minv, dinv, slots, "inv");
-	//-----------------------------------------
+
 	cout << "!!! END TEST INVERSE BATCH !!!" << endl;
 }
-
-//-----------------------------------------
 
 void TestScheme::testLogarithmBatch(long logN, long logQ, long logp, long degree, long logSlots) {
 	cout << "!!! START TEST LOGARITHM BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* mlog = new CZZ[slots];
-	for (long i = 0; i < slots; ++i) {
-		double mr = (double)rand() / RAND_MAX / 20;
-		double mi = (double)rand() / RAND_MAX / 20;
-		mvec[i] = EvaluatorUtils::evalCZZ(mr, mi, logp);
-		mlog[i] = EvaluatorUtils::evalCZZLog(1 + mr, mi, logp);
-	}
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = 1 << logSlots;
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots, 0.1);
+	complex<double>* mlog = new complex<double>[slots];
+	for (long i = 0; i < slots; ++i) {
+		mlog[i] = log(mvec[i] + 1.);
+	}
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start(LOGARITHM + " batch");
 	Ciphertext clog = algo.function(cipher, LOGARITHM, logp, degree);
 	timeutils.stop(LOGARITHM + " batch");
-	//-----------------------------------------
-	CZZ* dlog = scheme.decrypt(secretKey, clog);
+
+	complex<double>* dlog = scheme.decrypt(secretKey, clog);
+
 	StringUtils::showcompare(mlog, dlog, slots, LOGARITHM);
-	//-----------------------------------------
+
 	cout << "!!! END TEST LOGARITHM BATCH !!!" << endl;
 }
 
-//-----------------------------------------
-
-void TestScheme::testExponentBatch(long logN, long logq, long logp, long degree, long logSlots) {
+void TestScheme::testExponentBatch(long logN, long logQ, long logp, long degree, long logSlots) {
 	cout << "!!! START TEST EXPONENT BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logq);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* mexp = new CZZ[slots];
-	for (long i = 0; i < slots; ++i) {
-		RR mr = random_RR();
-		RR mi = random_RR();
-		mvec[i] = EvaluatorUtils::evalCZZ(mr, mi, logp);
-		mexp[i] = EvaluatorUtils::evalCZZExp(mr, mi, logp);
-	}
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logq);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = 1 << logSlots;
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* mexp = new complex<double>[slots];
+	for (long i = 0; i < slots; ++i) {
+		mexp[i] = exp(mvec[i]);
+	}
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start(EXPONENT + " batch");
 	Ciphertext cexp = algo.function(cipher, EXPONENT, logp, degree);
 	timeutils.stop(EXPONENT + " batch");
-	//-----------------------------------------
-	CZZ* dexp = scheme.decrypt(secretKey, cexp);
+
+	complex<double>* dexp = scheme.decrypt(secretKey, cexp);
+
 	StringUtils::showcompare(mexp, dexp, slots, EXPONENT);
-	//-----------------------------------------
+
 	cout << "!!! END TEST EXPONENT BATCH !!!" << endl;
 }
 
@@ -485,31 +556,29 @@ void TestScheme::testExponentBatchLazy(long logN, long logQ, long logp, long deg
 	cout << "!!! START TEST EXPONENT LAZY !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* mexp = new CZZ[slots];
-	for (long i = 0; i < slots; ++i) {
-		RR mr = random_RR();
-		RR mi = random_RR();
-		mvec[i] = EvaluatorUtils::evalCZZ(mr, mi, logp);
-		mexp[i] = EvaluatorUtils::evalCZZExp(mr, mi, logp);
-	}
-	EvaluatorUtils::leftShiftAndEqual(mexp, slots, logp);
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = 1 << logSlots;
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* mexp = new complex<double>[slots];
+	for (long i = 0; i < slots; ++i) {
+		mexp[i] = exp(mvec[i]);
+	}
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start(EXPONENT + " lazy");
 	Ciphertext cexp = algo.functionLazy(cipher, EXPONENT, logp, degree);
 	timeutils.stop(EXPONENT + " lazy");
-	//-----------------------------------------
-	CZZ* dexp = scheme.decrypt(secretKey, cexp);
+
+	complex<double>* dexp = scheme.decrypt(secretKey, cexp);
+
 	StringUtils::showcompare(mexp, dexp, slots, EXPONENT);
-	//-----------------------------------------
+
 	cout << "!!! END TEST EXPONENT LAZY !!!" << endl;
 }
 
@@ -519,30 +588,31 @@ void TestScheme::testSigmoidBatch(long logN, long logQ, long logp, long degree, 
 	cout << "!!! START TEST SIGMOID BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* msig = new CZZ[slots];
-	for (long i = 0; i < slots; ++i) {
-		RR mr = random_RR();
-		RR mi = random_RR();
-		mvec[i] = EvaluatorUtils::evalCZZ(mr, mi, logp);
-		msig[i] = EvaluatorUtils::evalCZZSigmoid(mr, mi, logp);
-	}
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = 1 << logSlots;
+
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* msig = new complex<double>[slots];
+	for (long i = 0; i < slots; ++i) {
+		msig[i] = exp(mvec[i]) / (1. + exp(mvec[i]));
+	}
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start(SIGMOID + " batch");
 	Ciphertext csig = algo.function(cipher, SIGMOID, logp, degree);
 	timeutils.stop(SIGMOID + " batch");
-	//-----------------------------------------
-	CZZ* dsig = scheme.decrypt(secretKey, csig);
+
+	complex<double>* dsig = scheme.decrypt(secretKey, csig);
+
 	StringUtils::showcompare(msig, dsig, slots, SIGMOID);
-	//-----------------------------------------
+
 	cout << "!!! END TEST SIGMOID BATCH !!!" << endl;
 }
 
@@ -550,111 +620,114 @@ void TestScheme::testSigmoidBatchLazy(long logN, long logQ, long logp, long degr
 	cout << "!!! START TEST SIGMOID LAZY !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	long slots = 1 << logSlots;
-	CZZ* mvec = new CZZ[slots];
-	CZZ* msig = new CZZ[slots];
-	for (long i = 0; i < slots; ++i) {
-		RR mr = random_RR();
-		RR mi = random_RR();
-		mvec[i] = EvaluatorUtils::evalCZZ(mr, mi, logp);
-		msig[i] = EvaluatorUtils::evalCZZSigmoid(mr, mi, logp);
-	}
-	EvaluatorUtils::leftShiftAndEqual(msig, slots, logp);
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
+	srand(time(NULL));
 	//-----------------------------------------
+	long slots = 1 << logSlots;
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+	complex<double>* msig = new complex<double>[slots];
+	for (long i = 0; i < slots; ++i) {
+		msig[i] = exp(mvec[i]) / (1. + exp(mvec[i]));
+	}
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
 	timeutils.start(SIGMOID + " lazy");
 	Ciphertext csig = algo.functionLazy(cipher, SIGMOID, logp, degree);
 	timeutils.stop(SIGMOID + " lazy");
-	//-----------------------------------------
-	CZZ* dsig = scheme.decrypt(secretKey, csig);
+
+	complex<double>* dsig = scheme.decrypt(secretKey, csig);
+
 	StringUtils::showcompare(msig, dsig, slots, SIGMOID);
-	//-----------------------------------------
+
 	cout << "!!! END TEST SIGMOID LAZY !!!" << endl;
 }
 
-//-----------------------------------------
+
+//----------------------------------------------------------------------------------
+//   FFT TESTS
+//----------------------------------------------------------------------------------
+
 
 void TestScheme::testFFTBatch(long logN, long logQ, long logp, long logSlots, long logfftdim) {
 	cout << "!!! START TEST FFT BATCH !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 	SetNumThreads(8);
 	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
 	long fftdim = 1 << logfftdim;
 	long slots = 1 << logSlots;
-	CZZ** mvec1 = new CZZ*[slots];
-	CZZ** mvec2 = new CZZ*[slots];
-
+	complex<double>** mvec1 = new complex<double>*[slots];
+	complex<double>** mvec2 = new complex<double>*[slots];
 	for (long i = 0; i < slots; ++i) {
-		mvec1[i] = EvaluatorUtils::evalRandCZZArray(fftdim, logp);
-		mvec2[i] = EvaluatorUtils::evalRandCZZArray(fftdim, logp);
+		mvec1[i] = EvaluatorUtils::randomComplexArray(fftdim);
+		mvec2[i] = EvaluatorUtils::randomComplexArray(fftdim);
 	}
 
 	Ciphertext* cvec1 = new Ciphertext[fftdim];
 	Ciphertext* cvec2 = new Ciphertext[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
-		CZZ* mvals1 = new CZZ[slots];
-		CZZ* mvals2	= new CZZ[slots];
+		complex<double>* mvals1 = new complex<double>[slots];
+		complex<double>* mvals2	= new complex<double>[slots];
 		for (long i = 0; i < slots; ++i) {
 			mvals1[i] = mvec1[i][j];
 			mvals2[i] = mvec2[i][j];
 		}
-		cvec1[j] = scheme.encrypt(mvals1, slots, logQ);
-		cvec2[j] = scheme.encrypt(mvals2, slots, logQ);
+		cvec1[j] = scheme.encrypt(mvals1, slots, logp, logQ);
+		cvec2[j] = scheme.encrypt(mvals2, slots, logp, logQ);
 		delete[] mvals1;
 		delete[] mvals2;
 	}
 
 	for (long i = 0; i < slots; ++i) {
-		NumUtils::fft(mvec1[i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
-		NumUtils::fft(mvec2[i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
+		context.fft(mvec1[i], fftdim);
+		context.fft(mvec2[i], fftdim);
 		for (long j = 0; j < fftdim; ++j) {
 			mvec1[i][j] *= mvec2[i][j];
-			mvec1[i][j] >>= logp;
 		}
-		NumUtils::fftInv(mvec1[i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
+		context.fftInv(mvec1[i], fftdim);
 	}
-	//-----------------------------------------
+
 	timeutils.start("ciphers fft 1 batch");
 	algo.fft(cvec1, fftdim);
 	timeutils.stop("ciphers fft 1 batch");
-	//-----------------------------------------
+
 	timeutils.start("ciphers fft 2 batch");
 	algo.fft(cvec2, fftdim);
 	timeutils.stop("ciphers fft 2 batch");
-	//-----------------------------------------
+
 	timeutils.start("ciphers hadamard mult batch");
 	algo.multModSwitchAndEqualVec(cvec1, cvec2, logp, fftdim);
 	timeutils.stop("ciphers hadamard mult batch");
-	//-----------------------------------------
+
 	delete[] cvec2;
-	//-----------------------------------------
+
 	timeutils.start("ciphers fft inverse batch");
 	algo.fftInv(cvec1, fftdim);
 	timeutils.stop("ciphers fft inverse batch");
-	//-----------------------------------------
-	CZZ** dvec1 = new CZZ*[fftdim];
+
+	complex<double>** dvec1 = new complex<double>*[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
 		dvec1[j] = scheme.decrypt(secretKey, cvec1[j]);
 	}
+
 	for (long i = 0; i < slots; ++i) {
 		for (long j = 0; j < fftdim; ++j) {
 			StringUtils::showcompare(mvec1[i][j], dvec1[j][i], "fft");
 		}
 	}
-	//-----------------------------------------
+
 	cout << "!!! END TEST FFT BATCH !!!" << endl;
 }
 
@@ -662,77 +735,77 @@ void TestScheme::testFFTBatchLazy(long logN, long logQ, long logp, long logSlots
 	cout << "!!! START TEST FFT BATCH LAZY !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 	SetNumThreads(8);
 	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
 	long fftdim = 1 << logfftdim;
 	long slots = 1 << logSlots;
-	CZZ** mvec1 = new CZZ*[slots];
-	CZZ** mvec2 = new CZZ*[slots];
-
+	complex<double>** mvec1 = new complex<double>*[slots];
+	complex<double>** mvec2 = new complex<double>*[slots];
 	for (long i = 0; i < slots; ++i) {
-		mvec1[i] = EvaluatorUtils::evalRandCZZArray(fftdim, logp);
-		mvec2[i] = EvaluatorUtils::evalRandCZZArray(fftdim, logp);
+		mvec1[i] = EvaluatorUtils::randomComplexArray(fftdim);
+		mvec2[i] = EvaluatorUtils::randomComplexArray(fftdim);
 	}
 
 	Ciphertext* cvec1 = new Ciphertext[fftdim];
 	Ciphertext* cvec2 = new Ciphertext[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
-		CZZ* mvals1 = new CZZ[slots];
-		CZZ* mvals2	= new CZZ[slots];
+		complex<double>* mvals1 = new complex<double>[slots];
+		complex<double>* mvals2	= new complex<double>[slots];
 		for (long i = 0; i < slots; ++i) {
 			mvals1[i] = mvec1[i][j];
 			mvals2[i] = mvec2[i][j];
 		}
-		cvec1[j] = scheme.encrypt(mvals1, slots, logQ);
-		cvec2[j] = scheme.encrypt(mvals2, slots, logQ);
+		cvec1[j] = scheme.encrypt(mvals1, slots, logp, logQ);
+		cvec2[j] = scheme.encrypt(mvals2, slots, logp, logQ);
 		delete[] mvals1;
 		delete[] mvals2;
 	}
 
 	for (long i = 0; i < slots; ++i) {
-		NumUtils::fft(mvec1[i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
-		NumUtils::fft(mvec2[i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
+		context.fft(mvec1[i], fftdim);
+		context.fft(mvec2[i], fftdim);
 		for (long j = 0; j < fftdim; ++j) {
 			mvec1[i][j] *= mvec2[i][j];
-			mvec1[i][j] >>= logp;
 		}
-		NumUtils::fftInvLazy(mvec1[i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
+		context.fftInvLazy(mvec1[i], fftdim);
 	}
-	//-----------------------------------------
+
 	timeutils.start("ciphers fft 1");
 	algo.fft(cvec1, fftdim);
 	timeutils.stop("ciphers fft 1");
-	//-----------------------------------------
+
 	timeutils.start("ciphers fft 2");
 	algo.fft(cvec2, fftdim);
 	timeutils.stop("ciphers fft 2");
-	//-----------------------------------------
+
 	timeutils.start("ciphers hadamard mult");
 	algo.multModSwitchAndEqualVec(cvec1, cvec2, logp, fftdim);
 	timeutils.stop("ciphers hadamard mult");
-	//-----------------------------------------
+
 	delete[] cvec2;
-	//-----------------------------------------
+
 	timeutils.start("ciphers fft inverse lazy");
 	algo.fftInvLazy(cvec1, fftdim);
 	timeutils.stop("ciphers fft inverse lazy");
-	//-----------------------------------------
-	CZZ** dvec1 = new CZZ*[fftdim];
+
+	complex<double>** dvec1 = new complex<double>*[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
 		dvec1[j] = scheme.decrypt(secretKey, cvec1[j]);
 	}
+
 	for (long i = 0; i < slots; ++i) {
 		for (long j = 0; j < fftdim; ++j) {
 			StringUtils::showcompare(mvec1[i][j], dvec1[j][i], "fft");
 		}
 	}
-	//-----------------------------------------
+
 	cout << "!!! END TEST FFT BATCH LAZY !!!" << endl;
 }
 
@@ -740,38 +813,37 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logQ, long log
 	cout << "!!! START TEST FFT BATCH LAZY MULTIPLE HADAMARD !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
 	SetNumThreads(8);
 	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
 	long fftdim = 1 << logfftdim;
 	long hdim = 1 << logHdim;
 	long slots = 1 << logSlots;
-	CZZ*** mvecs = new CZZ**[hdim];
+	complex<double>*** mvecs = new complex<double>**[hdim];
 	Ciphertext** cvecs = new Ciphertext*[hdim];
 	for (long h = 0; h < hdim; ++h) {
-		mvecs[h] = new CZZ*[slots];
-
+		mvecs[h] = new complex<double>*[slots];
 		for (long i = 0; i < slots; ++i) {
-			mvecs[h][i] = EvaluatorUtils::evalRandCZZArray(fftdim, logp);
+			mvecs[h][i] = EvaluatorUtils::randomComplexArray(fftdim);
 		}
 
 		cvecs[h] = new Ciphertext[fftdim];
-
 		for (long j = 0; j < fftdim; ++j) {
-			CZZ* mvals = new CZZ[slots];
+			complex<double>* mvals = new complex<double>[slots];
 			for (long i = 0; i < slots; ++i) {
 				mvals[i] = mvecs[h][i][j];
 			}
-			cvecs[h][j] = scheme.encrypt(mvals, slots, logQ);
+			cvecs[h][j] = scheme.encrypt(mvals, slots, logp, logQ);
 			delete[] mvals;
 		}
 		for (long i = 0; i < slots; ++i) {
-			NumUtils::fft(mvecs[h][i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
+			context.fft(mvecs[h][i], fftdim);
 		}
 	}
 
@@ -781,14 +853,13 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logQ, long log
 				long spow = 1 << s;
 				for (long h = 0; h < spow; ++h) {
 					mvecs[h][i][j] *= mvecs[h+spow][i][j];
-					mvecs[h][i][j] >>= logp;
 				}
 			}
 		}
 	}
 
 	for (long i = 0; i < slots; ++i) {
-		NumUtils::fftInvLazy(mvecs[0][i], fftdim, context.ksiPowsr, context.ksiPowsi, context.M);
+		context.fftInvLazy(mvecs[0][i], fftdim);
 	}
 
 	for (long h = 1; h < hdim; ++h) {
@@ -799,100 +870,113 @@ void TestScheme::testFFTBatchLazyMultipleHadamard(long logN, long logQ, long log
 	}
 
 	for (long h = 0; h < hdim; ++h) {
-		timeutils.start("ciphers fft");
+		timeutils.start("fft");
 		algo.fft(cvecs[h], fftdim);
-		timeutils.stop("ciphers fft");
+		timeutils.stop("fft");
 	}
+
 	for (long s = logHdim - 1; s >= 0; --s) {
 		long spow = 1 << s;
 		for (long h = 0; h < spow; ++h) {
-			timeutils.start("ciphers hadamard mult");
+			timeutils.start("hadamard mult");
 			algo.multModSwitchAndEqualVec(cvecs[h], cvecs[h+spow], logp, fftdim);
-			timeutils.stop("ciphers hadamard mult");
+			timeutils.stop("hadamard mult");
 			delete[] cvecs[h+spow];
 		}
 	}
 
-	timeutils.start("ciphers fft inverse lazy");
+	timeutils.start("fft inverse lazy");
 	algo.fftInvLazy(cvecs[0], fftdim);
-	timeutils.stop("ciphers fft inverse lazy");
+	timeutils.stop("fft inverse lazy");
 
-	//-----------------------------------------
-	CZZ** dvec = new CZZ*[fftdim];
+	complex<double>** dvec = new complex<double>*[fftdim];
 	for (long j = 0; j < fftdim; ++j) {
 		dvec[j] = scheme.decrypt(secretKey, cvecs[0][j]);
 	}
+
 	for (long i = 0; i < slots; ++i) {
 		for (long j = 0; j < fftdim; ++j) {
 			StringUtils::showcompare(mvecs[0][i][j], dvec[j][i], "fft");
 		}
 	}
-	//-----------------------------------------
+
 	cout << "!!! END TEST FFT BATCH LAZY MULTIPLE HADAMARD !!!" << endl;
 }
 
-void TestScheme::testCiphertextWriteAndRead(long logN, long logQ, long logp, long logSlots) {
+void TestScheme::testWriteAndRead(long logN, long logQ, long logp, long logSlots) {
 	cout << "!!! START TEST WRITE AND READ !!!" << endl;
 	//-----------------------------------------
 	TimeUtils timeutils;
-	Params params(logN, logQ);
-	Context context(params);
-	SecretKey secretKey(params);
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	SchemeAlgo algo(scheme);
 	//-----------------------------------------
-	// Write SecretKey and delete it //
-	int secretKeyID = rand();
-	secretKey.Write(secretKeyID);
+	srand(time(NULL));
 	//-----------------------------------------
 	long slots = (1 << logSlots);
-	CZZ* mvec = EvaluatorUtils::evalRandCZZArray(slots, logp);
-	//-----------------------------------------
-	timeutils.start("Encrypt batch");
-	Ciphertext cipher = scheme.encrypt(mvec, slots, logQ);
-	timeutils.stop("Encrypt batch");
-	//-----------------------------------------
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logQ);
+
+	string cipherPath = "testCiphertext.txt";
 	timeutils.start("Write Ciphertext");
-	int CiphertextID = rand();
-	cipher.Write(to_string(CiphertextID));
+	SerializationUtils::writeCiphertext(cipher, cipherPath);
 	timeutils.stop("Write Ciphertext");
-	//-----------------------------------------
+
 	timeutils.start("Read Ciphertext");
-	Ciphertext newcipher;
-	newcipher.Read(to_string(CiphertextID));
+	Ciphertext newcipher = SerializationUtils::readCiphertext(cipherPath);
 	timeutils.stop("Read Ciphertext");
-	//-----------------------------------------
-	
-	// check //
-	if(newcipher.ax != cipher.ax || newcipher.bx != cipher.bx || newcipher.logq != cipher.logq || newcipher.slots != cipher.slots || newcipher.q != cipher.q) {
+
+	if(newcipher.ax != cipher.ax || newcipher.bx != cipher.bx || newcipher.logq != cipher.logq || newcipher.slots != cipher.slots || newcipher.logp != cipher.logp) {
 		cerr << "Write and Read for ciphertext does not work" << endl;
 		cout << "difference ax = " << newcipher.ax - cipher.ax << endl;
 		cout << "difference bx = " << newcipher.ax - cipher.bx << endl;
-	}
-	else {
+	} else {
 		cout << "Write and Read for ciphertext works well" << endl;
 	}
 
-	//-----------------------------------------
-	SecretKey newsecretKey(params);
-	newsecretKey.Read(secretKeyID);
-	
-	// check //
+	string secretKeyPath = "testSecretKey.txt";
+	timeutils.start("Write SecretKey");
+	SerializationUtils::writeSecretKey(secretKey, secretKeyPath);
+	timeutils.stop("Write SecretKey");
+
+	timeutils.start("Read SecretKey");
+	SecretKey newsecretKey = SerializationUtils::readSecretKey(secretKeyPath);
+	timeutils.stop("Read SecretKey");
 	if(secretKey.sx != newsecretKey.sx) {
 		cout << "Write and Read for sk does not work" << endl;
-	}
-	else {
+	} else {
 		cout << "Write and Read for sk works well" << endl;
 	}
 
-	timeutils.start("Decrypt batch");
-	CZZ* dvec1 = scheme.decrypt(newsecretKey, cipher);
-	timeutils.stop("Decrypt batch");
-	timeutils.start("Decrypt batch");
-	CZZ* dvec2 = scheme.decrypt(newsecretKey, newcipher);
-	timeutils.stop("Decrypt batch");
-	//-----------------------------------------
-	StringUtils::showcompare(dvec1, dvec2, slots, "val");
-	//-----------------------------------------
+//	scheme.addLeftRotKeys(secretKey);
+	scheme.addConjKey(secretKey);
+
+	string schemeKeysPath = "testSchemeKeys.txt";
+	timeutils.start("Write Scheme");
+	SerializationUtils::writeSchemeKeys(scheme, schemeKeysPath);
+	timeutils.stop("Write Scheme");
+
+	string contextPath = "testContext.txt";
+	timeutils.start("Write Context");
+	SerializationUtils::writeContext(context, contextPath);
+	timeutils.stop("Write Context");
+
+	timeutils.start("Read Context");
+	Context newcontext = SerializationUtils::readContext(contextPath);
+	timeutils.stop("Read Context");
+
+	Scheme newscheme(newcontext);
+
+	timeutils.start("Read Scheme");
+	SerializationUtils::readSchemeKeys(newscheme, schemeKeysPath);
+	timeutils.stop("Read Scheme");
+
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+	complex<double>* newdvec = newscheme.decrypt(newsecretKey, newcipher);
+
+	StringUtils::showcompare(dvec, newdvec, slots, "r&w");
+
 	cout << "!!! END TEST WRITE AND READ !!!" << endl;
 }

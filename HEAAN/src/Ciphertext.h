@@ -4,8 +4,6 @@
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 
-#include <fstream>
-
 using namespace std;
 using namespace NTL;
 
@@ -15,31 +13,32 @@ using namespace NTL;
 class Ciphertext {
 public:
 
-	ZZX ax;
-	ZZX bx;
+	ZZX ax; ///< Ciphertext is an RLWE instance (ax, bx = mx + ex - ax * sx) in ring Z_q[X] / (X^N + 1);
+	ZZX bx; ///< Ciphertext is an RLWE instance (ax, bx = mx + ex - ax * sx) in ring Z_q[X] / (X^N + 1);
 
-	ZZ q; ///< ciphertext modulus
+	long logp; ///< number of quantized bits
 	long logq; ///< number of bits in modulus
-	long slots; ///< number of slots in ciphertext
+	long slots; ///< number of slots in Ciphertext
 
-	bool isComplex;
+	bool isComplex; ///< option of Ciphertext with single real slot
+
 	//-----------------------------------------
 
 	/**
-	 * Ciphertext = (bx = mx + ex - ax * sx, ax) for secret key sx and error ex
+	 * Ciphertext = (ax, bx = mx + ex - ax * sx) for secret key sx and error ex
 	 * @param[in] ax: ZZX polynomial
 	 * @param[in] bx: ZZX polynomial
-	 * @param[in] q: ciphertext modulus
+	 * @param[in] logp: number of quantized bits
 	 * @param[in] logq: number of bits in modulus
 	 * @param[in] slots: number of slots in a ciphertext
+	 * @param[in] isComplex: option of Ciphertext with single real slot
 	 */
-	Ciphertext(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), ZZ q = ZZ::zero(), long logq = 0, long slots = 1, bool isComplex = true) : ax(ax), bx(bx), q(q), logq(logq), slots(slots), isComplex(isComplex) {}
+	Ciphertext(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero(), long logp = 0, long logq = 0, long slots = 1, bool isComplex = true) : ax(ax), bx(bx), logp(logp), logq(logq), slots(slots), isComplex(isComplex) {}
 
-	Ciphertext(const Ciphertext& o) : ax(o.ax), bx(o.bx), q(o.q), logq(o.logq), slots(o.slots), isComplex(o.isComplex) {}
-
-	void Write(string filename);
-
-	void Read(string filename);
+	/**
+	 * Copy Constructor
+	 */
+	Ciphertext(const Ciphertext& o) : ax(o.ax), bx(o.bx), logp(o.logp), logq(o.logq), slots(o.slots), isComplex(o.isComplex) {}
 
 };
 
