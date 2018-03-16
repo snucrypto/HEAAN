@@ -1,5 +1,11 @@
+/*
+* Copyright (c) by CryptoLAB
+* This program is licensed under a
+* Creative Commons Attribution-NonCommercial 3.0 Unported License.
+* You should have received a copy of the license along with this
+* work.  If not, see <http://creativecommons.org/licenses/by-nc/3.0/>.
+*/
 #include "NumUtils.h"
-
 
 void NumUtils::sampleGauss(ZZX& res, const long size, const double stdev) {
 	static double const Pi = 4.0 * atan(1.0);
