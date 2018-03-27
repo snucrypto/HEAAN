@@ -41,8 +41,7 @@ public:
 	ZZ QQ; ///< PQ = Q * Q
 
 	long* rotGroup; ///< precomputed rotation group indexes
-	RR* ksiPowsr; ///< precomputed ksi powers
-	RR* ksiPowsi; ///< precomputed ksi powers
+	complex<double>* ksiPows; ///< precomputed ksi powers
 	ZZ* qpowvec; ///< precomputed powers of 2
 
 	map<string, double*> taylorCoeffsMap; ///< precomputed taylor coefficients

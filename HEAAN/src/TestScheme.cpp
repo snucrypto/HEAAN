@@ -40,6 +40,8 @@ void TestScheme::testEncodeBatch(long logN, long logQ, long logp, long logSlots)
 	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	//-----------------------------------------
+	SetNumThreads(1);
+	//-----------------------------------------
 	srand(time(NULL));
 	//-----------------------------------------
 	long slots = (1 << logSlots);
@@ -91,6 +93,8 @@ void TestScheme::testBasic(long logN, long logQ, long logp, long logSlots) {
 	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	//-----------------------------------------
+	SetNumThreads(1);
+	//-----------------------------------------
 	srand(time(NULL));
 	//-----------------------------------------
 	long slots = (1 << logSlots);
@@ -114,6 +118,7 @@ void TestScheme::testBasic(long logN, long logQ, long logp, long logSlots) {
 
 	timeutils.start("Homomorphic Multiplication");
 	Ciphertext multCipher = scheme.mult(cipher1, cipher2);
+	scheme.reScaleByAndEqual(multCipher, logp);
 	timeutils.stop("Homomorphic Multiplication");
 
 	timeutils.start("Decrypt batch");

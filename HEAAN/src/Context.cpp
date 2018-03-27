@@ -36,16 +36,14 @@ void Context::init(long logN, long logQ, double sigma, long h) {
 		fivePows %= M;
 	}
 
-	ksiPowsr = new RR[M + 1];
-	ksiPowsi = new RR[M + 1];
+	ksiPows = new complex<double>[M + 1];
 	for (long j = 0; j < M; ++j) {
-		RR angle = 2.0 * Pi * j / M;
-		ksiPowsr[j] = cos(angle);
-		ksiPowsi[j] = sin(angle);
+		double angle = 2.0 * M_PI * j / M;
+		ksiPows[j].real(cos(angle));
+		ksiPows[j].imag(sin(angle));
 	}
 
-	ksiPowsr[M] = ksiPowsr[0];
-	ksiPowsi[M] = ksiPowsi[0];
+	ksiPows[M] = ksiPows[0];
 
 	qpowvec = new ZZ[logQQ + 1];
 	qpowvec[0] = ZZ(1);
@@ -60,8 +58,7 @@ void Context::init(long logN, long logQ, double sigma, long h) {
 
 Context::~Context() {
 	delete[] rotGroup;
-	delete[] ksiPowsr;
-	delete[] ksiPowsi;
+	delete[] ksiPows;
 }
 
 
@@ -138,11 +135,7 @@ void Context::fft(complex<double>* vals, const long size) {
 				long idx = j * MoverLen;
 				complex<double> u = vals[i + j];
 				complex<double> v = vals[i + j + lenh];
-				RR tmp1 = to_RR(v.real()) * (ksiPowsr[idx] + ksiPowsi[idx]);
-				RR tmpr = tmp1 - to_RR(v.real() + v.imag()) * ksiPowsi[idx];
-				RR tmpi = tmp1 + to_RR(v.imag() - v.real()) * ksiPowsr[idx];
-				v.real(to_double(tmpr));
-				v.imag(to_double(tmpi));
+				v *= ksiPows[idx];
 				vals[i + j] = u + v;
 				vals[i + j + lenh] = u - v;
 			}
@@ -160,11 +153,7 @@ void Context::fftInvLazy(complex<double>* vals, const long size) {
 				long idx = (len - j) * MoverLen;
 				complex<double> u = vals[i + j];
 				complex<double> v = vals[i + j + lenh];
-				RR tmp1 = to_RR(v.real()) * (ksiPowsr[idx] + ksiPowsi[idx]);
-				RR tmpr = tmp1 - to_RR(v.real() + v.imag()) * ksiPowsi[idx];
-				RR tmpi = tmp1 + to_RR(v.imag() - v.real()) * ksiPowsr[idx];
-				v.real(to_double(tmpr));
-				v.imag(to_double(tmpi));
+				v *= ksiPows[idx];
 				vals[i + j] = u + v;
 				vals[i + j + lenh] = u - v;
 			}
@@ -189,11 +178,7 @@ void Context::fftSpecial(complex<double>* vals, const long size) {
 				long idx = ((rotGroup[j] % lenq)) * M / lenq;
 				complex<double> u = vals[i + j];
 				complex<double> v = vals[i + j + lenh];
-				RR tmp1 = to_RR(v.real()) * (ksiPowsr[idx] + ksiPowsi[idx]);
-				RR tmpr = tmp1 - to_RR(v.real() + v.imag()) * ksiPowsi[idx];
-				RR tmpi = tmp1 + to_RR(v.imag() - v.real()) * ksiPowsr[idx];
-				v.real(to_double(tmpr));
-				v.imag(to_double(tmpi));
+				v *= ksiPows[idx];
 				vals[i + j] = u + v;
 				vals[i + j + lenh] = u - v;
 			}
@@ -210,11 +195,7 @@ void Context::fftSpecialInvLazy(complex<double>* vals, const long size) {
 				long idx = (lenq - (rotGroup[j] % lenq)) * M / lenq;
 				complex<double> u = vals[i + j] + vals[i + j + lenh];
 				complex<double> v = vals[i + j] - vals[i + j + lenh];
-				RR tmp1 = to_RR(v.real()) * (ksiPowsr[idx] + ksiPowsi[idx]);
-				RR tmpr = tmp1 - to_RR(v.real() + v.imag()) * ksiPowsi[idx];
-				RR tmpi = tmp1 + to_RR(v.imag() - v.real()) * ksiPowsr[idx];
-				v.real(to_double(tmpr));
-				v.imag(to_double(tmpi));
+				v *= ksiPows[idx];
 				vals[i + j] = u;
 				vals[i + j + lenh] = v;
 			}
