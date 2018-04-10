@@ -69,12 +69,44 @@ public:
 	ZZX encode(complex<double>* vals, long slots, long logp);
 
 	/**
+	 * encoding a value to polynomial
+	 * @param[in] val: value
+	 * @param[in] logp: number of quantized bits
+	 */
+	ZZX encodeSingle(complex<double> val, long logp);
+
+	/**
 	 * encoding of values to polynomial
 	 * @param[in] vals: array of values
 	 * @param[in] slots: size of array
 	 * @param[in] logp: number of quantized bits
 	 */
 	ZZX encode(double* vals, long slots, long logp);
+
+	/**
+	 * encoding a value to polynomial
+	 * @param[in] val: value
+	 * @param[in] logp: number of quantized bits
+	 */
+	ZZX encodeSingle(double val, long logp);
+
+	/**
+	 * decoding values from a polynomial
+	 * @param[in] mx: polynomial
+	 * @param[in] slots: size of array
+	 * @param[in] logp: number of quantized bits
+	 * @param[in] logq: number of modulus bits
+	 */
+	complex<double>* decode(ZZX& mx, long slots, long logp, long logq);
+
+	/**
+	 * decoding value from a polynomial
+	 * @param[in] mx: polynomial
+	 * @param[in] logp: number of quantized bits
+	 * @param[in] logq: number of modulus bits
+	 */
+	complex<double> decodeSingle(ZZX& mx, long logp, long logq, bool isComplex = true);
+
 
 
 	//----------------------------------------------------------------------------------

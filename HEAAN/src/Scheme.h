@@ -410,6 +410,26 @@ public:
 	Ciphertext multByConst(Ciphertext& cipher, complex<double> cnst, long logp);
 
 	/**
+	 * quantized constant vector multiplication
+	 * @param[in, out] cipher: ciphertext(m)
+	 * @param[in] cnstVec: constant vector
+	 * @param[in] slots: cnstVec size
+	 * @param[in] logp: number of quantized bits
+	 * @return ciphertext(m * (cnst * 2^logp))
+	 */
+	Ciphertext multByConstVec(Ciphertext& cipher, double* cnstVec, long slots, long logp);
+
+	/**
+	 * quantized constant vector multiplication
+	 * @param[in, out] cipher: ciphertext(m)
+	 * @param[in] cnstVec: constant vector
+	 * @param[in] slots: cnstVec size
+	 * @param[in] logp: number of quantized bits
+	 * @return ciphertext(m * (cnst * 2^logp))
+	 */
+	Ciphertext multByConstVec(Ciphertext& cipher, complex<double>* cnstVec, long slots, long logp);
+
+	/**
 	 * quantized constant multiplication
 	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * (cnst * 2^logp))
 	 * @param[in] cnst: constant
@@ -432,6 +452,22 @@ public:
 	 * @param[in] logp: number of quantized bits
 	 */
 	void multByConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp);
+
+	/**
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * (cnst * 2^logp))
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits
+	 */
+	void multByConstVecAndEqual(Ciphertext& cipher, double* cnst, long slots, long logp);
+
+	/**
+	 * quantized constant multiplication
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(m * (cnst * 2^logp))
+	 * @param[in] cnst: constant
+	 * @param[in] logp: number of quantized bits
+	 */
+	void multByConstVecAndEqual(Ciphertext& cipher, complex<double>* cnst, long slots, long logp);
 
 	/**
 	 * polynomial multiplication

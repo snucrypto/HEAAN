@@ -84,6 +84,14 @@ ZZX Context::encode(complex<double>* vals, long slots, long logp) {
 	return mx;
 }
 
+ZZX Context::encodeSingle(complex<double> val, long logp) {
+	ZZX mx;
+	mx.SetLength(N);
+	mx.rep[0] = EvaluatorUtils::scaleUpToZZ(val.real(), logp);
+	mx.rep[Nh] = EvaluatorUtils::scaleUpToZZ(val.imag(), logp);
+	return mx;
+}
+
 ZZX Context::encode(double* vals, long slots, long logp) {
 	complex<double>* uvals = new complex<double>[slots];
 	long i, jdx, idx;
@@ -104,6 +112,49 @@ ZZX Context::encode(double* vals, long slots, long logp) {
 	}
 	delete[] uvals;
 	return mx;
+}
+
+ZZX Context::encodeSingle(double val, long logp) {
+	ZZX mx;
+	mx.SetLength(N);
+	mx.rep[0] = EvaluatorUtils::scaleUpToZZ(val, logp);
+	return mx;
+}
+
+complex<double>* Context::decode(ZZX& mx, long slots, long logp, long logq) {
+	ZZ q = qpowvec[logq];
+	long gap = Nh / slots;
+	complex<double>* res = new complex<double>[slots];
+	ZZ tmp;
+
+	for (long i = 0, idx = 0; i < slots; ++i, idx += gap) {
+		rem(tmp, mx[idx], q);
+		if(NumBits(tmp) == logq) tmp -= q;
+		res[i].real(EvaluatorUtils::scaleDownToReal(tmp, logp));
+
+		rem(tmp, mx[idx + Nh], q);
+		if(NumBits(tmp) == logq) tmp -= q;
+		res[i].imag(EvaluatorUtils::scaleDownToReal(tmp, logp));
+	}
+	fftSpecial(res, slots);
+	return res;
+}
+
+complex<double> Context::decodeSingle(ZZX& mx, long logp, long logq, bool isComplex) {
+	ZZ q = qpowvec[logq];
+
+	complex<double> res;
+	ZZ tmp = mx.rep[0] % q;
+	if(NumBits(tmp) == logq) tmp -= q;
+	res.real(EvaluatorUtils::scaleDownToReal(tmp, logp));
+
+	if(isComplex) {
+		tmp = mx.rep[Nh] % q;
+		if(NumBits(tmp) == logq) tmp -= q;
+		res.imag(EvaluatorUtils::scaleDownToReal(tmp, logp));
+	}
+
+	return res;
 }
 
 

@@ -128,55 +128,21 @@ Plaintext Scheme::encode(complex<double>* vals, long slots, long logp, long logq
 }
 
 complex<double>* Scheme::decode(Plaintext& msg) {
-	ZZ q = context.qpowvec[msg.logq];
-	long slots = msg.slots;
-	long gap = context.Nh / slots;
-	complex<double>* res = new complex<double>[slots];
-	ZZ tmp;
-
-	for (long i = 0, idx = 0; i < slots; ++i, idx += gap) {
-		rem(tmp, msg.mx[idx], q);
-		if(NumBits(tmp) == msg.logq) tmp -= q;
-		res[i].real(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
-
-		rem(tmp, msg.mx[idx + context.Nh], q);
-		if(NumBits(tmp) == msg.logq) tmp -= q;
-		res[i].imag(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
-	}
-	context.fftSpecial(res, slots);
-	return res;
+	return context.decode(msg.mx, msg.slots, msg.logp, msg.logq);
 }
 
 Plaintext Scheme::encodeSingle(complex<double> val, long logp, long logq) {
-	ZZX mx;
-	mx.SetLength(context.N);
-	mx.rep[0] = EvaluatorUtils::scaleUpToZZ(val.real(), logp + context.logQ);
-	mx.rep[context.Nh] = EvaluatorUtils::scaleUpToZZ(val.imag(), logp + context.logQ);
+	ZZX mx = context.encodeSingle(val, logp + context.logQ);
 	return Plaintext(mx, logp, logq, 1, true);
 }
 
 Plaintext Scheme::encodeSingle(double val, long logp, long logq) {
-	ZZX mx;
-	mx.SetLength(context.N);
-	mx.rep[0] = EvaluatorUtils::scaleUpToZZ(val, logp + context.logQ);
+	ZZX mx = context.encodeSingle(val, logp + context.logQ);
 	return Plaintext(mx, logp, logq, 1, false);
 }
 
 complex<double> Scheme::decodeSingle(Plaintext& msg) {
-	ZZ q = context.qpowvec[msg.logq];
-
-	complex<double> res;
-	ZZ tmp = msg.mx.rep[0] % q;
-	if(NumBits(tmp) == msg.logq) tmp -= q;
-	res.real(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
-
-	if(msg.isComplex) {
-		tmp = msg.mx.rep[context.Nh] % q;
-		if(NumBits(tmp) == msg.logq) tmp -= q;
-		res.imag(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
-	}
-
-	return res;
+	return context.decodeSingle(msg.mx, msg.logp, msg.logq, msg.isComplex);
 }
 
 
@@ -546,6 +512,16 @@ Ciphertext Scheme::multByConst(Ciphertext& cipher, complex<double> cnst, long lo
 	return Ciphertext(axr, bxr, cipher.logp + logp, cipher.logq, cipher.slots, cipher.isComplex);
 }
 
+Ciphertext Scheme::multByConstVec(Ciphertext& cipher, complex<double>* cnstVec, long slots, long logp) {
+	ZZX cmx = context.encode(cnstVec, slots, logp);
+	return multByPoly(cipher, cmx, logp);
+}
+
+Ciphertext Scheme::multByConstVec(Ciphertext& cipher, double* cnstVec, long slots, long logp) {
+	ZZX cmx = context.encode(cnstVec, slots, logp);
+	return multByPoly(cipher, cmx, logp);
+}
+
 void Scheme::multByConstAndEqual(Ciphertext& cipher, double cnst, long logp) {
 	ZZ q = context.qpowvec[cipher.logq];
 	ZZ cnstZZ = EvaluatorUtils::scaleUpToZZ(cnst, logp);
@@ -583,6 +559,16 @@ void Scheme::multByConstAndEqual(Ciphertext& cipher, complex<double> cnst, long 
 	Ring2Utils::addAndEqual(cipher.ax, axi, q, context.N);
 	Ring2Utils::addAndEqual(cipher.bx, bxi, q, context.N);
 	cipher.logp += logp;
+}
+
+void Scheme::multByConstVecAndEqual(Ciphertext& cipher, complex<double>* cnstVec, long slots, long logp) {
+	ZZX cmx = context.encode(cnstVec, slots, logp);
+	multByPolyAndEqual(cipher, cmx, logp);
+}
+
+void Scheme::multByConstVecAndEqual(Ciphertext& cipher, double* cnstVec, long slots, long logp) {
+	ZZX cmx = context.encode(cnstVec, slots, logp);
+	multByPolyAndEqual(cipher, cmx, logp);
 }
 
 Ciphertext Scheme::multByPoly(Ciphertext& cipher, ZZX& poly, long logp) {

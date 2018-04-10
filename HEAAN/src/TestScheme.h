@@ -34,9 +34,8 @@ public:
 	 * @param[in] logN: input parameter for Params class
 	 * @param[in] logQ: input parameter for Params class
 	 * @param[in] logp: log of precision
-	 * @param[in] isComplex: is value real or complex
 	 */
-	static void testEncodeSingle(long logN, long logQ, long logp, bool isComplex);
+	static void testEncodeSingle(long logN, long logQ, long logp);
 
 	/**
 	 * Testing encoding, decoding, add, and mult timing of the ciphertext
