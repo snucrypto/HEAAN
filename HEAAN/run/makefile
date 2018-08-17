@@ -1,58 +1,19 @@
-################################################################################
-# Automatically-generated file. Do not edit!
-################################################################################
-
--include ../makefile.init
-
-RM := rm -rf
-
-# All of the sources participating in the build are defined here
--include sources.mk
--include src/subdir.mk
--include subdir.mk
--include objects.mk
-
-ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(strip $(CC_DEPS)),)
--include $(CC_DEPS)
-endif
-ifneq ($(strip $(C++_DEPS)),)
--include $(C++_DEPS)
-endif
-ifneq ($(strip $(C_UPPER_DEPS)),)
--include $(C_UPPER_DEPS)
-endif
-ifneq ($(strip $(CXX_DEPS)),)
--include $(CXX_DEPS)
-endif
-ifneq ($(strip $(CPP_DEPS)),)
--include $(CPP_DEPS)
-endif
-ifneq ($(strip $(C_DEPS)),)
--include $(C_DEPS)
-endif
-endif
-
--include ../makefile.defs
-
-# Add inputs and outputs from these tool invocations to the build variables 
+# This sample should be run after make libHEAAN.a file in lib folder
 
 # All Target
-all: HEAAN
+all: clean HEAAN run
 
 # Tool invocations
-HEAAN: $(OBJS) $(USER_OBJS)
+HEAAN:
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L/usr/local/lib -o "HEAAN" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/usr/local/lib -o "HEAAN" ../lib/libHEAAN.a run.cpp -I/../src -lgmp -lntl -lm -O2 -std=c++11
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(CC_DEPS)$(C++_DEPS)$(EXECUTABLES)$(C_UPPER_DEPS)$(CXX_DEPS)$(OBJS)$(CPP_DEPS)$(C_DEPS) HEAAN
-	-@echo ' '
+	rm -rf HEAAN
 
-.PHONY: all clean dependents
-
--include ../makefile.targets
+run:
+	./HEAAN

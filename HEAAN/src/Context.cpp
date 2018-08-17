@@ -8,7 +8,6 @@
 #include "Context.h"
 #include "Ring2Utils.h"
 #include "EvaluatorUtils.h"
-
 #include "StringUtils.h"
 
 Context::Context(long logN, long logQ, double sigma, long h) : logN(logN), logQ(logQ), sigma(sigma), h(h) {
@@ -68,7 +67,7 @@ Context::~Context() {
 
 
 ZZX Context::encode(complex<double>* vals, long slots, long logp) {
-	complex<double>* uvals = new complex<double>[slots];
+	complex<double>* uvals = new complex<double>[slots]();
 	long i, jdx, idx;
 	copy(vals, vals + slots, uvals);
 
