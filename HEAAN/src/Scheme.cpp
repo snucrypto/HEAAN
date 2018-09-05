@@ -103,6 +103,30 @@ void Scheme::addRightRotKeys(SecretKey& secretKey) {
 	}
 }
 
+void Scheme::addBootKey(SecretKey& secretKey, long logSlots, long logp) {
+	context.addBootContext(logSlots, logp);
+
+	addConjKey(secretKey);
+	addLeftRotKeys(secretKey);
+
+	long logk = logSlots / 2;
+	long k = 1 << logk;
+	long m = 1 << (logSlots - logk);
+
+	for (long i = 1; i < k; ++i) {
+		if(leftRotKeyMap.find(i) == leftRotKeyMap.end()) {
+			addLeftRotKey(secretKey, i);
+		}
+	}
+
+	for (long i = 1; i < m; ++i) {
+		long idx = i * k;
+		if(leftRotKeyMap.find(idx) == leftRotKeyMap.end()) {
+			addLeftRotKey(secretKey, idx);
+		}
+	}
+}
+
 void Scheme::addSortKeys(SecretKey& secretKey, long size) {
 	for (long i = 1; i < size; ++i) {
 		if(leftRotKeyMap.find(i) == leftRotKeyMap.end()) {
@@ -128,21 +152,55 @@ Plaintext Scheme::encode(complex<double>* vals, long slots, long logp, long logq
 }
 
 complex<double>* Scheme::decode(Plaintext& msg) {
-	return context.decode(msg.mx, msg.slots, msg.logp, msg.logq);
+	ZZ q = context.qpowvec[msg.logq];
+	long slots = msg.slots;
+	long gap = context.Nh / slots;
+	complex<double>* res = new complex<double>[slots];
+	ZZ tmp;
+
+	for (long i = 0, idx = 0; i < slots; ++i, idx += gap) {
+		rem(tmp, msg.mx[idx], q);
+		if(NumBits(tmp) == msg.logq) tmp -= q;
+		res[i].real(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
+
+		rem(tmp, msg.mx[idx + context.Nh], q);
+		if(NumBits(tmp) == msg.logq) tmp -= q;
+		res[i].imag(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
+	}
+	context.fftSpecial(res, slots);
+	return res;
 }
 
 Plaintext Scheme::encodeSingle(complex<double> val, long logp, long logq) {
-	ZZX mx = context.encodeSingle(val, logp + context.logQ);
+	ZZX mx;
+	mx.SetLength(context.N);
+	mx.rep[0] = EvaluatorUtils::scaleUpToZZ(val.real(), logp + context.logQ);
+	mx.rep[context.Nh] = EvaluatorUtils::scaleUpToZZ(val.imag(), logp + context.logQ);
 	return Plaintext(mx, logp, logq, 1, true);
 }
 
 Plaintext Scheme::encodeSingle(double val, long logp, long logq) {
-	ZZX mx = context.encodeSingle(val, logp + context.logQ);
+	ZZX mx;
+	mx.SetLength(context.N);
+	mx.rep[0] = EvaluatorUtils::scaleUpToZZ(val, logp + context.logQ);
 	return Plaintext(mx, logp, logq, 1, false);
 }
 
 complex<double> Scheme::decodeSingle(Plaintext& msg) {
-	return context.decodeSingle(msg.mx, msg.logp, msg.logq, msg.isComplex);
+	ZZ q = context.qpowvec[msg.logq];
+
+	complex<double> res;
+	ZZ tmp = msg.mx.rep[0] % q;
+	if(NumBits(tmp) == msg.logq) tmp -= q;
+	res.real(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
+
+	if(msg.isComplex) {
+		tmp = msg.mx.rep[context.Nh] % q;
+		if(NumBits(tmp) == msg.logq) tmp -= q;
+		res.imag(EvaluatorUtils::scaleDownToReal(tmp, msg.logp));
+	}
+
+	return res;
 }
 
 
@@ -856,4 +914,266 @@ void Scheme::conjugateAndEqual(Ciphertext& cipher) {
 	Ring2Utils::rightShiftAndEqual(cipher.bx, context.logQ, context.N);
 
 	Ring2Utils::addAndEqual(cipher.bx, bxconj, q, context.N);
+}
+
+
+//----------------------------------------------------------------------------------
+//   ADDITIONAL METHODS FOR BOOTSTRAPPING
+//----------------------------------------------------------------------------------
+
+
+void Scheme::normalizeAndEqual(Ciphertext& cipher) {
+	ZZ q = context.qpowvec[cipher.logq];
+
+	for (int i = 0; i < context.N; ++i) {
+		if(NumBits(cipher.ax.rep[i]) == cipher.logq) cipher.ax.rep[i] -= q;
+		if(NumBits(cipher.bx.rep[i]) == cipher.logq) cipher.bx.rep[i] -= q;
+	}
+}
+
+void Scheme::coeffToSlotAndEqual(Ciphertext& cipher) {
+	long slots = cipher.slots;
+	long logSlots = log2(slots);
+	long logk = logSlots / 2;
+	long k = 1 << logk;
+
+	long ki, j;
+	Ciphertext* rotvec = new Ciphertext[k];
+	rotvec[0] = cipher;
+
+	NTL_EXEC_RANGE(k - 1, first, last);
+	for (j = first; j < last; ++j) {
+		rotvec[j + 1] = leftRotateFast(rotvec[0], j + 1);
+	}
+	NTL_EXEC_RANGE_END;
+
+	BootContext bootContext = context.bootContextMap.at(logSlots);
+
+	Ciphertext* tmpvec = new Ciphertext[k];
+
+	NTL_EXEC_RANGE(k, first, last);
+	for (j = first; j < last; ++j) {
+		tmpvec[j] = multByPoly(rotvec[j], bootContext.pvec[j], bootContext.logp);
+	}
+	NTL_EXEC_RANGE_END;
+
+	for (j = 1; j < k; ++j) {
+		addAndEqual(tmpvec[0], tmpvec[j]);
+	}
+	cipher = tmpvec[0];
+
+	for (ki = k; ki < slots; ki += k) {
+		NTL_EXEC_RANGE(k, first, last);
+		for (j = first; j < last; ++j) {
+			tmpvec[j] = multByPoly(rotvec[j], bootContext.pvec[j + ki], bootContext.logp);
+		}
+		NTL_EXEC_RANGE_END;
+		for (j = 1; j < k; ++j) {
+			addAndEqual(tmpvec[0], tmpvec[j]);
+		}
+		leftRotateAndEqualFast(tmpvec[0], ki);
+		addAndEqual(cipher, tmpvec[0]);
+	}
+	reScaleByAndEqual(cipher, bootContext.logp);
+	delete[] rotvec;
+	delete[] tmpvec;
+}
+
+void Scheme::slotToCoeffAndEqual(Ciphertext& cipher) {
+	long slots = cipher.slots;
+	long logSlots = log2(slots);
+	long logk = logSlots / 2;
+	long k = 1 << logk;
+
+	long ki, j;
+	Ciphertext* rotvec = new Ciphertext[k];
+	rotvec[0] = cipher;
+
+	NTL_EXEC_RANGE(k-1, first, last);
+	for (j = first; j < last; ++j) {
+		rotvec[j + 1] = leftRotateFast(rotvec[0], j + 1);
+	}
+	NTL_EXEC_RANGE_END;
+
+	BootContext bootContext = context.bootContextMap.at(logSlots);
+
+	Ciphertext* tmpvec = new Ciphertext[k];
+
+	NTL_EXEC_RANGE(k, first, last);
+	for (j = first; j < last; ++j) {
+		tmpvec[j] = multByPoly(rotvec[j], bootContext.pvecInv[j], bootContext.logp);
+	}
+	NTL_EXEC_RANGE_END;
+
+	for (j = 1; j < k; ++j) {
+		addAndEqual(tmpvec[0], tmpvec[j]);
+	}
+	cipher = tmpvec[0];
+
+	for (ki = k; ki < slots; ki+=k) {
+		NTL_EXEC_RANGE(k, first, last);
+		for (j = first; j < last; ++j) {
+			tmpvec[j] = multByPoly(rotvec[j], bootContext.pvecInv[j + ki], bootContext.logp);
+		}
+		NTL_EXEC_RANGE_END;
+
+		for (j = 1; j < k; ++j) {
+			addAndEqual(tmpvec[0], tmpvec[j]);
+		}
+
+		leftRotateAndEqualFast(tmpvec[0], ki);
+		addAndEqual(cipher, tmpvec[0]);
+	}
+	reScaleByAndEqual(cipher, bootContext.logp);
+	delete[] rotvec;
+	delete[] tmpvec;
+}
+
+void Scheme::exp2piAndEqual(Ciphertext& cipher, long logp) {
+	Ciphertext cipher2 = square(cipher);
+	reScaleByAndEqual(cipher2, logp); // cipher2.logq : logq - logp
+
+	Ciphertext cipher4 = square(cipher2);
+	reScaleByAndEqual(cipher4, logp); // cipher4.logq : logq -2logp
+
+	RR c = 1/(2*Pi);
+	Ciphertext cipher01 = addConst(cipher, c, logp); // cipher01.logq : logq
+
+	c = 2*Pi;
+	multByConstAndEqual(cipher01, c, logp);
+	reScaleByAndEqual(cipher01, logp); // cipher01.logq : logq - logp
+
+	c = 3/(2*Pi);
+	Ciphertext cipher23 = addConst(cipher, c, logp); // cipher23.logq : logq
+
+	c = 4*Pi*Pi*Pi/3;
+	multByConstAndEqual(cipher23, c, logp);
+	reScaleByAndEqual(cipher23, logp); // cipher23.logq : logq - logp
+
+	multAndEqual(cipher23, cipher2);
+	reScaleByAndEqual(cipher23, logp); // cipher23.logq : logq - 2logp
+
+	addAndEqual(cipher23, cipher01); // cipher23.logq : logq - 2logp
+
+	c = 5/(2*Pi);
+	Ciphertext cipher45 = addConst(cipher, c, logp); // cipher45.logq : logq
+
+	c = 4*Pi*Pi*Pi*Pi*Pi/15;
+	multByConstAndEqual(cipher45, c, logp);
+	reScaleByAndEqual(cipher45, logp); // cipher45.logq : logq - logp
+
+	c = 7/(2*Pi);
+	addConstAndEqual(cipher, c, logp); // cipher.logq : logq
+
+	c = 8*Pi*Pi*Pi*Pi*Pi*Pi*Pi/315;
+	multByConstAndEqual(cipher, c, logp);
+	reScaleByAndEqual(cipher, logp); // cipher.logq : logq - logp
+
+	multAndEqual(cipher, cipher2);
+	reScaleByAndEqual(cipher, logp); // cipher.logq : logq - 2logp
+
+	modDownByAndEqual(cipher45, logp); // cipher45.logq : logq - 2logp
+	addAndEqual(cipher, cipher45); // cipher.logq : logq - 2logp
+
+	multAndEqual(cipher, cipher4);
+	reScaleByAndEqual(cipher, logp); // cipher.logq : logq - 3logp
+
+	modDownByAndEqual(cipher23, logp);
+	addAndEqual(cipher, cipher23); // cipher.logq : logq - 3logp
+}
+
+void Scheme::evalExpAndEqual(Ciphertext& cipher, long logT, long logI) {
+	long slots = cipher.slots;
+	long logSlots = log2(slots);
+	BootContext bootContext = context.bootContextMap.at(logSlots);
+	if(logSlots == 0 && !cipher.isComplex) {
+		imultAndEqual(cipher);
+		divByPo2AndEqual(cipher, logT); // bitDown: logT
+		exp2piAndEqual(cipher, bootContext.logp); // bitDown: logT + 3(logq + logI)
+		for (long i = 0; i < logI + logT; ++i) {
+			squareAndEqual(cipher);
+			reScaleByAndEqual(cipher, bootContext.logp);
+		}
+		Ciphertext tmp = conjugate(cipher);
+		subAndEqual(cipher, tmp);
+		idivAndEqual(cipher);
+		RR c = 0.25/Pi;
+		multByConstAndEqual(cipher, c, bootContext.logp);
+		// bitDown: logT + 3(logq + logI) + (logI + logT)(logq + logI)
+	} else if(logSlots < context.logNh) {
+		Ciphertext tmp = conjugate(cipher);
+		subAndEqual(cipher, tmp);
+		divByPo2AndEqual(cipher, logT + 1); // bitDown: logT + 1
+		exp2piAndEqual(cipher, bootContext.logp); // bitDown: logT + 1 + 3(logq + logI)
+		for (long i = 0; i < logI + logT; ++i) {
+			squareAndEqual(cipher);
+			reScaleByAndEqual(cipher, bootContext.logp);
+		}
+		tmp = conjugate(cipher);
+		subAndEqual(cipher, tmp);
+
+		tmp = multByPoly(cipher, bootContext.p1, bootContext.logp);
+		Ciphertext tmprot = leftRotateFast(tmp, slots);
+		addAndEqual(tmp, tmprot);
+		multByPolyAndEqual(cipher, bootContext.p2, bootContext.logp);
+		tmprot = leftRotateFast(cipher, slots);
+		addAndEqual(cipher, tmprot);
+		addAndEqual(cipher, tmp);
+		// bitDown: logT + 1 + 3(logq + logI) + (logI + logT)(logq + logI)
+	} else {
+		Ciphertext tmp = conjugate(cipher);
+		Ciphertext c2 = sub(cipher, tmp);
+		addAndEqual(cipher, tmp);
+		imultAndEqual(cipher);
+		divByPo2AndEqual(cipher, logT + 1); // cipher bitDown: logT + 1
+		reScaleByAndEqual(c2, logT + 1); // c2 bitDown: logT + 1
+		exp2piAndEqual(cipher, bootContext.logp); // cipher bitDown: logT + 1 + 3(logq + logI)
+		exp2piAndEqual(c2, bootContext.logp); // c2 bitDown: logT + 1 + 3(logq + logI)
+		for (long i = 0; i < logI + logT; ++i) {
+			squareAndEqual(c2);
+			squareAndEqual(cipher);
+			reScaleByAndEqual(c2, bootContext.logp);
+			reScaleByAndEqual(cipher, bootContext.logp);
+		}
+		tmp = conjugate(c2);
+		subAndEqual(c2, tmp);
+		tmp = conjugate(cipher);
+		subAndEqual(cipher, tmp);
+		imultAndEqual(cipher);
+		subAndEqual2(c2, cipher);
+		RR c = 0.25/Pi;
+		multByConstAndEqual(cipher, c, bootContext.logp);
+		// bitDown: logT + 1 + 3(logq + logI) + (logI + logT)(logq + logI)
+	}
+	reScaleByAndEqual(cipher, bootContext.logp + logI);
+	// if (logSlots == 0 && !cipher.isComplex) bitDown: logT + 3(logq + logI) + (logI + logT)(logq + logI) + logq + 2logI
+	// else bitDown: logT + 1 + 3(logq + logI) + (logI + logT)(logq + logI) + logq + 2logI
+}
+
+void Scheme::bootstrapAndEqual(Ciphertext& cipher, long logq, long logQ, long logT, long logI) {
+	long logSlots = log2(cipher.slots);
+	long logp = cipher.logp;
+
+	modDownToAndEqual(cipher, logq);
+	normalizeAndEqual(cipher);
+
+	cipher.logq = logQ;
+	cipher.logp = logq + 4;
+	for (long i = logSlots; i < context.logNh; ++i) {
+		Ciphertext rot = leftRotateByPo2(cipher, i);
+		addAndEqual(cipher, rot);
+	}
+
+	if (logSlots == 0 && !cipher.isComplex) {
+			Ciphertext cconj = conjugate(cipher);
+			addAndEqual(cipher, cconj);
+			divByPo2AndEqual(cipher, context.logN); // bitDown: context.logN - logSlots
+			evalExpAndEqual(cipher, logT, logI); // bitDown: context.logN - logSlots + (logq + logI + 4) * logq + (logq + logI + 5) * logI + logT
+	} else {
+		divByPo2AndEqual(cipher, context.logNh); // bitDown: context.logNh - logSlots
+		coeffToSlotAndEqual(cipher);
+		evalExpAndEqual(cipher, logT, logI); // bitDown: context.logNh + (logI + logT + 5) * logq + (logI + logT + 6) * logI + logT + 1
+		slotToCoeffAndEqual(cipher);
+	}
+	cipher.logp = logp;
 }

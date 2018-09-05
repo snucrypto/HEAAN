@@ -7,6 +7,7 @@
 */
 #include "NumUtils.h"
 
+
 void NumUtils::sampleGauss(ZZX& res, const long size, const double stdev) {
 	static double const Pi = 4.0 * atan(1.0);
 	static long const bignum = 0xfffffff;

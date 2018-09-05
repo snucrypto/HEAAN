@@ -6,6 +6,7 @@
 * work.  If not, see <http://creativecommons.org/licenses/by-nc/3.0/>.
 */
 #include "EvaluatorUtils.h"
+
 #include <cmath>
 #include <complex>
 #include <cstdlib>

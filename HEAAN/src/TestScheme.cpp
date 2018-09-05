@@ -40,8 +40,6 @@ void TestScheme::testEncodeBatch(long logN, long logQ, long logp, long logSlots)
 	SecretKey secretKey(logN);
 	Scheme scheme(secretKey, context);
 	//-----------------------------------------
-	SetNumThreads(1);
-	//-----------------------------------------
 	srand(time(NULL));
 	//-----------------------------------------
 	long slots = (1 << logSlots);
@@ -1003,3 +1001,112 @@ void TestScheme::testWriteAndRead(long logN, long logQ, long logp, long logSlots
 
 	cout << "!!! END TEST WRITE AND READ !!!" << endl;
 }
+
+
+void TestScheme::testBootstrap(long logN, long logp, long logq, long logQ, long logSlots, long logT) {
+	cout << "!!! START TEST BOOTSTRAP !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
+	Scheme scheme(secretKey, context);
+	//-----------------------------------------
+	timeutils.start("Key generating");
+	scheme.addBootKey(secretKey, logSlots, logq + 4);
+	timeutils.stop("Key generated");
+	//-----------------------------------------
+	SetNumThreads(1);
+	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
+	long slots = (1 << logSlots);
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(slots);
+
+	Ciphertext cipher = scheme.encrypt(mvec, slots, logp, logq);
+
+	cout << "cipher logq before: " << cipher.logq << endl;
+
+	scheme.modDownToAndEqual(cipher, logq);
+	scheme.normalizeAndEqual(cipher);
+	cipher.logq = logQ;
+	cipher.logp = logq + 4;
+
+	timeutils.start("SubSum");
+	for (long i = logSlots; i < context.logNh; ++i) {
+		Ciphertext rot = scheme.leftRotateByPo2(cipher, i);
+		scheme.addAndEqual(cipher, rot);
+	}
+	scheme.divByPo2AndEqual(cipher, context.logNh);
+	timeutils.stop("SubSum");
+
+	timeutils.start("CoeffToSlot");
+	scheme.coeffToSlotAndEqual(cipher);
+	timeutils.stop("CoeffToSlot");
+
+	timeutils.start("EvalExp");
+	scheme.evalExpAndEqual(cipher, logT);
+	timeutils.stop("EvalExp");
+
+	timeutils.start("SlotToCoeff");
+	scheme.slotToCoeffAndEqual(cipher);
+	timeutils.stop("SlotToCoeff");
+
+	cipher.logp = logp;
+	cout << "cipher logq after: " << cipher.logq << endl;
+
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+
+	StringUtils::showcompare(mvec, dvec, slots, "boot");
+
+	cout << "!!! END TEST BOOTSRTAP !!!" << endl;
+}
+
+void TestScheme::testBootstrapSingleReal(long logN, long logp, long logq, long logQ, long logT) {
+	cout << "!!! START TEST BOOTSTRAP SINGLE REAL !!!" << endl;
+	//-----------------------------------------
+	TimeUtils timeutils;
+	Context context(logN, logQ);
+	SecretKey secretKey(logN);
+	Scheme scheme(secretKey, context);
+	//-----------------------------------------
+	timeutils.start("Key generating");
+	scheme.addBootKey(secretKey, 0, logq + 4);
+	timeutils.stop("Key generated");
+	//-----------------------------------------
+	SetNumThreads(1);
+	//-----------------------------------------
+	srand(time(NULL));
+	//-----------------------------------------
+	double mval = EvaluatorUtils::randomReal();
+
+	Ciphertext cipher = scheme.encryptSingle(mval, logp, logq);
+
+	cout << "cipher logq before: " << cipher.logq << endl;
+	scheme.modDownToAndEqual(cipher, logq);
+	scheme.normalizeAndEqual(cipher);
+	cipher.logq = logQ;
+
+	timeutils.start("SubSum");
+	for (long i = 0; i < context.logNh; ++i) {
+		Ciphertext rot = scheme.leftRotateByPo2(cipher, i);
+		scheme.addAndEqual(cipher, rot);
+	}
+	Ciphertext cconj = scheme.conjugate(cipher);
+	scheme.addAndEqual(cipher, cconj);
+	scheme.divByPo2AndEqual(cipher, context.logN);
+	timeutils.stop("SubSum");
+
+	timeutils.start("EvalExp");
+	scheme.evalExpAndEqual(cipher, logT);
+	timeutils.stop("EvalExp");
+
+	cout << "cipher logq after: " << cipher.logq << endl;
+
+	cipher.logp = logp;
+	complex<double> dval = scheme.decryptSingle(secretKey, cipher);
+
+	StringUtils::showcompare(mval, dval.real(), "boot");
+
+	cout << "!!! END TEST BOOTSRTAP SINGLE REAL !!!" << endl;
+}
+

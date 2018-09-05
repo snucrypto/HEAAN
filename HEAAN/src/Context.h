@@ -12,6 +12,7 @@
 #include <NTL/RR.h>
 #include <complex>
 
+#include "BootContext.h"
 #include "Common.h"
 
 using namespace std;
@@ -45,6 +46,8 @@ public:
 	ZZ* qpowvec; ///< precomputed powers of 2
 
 	map<string, double*> taylorCoeffsMap; ///< precomputed taylor coefficients
+
+	map<long, BootContext> bootContextMap; ///< precomputed bootstrapping auxiliary information
 
 	Context(long logN, long logQ, double sigma = 3.2, long h = 64);
 
@@ -107,6 +110,13 @@ public:
 	 */
 	complex<double> decodeSingle(ZZX& mx, long logp, long logq, bool isComplex = true);
 
+
+	/**
+	 * adding information for Bootstrapping
+	 * @param[in] logl: log of slots
+	 * @param[in] logp: log of precision
+	 */
+	void addBootContext(long logSlots, long logp);
 
 
 	//----------------------------------------------------------------------------------

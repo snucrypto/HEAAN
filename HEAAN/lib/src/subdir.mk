@@ -4,9 +4,11 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/BootContext.cpp \
 ../src/Ciphertext.cpp \
 ../src/Context.cpp \
 ../src/EvaluatorUtils.cpp \
+../src/HEAAN.cpp \
 ../src/Key.cpp \
 ../src/NumUtils.cpp \
 ../src/Plaintext.cpp \
@@ -20,9 +22,11 @@ CPP_SRCS += \
 ../src/TimeUtils.cpp 
 
 OBJS += \
+./src/BootContext.o \
 ./src/Ciphertext.o \
 ./src/Context.o \
 ./src/EvaluatorUtils.o \
+./src/HEAAN.o \
 ./src/Key.o \
 ./src/NumUtils.o \
 ./src/Plaintext.o \
@@ -36,9 +40,11 @@ OBJS += \
 ./src/TimeUtils.o 
 
 CPP_DEPS += \
+./src/BootContext.d \
 ./src/Ciphertext.d \
 ./src/Context.d \
 ./src/EvaluatorUtils.d \
+./src/HEAAN.d \
 ./src/Key.d \
 ./src/NumUtils.d \
 ./src/Plaintext.d \

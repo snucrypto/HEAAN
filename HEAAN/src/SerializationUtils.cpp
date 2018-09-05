@@ -116,6 +116,12 @@ void SerializationUtils::writeContext(Context& context, string path) {
 	myfile << context.logQ << endl;
 	myfile << context.sigma << endl;
 	myfile << context.h << endl;
+	myfile << "BootContext" << endl;
+	myfile << context.bootContextMap.size() << endl;
+	for (auto const& element : context.bootContextMap) {
+		myfile << element.first << endl;
+		myfile << element.second.logp << endl;
+	}
 	myfile.close();
 }
 
@@ -137,11 +143,22 @@ Context SerializationUtils::readContext(string path) {
 		//h
 		getline(myfile, line);
 		long h = atol(line.c_str());
-		return Context(logN, logQ, sigma, h);
+		Context context(logN, logQ, sigma, h);
+
+		getline(myfile, line);
+		getline(myfile, line);
+		long bootsize = atol(line.c_str());
+		for (long i = 0; i < bootsize; ++i) {
+			getline(myfile, line);
+			long logslots = atol(line.c_str());
+			getline(myfile, line);
+			long logp = atol(line.c_str());
+			context.addBootContext(logslots, logp);
+		}
+		return context;
 	} else {
 		throw std::invalid_argument("Unable to open file");
 	}
-
 }
 
 void SerializationUtils::writeSchemeKeys(Scheme& scheme, string path) {

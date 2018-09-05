@@ -290,6 +290,35 @@ public:
 	 */
 	static void testWriteAndRead(long logN, long logQ, long logp, long logSlots);
 
+
+	//----------------------------------------------------------------------------------
+	//   BOOTSTRAPPING TESTS
+	//----------------------------------------------------------------------------------
+
+
+	/**
+	 * Testing bootstrapping procedure
+	 * number of modulus bits up: depends on parameters
+	 * @param[in] logN: input parameter for Params class
+	 * @param[in] logq: log of initial modulus
+	 * @param[in] logQ: input parameter for Params class
+	 * @param[in] logSlots: log of number of slots
+	 * @param[in] nu: auxiliary parameter, corresonds to message bits (message bits is logq - nu)
+	 * @param[in] logT: auxiliary parameter, corresponds to number of iterations in removeIpart (num of iterations is logI + logT)
+	 */
+	static void testBootstrap(long logN, long logq, long logQ, long logSlots, long nu, long logT);
+
+	/**
+	 * Testing bootstrapping procedure for single real value
+	 * number of modulus bits up: depends on parameters
+	 * @param[in] logN: input parameter for Params class
+	 * @param[in] logq: log of initial modulus
+	 * @param[in] logQ: input parameter for Params class
+	 * @param[in] nu: auxiliary parameter, corresonds to message bits (message bits is logq - nu)
+	 * @param[in] logT: auxiliary parameter, corresponds to number of iterations in removeIpart (num of iterations is logI + logT)
+	 */
+	static void testBootstrapSingleReal(long logN, long logq, long logQ, long nu, long logT);
+
 };
 
 #endif

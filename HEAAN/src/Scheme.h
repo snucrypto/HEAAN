@@ -72,6 +72,11 @@ public:
 	void addRightRotKeys(SecretKey& secretKey);
 
 	/**
+	 * generates key for bootstrapping (keys are stored in leftRotKeyMap and bootKeyMap)
+	 */
+	void addBootKey(SecretKey& secretKey, long logl, long logp);
+
+	/**
 	 * generates keys for sorting (keys are stored in leftRotKeyMap)
 	 */
 	void addSortKeys(SecretKey& secretKey, long size);
@@ -696,6 +701,52 @@ public:
 	 * @param[in, out] cipher: ciphertext(m = x + iy) -> ciphertext(x - iy)
 	 */
 	void conjugateAndEqual(Ciphertext& cipher);
+
+
+	//----------------------------------------------------------------------------------
+	//   ADDITIONAL METHODS FOR BOOTSTRAPPING
+	//----------------------------------------------------------------------------------
+
+
+	/**
+	 * part of bootstrapping procedure: normalizes coefficients of ax and bx in ciphertext
+	 * @param[in, out] cipher: ciphertext with ax, bx -> ciphertext with normalized ax, bx
+	 */
+	void normalizeAndEqual(Ciphertext& cipher);
+
+	/**
+	 * part of bootstrapping procedure: calculates special fft in encrypted form
+	 * @param[in, out] cipher: ciphertext(vecm) -> ciphertext(special fft of vecm)
+	 */
+	void coeffToSlotAndEqual(Ciphertext& cipher);
+
+	/**
+	 * part of bootstrapping procedure: calculates special fft inverse in encrypted form
+	 * @param[in, out] cipher: ciphertext(vecm) -> ciphertext(special fft inverse of vecm)
+	 */
+	void slotToCoeffAndEqual(Ciphertext& cipher);
+
+	/**
+	 * part of bootstrapping procedure: calculates exponent of ciphertext
+	 * @param[in, out] cipher: ciphertext(m) -> ciphertext(exp(2pim))
+	 */
+	void exp2piAndEqual(Ciphertext& cipher, long logp);
+
+	/**
+	 * part of bootstrapping procedure: removes qI parts from cipher
+	 * @param[in, out] cipher: ciphertext(x + qI + i(y + qJ)) -> ciphertext(x + iy)
+	 */
+	void evalExpAndEqual(Ciphertext& cipher, long logT, long logI = 4);
+
+	/**
+	 * full bootstrapping procedure
+	 * @param[in, out] cipher: ciphertext(x) in mod q-> ciphertext(x) in mod qq where Q > qq > q
+	 * @param[in] logq: log of q
+	 * @param[in] logQ: log of Q - max possible secure modulus
+	 * @param[in] logT: number of squaring steps in remove I part
+	 * @param[in] logI: for h = 64, logI by experiments is 4
+	 */
+	void bootstrapAndEqual(Ciphertext& cipher, long logq, long logQ, long logT, long logI = 4);
 
 };
 

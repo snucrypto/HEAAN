@@ -8,6 +8,7 @@
 #include "Context.h"
 #include "Ring2Utils.h"
 #include "EvaluatorUtils.h"
+
 #include "StringUtils.h"
 
 Context::Context(long logN, long logQ, double sigma, long h) : logN(logN), logQ(logQ), sigma(sigma), h(h) {
@@ -67,7 +68,7 @@ Context::~Context() {
 
 
 ZZX Context::encode(complex<double>* vals, long slots, long logp) {
-	complex<double>* uvals = new complex<double>[slots]();
+	complex<double>* uvals = new complex<double>[slots];
 	long i, jdx, idx;
 	copy(vals, vals + slots, uvals);
 
@@ -156,6 +157,119 @@ complex<double> Context::decodeSingle(ZZX& mx, long logp, long logq, bool isComp
 	return res;
 }
 
+void Context::addBootContext(long logSlots, long logp) {
+	if(bootContextMap.find(logSlots) == bootContextMap.end()) {
+		long slots = 1 << logSlots;
+		long dslots = slots << 1;
+		long logk = logSlots >> 1;
+
+		long k = 1 << logk;
+		long i, pos,  ki, jdx, idx, deg;
+		long gap = Nh >> logSlots;
+
+		ZZX* pvecInv = new ZZX[slots];
+		ZZX* pvec = new ZZX[slots];
+
+		complex<double>* pvals = new complex<double>[dslots];
+
+		ZZX p1, p2;
+		double c = 0.25/M_PI;
+
+		if(logSlots < logNh) {
+			long dgap = gap >> 1;
+			for (ki = 0; ki < slots; ki += k) {
+				for (pos = ki; pos < ki + k; ++pos) {
+					for (i = 0; i < slots - pos; ++i) {
+						deg = ((M - rotGroup[i + pos]) * i * gap) % M;
+						pvals[i] = ksiPows[deg];
+						pvals[i + slots].real(-pvals[i].imag());
+						pvals[i + slots].imag(pvals[i].real());
+					}
+					for (i = slots - pos; i < slots; ++i) {
+						deg =((M - rotGroup[i + pos - slots]) * i * gap) % M;
+						pvals[i] = ksiPows[deg];
+						pvals[i + slots].real(-pvals[i].imag());
+						pvals[i + slots].imag(pvals[i].real());
+					}
+					EvaluatorUtils::rightRotateAndEqual(pvals, dslots, ki);
+					fftSpecialInv(pvals, dslots);
+					pvec[pos].SetLength(N);
+					for (i = 0, jdx = Nh, idx = 0; i < dslots; ++i, jdx += dgap, idx += dgap) {
+						pvec[pos].rep[idx] = EvaluatorUtils::scaleUpToZZ(pvals[i].real(), logp);
+						pvec[pos].rep[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
+					}
+				}
+			}
+			for (i = 0; i < slots; ++i) {
+				pvals[i] = 0.0;
+				pvals[i + slots].real(0);
+				pvals[i + slots].imag(-c);
+			}
+			p1.SetLength(N);
+			fftSpecialInv(pvals, dslots);
+			for (i = 0, jdx = Nh, idx = 0; i < dslots; ++i, jdx += dgap, idx += dgap) {
+				p1.rep[idx] = EvaluatorUtils::scaleUpToZZ(pvals[i].real(), logp);
+				p1.rep[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
+			}
+
+			for (i = 0; i < slots; ++i) {
+				pvals[i] = c;
+				pvals[i + slots] = 0;
+			}
+
+			p2.SetLength(N);
+			fftSpecialInv(pvals, dslots);
+			for (i = 0, jdx = Nh, idx = 0; i < dslots; ++i, jdx += dgap, idx += dgap) {
+				p2.rep[idx] = EvaluatorUtils::scaleUpToZZ(pvals[i].real(), logp);
+				p2.rep[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
+			}
+		} else {
+			for (ki = 0; ki < slots; ki += k) {
+				for (pos = ki; pos < ki + k; ++pos) {
+					for (i = 0; i < slots - pos; ++i) {
+						deg = ((M - rotGroup[i + pos]) * i * gap) % M;
+						pvals[i] = ksiPows[deg];
+					}
+					for (i = slots - pos; i < slots; ++i) {
+						deg =((M - rotGroup[i + pos - slots]) * i * gap) % M;
+						pvals[i] = ksiPows[deg];
+					}
+					EvaluatorUtils::rightRotateAndEqual(pvals, slots, ki);
+					fftSpecialInv(pvals, slots);
+					pvec[pos].SetLength(N);
+					for (i = 0, jdx = Nh, idx = 0; i < slots; ++i, jdx += gap, idx += gap) {
+						pvec[pos].rep[idx] = EvaluatorUtils::scaleUpToZZ(pvals[i].real(), logp);
+						pvec[pos].rep[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
+					}
+				}
+			}
+		}
+
+		for (ki = 0; ki < slots; ki += k) {
+			for (pos = ki; pos < ki + k; ++pos) {
+
+				for (i = 0; i < slots - pos; ++i) {
+					deg = (rotGroup[i] * (i + pos) * gap) % M;
+					pvals[i] = ksiPows[deg];
+				}
+				for (i = slots - pos; i < slots; ++i) {
+					deg = (rotGroup[i] * (i + pos - slots) * gap) % M;
+					pvals[i] = ksiPows[deg];
+				}
+				EvaluatorUtils::rightRotateAndEqual(pvals, slots, ki);
+				fftSpecialInv(pvals, slots);
+				pvecInv[pos].SetLength(N);
+				for (i = 0, jdx = Nh, idx = 0; i < slots; ++i, jdx += gap, idx += gap) {
+					pvecInv[pos].rep[idx] = EvaluatorUtils::scaleUpToZZ(pvals[i].real(), logp);
+					pvecInv[pos].rep[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
+				}
+			}
+		}
+
+		delete[] pvals;
+		bootContextMap.insert(pair<long, BootContext>(logSlots, BootContext(pvec, pvecInv, p1, p2, logp)));
+	}
+}
 
 //----------------------------------------------------------------------------------
 //   FFT & FFT INVERSE
