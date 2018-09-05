@@ -95,6 +95,8 @@ public:
 
 	uint64_t* toNTT(ZZ* x, long np);
 
+	void addNTTAndEqual(uint64_t* ra, uint64_t* rb, long np);
+
 	void mult(ZZ* x, ZZ* a, ZZ* b, long np, ZZ& q);
 
 	void multNTT(ZZ* x, ZZ* a, uint64_t* rb, long np, ZZ& q);

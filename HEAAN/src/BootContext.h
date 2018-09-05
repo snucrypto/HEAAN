@@ -17,7 +17,6 @@ public:
 
 	uint64_t** rpvec;
 	uint64_t** rpvecInv;
-
 	uint64_t* rp1;
 	uint64_t* rp2;
 
@@ -25,6 +24,7 @@ public:
 	long* bndvecInv;
 	long bnd1;
 	long bnd2;
+
 	long logp; ///< number of quantized bits
 
 	BootContext(uint64_t** rpvec = NULL, uint64_t** rpvecInv = NULL, uint64_t* rp1 = NULL, uint64_t* rp2 = NULL,

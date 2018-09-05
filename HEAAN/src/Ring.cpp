@@ -191,14 +191,16 @@ void Ring::addBootContext(long logSlots, long logp) {
 
 		long np;
 
-		uint64_t** rpvecInv = new uint64_t*[slots];
 		uint64_t** rpvec = new uint64_t*[slots];
+		uint64_t** rpvecInv = new uint64_t*[slots];
 		uint64_t* rp1;
 		uint64_t* rp2;
+
 		long* bndvec = new long[slots];
 		long* bndvecInv = new long[slots];
 		long bnd1;
 		long bnd2;
+
 		ZZ* pvec = new ZZ[N];
 		complex<double>* pvals = new complex<double> [dslots];
 
@@ -229,6 +231,9 @@ void Ring::addBootContext(long logSlots, long logp) {
 					bndvec[pos] = maxBits(pvec, N);
 					np = ceil((bndvec[pos] + logQ + 2 * logN + 2)/59.0);
 					rpvec[pos] = toNTT(pvec, np);
+					for (i = 0; i < N; ++i) {
+						pvec[i] = ZZ::zero();
+					}
 				}
 			}
 
@@ -245,6 +250,9 @@ void Ring::addBootContext(long logSlots, long logp) {
 			bnd1 = maxBits(pvec, N);
 			np = ceil((bnd1 + logQ + 2 * logN + 2)/59.0);
 			rp1 = toNTT(pvec, np);
+			for (i = 0; i < N; ++i) {
+				pvec[i] = ZZ::zero();
+			}
 
 			for (i = 0; i < slots; ++i) {
 				pvals[i] = c;
@@ -259,6 +267,10 @@ void Ring::addBootContext(long logSlots, long logp) {
 			bnd2 = maxBits(pvec, N);
 			np = ceil((bnd2 + logQ + 2 * logN + 2)/59.0);
 			rp2 = toNTT(pvec, np);
+			for (i = 0; i < N; ++i) {
+				pvec[i] = ZZ::zero();
+			}
+
 		} else {
 			for (ki = 0; ki < slots; ki += k) {
 				for (pos = ki; pos < ki + k; ++pos) {
@@ -279,6 +291,9 @@ void Ring::addBootContext(long logSlots, long logp) {
 					bndvec[pos] = maxBits(pvec, N);
 					np = ceil((bndvec[pos] + logQ + 2 * logN + 2)/59.0);
 					rpvec[pos] = toNTT(pvec, np);
+					for (i = 0; i < N; ++i) {
+						pvec[i] = ZZ::zero();
+					}
 				}
 			}
 		}
@@ -303,6 +318,9 @@ void Ring::addBootContext(long logSlots, long logp) {
 				bndvecInv[pos] = maxBits(pvec, N);
 				np = ceil((bndvecInv[pos] + logQ + 2 * logN + 2)/59.0);
 				rpvecInv[pos] = toNTT(pvec, np);
+				for (i = 0; i < N; ++i) {
+					pvec[i] = ZZ::zero();
+				}
 			}
 		}
 		delete[] pvals;
@@ -316,6 +334,7 @@ void Ring::addBootContext(long logSlots, long logp) {
 //   MULTIPLICATION
 //----------------------------------------------------------------------------------
 
+
 long Ring::maxBits(const ZZ* f, long n) {
    long i, m;
    m = 0;
@@ -328,6 +347,10 @@ long Ring::maxBits(const ZZ* f, long n) {
 
 uint64_t* Ring::toNTT(ZZ* x, long np) {
 	return multiplier.toNTT(x, np);
+}
+
+void Ring::addNTTAndEqual(uint64_t* ra, uint64_t* rb, long np) {
+	multiplier.addNTTAndEqual(ra, rb, np);
 }
 
 void Ring::mult(ZZ* x, ZZ* a, ZZ* b, long np, ZZ& q) {
