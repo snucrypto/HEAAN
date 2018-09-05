@@ -9,6 +9,8 @@ v1.0 Implementation of Original HEAAN scheme
 
 V1.1 Implementation of Original HEAAN scheme with bootstrapping (https://eprint.iacr.org/2018/153.pdf)
 
+V2.0 Faster Implementation of HEAAN scheme
+
 ## Dependency
 This library is written by c++ and using NTL library (http://www.shoup.net/ntl/).
 
