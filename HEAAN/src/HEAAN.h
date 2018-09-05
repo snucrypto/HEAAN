@@ -6,6 +6,7 @@
 * work.  If not, see <http://creativecommons.org/licenses/by-nc/3.0/>.
 */
 
+#include "BootContext.h"
 #include "Common.h"
 #include "Ciphertext.h"
 #include "EvaluatorUtils.h"
