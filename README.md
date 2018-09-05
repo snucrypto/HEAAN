@@ -4,8 +4,12 @@ This library supports approximate operations between rational numbers.
 The approximate error depends on some parameters and almost same with floating point operation errors.
 The scheme in this library is on the paper "Homomorphic Encryption for Arithmetic of Approximate Numbers" (https://eprint.iacr.org/2016/421.pdf).
 
-This library does not contain bootstrapping, you can find the library with bootstrapping in https://github.com/kimandrik/HEAANBOOT
+## Version
+v1.0 Implementation of Original HEAAN scheme
 
+V1.1 Implementation of Original HEAAN scheme with bootstrapping (https://eprint.iacr.org/2018/153.pdf)
+
+## Dependency
 This library is written by c++ and using NTL library (http://www.shoup.net/ntl/).
 
 ## How to use this library?
