@@ -7,7 +7,7 @@
 */
 #include "SecretKey.h"
 
-SecretKey::SecretKey(long logN, long h) {
-	long N = 1 << logN;
-	NumUtils::sampleHWT(sx, N, h);
+SecretKey::SecretKey(Ring& ring) : N(ring.N) {
+	sx = new ZZ[N];
+	ring.sampleHWT(sx);
 }

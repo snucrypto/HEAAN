@@ -6,13 +6,12 @@
 CPP_SRCS += \
 ../src/BootContext.cpp \
 ../src/Ciphertext.cpp \
-../src/Context.cpp \
 ../src/EvaluatorUtils.cpp \
 ../src/HEAAN.cpp \
 ../src/Key.cpp \
-../src/NumUtils.cpp \
 ../src/Plaintext.cpp \
-../src/Ring2Utils.cpp \
+../src/Ring.cpp \
+../src/RingMultiplier.cpp \
 ../src/Scheme.cpp \
 ../src/SchemeAlgo.cpp \
 ../src/SecretKey.cpp \
@@ -24,13 +23,12 @@ CPP_SRCS += \
 OBJS += \
 ./src/BootContext.o \
 ./src/Ciphertext.o \
-./src/Context.o \
 ./src/EvaluatorUtils.o \
 ./src/HEAAN.o \
 ./src/Key.o \
-./src/NumUtils.o \
 ./src/Plaintext.o \
-./src/Ring2Utils.o \
+./src/Ring.o \
+./src/RingMultiplier.o \
 ./src/Scheme.o \
 ./src/SchemeAlgo.o \
 ./src/SecretKey.o \
@@ -42,13 +40,12 @@ OBJS += \
 CPP_DEPS += \
 ./src/BootContext.d \
 ./src/Ciphertext.d \
-./src/Context.d \
 ./src/EvaluatorUtils.d \
 ./src/HEAAN.d \
 ./src/Key.d \
-./src/NumUtils.d \
 ./src/Plaintext.d \
-./src/Ring2Utils.d \
+./src/Ring.d \
+./src/RingMultiplier.d \
 ./src/Scheme.d \
 ./src/SchemeAlgo.d \
 ./src/SecretKey.d \

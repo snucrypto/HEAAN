@@ -8,23 +8,20 @@
 #ifndef HEAAN_KEY_H_
 #define HEAAN_KEY_H_
 
-#include <NTL/ZZX.h>
-
-#include "Common.h"
+#include <NTL/ZZ.h>
 
 using namespace NTL;
-using namespace std;
 
 /**
- * Key is an RLWE instance (ax, bx = mx + ex - ax * sx) in ring Z_q[X] / (X^N + 1);
+ * Key is an RLWE instance (ax, bx = kx + ex - ax * sx) in the ring Z_q[X] / (X^N + 1)
  */
 class Key {
 public:
 
-	ZZX ax;
-	ZZX bx;
+	uint64_t* rax;
+	uint64_t* rbx;
 
-	Key(ZZX ax = ZZX::zero(), ZZX bx = ZZX::zero()) : ax(ax), bx(bx) {}
+	Key(uint64_t* rax = NULL, uint64_t* rbx = NULL);
 
 };
 

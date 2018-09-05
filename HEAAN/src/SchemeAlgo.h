@@ -39,14 +39,6 @@ public:
 	Ciphertext* encryptSingleArray(complex<double>* vals, long size, long logp);
 
 	/**
-	 * encrypting array of values, each to one ciphertext
-	 * @param[in] vals: [m_1, m_2,...,m_size]
-	 * @param[in] size: array size
-	 * @return [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
-	 */
-	Ciphertext* encryptSingleArray(double* vals, long size, long logp);
-
-	/**
 	 * decrypting array of ciphertexts with single value encrypted in each
 	 * @param[in] secretKey: secret key
 	 * @param[in] ciphers: [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
@@ -213,7 +205,7 @@ public:
 	 * @param[in] steps: number of steps in approximation
 	 * @return cipher(1 / m << (2 * logp))
 	 */
-	Ciphertext inverse(Ciphertext& cipher, const long logp, const long steps);
+	Ciphertext inverse(Ciphertext& cipher, long logp, long steps);
 
 	/**
 	 * Calculating and storing inverse of a ciphertext at each step up to steps
@@ -260,22 +252,21 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void bitReverse(Ciphertext* ciphers, const long size);
+	/**
+	 * Calculating pre fft of ciphertexts
+	 * @param[in] ciphers: [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
+	 * @param[in] size: array size (power-of-two)
+	 * @param[in] isForward: switching between fft and fft inverse
+	 * @return [ciphertext(fft_1), ... ,ciphertext(fft_size)]
+	 */
+	void fftRaw(Ciphertext* ciphers, const long size, const bool isForward);
 
 	/**
 	 * Calculating fft of ciphertexts
 	 * @param[in] [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
 	 * @return [ciphertext(fft_1), ... ,ciphertext(fft_size)]
 	 */
-	void fft(Ciphertext* ciphers, const long size);
-
-	/**
-	 * Calculating fft inverse of ciphertexts
-	 * @param[in] ciphers: [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
-	 * @param[in] size: array size (power-of-two)
-	 * @return [ciphertext(fftinv_1 * size), ... ,ciphertext(fftinv_size * size)] but saves level
-	 */
-	void fftInvLazy(Ciphertext* ciphers, const long size);
+	void DFT(Ciphertext* ciphers, const long size);
 
 	/**
 	 * Calculating fft inverse of ciphertexts
@@ -283,7 +274,15 @@ public:
 	 * @param[in] size: array size (power-of-two)
 	 * @return [ciphertext(fftinv_1), ... ,ciphertext(fftinv_size)]
 	 */
-	void fftInv(Ciphertext* ciphers, const long size);
+	void IDFT(Ciphertext* ciphers, const long size);
+
+	/**
+	 * Calculating fft inverse of ciphertexts
+	 * @param[in] ciphers: [ciphertext(m_1), ciphertext(m_2),...,ciphertext(m_size)]
+	 * @param[in] size: array size (power-of-two)
+	 * @return [ciphertext(fftinv_1 * size), ... ,ciphertext(fftinv_size * size)] but saves level
+	 */
+	void IDFTLazy(Ciphertext* ciphers, const long size);
 
 };
 

@@ -7,183 +7,80 @@
 */
 #include "TestScheme.h"
 
-#include <iostream>
-
-using namespace std;
-
 int main() {
 
-	//-----------------------------------------
 
-	/*
-	 * Params: logN, logQ, logp, logSlots
-	 * Suggested: 13, 65, 30, 3
-	 */
-//	TestScheme::testEncodeBatch(13, 65, 30, 3);
-
-	/*
-	 * Params: logN, logQ, logp
-	 * Suggested: 13, 65, 30
-	 */
-//	TestScheme::testEncodeSingle(13, 65, 30);
-
-	/*
-	 * Params: logN, logQ, logp, logSlots
-	 * Suggested: 13, 65, 30, 3
-	 */
-//	TestScheme::testBasic(13, 65, 30, 3);
-
-	/*
-	 * Params: logN, logQ, logp, logSlots
-	 * Suggested: 13, 65, 30, 3
-	 */
-
-//	TestScheme::testConjugateBatch(13, 65, 30, 3);
-
-	/*
-	 * Params: logN, logQ, logp, logSlots
-	 * Suggested: 13, 65, 30, 3
-	 */
-
-//	TestScheme::testimultBatch(13, 65, 30, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, rotlogSlots, logSlots, isLeft
-	 * Suggested: 13, 65, 30, 2, 5, true
-	 */
-
-//	TestScheme::testRotateByPo2Batch(13, 65, 30, 2, 5, true);
-//	TestScheme::testRotateBatch(13, 65, 30, 17, 5, true);
-
-	/*
-	 * Params: logN, logQ, logp, logSlots
-	 * Suggested: 13, 65, 30, 3
-	 */
-
-//	TestScheme::testSlotsSum(13, 65, 30, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, logDegree, logSlots
-	 * Suggested: 13, 155, 30, 4, 3
-	 * Suggested: 15, 618, 56, 10, 3
-	 */
-
-//	TestScheme::testPowerOf2Batch(13, 155, 30, 4, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, degree, logSlots
-	 * Suggested: 13, 155, 30, 13, 3
-	 * Suggested: 15, 618, 56, 903, 3
-	 */
-
-//	TestScheme::testPowerBatch(13, 155, 30, 13, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, logDegree, logSlots
-	 * Suggested: 13, 155, 30, 4, 3
-	 * Suggested: 15, 618, 56, 10, 3
-	 */
-
-//	TestScheme::testProdOfPo2Batch(13, 155, 30, 4, 3);
-
-	/*
-	 * Params: logN, logQ, logp, degree, logSlots
-	 * Suggested: 13, 155, 30, 13, 3
-	 * Suggested: 15, 618, 56, 903, 3
-	 */
-
-//	TestScheme::testProdBatch(13, 155, 30, 13, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, invSteps, logSlots
-	 * Suggested: 14, 255, 25, 8, 3
-	 * Suggested: 15, 325, 32, 8, 3
-	 */
-
-//	TestScheme::testInverseBatch(14, 255, 25, 8, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, degree, logSlots
-	 * Suggested: 13, 155, 30, 7, 3
-	 */
-
-//	TestScheme::testLogarithmBatch(13, 155, 30, 7, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, degree, logSlots
-	 * Suggested: 13, 155, 30, 7, 3
-	 */
-
-//	TestScheme::testExponentBatch(13, 155, 30, 7, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, degree, logSlots
-	 * Suggested: 13, 155, 30, 7, 3
-	 */
-
-//	TestScheme::testSigmoidBatch(13, 155, 30, 7, 3);
-//	TestScheme::testSigmoidBatchLazy(13, 155, 30, 7, 3);
-
-	//-----------------------------------------
-
-	/*
-	 * Params: logN, logQ, logp, logSlots, logFFTdim
-	 * Suggested: 13, 100, 42, 3, 4;
-	 */
-
-//	TestScheme::testFFTBatch(13, 100, 42, 3, 4);
-//	TestScheme::testFFTBatchLazy(13, 100, 42, 3, 4);
-
-	/*
-	 * Params: logN, logQ, logp, logSlots, logFFTdim, logHdim
-	 * Suggested: 13, 140, 42, 3, 3, 2;
-	 */
-
-//	TestScheme::testFFTBatchLazyMultipleHadamard(13, 140, 42, 3, 3, 2);
-
-	/*
-	 * Params: logN, logQ, logp, logSlots
-	 * Suggested: 13, 65, 30, 3
-	 */
-
-//	TestScheme::testWriteAndRead(15, 620, 30, 3);
+//----------------------------------------------------------------------------------
+//   STANDARD TESTS
+//----------------------------------------------------------------------------------
 
 
-	//-----------------------------------------
+//	TestScheme::testEncrypt(17, 1000, 30, 4);
+//	TestScheme::testEncryptSingle(15, 300, 30);
+//	TestScheme::testBasic(16, 1200, 30, 4);
+//	TestScheme::testimult(15, 300, 30, 4);
 
-	/*
-	 * Params: logN, logp, logq, logQ, logSlots, logT
-	 * Suggested: 15, 23, 29, 620, 3, 2
-	 * Suggested: 15, 27, 37, 620, 3, 3
-	 * Suggested: 16, 31, 41, 1240, 3, 3
-	 * Suggested: 16, 39, 54, 1240, 3, 5
-	 */
+
+//----------------------------------------------------------------------------------
+//   ROTATE & CONJUGATE
+//----------------------------------------------------------------------------------
+
+
+//	TestScheme::testRotateFast(16, 1200, 30, 4, 1);
+//	TestScheme::testRotate(15, 300, 30, 4, 1);
+//	TestScheme::testConjugate(15, 300, 30, 4);
+
+
+//----------------------------------------------------------------------------------
+//   POWER & PRODUCT
+//----------------------------------------------------------------------------------
+
+
+//	TestScheme::testPowerOf2(15, 300, 30, 4, 4);
+//	TestScheme::testPower(15, 300, 30, 4, 13);
+//	TestScheme::testProdOfPo2(15, 300, 30, 4, 4);
+//	TestScheme::testProd(15, 300, 30, 4, 13);
+
+
+//----------------------------------------------------------------------------------
+//   FUNCTION
+//----------------------------------------------------------------------------------
+
+
+//	TestScheme::testInverse(15, 300, 25, 4, 6);
+//	TestScheme::testLogarithm(15, 300, 30, 4, 7);
+//	TestScheme::testExponent(15, 300, 30, 4, 7);
+//	TestScheme::testSigmoid(15, 300, 30, 4, 7);
+//	TestScheme::testSigmoidLazy(15, 300, 30, 4, 7);
+
+
+//----------------------------------------------------------------------------------
+//   DFT
+//----------------------------------------------------------------------------------
+
+
+//	TestScheme::testDFTBatch(15, 300, 30, 4, 3);
+//	TestScheme::testDFTLazyBatch(15, 300, 30, 4, 3);
+//	TestScheme::testDFTLazyBatchMultipleHadamard(15, 300, 30, 3, 3, 3);
+
+
+//----------------------------------------------------------------------------------
+//   BOOTSTRAPPING
+//----------------------------------------------------------------------------------
+
+
 //	TestScheme::testBootstrap(15, 23, 29, 620, 3, 2);
-
-	/*
-	 * Params: logN, logp, logq, logQ, logT
-	 * Suggested: 15, 23, 29, 620, 2
-	 * Suggested: 15, 27, 37, 620, 3
-	 * Suggested: 16, 31, 41, 1240, 3
-	 * Suggested: 16, 39, 54, 1240, 5
-	 */
 //	TestScheme::testBootstrapSingleReal(15, 23, 29, 620, 2);
+
+
+//----------------------------------------------------------------------------------
+//   OTHER
+//----------------------------------------------------------------------------------
+
+
+//	TestScheme::testCiphertextWriteAndRead(10, 65, 30, 2);
+//	TestScheme::test();
+
 
 	return 0;
 }

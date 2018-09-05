@@ -12,9 +12,9 @@
 
 #include "Ciphertext.h"
 #include "Plaintext.h"
+#include "Ring.h"
 #include "Scheme.h"
 #include "SecretKey.h"
-#include "Context.h"
 
 using namespace std;
 using namespace NTL;
@@ -28,8 +28,8 @@ public:
 	static void writePlaintext(Plaintext& plaintext, string path);
 	static Plaintext readPlaintext(string path);
 
-	static void writeContext(Context& context, string path);
-	static Context readContext(string path);
+	static void writeContext(Ring& context, string path);
+	static Ring readContext(string path);
 
 	static void writeSchemeKeys(Scheme& scheme, string path);
 	static void readSchemeKeys(Scheme& scheme, string path);

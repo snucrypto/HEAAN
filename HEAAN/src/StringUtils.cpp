@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------------
 
 
-void StringUtils::show(long* vals, long size) {
+void StringUtils::showVec(long* vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {
 		cout << vals[i] << ", ";
@@ -21,7 +21,7 @@ void StringUtils::show(long* vals, long size) {
 	cout << "]" << endl;
 }
 
-void StringUtils::show(double* vals, long size) {
+void StringUtils::showVec(double* vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {
 		cout << vals[i] << ", ";
@@ -29,7 +29,7 @@ void StringUtils::show(double* vals, long size) {
 	cout << "]" << endl;
 }
 
-void StringUtils::show(complex<double>* vals, long size) {
+void StringUtils::showVec(complex<double>* vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {
 		cout << vals[i] << ", ";
@@ -37,7 +37,7 @@ void StringUtils::show(complex<double>* vals, long size) {
 	cout << "]" << endl;
 }
 
-void StringUtils::show(ZZ* vals, long size) {
+void StringUtils::showVec(ZZ* vals, long size) {
 	cout << "[";
 	for (long i = 0; i < size; ++i) {
 		cout << vals[i] << ", ";
@@ -51,7 +51,7 @@ void StringUtils::show(ZZ* vals, long size) {
 //----------------------------------------------------------------------------------
 
 
-void StringUtils::showcompare(double val1, double val2, string prefix) {
+void StringUtils::compare(double val1, double val2, string prefix) {
 	cout << "---------------------" << endl;
 	cout << "m" + prefix + ":" << val1 << endl;
 	cout << "d" + prefix + ":" << val2 << endl;
@@ -59,7 +59,7 @@ void StringUtils::showcompare(double val1, double val2, string prefix) {
 	cout << "---------------------" << endl;
 }
 
-void StringUtils::showcompare(complex<double> val1, complex<double> val2, string prefix) {
+void StringUtils::compare(complex<double> val1, complex<double> val2, string prefix) {
 	cout << "---------------------" << endl;
 	cout << "m" + prefix + ":" << val1 << endl;
 	cout << "d" + prefix + ":" << val2 << endl;
@@ -67,7 +67,7 @@ void StringUtils::showcompare(complex<double> val1, complex<double> val2, string
 	cout << "---------------------" << endl;
 }
 
-void StringUtils::showcompare(double* vals1, double* vals2, long size, string prefix) {
+void StringUtils::compare(double* vals1, double* vals2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << vals1[i] << endl;
@@ -77,7 +77,7 @@ void StringUtils::showcompare(double* vals1, double* vals2, long size, string pr
 	}
 }
 
-void StringUtils::showcompare(complex<double>* vals1, complex<double>* vals2, long size, string prefix) {
+void StringUtils::compare(complex<double>* vals1, complex<double>* vals2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << vals1[i] << endl;
@@ -88,7 +88,7 @@ void StringUtils::showcompare(complex<double>* vals1, complex<double>* vals2, lo
 }
 
 
-void StringUtils::showcompare(double* vals1, double val2, long size, string prefix) {
+void StringUtils::compare(double* vals1, double val2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << vals1[i] << endl;
@@ -98,7 +98,7 @@ void StringUtils::showcompare(double* vals1, double val2, long size, string pref
 	}
 }
 
-void StringUtils::showcompare(complex<double>* vals1, complex<double> val2, long size, string prefix) {
+void StringUtils::compare(complex<double>* vals1, complex<double> val2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << vals1[i] << endl;
@@ -108,7 +108,7 @@ void StringUtils::showcompare(complex<double>* vals1, complex<double> val2, long
 	}
 }
 
-void StringUtils::showcompare(double val1, double* vals2, long size, string prefix) {
+void StringUtils::compare(double val1, double* vals2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << val1 << endl;
@@ -118,7 +118,7 @@ void StringUtils::showcompare(double val1, double* vals2, long size, string pref
 	}
 }
 
-void StringUtils::showcompare(complex<double> val1, complex<double>* vals2, long size, string prefix) {
+void StringUtils::compare(complex<double> val1, complex<double>* vals2, long size, string prefix) {
 	for (long i = 0; i < size; ++i) {
 		cout << "---------------------" << endl;
 		cout << "m" + prefix + ": " << i << " :" << val1 << endl;

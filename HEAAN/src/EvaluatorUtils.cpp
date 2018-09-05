@@ -36,25 +36,25 @@ complex<double> EvaluatorUtils::randomCircle(double anglebound) {
 	return res;
 }
 
-double* EvaluatorUtils::randomRealArray(long size, double bound) {
-	double* res = new double[size];
-	for (long i = 0; i < size; ++i) {
+double* EvaluatorUtils::randomRealArray(long n, double bound) {
+	double* res = new double[n];
+	for (long i = 0; i < n; ++i) {
 		res[i] = randomReal(bound);
 	}
 	return res;
 }
 
-complex<double>* EvaluatorUtils::randomComplexArray(long size, double bound) {
-	complex<double>* res = new complex<double>[size];
-	for (long i = 0; i < size; ++i) {
+complex<double>* EvaluatorUtils::randomComplexArray(long n, double bound) {
+	complex<double>* res = new complex<double>[n];
+	for (long i = 0; i < n; ++i) {
 		res[i] = randomComplex(bound);
 	}
 	return res;
 }
 
-complex<double>* EvaluatorUtils::randomCircleArray(long size, double bound) {
-	complex<double>* res = new complex<double>[size];
-	for (long i = 0; i < size; ++i) {
+complex<double>* EvaluatorUtils::randomCircleArray(long n, double bound) {
+	complex<double>* res = new complex<double>[n];
+	for (long i = 0; i < n; ++i) {
 		res[i] = randomCircle(bound);
 	}
 	return res;
@@ -87,25 +87,25 @@ ZZ EvaluatorUtils::scaleUpToZZ(const RR& x, const long logp) {
 //----------------------------------------------------------------------------------
 
 
-void EvaluatorUtils::leftRotateAndEqual(complex<double>* vals, const long size, const long rotSize) {
-	long remrotSize = rotSize % size;
-	if(remrotSize != 0) {
-		long divisor = GCD(remrotSize, size);
-		long steps = size / divisor;
+void EvaluatorUtils::leftRotateAndEqual(complex<double>* vals, const long n, const long r) {
+	long rem = r % n;
+	if(rem != 0) {
+		long divisor = GCD(rem, n);
+		long steps = n / divisor;
 		for (long i = 0; i < divisor; ++i) {
 			complex<double> tmp = vals[i];
 			long idx = i;
 			for (long j = 0; j < steps - 1; ++j) {
-				vals[idx] = vals[(idx + remrotSize) % size];
-				idx = (idx + remrotSize) % size;
+				vals[idx] = vals[(idx + rem) % n];
+				idx = (idx + rem) % n;
 			}
 			vals[idx] = tmp;
 		}
 	}
 }
 
-void EvaluatorUtils::rightRotateAndEqual(complex<double>* vals, const long size, const long rotSize) {
-	long remrotSize = rotSize % size;
-	long leftremrotSize = (size - remrotSize) % size;
-	leftRotateAndEqual(vals, size, leftremrotSize);
+void EvaluatorUtils::rightRotateAndEqual(complex<double>* vals, const long n, const long r) {
+	long rem = r % n;
+	rem = (n - rem) % n;
+	leftRotateAndEqual(vals, n, rem);
 }

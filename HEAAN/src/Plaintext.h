@@ -9,7 +9,6 @@
 #define HEAAN_PLAINTEXT_H_
 
 #include <NTL/ZZ.h>
-#include <NTL/ZZX.h>
 
 using namespace std;
 using namespace NTL;
@@ -17,29 +16,21 @@ using namespace NTL;
 class Plaintext {
 public:
 
-	ZZX mx; ///< message mod X^N + 1
+	ZZ* mx;
+	long N;
 
-	long logp; ///< number of quantized bits
-	long logq; ///< number of bits in modulus
-	long slots; ///< number of slots in message
+	long logp;
+	long logq;
 
-	bool isComplex; ///< option of Message with single real slot
+	long n; ///< number of slots in ciphertext
+
 	//-----------------------------------------
 
-	/**
-	 * Plaintext: mx
-	 * @param[in] mx: ZZX polynomial
-	 * @param[in] logp: number of quantized bits
-	 * @param[in] logq: number of bits in modulus
-	 * @param[in] slots: number of slots in message
-	 * @param[in] isComplex: option of Message with single real slot
-	 */
-	Plaintext(ZZX mx = ZZX::zero(), long logp = 0, long logq = 0, long slots = 1, bool isComplex = true) : mx(mx), logp(logp), logq(logq), slots(slots), isComplex(isComplex) {}
+	Plaintext(ZZ* mx = NULL, long logp = 0, long logq = 0, long N = 1, long n = 1);
 
-	/**
-	 * Copy Constructor
-	 */
-	Plaintext(const Plaintext& o) : mx(o.mx), logp(o.logp), logq(o.logq), slots(o.slots), isComplex(o.isComplex) {}
+	Plaintext(const Plaintext& o);
+
+	Plaintext& operator=(const Plaintext &o);
 };
 
 #endif

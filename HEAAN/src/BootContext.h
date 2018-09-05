@@ -8,23 +8,27 @@
 #ifndef HEAAN_BOOTCONTEXT_H_
 #define HEAAN_BOOTCONTEXT_H_
 
-#include <NTL/ZZX.h>
+#include <NTL/ZZ.h>
 
 using namespace NTL;
 
 class BootContext {
-
 public:
 
-	ZZX* pvec; ///< encodings of "diagonal" values of CoeffToSlot matrix
-	ZZX* pvecInv; ///< encodings of "diagonal" values of SlotToCoeff matrix
+	uint64_t** rpvec;
+	uint64_t** rpvecInv;
 
-	ZZX p1; ///< auxiliary encoding for EvalExp
-	ZZX p2; ///< auxiliary encoding for EvalExp
+	uint64_t* rp1;
+	uint64_t* rp2;
 
+	long* bndvec;
+	long* bndvecInv;
+	long bnd1;
+	long bnd2;
 	long logp; ///< number of quantized bits
 
-	BootContext(ZZX* pvec = NULL, ZZX* pvecInv = NULL, ZZX p1 = ZZX::zero(), ZZX p2 = ZZX::zero(), long logp = 0);
+	BootContext(uint64_t** rpvec = NULL, uint64_t** rpvecInv = NULL, uint64_t* rp1 = NULL, uint64_t* rp2 = NULL,
+			long* bndvec = NULL, long* bndvecInv = NULL, long bnd1 = NULL, long bnd2 = NULL, long logp = 0);
 
 };
 
