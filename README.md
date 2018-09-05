@@ -47,9 +47,9 @@ int main() {
 	
   // Construct and Generate Public Keys //
   TimeUtils timeutils;
-  Context context(logN, logQ);
-  SecretKey secretKey(logN);
-  Scheme scheme(secretKey, context);
+  Ring ring(logN, logQ);
+  SecretKey secretKey(ring);
+  Scheme scheme(secretKey, ring);
   scheme.addLeftRotKeys(secretKey); ///< When you need left rotation for the vectorized message
   scheme.addRightRotKeys(secretKey); ///< When you need right rotation for the vectorized message
   
