@@ -36,10 +36,8 @@ Ciphertext SerializationUtils::readCiphertext(string path) {
 		getline(myfile, line);
 		long logq = atol(line.c_str());
 		getline(myfile, line);
-		long slots = atol(line.c_str());
-		getline(myfile, line);
-		bool isComplex = atoi(line.c_str());
-
+		long n = atol(line.c_str());
+		
 		ZZ* ax = new ZZ[N];
 		ZZ* bx = new ZZ[N];
 		for(long i = 0; i < N; i++) {
@@ -51,7 +49,7 @@ Ciphertext SerializationUtils::readCiphertext(string path) {
 			bx[i] = conv<ZZ>(line.c_str());
 		}
 		myfile.close();
-		return Ciphertext(ax, bx, logp, logq, slots, isComplex);
+		return Ciphertext(ax, bx, logp, logq, N, n);
 	} else {
 		throw std::invalid_argument("Unable to open file");
 	}
