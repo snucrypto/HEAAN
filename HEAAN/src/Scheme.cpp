@@ -269,6 +269,12 @@ Ciphertext Scheme::encrypt(double* vals, long n, long logp, long logq) {
 	return encryptMsg(msg);
 }
 
+Ciphertext Scheme::encryptZeros(long n, long logp, long logq) {
+	Ciphertext res = encryptSingle(0.0, logp, logq);
+	res.n = n;
+	return res;
+}
+
 complex<double>* Scheme::decrypt(SecretKey& secretKey, Ciphertext& cipher) {
 	Plaintext msg = decryptMsg(secretKey, cipher);
 	return decode(msg);
