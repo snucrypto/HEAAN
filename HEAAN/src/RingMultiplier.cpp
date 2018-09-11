@@ -17,8 +17,6 @@
 #include <iterator>
 #include <vector>
 
-#include "Primes.h"
-
 RingMultiplier::RingMultiplier(long logN, long logQ) : logN(logN) {
 	N = 1 << logN;
 	long M = N << 1;
@@ -36,8 +34,17 @@ RingMultiplier::RingMultiplier(long logN, long logQ) : logN(logN) {
 
 	red_ss_array = new _ntl_general_rem_one_struct*[nprimes];
 
+	uint64_t primetest = (1ULL << 59) + 1;
 	for (long i = 0; i < nprimes; ++i) {
-		pVec[i] = pPrimesVec[i];
+		while(true) {
+			primetest += M;
+			if(primeTest(primetest)) {
+				pVec[i] = primetest;
+				break;
+			}
+		}
+	}
+	for (long i = 0; i < nprimes; ++i) {
 		red_ss_array[i] = _ntl_general_rem_one_struct_build(pVec[i]);
 		pInvVec[i] = inv(pVec[i]);
 		pTwok[i] = (2 * ((long) log2(pVec[i]) + 1));
@@ -88,6 +95,28 @@ RingMultiplier::RingMultiplier(long logN, long logQ) : logN(logN) {
 			coeffpinv_array[i][j] = PrepMulModPrecon(pHatInvModp[i][j], pVec[j]);
 		}
 	}
+}
+
+bool RingMultiplier::primeTest(uint64_t p) {
+	if(p < 2) return false;
+	if(p != 2 && p % 2 == 0) return false;
+	uint64_t s = p - 1;
+	while(s % 2 == 0) {
+		s /= 2;
+	}
+	for(long i = 0; i < 200; i++) {
+		uint64_t temp1 = rand();
+		temp1  = (temp1 << 32) | rand();
+		temp1 = temp1 % (p - 1) + 1;
+		uint64_t temp2 = s;
+		uint64_t mod = powMod(temp1,temp2,p);
+		while (temp2 != p - 1 && mod != 1 && mod != p - 1) {
+			mulMod(mod, mod, mod, p);
+		    temp2 *= 2;
+		}
+		if (mod != p - 1 && temp2 % 2 == 0) return false;
+	}
+	return true;
 }
 
 void RingMultiplier::NTT(uint64_t* a, long index) {

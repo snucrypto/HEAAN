@@ -37,6 +37,8 @@ public:
 
 	RingMultiplier(long logN, long logQ);
 
+	bool primeTest(uint64_t p);
+
 	void NTT(uint64_t* a, long index);
 	void INTT(uint64_t* a, long index);
 
