@@ -45,3 +45,8 @@ Ciphertext::~Ciphertext() {
 	if(ax != NULL) delete[] ax;
 	if(bx != NULL) delete[] bx;
 }
+
+void Ciphertext::kill() {
+	if(ax != NULL) delete[] ax;
+	if(bx != NULL) delete[] bx;
+}
