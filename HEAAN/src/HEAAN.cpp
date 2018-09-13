@@ -17,7 +17,7 @@ int main() {
 
 //	TestScheme::testEncrypt(17, 1000, 30, 4);
 //	TestScheme::testEncryptSingle(15, 300, 30);
-//	TestScheme::testBasic(16, 1200, 30, 4);
+	TestScheme::testBasic(16, 1200, 30, 4);
 //	TestScheme::testimult(15, 300, 30, 4);
 
 
@@ -26,7 +26,7 @@ int main() {
 //----------------------------------------------------------------------------------
 
 
-	TestScheme::testRotateFast(16, 1200, 30, 4, 1);
+//	TestScheme::testRotateFast(16, 1200, 30, 4, 1);
 //	TestScheme::testRotate(15, 300, 30, 4, 1);
 //	TestScheme::testConjugate(15, 300, 30, 4);
 

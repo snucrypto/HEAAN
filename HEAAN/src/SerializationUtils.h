@@ -23,20 +23,8 @@ using namespace NTL;
 class SerializationUtils {
 public:
 
-	static void writeCiphertext(Ciphertext& ciphertext, string path);
-	static Ciphertext readCiphertext(string path);
-
-	static void writePlaintext(Plaintext& plaintext, string path);
-	static Plaintext readPlaintext(string path);
-
-	static void writeContext(Ring& context, string path);
-	static Ring readContext(string path);
-
-	static void writeSchemeKeys(Scheme& scheme, string path);
-	static void readSchemeKeys(Scheme& scheme, string path);
-
-	static void writeSecretKey(SecretKey& secretKey, string path);
-	static SecretKey readSecretKey(string path);
+	static void writeCiphertext(Ciphertext* ciphertext, string path);
+	static Ciphertext* readCiphertext(string path);
 
 	static void writeKey(Key* key, string path);
 	static Key* readKey(string path);

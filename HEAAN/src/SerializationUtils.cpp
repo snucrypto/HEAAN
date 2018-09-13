@@ -7,95 +7,55 @@
 */
 #include "SerializationUtils.h"
 
-void SerializationUtils::writeCiphertext(Ciphertext& cipher, string path) {
-	ofstream myfile;
-	myfile.open(path);
-	myfile << "Ciphertext" << endl;
-	myfile << cipher.N << endl;
-	myfile << cipher.logp << endl;
-	myfile << cipher.logq << endl;
-	myfile << cipher.n << endl;
-	for(long i = 0; i < cipher.N; i++) {
-		myfile << cipher.ax[i] << endl;
+void SerializationUtils::writeCiphertext(Ciphertext* cipher, string path) {
+	fstream fout;
+	fout.open(path, ios::binary|ios::out);
+	long N = cipher -> N;
+	long n = cipher->n;
+	long logp = cipher->logp;
+	long logq = cipher->logq;
+	fout.write(reinterpret_cast<char*>(&N), sizeof(long));
+	fout.write(reinterpret_cast<char*>(&n), sizeof(long));
+	fout.write(reinterpret_cast<char*>(&logp), sizeof(long));
+	fout.write(reinterpret_cast<char*>(&logq), sizeof(long));
+
+	long np = ceil((double)logq/8);
+	unsigned char* bytes = new unsigned char[np];
+	for (long i = 0; i < N; ++i) {
+		BytesFromZZ(bytes, cipher->ax[i], np);
+		fout.write(reinterpret_cast<char*>(bytes), np);
 	}
-	for(long i = 0; i < cipher.N; i++) {
-		myfile << cipher.bx[i] << endl;
+	for (long i = 0; i < N; ++i) {
+		BytesFromZZ(bytes, cipher->bx[i], np);
+		fout.write(reinterpret_cast<char*>(bytes), np);
 	}
-	myfile.close();
+	fout.close();
 }
 
-Ciphertext SerializationUtils::readCiphertext(string path) {
-	ifstream myfile(path);
-	if(myfile.is_open()) {
-		string line;
-		getline(myfile, line);
-		getline(myfile, line);
-		long N = atol(line.c_str());
-		getline(myfile, line);
-		long logp = atol(line.c_str());
-		getline(myfile, line);
-		long logq = atol(line.c_str());
-		getline(myfile, line);
-		long n = atol(line.c_str());
-		
-		ZZ* ax = new ZZ[N];
-		ZZ* bx = new ZZ[N];
-		for(long i = 0; i < N; i++) {
-			getline(myfile, line);
-			ax[i] = conv<ZZ>(line.c_str());
-		}
-		for(long i = 0; i < N; i++) {
-			getline(myfile, line);
-			bx[i] = conv<ZZ>(line.c_str());
-		}
-		myfile.close();
-		return Ciphertext(ax, bx, logp, logq, N, n);
-	} else {
-		throw std::invalid_argument("Unable to open file");
+Ciphertext* SerializationUtils::readCiphertext(string path) {
+	long N, n, logp, logq;
+	fstream fin;
+	fin.open(path, ios::binary|ios::in);
+	fin.read(reinterpret_cast<char*>(&N), sizeof(long));
+	fin.read(reinterpret_cast<char*>(&n), sizeof(long));
+	fin.read(reinterpret_cast<char*>(&logp), sizeof(long));
+	fin.read(reinterpret_cast<char*>(&logq), sizeof(long));
+
+	long np = ceil((double)logq/8);
+	unsigned char* bytes = new unsigned char[np];
+
+	ZZ* ax = new ZZ[N];
+	for (long i = 0; i < N; ++i) {
+		fin.read(reinterpret_cast<char*>(bytes), np);
+		ZZFromBytes(ax[i], bytes, np);
 	}
-}
-
-void SerializationUtils::writePlaintext(Plaintext& message, string path) {
-	ofstream myfile;
-	myfile.open(path);
-	myfile << "Plaintext" << endl;
-	myfile << message.N << endl;
-	myfile << message.logp << endl;
-	myfile << message.logq << endl;
-	myfile << message.n << endl;
-	for(long i = 0; i < message.N; i++) {
-		myfile << message.mx[i] << endl;
+	ZZ* bx = new ZZ[N];
+	for (long i = 0; i < N; ++i) {
+		fin.read(reinterpret_cast<char*>(bytes), np);
+		ZZFromBytes(bx[i], bytes, np);
 	}
-	myfile.close();
-}
-
-Plaintext SerializationUtils::readPlaintext(string path) {
-	ifstream myfile(path);
-	if(myfile.is_open()) {
-
-		string line;
-		getline(myfile, line);
-		getline(myfile, line);
-		long N = atol(line.c_str());
-		getline(myfile, line);
-		long logp = atol(line.c_str());
-		getline(myfile, line);
-		long logq = atol(line.c_str());
-		getline(myfile, line);
-		long slots = atol(line.c_str());
-		getline(myfile, line);
-		bool isComplex = atoi(line.c_str());
-
-		ZZ* mx = new ZZ[N];
-		for(long i = 0; i < N; i++) {
-			getline(myfile, line);
-			mx[i] = conv<ZZ>(line.c_str());
-		}
-		myfile.close();
-		return Plaintext(mx, logp, logq, slots, isComplex);
-	} else {
-		throw std::invalid_argument("Unable to open file");
-	}
+	fin.close();
+	return new Ciphertext(ax, bx, logp, logq, N, n);
 }
 
 void SerializationUtils::writeKey(Key* key, string path) {
