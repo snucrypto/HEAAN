@@ -19,7 +19,7 @@ void SerializationUtils::writeCiphertext(Ciphertext* cipher, string path) {
 	fout.write(reinterpret_cast<char*>(&logp), sizeof(long));
 	fout.write(reinterpret_cast<char*>(&logq), sizeof(long));
 
-	long np = ceil((double)logq/8);
+	long np = ceil(((double)logq + 1)/8);
 	unsigned char* bytes = new unsigned char[np];
 	for (long i = 0; i < N; ++i) {
 		BytesFromZZ(bytes, cipher->ax[i], np);
@@ -41,7 +41,7 @@ Ciphertext* SerializationUtils::readCiphertext(string path) {
 	fin.read(reinterpret_cast<char*>(&logp), sizeof(long));
 	fin.read(reinterpret_cast<char*>(&logq), sizeof(long));
 
-	long np = ceil((double)logq/8);
+	long np = ceil(((double)logq + 1)/8);
 	unsigned char* bytes = new unsigned char[np];
 
 	ZZ* ax = new ZZ[N];
