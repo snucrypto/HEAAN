@@ -183,7 +183,6 @@ void TestScheme::testRotateFast(long logN, long logQ, long logp, long logn, long
 	long n = (1 << logn);
 	long r = (1 << logr);
 	scheme.addLeftRotKey(secretKey, r);
-
 	complex<double>* mvec = EvaluatorUtils::randomComplexArray(n);
 	Ciphertext cipher = scheme.encrypt(mvec, n, logp, logQ);
 

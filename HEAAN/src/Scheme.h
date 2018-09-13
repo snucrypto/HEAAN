@@ -33,11 +33,15 @@ private:
 public:
 	Ring& ring;
 
-	map<long, Key> keyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
-	map<long, Key> leftRotKeyMap; ///< contain left rotation keys, if generated
-	map<long, BootContext> bootKeyMap;
+	bool isSerialized;
 
-	Scheme(SecretKey& secretKey, Ring& ring);
+	map<long, Key*> keyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
+	map<long, Key*> leftRotKeyMap; ///< contain left rotation keys, if generated
+
+	map<long, string> serKeyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
+	map<long, string> serLeftRotKeyMap; ///< contain left rotation keys, if generated
+
+	Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized = false);
 
 	//----------------------------------------------------------------------------------
 	//   KEYS GENERATION
@@ -59,6 +63,10 @@ public:
 	void addRightRotKeys(SecretKey& secretKey);
 
 	void addBootKey(SecretKey& secretKey, long logl, long logp);
+
+	void serializeRotKey(long r, string path);
+
+	void deserializeRotKey(long r, string path);
 
 
 	//----------------------------------------------------------------------------------

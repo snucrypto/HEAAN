@@ -42,6 +42,6 @@ Ciphertext& Ciphertext::operator=(const Ciphertext& o) {
 }
 
 Ciphertext::~Ciphertext() {
-	delete[] ax;
-	delete[] bx;
+	if(ax != NULL) delete[] ax;
+	if(bx != NULL) delete[] bx;
 }

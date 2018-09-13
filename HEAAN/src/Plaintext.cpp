@@ -31,3 +31,7 @@ Plaintext& Plaintext::operator=(const Plaintext& o) {
 	}
 	return *this;
 }
+
+Plaintext::~Plaintext() {
+	if(mx != NULL) delete[] mx;
+}

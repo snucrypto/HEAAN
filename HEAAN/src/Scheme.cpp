@@ -9,9 +9,9 @@
 
 #include "NTL/BasicThreadPool.h"
 #include "StringUtils.h"
-//-----------------------------------------
+#include "SerializationUtils.h"
 
-Scheme::Scheme(SecretKey& secretKey, Ring& ring) : ring(ring) {
+Scheme::Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized) : ring(ring), isSerialized(isSerialized) {
 	addEncKey(secretKey);
 	addMultKey(secretKey);
 };
@@ -30,12 +30,18 @@ void Scheme::addEncKey(SecretKey& secretKey) {
 	np = ceil((2 * ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* rax = ring.toNTT(ax, np);
 	uint64_t* rbx = ring.toNTT(bx, np);
-
 	delete[] ax;
 	delete[] bx;
 	delete[] ex;
-
-	keyMap.insert(pair<long, Key>(ENCRYPTION, Key(rax, rbx)));
+	Key* key = new Key(rax, rbx, ring.N, np);
+	if(isSerialized) {
+		string path = "serialized/ENCRYPTION.txt";
+		SerializationUtils::writeKey(key, path);
+		serKeyMap.insert(pair<long, string>(ENCRYPTION, path));
+		delete key;
+	} else {
+		keyMap.insert(pair<long, Key*>(ENCRYPTION, new Key(rax, rbx, ring.N, np)));
+	}
 }
 
 void Scheme::addMultKey(SecretKey& secretKey) {
@@ -64,7 +70,15 @@ void Scheme::addMultKey(SecretKey& secretKey) {
 	delete[] ex;
 	delete[] sxsx;
 
-	keyMap.insert(pair<long, Key>(MULTIPLICATION, Key(rax, rbx)));
+	Key* key = new Key(rax, rbx, ring.N, np);
+	if(isSerialized) {
+		string path = "serialized/MULTIPLICATION.txt";
+		SerializationUtils::writeKey(key, path);
+		serKeyMap.insert(pair<long, string>(MULTIPLICATION, path));
+		delete key;
+	} else {
+		keyMap.insert(pair<long, Key*>(MULTIPLICATION, new Key(rax, rbx, ring.N, np)));
+	}
 }
 
 void Scheme::addConjKey(SecretKey& secretKey) {
@@ -91,8 +105,15 @@ void Scheme::addConjKey(SecretKey& secretKey) {
 	delete[] bx;
 	delete[] ex;
 	delete[] sxconj;
-
-	keyMap.insert(pair<long, Key>(CONJUGATION, Key(rax, rbx)));
+	Key* key = new Key(rax, rbx, ring.N, np);
+	if(isSerialized) {
+		string path = "serialized/CONJUGATION.txt";
+		SerializationUtils::writeKey(key, path);
+		serKeyMap.insert(pair<long, string>(CONJUGATION, path));
+		delete key;
+	} else {
+		keyMap.insert(pair<long, Key*>(CONJUGATION, new Key(rax, rbx, ring.N, np)));
+	}
 }
 
 void Scheme::addLeftRotKey(SecretKey& secretKey, long r) {
@@ -120,12 +141,20 @@ void Scheme::addLeftRotKey(SecretKey& secretKey, long r) {
 	delete[] ex;
 	delete[] spow;
 
-	leftRotKeyMap.insert(pair<long, Key>(r, Key(rax, rbx)));
+	Key* key = new Key(rax, rbx, ring.N, np);
+	if(isSerialized) {
+		string path = "serialized/ROTATION_" + to_string(r) + ".txt";
+		SerializationUtils::writeKey(key, path);
+		serLeftRotKeyMap.insert(pair<long, string>(r, path));
+		delete key;
+	} else {
+		leftRotKeyMap.insert(pair<long, Key*>(r, new Key(rax, rbx, ring.N, np)));
+	}
 }
 
 void Scheme::addRightRotKey(SecretKey& secretKey, long r) {
-	long idx = ring.N/2 - r;
-	if(leftRotKeyMap.find(idx) == leftRotKeyMap.end()) {
+	long idx = ring.Nh - r;
+	if(leftRotKeyMap.find(idx) == leftRotKeyMap.end() && serLeftRotKeyMap.find(idx) == serLeftRotKeyMap.end()) {
 		addLeftRotKey(secretKey, idx);
 	}
 }
@@ -133,7 +162,7 @@ void Scheme::addRightRotKey(SecretKey& secretKey, long r) {
 void Scheme::addLeftRotKeys(SecretKey& secretKey) {
 	for (long i = 0; i < ring.logN - 1; ++i) {
 		long idx = 1 << i;
-		if(leftRotKeyMap.find(idx) == leftRotKeyMap.end()) {
+		if(leftRotKeyMap.find(idx) == leftRotKeyMap.end() && serLeftRotKeyMap.find(idx) == serLeftRotKeyMap.end()) {
 			addLeftRotKey(secretKey, idx);
 		}
 	}
@@ -141,8 +170,8 @@ void Scheme::addLeftRotKeys(SecretKey& secretKey) {
 
 void Scheme::addRightRotKeys(SecretKey& secretKey) {
 	for (long i = 0; i < ring.logN - 1; ++i) {
-		long idx = ring.N/2 - (1 << i);
-		if(leftRotKeyMap.find(idx) == leftRotKeyMap.end()) {
+		long idx = ring.Nh - (1 << i);
+		if(leftRotKeyMap.find(idx) == leftRotKeyMap.end() && serLeftRotKeyMap.find(idx) == serLeftRotKeyMap.end()) {
 			addLeftRotKey(secretKey, idx);
 		}
 	}
@@ -159,17 +188,30 @@ void Scheme::addBootKey(SecretKey& secretKey, long logl, long logp) {
 	long m = 1 << (logl - loglh);
 
 	for (long i = 1; i < k; ++i) {
-		if(leftRotKeyMap.find(i) == leftRotKeyMap.end()) {
+		if(leftRotKeyMap.find(i) == leftRotKeyMap.end() && serLeftRotKeyMap.find(i) == serLeftRotKeyMap.end()) {
 			addLeftRotKey(secretKey, i);
 		}
 	}
 
 	for (long i = 1; i < m; ++i) {
 		long idx = i * k;
-		if(leftRotKeyMap.find(idx) == leftRotKeyMap.end()) {
+		if(leftRotKeyMap.find(idx) == leftRotKeyMap.end() && serLeftRotKeyMap.find(idx) == serLeftRotKeyMap.end()) {
 			addLeftRotKey(secretKey, idx);
 		}
 	}
+}
+
+void Scheme::serializeRotKey(long r, string path) {
+	map<long, Key*>::iterator itr = leftRotKeyMap.find(r);
+	if (itr != leftRotKeyMap.end()) {
+		SerializationUtils::writeKey(itr->second, path);
+		delete itr->second;
+		leftRotKeyMap.erase(itr);
+	}
+}
+
+void Scheme::deserializeRotKey(long r, string path) {
+	leftRotKeyMap.insert(pair<long, Key*>(r, SerializationUtils::readKey(path)));
 }
 
 Plaintext Scheme::encode(double* vals, long n, long logp, long logq) {
@@ -227,14 +269,15 @@ Ciphertext Scheme::encryptMsg(Plaintext& msg) {
 	ZZ* vx = new ZZ[ring.N];
 
 	ring.sampleZO(vx);
-	Key key = keyMap.at(ENCRYPTION);
+
+	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(ENCRYPTION)) : keyMap.at(ENCRYPTION);
 
 	long np = ceil((1 + ring.logQQ + ring.logN + 2)/59.0);
-	ring.multNTT(ax, vx, key.rax, np, qQ);
+	ring.multNTT(ax, vx, key->rax, np, qQ);
 	ring.sampleGauss(ex);
 	ring.addAndEqual(ax, ex, qQ);
 
-	ring.multNTT(bx, vx, key.rbx, np, qQ);
+	ring.multNTT(bx, vx, key->rbx, np, qQ);
 	ring.sampleGauss(ex);
 	ring.addAndEqual(bx, ex, qQ);
 
@@ -245,6 +288,7 @@ Ciphertext Scheme::encryptMsg(Plaintext& msg) {
 
 	delete[] ex;
 	delete[] vx;
+	if(isSerialized) delete key;
 
 	return Ciphertext(ax, bx, msg.logp, msg.logq, msg.N, msg.n);
 }
@@ -460,15 +504,15 @@ Ciphertext Scheme::mult(Ciphertext& cipher1, Ciphertext& cipher2) {
 	ring.addNTTAndEqual(ra2, rb2, np);
 	ring.multDNTT(axbx, ra1, ra2, np, q);
 
-	Key key = keyMap.at(MULTIPLICATION);
+	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(MULTIPLICATION)) : keyMap.at(MULTIPLICATION);
 
 	ZZ* axmult = new ZZ[ring.N];
 	ZZ* bxmult = new ZZ[ring.N];
 
 	np = ceil((cipher1.logq + ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* raa = ring.toNTT(axax, np);
-	ring.multDNTT(axmult, raa, key.rax, np, qQ);
-	ring.multDNTT(bxmult, raa, key.rbx, np, qQ);
+	ring.multDNTT(axmult, raa, key->rax, np, qQ);
+	ring.multDNTT(bxmult, raa, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(axmult, ring.logQ);
 	ring.rightShiftAndEqual(bxmult, ring.logQ);
@@ -486,6 +530,8 @@ Ciphertext Scheme::mult(Ciphertext& cipher1, Ciphertext& cipher2) {
 	delete[] rb1;
 	delete[] rb2;
 	delete[] raa;
+
+	if(isSerialized) delete key;
 
 	return Ciphertext(axmult, bxmult, cipher1.logp + cipher2.logp, cipher1.logq, cipher1.N, cipher1.n);
 }
@@ -511,12 +557,12 @@ void Scheme::multAndEqual(Ciphertext& cipher1, Ciphertext& cipher2) {
 	ring.addNTTAndEqual(ra2, rb2, np);
 	ring.multDNTT(axbx, ra1, ra2, np, q);
 
-	Key key = keyMap.at(MULTIPLICATION);
+	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(MULTIPLICATION)) : keyMap.at(MULTIPLICATION);
 
 	np = ceil((cipher1.logq + ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* raa = ring.toNTT(axax, np);
-	ring.multDNTT(cipher1.ax, raa, key.rax, np, qQ);
-	ring.multDNTT(cipher1.bx, raa, key.rbx, np, qQ);
+	ring.multDNTT(cipher1.ax, raa, key->rax, np, qQ);
+	ring.multDNTT(cipher1.bx, raa, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(cipher1.ax, ring.logQ);
 	ring.rightShiftAndEqual(cipher1.bx, ring.logQ);
@@ -536,6 +582,8 @@ void Scheme::multAndEqual(Ciphertext& cipher1, Ciphertext& cipher2) {
 	delete[] rb1;
 	delete[] rb2;
 	delete[] raa;
+
+	if(isSerialized) delete key;
 }
 
 //-----------------------------------------
@@ -561,12 +609,12 @@ Ciphertext Scheme::square(Ciphertext& cipher) {
 	ring.multDNTT(axbx, ra, rb, np, q);
 	ring.addAndEqual(axbx, axbx, q);
 
-	Key key = keyMap.at(MULTIPLICATION);
+	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(MULTIPLICATION)) : keyMap.at(MULTIPLICATION);
 
 	np = ceil((cipher.logq + ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* raa = ring.toNTT(axax, np);
-	ring.multDNTT(axmult, raa, key.rax, np, qQ);
-	ring.multDNTT(bxmult, raa, key.rbx, np, qQ);
+	ring.multDNTT(axmult, raa, key->rax, np, qQ);
+	ring.multDNTT(bxmult, raa, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(axmult, ring.logQ);
 	ring.rightShiftAndEqual(bxmult, ring.logQ);
@@ -581,6 +629,8 @@ Ciphertext Scheme::square(Ciphertext& cipher) {
 	delete[] ra;
 	delete[] rb;
 	delete[] raa;
+
+	if(isSerialized) delete key;
 
 	return Ciphertext(axmult, bxmult, 2 * cipher.logp, cipher.logq, cipher.N, cipher.n);
 }
@@ -607,13 +657,13 @@ void Scheme::squareAndEqual(Ciphertext& cipher) {
 	ring.multDNTT(axbx, ra, rb, np, q);
 	ring.addAndEqual(axbx, axbx, q);
 
-	Key key = keyMap.at(MULTIPLICATION);
+	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(MULTIPLICATION)) : keyMap.at(MULTIPLICATION);
 
 	np = ceil((cipher.logq + ring.logQQ + ring.logN + 2)/59.0);
 
 	uint64_t* raa = ring.toNTT(axax, np);
-	ring.multDNTT(cipher.ax, raa, key.rax, np, qQ);
-	ring.multDNTT(cipher.bx, raa, key.rbx, np, qQ);
+	ring.multDNTT(cipher.ax, raa, key->rax, np, qQ);
+	ring.multDNTT(cipher.bx, raa, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(cipher.ax, ring.logQ);
 	ring.rightShiftAndEqual(cipher.bx, ring.logQ);
@@ -629,6 +679,8 @@ void Scheme::squareAndEqual(Ciphertext& cipher) {
 	delete[] ra;
 	delete[] rb;
 	delete[] raa;
+
+	if(isSerialized) delete key;
 }
 
 //-----------------------------------------
@@ -895,12 +947,12 @@ Ciphertext Scheme::leftRotateFast(Ciphertext& cipher, long r) {
 	ring.leftRotate(bxrot, cipher.bx, r);
 	ring.leftRotate(axrot, cipher.ax, r);
 
-	Key key = leftRotKeyMap.at(r);
+	Key* key = isSerialized ? SerializationUtils::readKey(serLeftRotKeyMap.at(r)) : leftRotKeyMap.at(r);
 
 	long np = ceil((cipher.logq + ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* rarot = ring.toNTT(axrot, np);
-	ring.multDNTT(ax, rarot, key.rax, np, qQ);
-	ring.multDNTT(bx, rarot, key.rbx, np, qQ);
+	ring.multDNTT(ax, rarot, key->rax, np, qQ);
+	ring.multDNTT(bx, rarot, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(ax, ring.logQ);
 	ring.rightShiftAndEqual(bx, ring.logQ);
@@ -910,6 +962,8 @@ Ciphertext Scheme::leftRotateFast(Ciphertext& cipher, long r) {
 	delete[] bxrot;
 	delete[] axrot;
 	delete[] rarot;
+
+	if(isSerialized) delete key;
 
 	return Ciphertext(ax, bx, cipher.logp, cipher.logq, cipher.N, cipher.n);
 }
@@ -923,13 +977,11 @@ void Scheme::leftRotateFastAndEqual(Ciphertext& cipher, long r) {
 
 	ring.leftRotate(bxrot, cipher.bx, r);
 	ring.leftRotate(axrot, cipher.ax, r);
-
-	Key key = leftRotKeyMap.at(r);
-
+	Key* key = isSerialized ? SerializationUtils::readKey(serLeftRotKeyMap.at(r)) : leftRotKeyMap.at(r);
 	long np = ceil((cipher.logq + ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* rarot = ring.toNTT(axrot, np);
-	ring.multDNTT(cipher.ax, rarot, key.rax, np, qQ);
-	ring.multDNTT(cipher.bx, rarot, key.rbx, np, qQ);
+	ring.multDNTT(cipher.ax, rarot, key->rax, np, qQ);
+	ring.multDNTT(cipher.bx, rarot, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(cipher.ax, ring.logQ);
 	ring.rightShiftAndEqual(cipher.bx, ring.logQ);
@@ -939,6 +991,8 @@ void Scheme::leftRotateFastAndEqual(Ciphertext& cipher, long r) {
 	delete[] bxrot;
 	delete[] axrot;
 	delete[] rarot;
+
+	if(isSerialized) delete key;
 }
 
 Ciphertext Scheme::rightRotateFast(Ciphertext& cipher, long r) {
@@ -996,12 +1050,12 @@ Ciphertext Scheme::conjugate(Ciphertext& cipher) {
 	ring.conjugate(bxconj, cipher.bx);
 	ring.conjugate(axconj, cipher.ax);
 
-	Key key = keyMap.at(CONJUGATION);
+	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(CONJUGATION)) : keyMap.at(CONJUGATION);
 
 	long np = ceil((cipher.logq + ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* raconj = ring.toNTT(axconj, np);
-	ring.multDNTT(ax, raconj, key.rax, np, qQ);
-	ring.multDNTT(bx, raconj, key.rbx, np, qQ);
+	ring.multDNTT(ax, raconj, key->rax, np, qQ);
+	ring.multDNTT(bx, raconj, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(ax, ring.logQ);
 	ring.rightShiftAndEqual(bx, ring.logQ);
@@ -1011,6 +1065,8 @@ Ciphertext Scheme::conjugate(Ciphertext& cipher) {
 	delete[] bxconj;
 	delete[] axconj;
 	delete[] raconj;
+
+	if(isSerialized) delete key;
 
 	return Ciphertext(ax, bx, cipher.logp, cipher.logq, cipher.N, cipher.n);
 }
@@ -1025,12 +1081,12 @@ void Scheme::conjugateAndEqual(Ciphertext& cipher) {
 	ring.conjugate(bxconj, cipher.bx);
 	ring.conjugate(axconj, cipher.ax);
 
-	Key key = keyMap.at(CONJUGATION);
+	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(CONJUGATION)) : keyMap.at(CONJUGATION);
 
 	long np = ceil((cipher.logq + ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* raconj = ring.toNTT(axconj, np);
-	ring.multDNTT(cipher.ax, raconj, key.rax, np, qQ);
-	ring.multDNTT(cipher.bx, raconj, key.rbx, np, qQ);
+	ring.multDNTT(cipher.ax, raconj, key->rax, np, qQ);
+	ring.multDNTT(cipher.bx, raconj, key->rbx, np, qQ);
 
 	ring.rightShiftAndEqual(cipher.ax, ring.logQ);
 	ring.rightShiftAndEqual(cipher.bx, ring.logQ);
@@ -1040,6 +1096,8 @@ void Scheme::conjugateAndEqual(Ciphertext& cipher) {
 	delete[] bxconj;
 	delete[] axconj;
 	delete[] raconj;
+
+	if(isSerialized) delete key;
 }
 
 

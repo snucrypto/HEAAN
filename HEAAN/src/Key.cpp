@@ -7,6 +7,11 @@
 */
 #include "Key.h"
 
-Key::Key(uint64_t* rax, uint64_t* rbx) : rax(rax), rbx(rbx) {
+Key::Key(uint64_t* rax, uint64_t* rbx, long N, long np) : rax(rax), rbx(rbx), N(N), np(np) {
 
+}
+
+Key::~Key() {
+	if(rax != NULL) delete[] rax;
+	if(rbx != NULL) delete[] rbx;
 }

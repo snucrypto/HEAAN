@@ -37,8 +37,8 @@ public:
 	static void writeSecretKey(SecretKey& secretKey, string path);
 	static SecretKey readSecretKey(string path);
 
-	static void writeKey(Key& key, string path);
-	static Key readKey(string path);
+	static void writeKey(Key* key, string path);
+	static Key* readKey(string path);
 };
 
 #endif /* SERIALIZATIONUTILS_H_ */

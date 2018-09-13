@@ -97,3 +97,30 @@ Plaintext SerializationUtils::readPlaintext(string path) {
 		throw std::invalid_argument("Unable to open file");
 	}
 }
+
+void SerializationUtils::writeKey(Key* key, string path) {
+	fstream fout;
+	fout.open(path, ios::binary|ios::out);
+	long N = key -> N;
+	long np = key -> np;
+	fout.write(reinterpret_cast<char*>(&N), sizeof(long));
+	fout.write(reinterpret_cast<char*>(&np), sizeof(long));
+	fout.write(reinterpret_cast<char*>(key->rax), N * np * sizeof(uint64_t));
+	fout.write(reinterpret_cast<char*>(key->rbx), N * np * sizeof(uint64_t));
+	fout.close();
+}
+
+Key* SerializationUtils::readKey(string path) {
+	long N, np;
+	fstream fin;
+	fin.open(path, ios::binary|ios::in);
+	fin.read(reinterpret_cast<char*>(&N), sizeof(long));
+	fin.read(reinterpret_cast<char*>(&np), sizeof(long));
+	uint64_t* rax = new uint64_t[N*np];
+	fin.read(reinterpret_cast<char*>(rax), N*np*sizeof(uint64_t));
+	uint64_t* rbx = new uint64_t[N*np];
+	fin.read(reinterpret_cast<char*>(rbx), N*np*sizeof(uint64_t));
+	fin.close();
+	return new Key(rax, rbx, N, np);
+}
+

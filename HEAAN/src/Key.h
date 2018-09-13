@@ -18,11 +18,15 @@ using namespace NTL;
 class Key {
 public:
 
+	long N;
+	long np;
+
 	uint64_t* rax;
 	uint64_t* rbx;
 
-	Key(uint64_t* rax = NULL, uint64_t* rbx = NULL);
+	Key(uint64_t* rax, uint64_t* rbx, long N, long np);
 
+	virtual ~Key();
 };
 
 #endif
