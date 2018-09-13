@@ -37,6 +37,8 @@ public:
 	Ciphertext& operator=(const Ciphertext &o);
 
 	virtual ~Ciphertext();
+	
+	void kill();
 
 };
 
