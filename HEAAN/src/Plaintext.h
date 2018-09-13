@@ -32,7 +32,7 @@ public:
 
 	Plaintext& operator=(const Plaintext &o);
 
-	~Plaintext();
+	virtual ~Plaintext();
 };
 
 #endif

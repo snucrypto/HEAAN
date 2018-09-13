@@ -15,6 +15,7 @@
 #include "Ring.h"
 #include "Scheme.h"
 #include "SecretKey.h"
+#include "Key.h"
 
 using namespace std;
 using namespace NTL;

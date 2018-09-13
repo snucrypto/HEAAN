@@ -33,5 +33,5 @@ Plaintext& Plaintext::operator=(const Plaintext& o) {
 }
 
 Plaintext::~Plaintext() {
-	if(mx != NULL) delete[] mx;
+	if (mx) delete[] mx;
 }

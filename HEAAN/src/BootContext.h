@@ -28,7 +28,7 @@ public:
 	long logp; ///< number of quantized bits
 
 	BootContext(uint64_t** rpvec = NULL, uint64_t** rpvecInv = NULL, uint64_t* rp1 = NULL, uint64_t* rp2 = NULL,
-			long* bndvec = NULL, long* bndvecInv = NULL, long bnd1 = NULL, long bnd2 = NULL, long logp = 0);
+			long* bndvec = NULL, long* bndvecInv = NULL, long bnd1 = 0, long bnd2 = 0, long logp = 0);
 
 };
 

@@ -30,9 +30,11 @@ void Scheme::addEncKey(SecretKey& secretKey) {
 	np = ceil((2 * ring.logQQ + ring.logN + 2)/59.0);
 	uint64_t* rax = ring.toNTT(ax, np);
 	uint64_t* rbx = ring.toNTT(bx, np);
+
 	delete[] ax;
 	delete[] bx;
 	delete[] ex;
+
 	Key* key = new Key(rax, rbx, ring.N, np);
 	if(isSerialized) {
 		string path = "serialized/ENCRYPTION.txt";
@@ -105,6 +107,7 @@ void Scheme::addConjKey(SecretKey& secretKey) {
 	delete[] bx;
 	delete[] ex;
 	delete[] sxconj;
+
 	Key* key = new Key(rax, rbx, ring.N, np);
 	if(isSerialized) {
 		string path = "serialized/CONJUGATION.txt";

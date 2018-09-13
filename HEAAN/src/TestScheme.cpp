@@ -178,7 +178,7 @@ void TestScheme::testRotateFast(long logN, long logQ, long logp, long logn, long
 	TimeUtils timeutils;
 	Ring ring(logN, logQ);
 	SecretKey secretKey(ring);
-	Scheme scheme(secretKey, ring);
+	Scheme scheme(secretKey, ring, true);
 
 	long n = (1 << logn);
 	long r = (1 << logr);
