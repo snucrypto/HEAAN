@@ -7,7 +7,7 @@ all: clean HEAAN run
 HEAAN:
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L/usr/local/lib -o "HEAAN" ../lib/libHEAAN.a run.cpp -I/../src -lgmp -lntl -lm -O2 -std=c++11
+	g++ -L/usr/local/lib -o "HEAAN" ../lib/libHEAAN.a -lntl -lgmp -lm -std=c++11 -O2 run.cpp -I/../src -pthread
 	@echo 'Finished building target: $@'
 	@echo ' '
 

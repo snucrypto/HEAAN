@@ -47,6 +47,14 @@ Ciphertext::~Ciphertext() {
 }
 
 void Ciphertext::kill() {
-	if(ax != NULL) delete[] ax;
-	if(bx != NULL) delete[] bx;
+	if(ax != NULL) {
+		for(long i = 0; i < N; i++) {
+			ax[i].kill();
+		}
+	}
+	if(bx != NULL) {
+		for(long i = 0; i < N; i++) {
+			bx[i].kill();
+		}
+	}
 }

@@ -131,6 +131,11 @@ void TestScheme::testBasic(long logN, long logQ, long logp, long logn) {
 	StringUtils::compare(mcmult, dcmult, n, "cmult");
 
 	cout << "!!! END TEST BASIC !!!" << endl;
+
+	cipher1.kill(); cipher2.kill();
+	cadd.kill(); cmult.kill(); ccmult.kill();
+
+	delete[] dadd; delete[] dmult; delete[] dcmult;
 }
 
 void TestScheme::testimult(long logN, long logQ, long logp, long logn) {
