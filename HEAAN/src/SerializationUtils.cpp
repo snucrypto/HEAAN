@@ -20,12 +20,15 @@ void SerializationUtils::writeCiphertext(Ciphertext* cipher, string path) {
 	fout.write(reinterpret_cast<char*>(&logq), sizeof(long));
 
 	long np = ceil(((double)logq + 1)/8);
+	ZZ q = conv<ZZ>(1) << logq;
 	unsigned char* bytes = new unsigned char[np];
 	for (long i = 0; i < N; ++i) {
+		cipher->ax[i] %= q;
 		BytesFromZZ(bytes, cipher->ax[i], np);
 		fout.write(reinterpret_cast<char*>(bytes), np);
 	}
 	for (long i = 0; i < N; ++i) {
+		cipher->bx[i] %= q;
 		BytesFromZZ(bytes, cipher->bx[i], np);
 		fout.write(reinterpret_cast<char*>(bytes), np);
 	}
