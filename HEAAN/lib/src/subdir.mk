@@ -7,7 +7,6 @@ CPP_SRCS += \
 ../src/BootContext.cpp \
 ../src/Ciphertext.cpp \
 ../src/EvaluatorUtils.cpp \
-../src/HEAAN.cpp \
 ../src/Key.cpp \
 ../src/Plaintext.cpp \
 ../src/Ring.cpp \
@@ -24,7 +23,6 @@ OBJS += \
 ./src/BootContext.o \
 ./src/Ciphertext.o \
 ./src/EvaluatorUtils.o \
-./src/HEAAN.o \
 ./src/Key.o \
 ./src/Plaintext.o \
 ./src/Ring.o \
@@ -41,7 +39,6 @@ CPP_DEPS += \
 ./src/BootContext.d \
 ./src/Ciphertext.d \
 ./src/EvaluatorUtils.d \
-./src/HEAAN.d \
 ./src/Key.d \
 ./src/Plaintext.d \
 ./src/Ring.d \
