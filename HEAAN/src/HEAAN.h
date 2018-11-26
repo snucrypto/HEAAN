@@ -9,7 +9,6 @@
 #include "BootContext.h"
 #include "Ring.h"
 #include "RingMultiplier.h"
-#include "Common.h"
 #include "Ciphertext.h"
 #include "EvaluatorUtils.h"
 #include "Scheme.h"

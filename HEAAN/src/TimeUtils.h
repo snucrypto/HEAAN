@@ -22,16 +22,8 @@ public:
 
 	TimeUtils();
 
-	/**
-	 * starts timer
-	 * @param[in] msg: string message
-	 */
 	void start(string msg);
 
-	/**
-	 * stops timer and prints time elapsed in console
-	 * @param[in] msg: string message
-	 */
 	void stop(string msg);
 
 };

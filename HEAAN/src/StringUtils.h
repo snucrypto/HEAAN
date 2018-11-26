@@ -10,7 +10,6 @@
 
 #include <NTL/ZZ.h>
 
-#include "Common.h"
 #include <complex>
 
 using namespace std;

@@ -9,6 +9,7 @@
 #define HEAAN_PLAINTEXT_H_
 
 #include <NTL/ZZ.h>
+#include "Params.h"
 
 using namespace std;
 using namespace NTL;
@@ -16,21 +17,14 @@ using namespace NTL;
 class Plaintext {
 public:
 
-	ZZ* mx;
-	long N;
+	ZZ* mx = new ZZ[N];
 
 	long logp;
 	long logq;
+	long n;
 
-	long n; ///< number of slots in ciphertext
 
-	//-----------------------------------------
-
-	Plaintext(ZZ* mx = NULL, long logp = 0, long logq = 0, long N = 1, long n = 1);
-
-	Plaintext(const Plaintext& o);
-
-	Plaintext& operator=(const Plaintext &o);
+	Plaintext(long logp = 0, long logq = 0, long n = 0);
 
 	virtual ~Plaintext();
 };

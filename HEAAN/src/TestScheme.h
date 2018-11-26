@@ -17,13 +17,11 @@ public:
 	//----------------------------------------------------------------------------------
 	
 
-	static void testEncrypt(long logN, long logQ, long logp, long logn);
-
-	static void testEncryptSingle(long logN, long logQ, long logp);
-
-	static void testBasic(long logN, long logQ, long logp, long logn);
-
-	static void testimult(long logN, long logQ, long logp, long logn);
+	static void testEncrypt(long logq, long logp, long logn);
+	static void testEncryptSingle(long logq, long logp);
+	static void testAdd(long logq, long logp, long logn);
+	static void testMult(long logq, long logp, long logn);
+	static void testimult(long logq, long logp, long logn);
 
 
 	//----------------------------------------------------------------------------------
@@ -31,11 +29,9 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	static void testRotateFast(long logN, long logQ, long logp, long logn, long r);
+	static void testRotateFast(long logq, long logp, long logn, long r);
 
-	static void testRotate(long logN, long logQ, long logp, long logn, long r);
-
-	static void testConjugate(long logN, long logQ, long logp, long logn);
+	static void testConjugate(long logq, long logp, long logn);
 
 
 	//----------------------------------------------------------------------------------
@@ -43,13 +39,9 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	static void testPowerOf2(long logN, long logQ, long logp, long logn, long logdeg);
+	static void testPowerOf2(long logq, long logp, long logn, long logdeg);
 
-	static void testPower(long logN, long logQ, long logp, long logn, long degree);
-
-	static void testProdOfPo2(long logN, long logQ, long logp, long logn, long logdeg);
-
-	static void testProd(long logN, long logQ, long logp, long logn, long degree);
+	static void testPower(long logq, long logp, long logn, long degree);
 
 
 	//----------------------------------------------------------------------------------
@@ -57,31 +49,17 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	static void testInverse(long logN, long logQ, long logp, long logn, long steps);
+	static void testInverse(long logq, long logp, long logn, long steps);
 
-	static void testLogarithm(long logN, long logQ, long logp, long logn, long degree);
+	static void testLogarithm(long logq, long logp, long logn, long degree);
 
-	static void testExponent(long logN, long logQ, long logp, long logn, long degree);
+	static void testExponent(long logq, long logp, long logn, long degree);
 
-	static void testExponentLazy(long logN, long logQ, long logp, long logn, long degree);
+	static void testExponentLazy(long logq, long logp, long logn, long degree);
 
-	static void testSigmoid(long logN, long logQ, long logp, long logn, long degree);
+	static void testSigmoid(long logq, long logp, long logn, long degree);
 
-	static void testSigmoidLazy(long logN, long logQ, long logp, long logn, long degree);
-
-
-	//----------------------------------------------------------------------------------
-	//   DFT TESTS
-	//----------------------------------------------------------------------------------
-
-
-	static void testDFTBatch(long logN, long logQ, long logp, long logn, long logfft);
-
-	static void testDFTLazyBatch(long logN, long logQ, long logp, long logn, long logfft);
-
-	static void testDFTLazyBatchMultipleHadamard(long logN, long logQ, long logp, long logn, long logfftdim, long logh);
-
-	static void testWriteAndRead(long logN, long logQ, long logp, long logn);
+	static void testSigmoidLazy(long logq, long logp, long logn, long degree);
 
 
 	//----------------------------------------------------------------------------------
@@ -89,9 +67,11 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	static void testBootstrap(long logN, long logq, long logQ, long logn, long nu, long logT);
+	static void testWriteAndRead(long logq, long logp, long logn);
 
-	static void testBootstrapSingleReal(long logN, long logq, long logQ, long nu, long logT);
+	static void testBootstrap(long logq, long logQ, long logp, long logn, long logT);
+
+	static void testBootstrapSingleReal(long logq, long logQ, long logp, long logT);
 
 	static void test();
 };

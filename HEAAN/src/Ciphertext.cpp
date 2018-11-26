@@ -8,53 +8,39 @@
 #include "Ciphertext.h"
 
 #include <NTL/tools.h>
-#include "Common.h"
 
-Ciphertext::Ciphertext(ZZ* ax, ZZ* bx, long logp, long logq, long N, long n) :
-		ax(ax), bx(bx), logp(logp), logq(logq), N(N), n(n) {
-
+Ciphertext::Ciphertext(long logp, long logq, long n) : logp(logp), logq(logq), n(n) {
 }
 
-Ciphertext::Ciphertext(const Ciphertext& o) : logp(o.logp), logq(o.logq), N(o.N), n(o.n) {
-	ax = new ZZ[N];
-	bx = new ZZ[N];
+Ciphertext::Ciphertext(const Ciphertext& o) : logp(o.logp), logq(o.logq), n(o.n) {
 	for (long i = 0; i < N; ++i) {
 		ax[i] = o.ax[i];
 		bx[i] = o.bx[i];
 	}
 }
 
-Ciphertext& Ciphertext::operator=(const Ciphertext& o) {
-	if(this == &o) return *this;
-	delete[] ax;
-	delete[] bx;
+void Ciphertext::copyParams(Ciphertext& o) {
 	logp = o.logp;
 	logq = o.logq;
-	N = o.N;
 	n = o.n;
-	ax = new ZZ[N];
-	bx = new ZZ[N];
+}
+
+void Ciphertext::copy(Ciphertext& o) {
+	copyParams(o);
 	for (long i = 0; i < N; ++i) {
 		ax[i] = o.ax[i];
 		bx[i] = o.bx[i];
 	}
-	return *this;
+}
+
+void Ciphertext::free() {
+	for (long i = 0; i < N; ++i) {
+		clear(ax[i]);
+		clear(bx[i]);
+	}
 }
 
 Ciphertext::~Ciphertext() {
-	if(ax != NULL) delete[] ax;
-	if(bx != NULL) delete[] bx;
-}
-
-void Ciphertext::kill() {
-	if(ax != NULL) {
-		for(long i = 0; i < N; i++) {
-			ax[i].kill();
-		}
-	}
-	if(bx != NULL) {
-		for(long i = 0; i < N; i++) {
-			bx[i].kill();
-		}
-	}
+	delete[] ax;
+	delete[] bx;
 }

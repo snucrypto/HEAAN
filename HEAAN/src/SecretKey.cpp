@@ -7,7 +7,6 @@
 */
 #include "SecretKey.h"
 
-SecretKey::SecretKey(Ring& ring) : N(ring.N) {
-	sx = new ZZ[N];
+SecretKey::SecretKey(Ring& ring) {
 	ring.sampleHWT(sx);
 }

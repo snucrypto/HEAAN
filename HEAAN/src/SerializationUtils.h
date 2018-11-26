@@ -11,10 +11,7 @@
 #include <iostream>
 
 #include "Ciphertext.h"
-#include "Plaintext.h"
-#include "Ring.h"
-#include "Scheme.h"
-#include "SecretKey.h"
+#include "Params.h"
 #include "Key.h"
 
 using namespace std;
@@ -23,7 +20,7 @@ using namespace NTL;
 class SerializationUtils {
 public:
 
-	static void writeCiphertext(Ciphertext* ciphertext, string path);
+	static void writeCiphertext(Ciphertext& ciphertext, string path);
 	static Ciphertext* readCiphertext(string path);
 
 	static void writeKey(Key* key, string path);

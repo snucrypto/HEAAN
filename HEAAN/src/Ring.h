@@ -5,8 +5,8 @@
 * You should have received a copy of the license along with this
 * work.  If not, see <http://creativecommons.org/licenses/by-nc/3.0/>.
 */
-#ifndef HEAAN_RING2X_H_
-#define HEAAN_RING2X_H_
+#ifndef HEAAN_RING_H_
+#define HEAAN_RING_H_
 
 #include <NTL/ZZ.h>
 #include <NTL/RR.h>
@@ -18,45 +18,19 @@
 using namespace std;
 using namespace NTL;
 
-static string LOGARITHM = "Logarithm"; ///< log(x)
-static string EXPONENT  = "Exponent"; ///< exp(x)
-static string SIGMOID   = "Sigmoid"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
-
 static RR Pi = ComputePi_RR();
 
 class Ring {
 
 public:
 
-	long logN;
-	long logM;
-	long logNh;
-
-	long N;
-	long M;
-	long Nh;
-
-	long logQ; ///< log of Q
-	double sigma; ///< standard deviation for Gaussian distribution
-	long h; ///< parameter for HWT distribution
-
-	long logQQ; ///< log of PQ
-
-	ZZ Q; ///< Q corresponds to the highest modulus
-	ZZ QQ; ///< PQ = Q * Q
-
 	ZZ* qpows;
-
-	long* rotGroup; ///< auxiliary information about rotation group indexes for batch encoding
-	complex<double>* ksiPows; ///< storing ksi pows for fft calculation
-
-	map<string, double*> taylorCoeffsMap;
-
-	map<long, BootContext> bootContextMap;
-
+	long* rotGroup;
+	complex<double>* ksiPows;
+	map<long, BootContext*> bootContextMap;
 	RingMultiplier multiplier;
 
-	Ring(long logN, long logQ, double sigma = 3.2, long h = 64);
+	Ring();
 
 
 	//----------------------------------------------------------------------------------
@@ -93,25 +67,25 @@ public:
 
 	long maxBits(const ZZ* f, long n);
 
-	uint64_t* toNTT(ZZ* x, long np);
+	void CRT(uint64_t* rx, ZZ* x, const long np);
 
-	void addNTTAndEqual(uint64_t* ra, uint64_t* rb, long np);
+	void addNTTAndEqual(uint64_t* ra, uint64_t* rb, const long np);
 
-	void mult(ZZ* x, ZZ* a, ZZ* b, long np, ZZ& q);
+	void mult(ZZ* x, ZZ* a, ZZ* b, long np, const ZZ& q);
 
-	void multNTT(ZZ* x, ZZ* a, uint64_t* rb, long np, ZZ& q);
+	void multNTT(ZZ* x, ZZ* a, uint64_t* rb, long np, const ZZ& q);
 
-	void multDNTT(ZZ* x, uint64_t* a, uint64_t* rb, long np, ZZ& q);
+	void multDNTT(ZZ* x, uint64_t* a, uint64_t* rb, long np, const ZZ& q);
 
-	void multAndEqual(ZZ* a, ZZ* b, long np, ZZ& q);
+	void multAndEqual(ZZ* a, ZZ* b, long np, const ZZ& q);
 
-	void multNTTAndEqual(ZZ* a, uint64_t* rb, long np, ZZ& q);
+	void multNTTAndEqual(ZZ* a, uint64_t* rb, long np, const ZZ& q);
 
-	void square(ZZ* x, ZZ* a, long np, ZZ& q);
+	void square(ZZ* x, ZZ* a, long np, const ZZ& q);
 
-	void squareNTT(ZZ* x, uint64_t* ra, long np, ZZ& q);
+	void squareNTT(ZZ* x, uint64_t* ra, long np, const ZZ& q);
 
-	void squareAndEqual(ZZ* a, long np, ZZ& q);
+	void squareAndEqual(ZZ* a, long np, const ZZ& q);
 
 
 	//----------------------------------------------------------------------------------
@@ -119,37 +93,37 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void mod(ZZ* res, ZZ* p, ZZ& mod);
+	void mod(ZZ* res, ZZ* p, const ZZ& QQ);
 
-	void modAndEqual(ZZ* p, ZZ& mod);
+	void modAndEqual(ZZ* p, const ZZ& QQ);
 
 	void negate(ZZ* res, ZZ* p);
 
 	void negateAndEqual(ZZ* p);
 
-	void add(ZZ* res, ZZ* p1, ZZ* p2, ZZ& mod);
+	void add(ZZ* res, ZZ* p1, ZZ* p2, const ZZ& QQ);
 
-	void addAndEqual(ZZ* p1, ZZ* p2, ZZ& mod);
+	void addAndEqual(ZZ* p1, ZZ* p2, const ZZ& QQ);
 
-	void sub(ZZ* res, ZZ* p1, ZZ* p2, ZZ& mod);
+	void sub(ZZ* res, ZZ* p1, ZZ* p2, const ZZ& QQ);
 
-	void subAndEqual(ZZ* p1, ZZ* p2, ZZ& mod);
+	void subAndEqual(ZZ* p1, ZZ* p2, const ZZ& QQ);
 
-	void subAndEqual2(ZZ* p1, ZZ* p2, ZZ& mod);
+	void subAndEqual2(ZZ* p1, ZZ* p2, const ZZ& QQ);
 
 	void multByMonomial(ZZ* res, ZZ* p, long mDeg);
 
 	void multByMonomialAndEqual(ZZ* p, long mDeg);
 
-	void multByConst(ZZ* res, ZZ* p, ZZ& cnst, ZZ& mod);
+	void multByConst(ZZ* res, ZZ* p, ZZ& cnst, const ZZ& QQ);
 
-	void multByConstAndEqual(ZZ* p, ZZ& cnst, ZZ& mod);
+	void multByConstAndEqual(ZZ* p, ZZ& cnst, const ZZ& QQ);
 
-	void leftShift(ZZ* res, ZZ* p, long bits, ZZ& mod);
+	void leftShift(ZZ* res, ZZ* p, const long bits, const ZZ& QQ);
 
-	void leftShiftAndEqual(ZZ* p, long bits, ZZ& mod);
+	void leftShiftAndEqual(ZZ* p, const long bits, const ZZ& QQ);
 
-	void doubleAndEqual(ZZ* p, ZZ& mod);
+	void doubleAndEqual(ZZ* p, const ZZ& QQ);
 
 	void rightShift(ZZ* res, ZZ* p, long bits);
 
@@ -171,7 +145,9 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void sampleGauss(ZZ* res);
+	void subFromGaussAndEqual(ZZ* res, const ZZ& q);
+
+	void addGaussAndEqual(ZZ* res, const ZZ& q);
 
 	void sampleHWT(ZZ* res);
 

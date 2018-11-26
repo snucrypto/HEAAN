@@ -9,22 +9,17 @@
 #define HEAAN_KEY_H_
 
 #include <NTL/ZZ.h>
+#include "Params.h"
 
 using namespace NTL;
 
-/**
- * Key is an RLWE instance (ax, bx = kx + ex - ax * sx) in the ring Z_q[X] / (X^N + 1)
- */
 class Key {
 public:
 
-	long N;
-	long np;
+	uint64_t* rax = new uint64_t[Nnprimes]();
+	uint64_t* rbx = new uint64_t[Nnprimes]();
 
-	uint64_t* rax;
-	uint64_t* rbx;
-
-	Key(uint64_t* rax, uint64_t* rbx, long N, long np);
+	Key();
 
 	virtual ~Key();
 };

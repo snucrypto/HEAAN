@@ -13,7 +13,6 @@
 #include <complex>
 
 #include "BootContext.h"
-#include "Common.h"
 #include "SecretKey.h"
 #include "Ciphertext.h"
 #include "Plaintext.h"
@@ -64,27 +63,23 @@ public:
 
 	void addBootKey(SecretKey& secretKey, long logl, long logp);
 
-	void serializeRotKey(long r, string path);
-
-	void deserializeRotKey(long r, string path);
-
 
 	//----------------------------------------------------------------------------------
 	//   ENCODING & DECODING
 	//----------------------------------------------------------------------------------
 
 
-	Plaintext encode(complex<double>* vals, long n, long logp, long logq);
+	void encode(Plaintext& plain, complex<double>* vals, long n, long logp, long logq);
 
-	Plaintext encode(double* vals, long n, long logp, long logq);
+	void encode(Plaintext& plain, double* vals, long n, long logp, long logq);
 
-	complex<double>* decode(Plaintext& msg);
+	complex<double>* decode(Plaintext& plain);
 
-	Plaintext encodeSingle(complex<double> val, long logp, long logq);
+	void encodeSingle(Plaintext& plain, complex<double> val, long logp, long logq);
 
-	Plaintext encodeSingle(double val, long logp, long logq);
+	void encodeSingle(Plaintext& plain, double val, long logp, long logq);
 
-	complex<double> decodeSingle(Plaintext& msg);
+	complex<double> decodeSingle(Plaintext& plain);
 
 
 	//----------------------------------------------------------------------------------
@@ -92,21 +87,21 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	Ciphertext encryptMsg(Plaintext& msg);
+	void encryptMsg(Ciphertext& cipher, Plaintext& plain);
 
-	Plaintext decryptMsg(SecretKey& secretKey, Ciphertext& cipher);
+	void decryptMsg(Plaintext& plain, SecretKey& secretKey, Ciphertext& cipher);
 
-	Ciphertext encrypt(complex<double>* vals, long n, long logp, long logq);
+	void encrypt(Ciphertext& cipher, complex<double>* vals, long n, long logp, long logq);
 
-	Ciphertext encrypt(double* vals, long n, long logp, long logq);
+	void encrypt(Ciphertext& cipher, double* vals, long n, long logp, long logq);
 
-	Ciphertext encryptZeros(long n, long logp, long logq);
+	void encryptZeros(Ciphertext& cipher, long n, long logp, long logq);
 
 	complex<double>* decrypt(SecretKey& secretKey, Ciphertext& cipher);
 
-	Ciphertext encryptSingle(complex<double> val, long logp, long logq);
+	void encryptSingle(Ciphertext& cipher, complex<double> val, long logp, long logq);
 
-	Ciphertext encryptSingle(double val, long logp, long logq);
+	void encryptSingle(Ciphertext& cipher, double val, long logp, long logq);
 
 	complex<double> decryptSingle(SecretKey& secretKey, Ciphertext& cipher);
 
@@ -115,19 +110,19 @@ public:
 	//   HOMOMORPHIC OPERATIONS
 	//----------------------------------------------------------------------------------
 
-	Ciphertext negate(Ciphertext& cipher);
+	void negate(Ciphertext& res, Ciphertext& cipher);
 
 	void negateAndEqual(Ciphertext& cipher);
 
-	Ciphertext add(Ciphertext& cipher1, Ciphertext& cipher2);
+	void add(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2);
 
 	void addAndEqual(Ciphertext& cipher1, Ciphertext& cipher2);
 
-	Ciphertext addConst(Ciphertext& cipher, double cnst, long logp);
+	void addConst(Ciphertext& res, Ciphertext& cipher, double cnst, long logp);
 
-	Ciphertext addConst(Ciphertext& cipher, RR& cnst, long logp);
+	void addConst(Ciphertext& res, Ciphertext& cipher, RR& cnst, long logp);
 
-	Ciphertext addConst(Ciphertext& cipher, complex<double> cnst, long logp);
+	void addConst(Ciphertext& res, Ciphertext& cipher, complex<double> cnst, long logp);
 
 	void addConstAndEqual(Ciphertext& cipher, double cnst, long logp);
 
@@ -135,33 +130,33 @@ public:
 
 	void addConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp);
 
-	Ciphertext sub(Ciphertext& cipher1, Ciphertext& cipher2);
+	void sub(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2);
 
 	void subAndEqual(Ciphertext& cipher1, Ciphertext& cipher2);
 
 	void subAndEqual2(Ciphertext& cipher1, Ciphertext& cipher2);
 
-	Ciphertext imult(Ciphertext& cipher);
+	void imult(Ciphertext& res, Ciphertext& cipher);
 
-	Ciphertext idiv(Ciphertext& cipher);
+	void idiv(Ciphertext& res, Ciphertext& cipher);
 
 	void imultAndEqual(Ciphertext& cipher);
 
 	void idivAndEqual(Ciphertext& cipher);
 
-	Ciphertext mult(Ciphertext& cipher1, Ciphertext& cipher2);
+	void mult(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2);
 
 	void multAndEqual(Ciphertext& cipher1, Ciphertext& cipher2);
 
-	Ciphertext square(Ciphertext& cipher);
+	void square(Ciphertext& res, Ciphertext& cipher);
 
 	void squareAndEqual(Ciphertext& cipher);
 
-	Ciphertext multByConst(Ciphertext& cipher, double cnst, long logp);
+	void multByConst(Ciphertext& res, Ciphertext& cipher, double cnst, long logp);
 
-	Ciphertext multByConst(Ciphertext& cipher, complex<double> cnst, long logp);
+	void multByConst(Ciphertext& res, Ciphertext& cipher, complex<double> cnst, long logp);
 
-	Ciphertext multByConstVec(Ciphertext& cipher, complex<double>* cnstVec, long logp);
+	void multByConstVec(Ciphertext& res, Ciphertext& cipher, complex<double>* cnstVec, long logp);
 
 	void multByConstAndEqual(Ciphertext& cipher, double cnst, long logp);
 
@@ -169,25 +164,25 @@ public:
 
 	void multByConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp);
 
-	Ciphertext multByPoly(Ciphertext& cipher, ZZ* poly, long logp);
+	void multByPoly(Ciphertext& res, Ciphertext& cipher, ZZ* poly, long logp);
 
-	Ciphertext multByPolyNTT(Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp);
+	void multByPolyNTT(Ciphertext& res, Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp);
 
 	void multByPolyAndEqual(Ciphertext& cipher, ZZ* poly, long logp);
 
 	void multByPolyNTTAndEqual(Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp);
 
-	Ciphertext multByMonomial(Ciphertext& cipher, const long degree);
+	void multByMonomial(Ciphertext& res, Ciphertext& cipher, const long degree);
 
 	void multByMonomialAndEqual(Ciphertext& cipher, const long degree);
 
-	Ciphertext leftShift(Ciphertext& cipher, long bits);
+	void leftShift(Ciphertext& res, Ciphertext& cipher, long bits);
 
 	void leftShiftAndEqual(Ciphertext& cipher, long bits);
 
 	void doubleAndEqual(Ciphertext& cipher);
 
-	Ciphertext divByPo2(Ciphertext& cipher, long bits);
+	void divByPo2(Ciphertext& res, Ciphertext& cipher, long bits);
 
 	void divByPo2AndEqual(Ciphertext& cipher, long bits);
 
@@ -197,19 +192,19 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	Ciphertext reScaleBy(Ciphertext& cipher, long dlogq);
+	void reScaleBy(Ciphertext& res, Ciphertext& cipher, long dlogq);
 
-	Ciphertext reScaleTo(Ciphertext& cipher, long logq);
+	void reScaleTo(Ciphertext& res, Ciphertext& cipher, long logq);
 
 	void reScaleByAndEqual(Ciphertext& cipher, long dlogq);
 
 	void reScaleToAndEqual(Ciphertext& cipher, long logq);
 
-	Ciphertext modDownBy(Ciphertext& cipher, long dlogq);
+	void modDownBy(Ciphertext& res, Ciphertext& cipher, long dlogq);
 
 	void modDownByAndEqual(Ciphertext& cipher, long dlogq);
 
-	Ciphertext modDownTo(Ciphertext& cipher, long logq);
+	void modDownTo(Ciphertext& res, Ciphertext& cipher, long logq);
 
 	void modDownToAndEqual(Ciphertext& cipher, long logq);
 
@@ -219,20 +214,13 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	Ciphertext leftRotateFast(Ciphertext& cipher, long r);
-	Ciphertext rightRotateFast(Ciphertext& cipher, long r);
+	void leftRotateFast(Ciphertext& res, Ciphertext& cipher, long r);
+	void rightRotateFast(Ciphertext& res, Ciphertext& cipher, long r);
 
 	void leftRotateFastAndEqual(Ciphertext& cipher, long r);
 	void rightRotateFastAndEqual(Ciphertext& cipher, long r);
 
-	Ciphertext leftRotate(Ciphertext& cipher, long r);
-	Ciphertext rightRotate(Ciphertext& cipher, long r);
-
-	void leftRotateAndEqual(Ciphertext& cipher, long r);
-	void rightRotateAndEqual(Ciphertext& cipher, long r);
-
-	Ciphertext conjugate(Ciphertext& cipher);
-
+	void conjugate(Ciphertext& res, Ciphertext& cipher);
 	void conjugateAndEqual(Ciphertext& cipher);
 
 
@@ -252,9 +240,6 @@ public:
 	void evalExpAndEqual(Ciphertext& cipher, long logT, long logI = 4);
 
 	void bootstrapAndEqual(Ciphertext& cipher, long logq, long logQ, long logT, long logI = 4);
-
-	Ciphertext bootstrap(Ciphertext& cipher, long logq, long logQ, long logT, long logI = 4);
-
 };
 
 #endif
