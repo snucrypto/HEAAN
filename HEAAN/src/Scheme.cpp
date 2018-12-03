@@ -180,6 +180,9 @@ void Scheme::addBootKey(SecretKey& secretKey, long logl, long logp) {
 }
 
 void Scheme::encode(Plaintext& plain, double* vals, long n, long logp, long logq) {
+	plain.logp = logp;
+	plain.logq = logq;
+	plain.n = n;
 	ring.encode(plain.mx, vals, n, logp + logQ);
 }
 
@@ -417,6 +420,9 @@ void Scheme::idivAndEqual(Ciphertext& cipher) {
 }
 
 void Scheme::mult(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2) {
+	res.copyParams(cipher1);
+	res.logp += cipher2.logp;
+
 	ZZ q = ring.qpows[cipher1.logq];
 	ZZ qQ = ring.qpows[cipher1.logq + logQ];
 
@@ -449,7 +455,6 @@ void Scheme::mult(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2) {
 	ring.CRT(raa, axax, np);
 	ring.multDNTT(res.ax, raa, key->rax, np, qQ);
 	ring.multDNTT(res.bx, raa, key->rbx, np, qQ);
-
 	ring.rightShiftAndEqual(res.ax, logQ);
 	ring.rightShiftAndEqual(res.bx, logQ);
 
@@ -469,6 +474,7 @@ void Scheme::mult(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2) {
 }
 
 void Scheme::multAndEqual(Ciphertext& cipher1, Ciphertext& cipher2) {
+
 	ZZ q = ring.qpows[cipher1.logq];
 	ZZ qQ = ring.qpows[cipher1.logq + logQ];
 
@@ -510,8 +516,6 @@ void Scheme::multAndEqual(Ciphertext& cipher1, Ciphertext& cipher2) {
 	ring.subAndEqual(cipher1.ax, axax, q);
 	ring.addAndEqual(cipher1.bx, bxbx, q);
 
-	cipher1.logp += cipher2.logp;
-
 	delete[] axax;
 	delete[] bxbx;
 	delete[] axbx;
@@ -520,6 +524,8 @@ void Scheme::multAndEqual(Ciphertext& cipher1, Ciphertext& cipher2) {
 	delete[] rb1;
 	delete[] rb2;
 	delete[] raa;
+
+	cipher1.logp += cipher2.logp;
 }
 
 //-----------------------------------------

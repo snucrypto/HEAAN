@@ -32,7 +32,7 @@ using namespace NTL;
 void TestScheme::testEncrypt(long logq, long logp, long logn) {
 	cout << "!!! START TEST ENCRYPT !!!" << endl;
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -126,7 +126,6 @@ void TestScheme::testMult(long logq, long logp, long logn) {
 	complex<double>* mvec1 = EvaluatorUtils::randomComplexArray(n);
 	complex<double>* mvec2 = EvaluatorUtils::randomComplexArray(n);
 	complex<double>* mmult = new complex<double>[n];
-
 	for(long i = 0; i < n; i++) {
 		mmult[i] = mvec1[i] * mvec2[i];
 	}
@@ -135,8 +134,10 @@ void TestScheme::testMult(long logq, long logp, long logn) {
 	scheme.encrypt(cipher1, mvec1, n, logp, logq);
 	scheme.encrypt(cipher2, mvec2, n, logp, logq);
 
+//	Ciphertext cmult;
 	timeutils.start("Multiplication");
 	scheme.multAndEqual(cipher1, cipher2);
+//	scheme.mult(cmult, cipher1, cipher2);
 	timeutils.stop("Multiplication");
 
 	complex<double>* dmult = scheme.decrypt(secretKey, cipher1);
@@ -189,7 +190,7 @@ void TestScheme::testRotateFast(long logq, long logp, long logn, long logr) {
 	cout << "!!! START TEST ROTATE FAST !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -223,6 +224,7 @@ void TestScheme::testConjugate(long logq, long logp, long logn) {
 	Ring ring;
 	SecretKey secretKey(ring);
 	Scheme scheme(secretKey, ring);
+
 	scheme.addConjKey(secretKey);
 
 	long n = (1 << logn);
@@ -628,5 +630,30 @@ void TestScheme::testBootstrapSingleReal(long logq, long logQ, long logp, long l
 }
 
 void TestScheme::test() {
+	long logq = 1200;
+	long logp = 30;
+	long logn = 2; // n = 4
+
+	srand(time(NULL));
+	SetNumThreads(8);
+	TimeUtils timeutils;
+
+	Ring ring;
+	SecretKey secretKey(ring);
+	Scheme scheme(secretKey, ring);
+
+	long n = (1 << logn); // n = 4
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(n);
+	Ciphertext cipher;
+
+	timeutils.start("Encrypt");
+	scheme.encrypt(cipher, mvec, n, logp, logq);
+	timeutils.stop("Encrypt");
+
+	timeutils.start("Decrypt");
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+	timeutils.stop("Decrypt");
+
+	StringUtils::compare(mvec, dvec, n, "val");
 }
 

@@ -13,13 +13,13 @@ using namespace NTL;
 
 static const long logN = 16;
 static const long logQ = 1200;
+
+
 static const double sigma = 3.2;
 static const long h = 64;
-
 static const long pbnd = 59;
 static const long kbar = 60;
 static const long kbar2 = 120;
-
 static const long logNh = (logN - 1);
 static const long logQQ = (2 * logQ);
 static const long N = (1 << logN);
@@ -27,7 +27,6 @@ static const long Nh = (1 << logNh);
 static const long M = (N << 1);
 static const long nprimes = (2 + logN + 4 * logQ + pbnd - 1) / pbnd;
 static const long Nnprimes = (nprimes << logN);
-
 static const long cbnd = (logQQ + NTL_ZZ_NBITS - 1) / NTL_ZZ_NBITS;
 static const long bignum = 0xfffffff;
 static const ZZ Q = power2_ZZ(logQ);

@@ -15,7 +15,7 @@ int main() {
 //----------------------------------------------------------------------------------
 
 
-//	TestScheme::testEncrypt(1200, 30, 4);
+	TestScheme::testEncrypt(1200, 30, 4);
 //	TestScheme::testEncryptSingle(300, 30);
 //	TestScheme::testAdd(1200, 30, 4);
 //	TestScheme::testMult(1200, 30, 4);
@@ -58,7 +58,7 @@ int main() {
 
 
 //	TestScheme::testCiphertextWriteAndRead(65, 30, 2);
-	TestScheme::testBootstrap(29, 620, 23, 3, 2);
+//	TestScheme::testBootstrap(29, 620, 23, 3, 2);
 //	TestScheme::testBootstrapSingleReal(29, 620, 23, 2);
 //	TestScheme::test();
 
