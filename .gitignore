@@ -1,1 +1,8 @@
-/.DS_Store
+**/.DS_Store
+
+HEAAN/Debug
+HEAAN/Release
+
+HEAAN/run/HEAAN
+
+HEAAN/lib/*.a
