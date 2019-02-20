@@ -64,8 +64,10 @@ int main() {
   complex<double>* mvec2 = EvaluatorUtils::randomComplexArray(slots);
   
   // Encrypt Two Arry of Complex //
-  Ciphertext cipher1 = scheme.encrypt(mvec1, n, logp, logq);
-  Ciphertext cipher2 = scheme.encrypt(mvec2, n, logp, logq);
+  Ciphertext cipher1;
+  scheme.encrypt(cipher1, mvec1, n, logp, logq);
+  Ciphertext cipher2;
+  scheme.encrypt(cipher2, mvec2, n, logp, logq);
   
   // Addition //
   Ciphertext cipherAdd;
