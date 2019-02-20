@@ -37,17 +37,23 @@ using namespace std;
 using namespace NTL;
 
 int main() {
+  /*
+  * Basic Parameters are in src/Params.h
+  * If you want to use another parameter, you need to change src/Params.h file and re-complie this library.
+  */
 
   // Parameters //
-  long logN = 15;
-  long logQ = 353;
-  long logp = 30; ///< Larger logp will give you more correct result (smaller computation noise)
-  long slots = 1024; ///< This should be power of two
+  long logq = 300; ///< Ciphertext modulus (this value should be <= logQ in "scr/Params.h")
+  long logp = 30; ///< Scaling Factor (larger logp will give you more accurate value)
+  long logn = 10; ///< number of slot is 1024 (this value should be < logN in "src/Params.h")
+  long n = 1 << logn;
   long numThread = 8;
 	
   // Construct and Generate Public Keys //
+  srand(time(NULL));
+  SetNumThreads(numThread);
   TimeUtils timeutils;
-  Ring ring(logN, logQ);
+  Ring ring;
   SecretKey secretKey(ring);
   Scheme scheme(secretKey, ring);
   scheme.addLeftRotKeys(secretKey); ///< When you need left rotation for the vectorized message
@@ -58,19 +64,23 @@ int main() {
   complex<double>* mvec2 = EvaluatorUtils::randomComplexArray(slots);
   
   // Encrypt Two Arry of Complex //
-  Ciphertext cipher1 = scheme.encrypt(mvec1, slots, logp, logQ);
-  Ciphertext cipher2 = scheme.encrypt(mvec2, slots, logp, logQ);
+  Ciphertext cipher1 = scheme.encrypt(mvec1, n, logp, logq);
+  Ciphertext cipher2 = scheme.encrypt(mvec2, n, logp, logq);
   
   // Addition //
-  Ciphertext cipherAdd = scheme.add(cipher1, cipher2);
+  Ciphertext cipherAdd;
+  scheme.add(cipherAdd, cipher1, cipher2);
   
   // Multiplication And Rescale //
-  Ciphertext cipherMult = scheme.mult(cipher1, cipher2);
-  Ciphertext cipherMultAfterReScale = scheme.reScaleBy(cipherMult, logp);
+  Ciphertext cipherMult;
+  scheme.mult(cipherMult, cipher1, cipher2);
+  Ciphertext cipherMultAfterReScale;
+  scheme.reScaleBy(cipherMultAfterReScale, cipherMult, logp);
   
   // Rotation //
   long idx = 1;
-  Ciphertext cipherRot = scheme.leftRotate(cipher1, idx);
+  Ciphertext cipherRot;
+  scheme.leftRotateFast(cipherRot, cipher1, idx);
   
   // Decrypt //
   complex<double>* dvec1 = scheme.decrypt(secretKey, cipher1);
