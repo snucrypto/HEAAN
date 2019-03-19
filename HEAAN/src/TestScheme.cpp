@@ -102,7 +102,7 @@ void TestScheme::testAdd(long logq, long logp, long logn) {
 	scheme.encrypt(cipher2, mvec2, n, logp, logq);
 
 	timeutils.start("Addition");
-	scheme.multAndEqual(cipher1, cipher2);
+	scheme.addAndEqual(cipher1, cipher2);
 	timeutils.stop("Addition");
 
 	complex<double>* dadd = scheme.decrypt(secretKey, cipher1);
@@ -134,10 +134,8 @@ void TestScheme::testMult(long logq, long logp, long logn) {
 	scheme.encrypt(cipher1, mvec1, n, logp, logq);
 	scheme.encrypt(cipher2, mvec2, n, logp, logq);
 
-//	Ciphertext cmult;
 	timeutils.start("Multiplication");
 	scheme.multAndEqual(cipher1, cipher2);
-//	scheme.mult(cmult, cipher1, cipher2);
 	timeutils.stop("Multiplication");
 
 	complex<double>* dmult = scheme.decrypt(secretKey, cipher1);
@@ -147,7 +145,7 @@ void TestScheme::testMult(long logq, long logp, long logn) {
 	cout << "!!! END TEST MULT !!!" << endl;
 }
 
-void TestScheme::testimult(long logq, long logp, long logn) {
+void TestScheme::testiMult(long logq, long logp, long logn) {
 	cout << "!!! START TEST i MULTIPLICATION !!!" << endl;
 
 	srand(time(NULL));

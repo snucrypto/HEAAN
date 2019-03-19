@@ -18,10 +18,14 @@ public:
 	
 
 	static void testEncrypt(long logq, long logp, long logn);
+	
 	static void testEncryptSingle(long logq, long logp);
+	
 	static void testAdd(long logq, long logp, long logn);
+	
 	static void testMult(long logq, long logp, long logn);
-	static void testimult(long logq, long logp, long logn);
+	
+	static void testiMult(long logq, long logp, long logn);
 
 
 	//----------------------------------------------------------------------------------
