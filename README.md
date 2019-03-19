@@ -29,6 +29,12 @@ Creative Commons Attribution-NonCommercial 3.0 Unported License.
 You should have received a copy of the license along with this
 work.  If not, see <http://creativecommons.org/licenses/by-nc/3.0/>.
 
+## Test
+In /test folder, we have test.cpp.
+You can compile this code using "make".
+After that, ./TestHEAAN TEST_NAME will test HEAAN library.
+TEST_NAME can be one of followings: Encrypt, EncryptSingle, Add, Mult, iMult, RotateFast, Conjugate
+
 ## Example
 ```c++
 #include "HEAAN.h"
