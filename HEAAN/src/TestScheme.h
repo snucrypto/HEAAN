@@ -69,15 +69,15 @@ public:
 	//----------------------------------------------------------------------------------
 	//   BOOTSTRAPPING TESTS
 	//----------------------------------------------------------------------------------
+    
 
+	static void testBootstrap(long logq, long logp, long logn, long logT);
 
-	static void testWriteAndRead(long logq, long logp, long logn);
+	static void testBootstrapSingleReal(long logq, long logp, long logT);
+    
+    static void testWriteAndRead(long logq, long logp, long logn);
 
-	static void testBootstrap(long logq, long logQ, long logp, long logn, long logT);
-
-	static void testBootstrapSingleReal(long logq, long logQ, long logp, long logT);
-
-	static void test();
+    
 };
 
 #endif

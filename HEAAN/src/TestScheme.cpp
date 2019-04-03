@@ -217,7 +217,7 @@ void TestScheme::testConjugate(long logq, long logp, long logn) {
 	cout << "!!! START TEST CONJUGATE !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -256,7 +256,7 @@ void TestScheme::testPowerOf2(long logq, long logp, long logn, long logdeg) {
 	cout << "!!! START TEST POWER OF 2 !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -291,7 +291,7 @@ void TestScheme::testPower(long logq, long logp, long logn, long degree) {
 	cout << "!!! START TEST POWER !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -359,7 +359,7 @@ void TestScheme::testLogarithm(long logq, long logp, long logn, long degree) {
 	cout << "!!! START TEST LOGARITHM !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -390,7 +390,7 @@ void TestScheme::testExponent(long logq, long logp, long logn, long degree) {
 	cout << "!!! START TEST EXPONENT !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -421,7 +421,7 @@ void TestScheme::testExponentLazy(long logq, long logp, long logn, long degree) 
 	cout << "!!! START TEST EXPONENT LAZY !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -453,7 +453,7 @@ void TestScheme::testSigmoid(long logq, long logp, long logn, long degree) {
 	cout << "!!! START TEST SIGMOID !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -520,7 +520,7 @@ void TestScheme::testWriteAndRead(long logq, long logp, long logSlots) {
 }
 
 
-void TestScheme::testBootstrap(long logq, long logQ, long logp, long logSlots, long logT) {
+void TestScheme::testBootstrap(long logq, long logp, long logSlots, long logT) {
 	cout << "!!! START TEST BOOTSTRAP !!!" << endl;
 
 	srand(time(NULL));
@@ -578,11 +578,11 @@ void TestScheme::testBootstrap(long logq, long logQ, long logp, long logSlots, l
 	cout << "!!! END TEST BOOTSRTAP !!!" << endl;
 }
 
-void TestScheme::testBootstrapSingleReal(long logq, long logQ, long logp, long logT) {
+void TestScheme::testBootstrapSingleReal(long logq, long logp, long logT) {
 	cout << "!!! START TEST BOOTSTRAP SINGLE REAL !!!" << endl;
 
 	srand(time(NULL));
-//	SetNumThreads(8);
+	SetNumThreads(8);
 	TimeUtils timeutils;
 	Ring ring;
 	SecretKey secretKey(ring);
@@ -626,32 +626,3 @@ void TestScheme::testBootstrapSingleReal(long logq, long logQ, long logp, long l
 
 	cout << "!!! END TEST BOOTSRTAP SINGLE REAL !!!" << endl;
 }
-
-void TestScheme::test() {
-	long logq = 1200;
-	long logp = 30;
-	long logn = 2; // n = 4
-
-	srand(time(NULL));
-	SetNumThreads(8);
-	TimeUtils timeutils;
-
-	Ring ring;
-	SecretKey secretKey(ring);
-	Scheme scheme(secretKey, ring);
-
-	long n = (1 << logn); // n = 4
-	complex<double>* mvec = EvaluatorUtils::randomComplexArray(n);
-	Ciphertext cipher;
-
-	timeutils.start("Encrypt");
-	scheme.encrypt(cipher, mvec, n, logp, logq);
-	timeutils.stop("Encrypt");
-
-	timeutils.start("Decrypt");
-	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
-	timeutils.stop("Decrypt");
-
-	StringUtils::compare(mvec, dvec, n, "val");
-}
-
