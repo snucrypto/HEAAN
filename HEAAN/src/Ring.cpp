@@ -200,7 +200,7 @@ void Ring::addBootContext(long logSlots, long logp) {
 						pvec[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
 					}
 					bndvec[pos] = maxBits(pvec, N);
-					np = ceil((bndvec[pos] + logQ + 2 * logN + 2)/59.0);
+					np = ceil((bndvec[pos] + logQ + 2 * logN + 2)/(double)pbnd);
 					rpvec[pos] = new uint64_t[np << logN];
 					CRT(rpvec[pos], pvec, np);
 					for (i = 0; i < N; ++i) {
@@ -220,7 +220,7 @@ void Ring::addBootContext(long logSlots, long logp) {
 				pvec[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
 			}
 			bnd1 = maxBits(pvec, N);
-			np = ceil((bnd1 + logQ + 2 * logN + 2)/59.0);
+			np = ceil((bnd1 + logQ + 2 * logN + 2)/(double)pbnd);
 			rp1 = new uint64_t[np << logN];
 			CRT(rp1, pvec, np);
 			for (i = 0; i < N; ++i) {
@@ -238,7 +238,7 @@ void Ring::addBootContext(long logSlots, long logp) {
 				pvec[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
 			}
 			bnd2 = maxBits(pvec, N);
-			np = ceil((bnd2 + logQ + 2 * logN + 2)/59.0);
+			np = ceil((bnd2 + logQ + 2 * logN + 2)/(double)pbnd);
 			rp2 = new uint64_t[np << logN];
 			CRT(rp2, pvec, np);
 			for (i = 0; i < N; ++i) {
@@ -263,7 +263,7 @@ void Ring::addBootContext(long logSlots, long logp) {
 						pvec[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
 					}
 					bndvec[pos] = maxBits(pvec, N);
-					np = ceil((bndvec[pos] + logQ + 2 * logN + 2)/59.0);
+					np = ceil((bndvec[pos] + logQ + 2 * logN + 2)/(double)pbnd);
 					rpvec[pos] = new uint64_t[np << logN];
 					CRT(rpvec[pos], pvec, np);
 					for (i = 0; i < N; ++i) {
@@ -291,7 +291,7 @@ void Ring::addBootContext(long logSlots, long logp) {
 					pvec[jdx] = EvaluatorUtils::scaleUpToZZ(pvals[i].imag(), logp);
 				}
 				bndvecInv[pos] = maxBits(pvec, N);
-				np = ceil((bndvecInv[pos] + logQ + 2 * logN + 2)/59.0);
+				np = ceil((bndvecInv[pos] + logQ + 2 * logN + 2)/(double)pbnd);
 				rpvecInv[pos] = new uint64_t[np << logN];
 				CRT(rpvecInv[pos], pvec, np);
 				for (i = 0; i < N; ++i) {

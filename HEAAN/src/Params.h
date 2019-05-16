@@ -14,12 +14,11 @@ using namespace NTL;
 static const long logN = 16;
 static const long logQ = 1200;
 
-
 static const double sigma = 3.2;
 static const long h = 64;
-static const long pbnd = 59;
-static const long kbar = 60;
-static const long kbar2 = 120;
+static const long pbnd = round(log(NTL_SP_BOUND)/log(2.)) - 1;
+static const long kbar = pbnd + 1;
+static const long kbar2 = 2 * kbar;
 static const long logNh = (logN - 1);
 static const long logQQ = (2 * logQ);
 static const long N = (1 << logN);
