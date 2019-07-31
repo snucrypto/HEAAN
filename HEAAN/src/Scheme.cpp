@@ -635,15 +635,20 @@ void Scheme::multByConst(Ciphertext& res, Ciphertext& cipher, double cnst, long 
 }
 
 void Scheme::multByConst(Ciphertext& res, Ciphertext& cipher, complex<double> cnst, long logp) {
-	ZZ q = ring.qpows[cipher.logq];
-	ZZ cnstZZ = EvaluatorUtils::scaleUpToZZ(cnst.real(), logp);
-	res.copyParams(cipher);
-	ring.multByConst(res.ax, cipher.ax, cnstZZ, q);
-	ring.multByConst(res.bx, cipher.bx, cnstZZ, q);
-	res.logp += logp;
+	res.copy(cipher);
+	multByConstAndEqual(res, cnst, logp);
 }
 
 void Scheme::multByConstVec(Ciphertext& res, Ciphertext& cipher, complex<double>* cnstVec, long logp) {
+	res.copy(cipher);
+	multByConstVecAndEqual(res, cnstVec, logp);
+}
+
+void Scheme::multByConstVecAndEqual(Ciphertext& cipher, complex<double>* cnstVec, long logp) {
+	long slots = cipher.n;
+	ZZ* cnstPoly = new ZZ[N];
+	ring.encode(cnstPoly, cnstVec, slots, logp);
+	multByPolyAndEqual(cipher, cnstPoly, logp);
 }
 
 void Scheme::multByConstAndEqual(Ciphertext& cipher, double cnst, long logp) {
@@ -664,9 +669,23 @@ void Scheme::multByConstAndEqual(Ciphertext& cipher, RR& cnst, long logp) {
 
 void Scheme::multByConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp) {
 	ZZ q = ring.qpows[cipher.logq];
-	ZZ cnstZZ = EvaluatorUtils::scaleUpToZZ(cnst.real(), logp);
-	ring.multByConstAndEqual(cipher.ax, cnstZZ, q);
-	ring.multByConstAndEqual(cipher.bx, cnstZZ, q);
+	ZZ cnstZZReal = EvaluatorUtils::scaleUpToZZ(cnst.real(), logp);
+	ZZ cnstZZImag = EvaluatorUtils::scaleUpToZZ(cnst.imag(), logp);
+
+	Ciphertext tmp; // compute imagnary part
+	tmp.copyParams(cipher);
+	ring.multByConst(tmp.ax, cipher.ax, cnstZZImag, q);
+	ring.multByConst(tmp.bx, cipher.bx, cnstZZImag, q);
+	ring.multByMonomialAndEqual(tmp.ax, N / 2);
+	ring.multByMonomialAndEqual(tmp.bx, N / 2);
+	
+
+	ring.multByConstAndEqual(cipher.ax, cnstZZReal, q);
+	ring.multByConstAndEqual(cipher.bx, cnstZZReal, q);
+
+	ring.addAndEqual(cipher.ax, tmp.ax, QQ);
+	ring.addAndEqual(cipher.bx, tmp.bx, QQ);
+
 	cipher.logp += logp;
 }
 
@@ -683,15 +702,6 @@ void Scheme::multByPoly(Ciphertext& res, Ciphertext& cipher, ZZ* poly, long logp
 	res.logp += logp;
 }
 
-void Scheme::multByPolyNTT(Ciphertext& res, Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp) {
-	ZZ q = ring.qpows[cipher.logq];
-	res.copyParams(cipher);
-	long np = ceil((cipher.logq + bnd + logN + 2)/(double)pbnd);
-	ring.multNTT(res.ax, cipher.ax, rpoly, np, q);
-	ring.multNTT(res.bx, cipher.bx, rpoly, np, q);
-	res.logp += logp;
-}
-
 void Scheme::multByPolyAndEqual(Ciphertext& cipher, ZZ* poly, long logp) {
 	ZZ q = ring.qpows[cipher.logq];
 	long bnd = ring.maxBits(poly, N);
@@ -702,6 +712,15 @@ void Scheme::multByPolyAndEqual(Ciphertext& cipher, ZZ* poly, long logp) {
 	ring.multNTTAndEqual(cipher.bx, rpoly, np, q);
 	delete[] rpoly;
 	cipher.logp += logp;
+}
+
+void Scheme::multByPolyNTT(Ciphertext& res, Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp) {
+	ZZ q = ring.qpows[cipher.logq];
+	res.copyParams(cipher);
+	long np = ceil((cipher.logq + bnd + logN + 2)/(double)pbnd);
+	ring.multNTT(res.ax, cipher.ax, rpoly, np, q);
+	ring.multNTT(res.bx, cipher.bx, rpoly, np, q);
+	res.logp += logp;
 }
 
 void Scheme::multByPolyNTTAndEqual(Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp) {
