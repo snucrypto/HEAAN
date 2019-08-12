@@ -15,32 +15,36 @@
 
 void StringUtils::showVec(long* vals, long size) {
 	cout << "[";
-	for (long i = 0; i < size; ++i) {
-		cout << vals[i] << ", ";
+	cout << vals[0];
+	for (long i = 1; i < size; ++i) {
+		cout << ", " << vals[i];
 	}
 	cout << "]" << endl;
 }
 
 void StringUtils::showVec(double* vals, long size) {
 	cout << "[";
-	for (long i = 0; i < size; ++i) {
-		cout << vals[i] << ", ";
+	cout << vals[0];
+	for (long i = 1; i < size; ++i) {
+		cout << ", " << vals[i];
 	}
 	cout << "]" << endl;
 }
 
 void StringUtils::showVec(complex<double>* vals, long size) {
 	cout << "[";
-	for (long i = 0; i < size; ++i) {
-		cout << vals[i] << ", ";
+	cout << vals[0];
+	for (long i = 1; i < size; ++i) {
+		cout << ", " << vals[i];
 	}
 	cout << "]" << endl;
 }
 
 void StringUtils::showVec(ZZ* vals, long size) {
 	cout << "[";
-	for (long i = 0; i < size; ++i) {
-		cout << vals[i] << ", ";
+	cout << vals[0];
+	for (long i = 1; i < size; ++i) {
+		cout << ", " << vals[i];
 	}
 	cout << "]" << endl;
 }
