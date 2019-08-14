@@ -42,6 +42,8 @@ public:
 
 	Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized = false);
 
+	virtual ~Scheme();
+
 	//----------------------------------------------------------------------------------
 	//   KEYS GENERATION
 	//----------------------------------------------------------------------------------

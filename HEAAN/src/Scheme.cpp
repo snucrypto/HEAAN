@@ -16,6 +16,13 @@ Scheme::Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized) : ring(ring)
 	addMultKey(secretKey);
 };
 
+Scheme::~Scheme() {
+  for (auto const& t : keyMap)
+    delete t.second;
+  for (auto const& t : leftRotKeyMap)
+    delete t.second;
+}
+
 void Scheme::addEncKey(SecretKey& secretKey) {
 	ZZ* ax = new ZZ[N];
 	ZZ* bx = new ZZ[N];

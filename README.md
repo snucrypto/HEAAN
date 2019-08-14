@@ -58,6 +58,7 @@ int main() {
   long logp = 30; ///< Scaling Factor (larger logp will give you more accurate value)
   long logn = 10; ///< number of slot is 1024 (this value should be < logN in "src/Params.h")
   long n = 1 << logn;
+  long slots = n;
   long numThread = 8;
 	
   // Construct and Generate Public Keys //
