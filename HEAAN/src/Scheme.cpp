@@ -656,6 +656,7 @@ void Scheme::multByConstVecAndEqual(Ciphertext& cipher, complex<double>* cnstVec
 	ZZ* cnstPoly = new ZZ[N];
 	ring.encode(cnstPoly, cnstVec, slots, logp);
 	multByPolyAndEqual(cipher, cnstPoly, logp);
+	delete[] cnstPoly;
 }
 
 void Scheme::multByConstAndEqual(Ciphertext& cipher, double cnst, long logp) {
