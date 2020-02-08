@@ -406,19 +406,19 @@ void Ring::addAndEqual(ZZ* p1, ZZ* p2, const ZZ& mod) {
 
 void Ring::sub(ZZ* res, ZZ* p1, ZZ* p2, const ZZ& mod) {
 	for (long i = 0; i < N; ++i) {
-		AddMod(res[i], p1[i], -p2[i], mod);
+		SubMod(res[i], p1[i], p2[i], mod);
 	}
 }
 
 void Ring::subAndEqual(ZZ* p1, ZZ* p2, const ZZ& mod) {
 	for (long i = 0; i < N; ++i) {
-		AddMod(p1[i], p1[i], -p2[i], mod);
+		SubMod(p1[i], p1[i], p2[i], mod);
 	}
 }
 
 void Ring::subAndEqual2(ZZ* p1, ZZ* p2, const ZZ& mod) {
 	for (long i = 0; i < N; ++i) {
-		AddMod(p2[i], p1[i], -p2[i], mod);
+		SubMod(p2[i], p1[i], p2[i], mod);
 	}
 }
 
