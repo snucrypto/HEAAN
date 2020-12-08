@@ -146,6 +146,8 @@ public:
 
 
 	void subFromGaussAndEqual(ZZ* res, const ZZ& q);
+	
+	void subFromGaussAndEqual(ZZ* res, const ZZ& q, double _sigma);
 
 	void addGaussAndEqual(ZZ* res, const ZZ& q);
 	

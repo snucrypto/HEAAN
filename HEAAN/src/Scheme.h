@@ -97,9 +97,9 @@ public:
 
 	void encrypt(Ciphertext& cipher, double* vals, long n, long logp, long logq);
 	
-	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, complex<double>* vals, long n, long logp, long logq);
+	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, complex<double>* vals, long n, long logp, long logq, double=3.2);
 	
-	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, double* vals, long n, long logp, long logq);
+	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, double* vals, long n, long logp, long logq, double=3.2);
 
 	void encryptZeros(Ciphertext& cipher, long n, long logp, long logq);
 

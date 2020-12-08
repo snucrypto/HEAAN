@@ -83,8 +83,10 @@ void TestScheme::testEncryptBySk(long logq, long logp, long logn) {
 
 void TestScheme::testDecryptForShare(long logq, long logp, long logn, long logErrorBound) {
 	cout << "!!! START TEST Decrypt for Share !!!" << endl;
-	sigma = 3.2 * sqrt(2);
-	cout << "Note : sigma is changed to " << sigma << endl;
+	
+	double sigma1 = 3.2 * sqrt(2);
+	
+	cout << "Note : encryption std is changed to sigma1 = " << sigma1 << endl;
 	srand(time(NULL));
 	SetNumThreads(8);
 	TimeUtils timeutils;
@@ -97,7 +99,7 @@ void TestScheme::testDecryptForShare(long logq, long logp, long logn, long logEr
 	Ciphertext cipher;
 
 	timeutils.start("Encrypt by sk");
-	scheme.encryptBySk(cipher, secretKey, mvec, n, logp, logq);
+	scheme.encryptBySk(cipher, secretKey, mvec, n, logp, logq, sigma1);
 	timeutils.stop("Encrypt by sk");
 
 	timeutils.start("Decrypt by share");

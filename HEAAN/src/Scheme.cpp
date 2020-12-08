@@ -283,7 +283,7 @@ void Scheme::encrypt(Ciphertext& cipher, double* vals, long n, long logp, long l
 	encryptMsg(cipher, plain);
 }
 
-void Scheme::encryptBySk(Ciphertext& cipher, SecretKey& secretKey, complex<double>* vals, long n, long logp, long logq) {
+void Scheme::encryptBySk(Ciphertext& cipher, SecretKey& secretKey, complex<double>* vals, long n, long logp, long logq, double sigma1) {
 	Plaintext plain;
 	encode(plain, vals, n, logp, logq);
 
@@ -294,14 +294,14 @@ void Scheme::encryptBySk(Ciphertext& cipher, SecretKey& secretKey, complex<doubl
 	long np = ceil((1 + logQQ + logN + 2)/(double)pbnd);
 	ring.sampleUniform2(cipher.ax, logQQ);
 	ring.mult(cipher.bx, secretKey.sx, cipher.ax, np, QQ);
-	ring.subFromGaussAndEqual(cipher.bx, QQ);
+	ring.subFromGaussAndEqual(cipher.bx, QQ, sigma1);
 	ring.addAndEqual(cipher.bx, plain.mx, QQ);
 
 	ring.rightShiftAndEqual(cipher.ax, logQ);
 	ring.rightShiftAndEqual(cipher.bx, logQ);
 }
 
-void Scheme::encryptBySk(Ciphertext& cipher, SecretKey& secretKey, double* vals, long n, long logp, long logq) {
+void Scheme::encryptBySk(Ciphertext& cipher, SecretKey& secretKey, double* vals, long n, long logp, long logq, double sigma1) {
 	Plaintext plain;
 	encode(plain, vals, n, logp, logq);
 
@@ -312,7 +312,7 @@ void Scheme::encryptBySk(Ciphertext& cipher, SecretKey& secretKey, double* vals,
 	long np = ceil((1 + logQQ + logN + 2)/(double)pbnd);
 	ring.sampleUniform2(cipher.ax, logQQ);
 	ring.mult(cipher.bx, secretKey.sx, cipher.ax, np, QQ);
-	ring.subFromGaussAndEqual(cipher.bx, QQ);
+	ring.subFromGaussAndEqual(cipher.bx, QQ, sigma1);
 	ring.addAndEqual(cipher.bx, plain.mx, QQ);
 
 	ring.rightShiftAndEqual(cipher.ax, logQ);
@@ -334,20 +334,20 @@ complex<double>* Scheme::decryptForShare(SecretKey& secretKey, Ciphertext& ciphe
 	Plaintext plain;
 	decryptMsg(plain, secretKey, cipher);
 	
-	double sigma_error;
+	double sigma1 = sigma * sqrt(2);
+	double sigma2;
 	double PI = 4.0 * atan(1.0);
 	if (logErrBound == -1) {
-		double WIDTH_DEFAULT_sq = 2*PI*6.4; // for lambda = 128, logq = 800
-		double WIDTH_sq = 2*PI*sigma*sigma;
-	
-		sigma_error = sqrt(WIDTH_sq * WIDTH_DEFAULT_sq / (WIDTH_sq - WIDTH_DEFAULT_sq) / 2 * PI);
+		// WIDTH = 8, WIDTH1 = sqrt(2*pi)*sigma
+		// Note that sigma is already multiplied by sqrt(2) in TestScheme.cpp
+		double WIDTH_sq = 64.0; 
+		double WIDTH1_sq = 2.0*PI*sigma1*sigma1;
+		sigma2 = sqrt(WIDTH1_sq * WIDTH_sq / ((WIDTH1_sq - WIDTH_sq) * 2 * PI));
 	} else {
-		sigma_error = ((double) ((long) 1 << logErrBound)) / sqrt(2 * PI);
+		sigma2 = ((double) ((long) 1 << logErrBound)) / sqrt(2 * PI);
 	}
-	cout << "sigma_error = " << sigma_error << endl;
-
 	ZZ q = ring.qpows[plain.logq];
-	ring.addGaussAndEqual(plain.mx, q, sigma_error);
+	ring.addGaussAndEqual(plain.mx, q, sigma2);
 	
 	return decode(plain);
 }
