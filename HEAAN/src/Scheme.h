@@ -96,10 +96,16 @@ public:
 	void encrypt(Ciphertext& cipher, complex<double>* vals, long n, long logp, long logq);
 
 	void encrypt(Ciphertext& cipher, double* vals, long n, long logp, long logq);
+	
+	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, complex<double>* vals, long n, long logp, long logq);
+	
+	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, double* vals, long n, long logp, long logq);
 
 	void encryptZeros(Ciphertext& cipher, long n, long logp, long logq);
 
 	complex<double>* decrypt(SecretKey& secretKey, Ciphertext& cipher);
+	
+	complex<double>* decryptForShare(SecretKey& secretKey, Ciphertext& cipher, long=0);
 
 	void encryptSingle(Ciphertext& cipher, complex<double> val, long logp, long logq);
 

@@ -9,6 +9,9 @@ In "Params.h", 'pbnd' value is 59.0 by default.
 If you are using NTL with "NTL_ENABLE_AVX_FFT=on", This option reduces that small-prime size bound from 60 bits to 50 bits (see https://www.shoup.net/ntl/doc/tour-changes.html).
 For this reason, you need to change the setting to 49.0.
 
+### Notification for Decryption Algorithm
+For the application of our library, you have to make sure that the decrypted value is not revealed other than secret key owner in the scenario. For details, see [here](SECURITY.md).
+
 ## Version
 v1.0 Implementation of Original HEAAN scheme
 

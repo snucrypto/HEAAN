@@ -12,9 +12,9 @@
 using namespace NTL;
 
 static const long logN = 16;
-static const long logQ = 1200;
+static const long logQ = 800; // 128-bit security
 
-static const double sigma = 3.2;
+static double sigma = 3.2; // it may be changed for decryptForShare
 static const long h = 64;
 static const long pbnd = 59.0;
 static const long kbar = pbnd + 1;

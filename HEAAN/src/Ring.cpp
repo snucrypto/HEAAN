@@ -593,6 +593,21 @@ void Ring::addGaussAndEqual(ZZ* res, const ZZ& q) {
 	}
 }
 
+void Ring::addGaussAndEqual(ZZ* res, const ZZ& q, double _sigma) {
+	static double Pi = 4.0 * atan(1.0);
+	static long bignum = 0xfffffff;
+
+	for (long i = 0; i < N; i+=2) {
+		double r1 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
+		double r2 = (1 + RandomBnd(bignum)) / ((double)bignum + 1);
+		double theta=2 * Pi * r1;
+		double rr= sqrt(-2.0 * log(r2)) * _sigma;
+
+		AddMod(res[i], res[i], (long) floor(rr * cos(theta) + 0.5), q);
+		AddMod(res[i + 1], res[i + 1], (long) floor(rr * sin(theta) + 0.5), q);
+	}
+}
+
 void Ring::sampleHWT(ZZ* res) {
 	long idx = 0;
 	ZZ tmp = RandomBits_ZZ(h);

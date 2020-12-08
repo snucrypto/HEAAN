@@ -11,3 +11,5 @@ HEAAN/lib/*.a
 *.d
 
 *.o
+
+*.json

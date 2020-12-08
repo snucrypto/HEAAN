@@ -15,15 +15,17 @@
   */
 int main(int argc, char **argv) {
 
-	long logq = 1200; ///< Ciphertext Modulus
+	long logq = 800; ///< Ciphertext Modulus
 	long logp = 30; ///< Real message will be quantized by multiplying 2^40
-	long logn = 5; ///< log2(The number of slots)
+	long logn = 4; ///< log2(The number of slots)
 
 //----------------------------------------------------------------------------------
 //   STANDARD TESTS
 //----------------------------------------------------------------------------------
 
 	if(string(argv[1]) == "Encrypt") TestScheme::testEncrypt(logq, logp, logn);
+	if(string(argv[1]) == "EncryptBySk") TestScheme::testEncryptBySk(logq, logp, logn);
+	if(string(argv[1]) == "DecryptForShare") TestScheme::testDecryptForShare(logq, logp, logn, stol(argv[2]));
 	if(string(argv[1]) == "EncryptSingle") TestScheme::testEncryptSingle(logq, logp);
 	if(string(argv[1]) == "Add") TestScheme::testAdd(logq, logp, logn);
 	if(string(argv[1]) == "Mult") TestScheme::testMult(logq, logp, logn);

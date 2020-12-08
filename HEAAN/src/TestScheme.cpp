@@ -55,6 +55,69 @@ void TestScheme::testEncrypt(long logq, long logp, long logn) {
 	cout << "!!! END TEST ENCRYPT !!!" << endl;
 }
 
+void TestScheme::testEncryptBySk(long logq, long logp, long logn) {
+	cout << "!!! START TEST ENCRYPT by SK !!!" << endl;
+	srand(time(NULL));
+	SetNumThreads(8);
+	TimeUtils timeutils;
+	Ring ring;
+	SecretKey secretKey(ring);
+	Scheme scheme(secretKey, ring);
+
+	long n = (1 << logn);
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(n);
+	Ciphertext cipher;
+
+	timeutils.start("Encrypt by sk");
+	scheme.encryptBySk(cipher, secretKey, mvec, n, logp, logq);
+	timeutils.stop("Encrypt by sk");
+
+	timeutils.start("Decrypt");
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+	timeutils.stop("Decrypt");
+
+	StringUtils::compare(mvec, dvec, n, "val");
+
+	cout << "!!! END TEST ENCRYPT By SK !!!" << endl;
+}
+
+void TestScheme::testDecryptForShare(long logq, long logp, long logn, long logErrorBound) {
+	cout << "!!! START TEST Decrypt for Share !!!" << endl;
+	sigma = 3.2 * sqrt(2);
+	cout << "Note : sigma is changed to " << sigma << endl;
+	srand(time(NULL));
+	SetNumThreads(8);
+	TimeUtils timeutils;
+	Ring ring;
+	SecretKey secretKey(ring);
+	Scheme scheme(secretKey, ring);
+
+	long n = (1 << logn);
+	complex<double>* mvec = EvaluatorUtils::randomComplexArray(n);
+	Ciphertext cipher;
+
+	timeutils.start("Encrypt by sk");
+	scheme.encryptBySk(cipher, secretKey, mvec, n, logp, logq);
+	timeutils.stop("Encrypt by sk");
+
+	timeutils.start("Decrypt by share");
+	complex<double>* dvecShare = scheme.decryptForShare(secretKey, cipher, logErrorBound);
+	complex<double>* dvec = scheme.decrypt(secretKey, cipher);
+	timeutils.stop("Decrypt by share");
+
+	for (long i = 0; i < n; ++i) {
+		cout << "---------------------" << endl;
+		cout << "plain : " << i << " :" << mvec[i] << endl;
+		cout << "decrypt : " << i << " :" << dvec[i] << endl;
+		cout << "decryptForShare : " << i << " :" << dvecShare[i] << endl;
+		cout << "dec error : " << i << " :" << (mvec[i]-dvec[i]) << endl;
+		cout << "dec and decForShare error : " << i << " :" << (dvec[i]-dvecShare[i]) << endl;
+		cout << "---------------------" << endl;
+	}
+
+	cout << "!!! END TEST Decrypt for Share !!!" << endl;
+}
+
 void TestScheme::testEncryptSingle(long logq, long logp) {
 	cout << "!!! START TEST ENCRYPT SINGLE !!!" << endl;
 	srand(time(NULL));

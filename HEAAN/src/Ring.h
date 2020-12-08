@@ -148,6 +148,8 @@ public:
 	void subFromGaussAndEqual(ZZ* res, const ZZ& q);
 
 	void addGaussAndEqual(ZZ* res, const ZZ& q);
+	
+	void addGaussAndEqual(ZZ* res, const ZZ& q, double _sigma);
 
 	void sampleHWT(ZZ* res);
 

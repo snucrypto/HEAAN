@@ -19,6 +19,10 @@ public:
 
 	static void testEncrypt(long logq, long logp, long logn);
 	
+	static void testEncryptBySk(long logq, long logp, long logn);
+	
+	static void testDecryptForShare(long logq, long logp, long logn, long logErrorBound);
+	
 	static void testEncryptSingle(long logq, long logp);
 	
 	static void testAdd(long logq, long logp, long logn);
