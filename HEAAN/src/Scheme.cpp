@@ -249,16 +249,17 @@ void Scheme::encryptMsg(Ciphertext& cipher, Plaintext& plain) {
 
 	long np = ceil((1 + logQQ + logN + 2)/(double)pbnd);
 	ring.multNTT(cipher.ax, vx, key->rax, np, qQ);
-	ring.addGaussAndEqual(cipher.ax, qQ);
 
 	ring.multNTT(cipher.bx, vx, key->rbx, np, qQ);
-	ring.addGaussAndEqual(cipher.bx, qQ);
 	delete[] vx;
 
 	ring.addAndEqual(cipher.bx, plain.mx, qQ);
 
 	ring.rightShiftAndEqual(cipher.ax, logQ);
 	ring.rightShiftAndEqual(cipher.bx, logQ);
+
+	ring.addGaussAndEqual(cipher.ax, qQ);
+	ring.addGaussAndEqual(cipher.bx, qQ);
 }
 
 void Scheme::decryptMsg(Plaintext& plain, SecretKey& secretKey, Ciphertext& cipher) {
