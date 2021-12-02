@@ -112,6 +112,7 @@ void SchemeAlgo::function(Ciphertext& res, Ciphertext& cipher, string& funcName,
 		}
 	}
 	scheme.reScaleByAndEqual(res, logp);
+	delete[] cpows;
 }
 
 void SchemeAlgo::functionLazy(Ciphertext& res, Ciphertext& cipher, string& funcName, long logp, long degree) {
@@ -134,4 +135,5 @@ void SchemeAlgo::functionLazy(Ciphertext& res, Ciphertext& cipher, string& funcN
 			scheme.addAndEqual(res, aixi);
 		}
 	}
+	delete[] cpows;
 }
