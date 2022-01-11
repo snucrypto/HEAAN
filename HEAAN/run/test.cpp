@@ -49,10 +49,10 @@ int main(int argc, char **argv) {
 //   BOOTSTRAPPING
 //----------------------------------------------------------------------------------
 
-    logq = logp + 10; //< suppose the input ciphertext of bootstrapping has logq = logp + 10
-    logn = 3; //< larger logn will make bootstrapping tech much slower
-    long logT = 4; //< this means that we use Taylor approximation in [-1/T,1/T] with double angle fomula
-    if(string(argv[1]) == "Bootstrapping") TestScheme::testBootstrap(logq, logp, logn, logT);
+	logq = logp + 10; //< suppose the input ciphertext of bootstrapping has logq = logp + 10
+	logn = 3; //< larger logn will make bootstrapping tech much slower
+	long logT = 4; //< this means that we use Taylor approximation in [-1/T,1/T] with double angle fomula
+	if(string(argv[1]) == "Bootstrapping") TestScheme::testBootstrap(logq, logp, logn, logT);
 
 	return 0;
 }

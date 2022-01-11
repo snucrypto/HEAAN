@@ -16,7 +16,7 @@ namespace heaan {
 class Plaintext {
 public:
 
-    NTL::ZZ* mx = new NTL::ZZ[N];
+	NTL::ZZ* mx = new NTL::ZZ[N];
 
 	long logp;
 	long logq;

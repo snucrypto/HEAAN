@@ -18,8 +18,8 @@ namespace heaan {
 class Ciphertext {
 public:
 
-    NTL::ZZ* ax = new NTL::ZZ[N];
-    NTL::ZZ* bx = new NTL::ZZ[N];
+	NTL::ZZ* ax = new NTL::ZZ[N];
+	NTL::ZZ* bx = new NTL::ZZ[N];
 
 	long logp;
 	long logq;

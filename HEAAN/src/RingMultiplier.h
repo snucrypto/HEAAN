@@ -25,11 +25,11 @@ public:
 	uint64_t** scaledRootInvPows = new uint64_t*[nprimes];
 	uint64_t* scaledNInv = new uint64_t[nprimes];
 	_ntl_general_rem_one_struct* red_ss_array[nprimes];
-    NTL::mulmod_precon_t* coeffpinv_array[nprimes];
+	NTL::mulmod_precon_t* coeffpinv_array[nprimes];
 
-    NTL::ZZ* pProd = new NTL::ZZ[nprimes];
-    NTL::ZZ* pProdh = new NTL::ZZ[nprimes];
-    NTL::ZZ** pHat = new NTL::ZZ*[nprimes];
+	NTL::ZZ* pProd = new NTL::ZZ[nprimes];
+	NTL::ZZ* pProdh = new NTL::ZZ[nprimes];
+	NTL::ZZ** pHat = new NTL::ZZ*[nprimes];
 	uint64_t** pHatInvModp = new uint64_t*[nprimes];
 
 	RingMultiplier();

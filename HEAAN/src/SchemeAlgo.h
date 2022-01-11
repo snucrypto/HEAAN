@@ -27,7 +27,7 @@ static std::string SIGMOID   = "Sigmoid"; ///< sigmoid(x) = exp(x) / (1 + exp(x)
 class SchemeAlgo {
 public:
 	Scheme& scheme;
-    std::map<std::string, double*> taylorCoeffsMap;
+	std::map<std::string, double*> taylorCoeffsMap;
 
 	SchemeAlgo(Scheme& scheme) : scheme(scheme) {
 		taylorCoeffsMap.insert(std::pair<std::string, double*>(LOGARITHM,new double[11] {0,1,-0.5,1./3,-1./4,1./5,-1./6,1./7,-1./8,1./9,-1./10}));

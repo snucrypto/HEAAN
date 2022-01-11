@@ -23,10 +23,10 @@ class Ring {
 
 public:
 
-    NTL::ZZ* qpows;
+	NTL::ZZ* qpows;
 	long* rotGroup;
-    std::complex<double>* ksiPows;
-    std::map<long, BootContext*> bootContextMap;
+	std::complex<double>* ksiPows;
+	std::map<long, BootContext*> bootContextMap;
 	RingMultiplier multiplier;
 
 	Ring();

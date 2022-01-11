@@ -34,11 +34,11 @@ public:
 
 	bool isSerialized;
 
-    std::map<long, Key*> keyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
-    std::map<long, Key*> leftRotKeyMap; ///< contain left rotation keys, if generated
+	std::map<long, Key*> keyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
+	std::map<long, Key*> leftRotKeyMap; ///< contain left rotation keys, if generated
 
-    std::map<long, std::string> serKeyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
-    std::map<long, std::string> serLeftRotKeyMap; ///< contain left rotation keys, if generated
+	std::map<long, std::string> serKeyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
+	std::map<long, std::string> serLeftRotKeyMap; ///< contain left rotation keys, if generated
 
 	Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized = false);
 
@@ -75,13 +75,13 @@ public:
 
 	void encode(Plaintext& plain, double* vals, long n, long logp, long logq);
 
-    std::complex<double>* decode(Plaintext& plain);
+	std::complex<double>* decode(Plaintext& plain);
 
 	void encodeSingle(Plaintext& plain, std::complex<double> val, long logp, long logq);
 
 	void encodeSingle(Plaintext& plain, double val, long logp, long logq);
 
-    std::complex<double> decodeSingle(Plaintext& plain);
+	std::complex<double> decodeSingle(Plaintext& plain);
 
 
 	//----------------------------------------------------------------------------------
@@ -103,15 +103,15 @@ public:
 
 	void encryptZeros(Ciphertext& cipher, long n, long logp, long logq);
 
-    std::complex<double>* decrypt(SecretKey& secretKey, Ciphertext& cipher);
+	std::complex<double>* decrypt(SecretKey& secretKey, Ciphertext& cipher);
 
-    std::complex<double>* decryptForShare(SecretKey& secretKey, Ciphertext& cipher, long=0);
+	std::complex<double>* decryptForShare(SecretKey& secretKey, Ciphertext& cipher, long=0);
 
 	void encryptSingle(Ciphertext& cipher, std::complex<double> val, long logp, long logq);
 
 	void encryptSingle(Ciphertext& cipher, double val, long logp, long logq);
 
-    std::complex<double> decryptSingle(SecretKey& secretKey, Ciphertext& cipher);
+	std::complex<double> decryptSingle(SecretKey& secretKey, Ciphertext& cipher);
 
 
 	//----------------------------------------------------------------------------------

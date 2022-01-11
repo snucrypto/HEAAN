@@ -25,9 +25,9 @@ Scheme::Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized) : ring(ring)
 
 Scheme::~Scheme() {
   for (auto const& t : keyMap)
-    delete t.second;
+	delete t.second;
   for (auto const& t : leftRotKeyMap)
-    delete t.second;
+	delete t.second;
 }
 
 void Scheme::addEncKey(SecretKey& secretKey) {

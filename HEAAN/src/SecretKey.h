@@ -17,7 +17,7 @@ namespace heaan {
 class SecretKey {
 public:
 
-    NTL::ZZ* sx = new NTL::ZZ[N];
+	NTL::ZZ* sx = new NTL::ZZ[N];
 
 	SecretKey(Ring& ring);
 

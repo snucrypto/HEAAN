@@ -81,7 +81,7 @@ public:
 
 	static void testBootstrapSingleReal(long logq, long logp, long logT);
 
-    static void testWriteAndRead(long logq, long logp, long logn);
+	static void testWriteAndRead(long logq, long logp, long logn);
 
 };
 
