@@ -9,6 +9,8 @@
 
 #include <NTL/tools.h>
 
+namespace heaan {
+
 Ciphertext::Ciphertext(long logp, long logq, long n) : logp(logp), logq(logq), n(n) {
 }
 
@@ -44,3 +46,5 @@ Ciphertext::~Ciphertext() {
 	delete[] ax;
 	delete[] bx;
 }
+
+}  // namespace heaan

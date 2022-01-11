@@ -8,6 +8,8 @@
 #include "StringUtils.h"
 
 
+namespace heaan {
+
 //----------------------------------------------------------------------------------
 //   SHOW ARRAY
 //----------------------------------------------------------------------------------
@@ -131,3 +133,5 @@ void StringUtils::compare(complex<double> val1, complex<double>* vals2, long siz
 		cout << "---------------------" << endl;
 	}
 }
+
+}  // namespace heaan

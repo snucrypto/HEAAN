@@ -18,6 +18,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 static RR Pi = ComputePi_RR();
 
 class Ring {
@@ -172,5 +174,7 @@ public:
 	void IDFT(complex<double>* vals, long n);
 
 };
+
+}  // namespace heaan
 
 #endif

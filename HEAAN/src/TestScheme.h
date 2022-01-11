@@ -8,6 +8,8 @@
 #ifndef HEAAN_TESTSCHEME_H_
 #define HEAAN_TESTSCHEME_H_
 
+namespace heaan {
+
 class TestScheme {
 public:
 
@@ -15,20 +17,20 @@ public:
 	//----------------------------------------------------------------------------------
 	//   STANDARD TESTS
 	//----------------------------------------------------------------------------------
-	
+
 
 	static void testEncrypt(long logq, long logp, long logn);
-	
+
 	static void testEncryptBySk(long logq, long logp, long logn);
-	
+
 	static void testDecryptForShare(long logq, long logp, long logn, long logErrorBound);
-	
+
 	static void testEncryptSingle(long logq, long logp);
-	
+
 	static void testAdd(long logq, long logp, long logn);
-	
+
 	static void testMult(long logq, long logp, long logn);
-	
+
 	static void testiMult(long logq, long logp, long logn);
 
 
@@ -73,15 +75,16 @@ public:
 	//----------------------------------------------------------------------------------
 	//   BOOTSTRAPPING TESTS
 	//----------------------------------------------------------------------------------
-    
+
 
 	static void testBootstrap(long logq, long logp, long logn, long logT);
 
 	static void testBootstrapSingleReal(long logq, long logp, long logT);
-    
+
     static void testWriteAndRead(long logq, long logp, long logn);
 
-    
 };
+
+}  // namespace heaan
 
 #endif

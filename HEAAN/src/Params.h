@@ -11,6 +11,8 @@
 #include <NTL/ZZ.h>
 using namespace NTL;
 
+namespace heaan {
+
 static const long logN = 16;
 static const long logQ = 800; // 128-bit security
 
@@ -30,5 +32,7 @@ static const long cbnd = (logQQ + NTL_ZZ_NBITS - 1) / NTL_ZZ_NBITS;
 static const long bignum = 0xfffffff;
 static const ZZ Q = power2_ZZ(logQ);
 static const ZZ QQ = power2_ZZ(logQQ);
+
+}  // namespace heaan
 
 #endif /* PARAMS_H_ */

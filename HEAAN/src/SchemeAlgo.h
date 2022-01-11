@@ -17,6 +17,8 @@
 #include "Ciphertext.h"
 #include "Scheme.h"
 
+namespace heaan {
+
 static string LOGARITHM = "Logarithm"; ///< log(x)
 static string EXPONENT  = "Exponent"; ///< exp(x)
 static string SIGMOID   = "Sigmoid"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
@@ -48,5 +50,7 @@ public:
 	void functionLazy(Ciphertext& res, Ciphertext& cipher, string& funcName, long logp, long degree);
 
 };
+
+}  // namespace heaan
 
 #endif

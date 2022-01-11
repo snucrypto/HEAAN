@@ -17,6 +17,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 class SerializationUtils {
 public:
 
@@ -26,5 +28,7 @@ public:
 	static void writeKey(Key* key, string path);
 	static Key* readKey(string path);
 };
+
+}  // namespace heaan
 
 #endif /* SERIALIZATIONUTILS_H_ */

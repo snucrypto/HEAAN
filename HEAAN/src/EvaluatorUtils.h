@@ -15,6 +15,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 class EvaluatorUtils {
 public:
 
@@ -58,5 +60,7 @@ public:
 	static void rightRotateAndEqual(complex<double>* vals, const long n, const long r);
 
 };
+
+}  // namespace heaan
 
 #endif

@@ -16,6 +16,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 class Ciphertext {
 public:
 
@@ -38,7 +40,9 @@ public:
 	void free();
 
 	virtual ~Ciphertext();
-	
+
 };
+
+}  // namespace heaan
 
 #endif

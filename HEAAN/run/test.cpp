@@ -7,6 +7,9 @@
 */
 
 #include "../src/HEAAN.h"
+
+using namespace heaan;
+
 /**
   * This file is for test HEAAN library
   * You can find more in src/TestScheme.h
@@ -38,11 +41,11 @@ int main(int argc, char **argv) {
 	long r = 1; ///< The amout of rotation
 	if(string(argv[1]) == "RotateFast") TestScheme::testRotateFast(logq, logp, logn, r);
 	if(string(argv[1]) == "Conjugate") TestScheme::testConjugate(logq, logp, logn);
-    
+
 //----------------------------------------------------------------------------------
 //   BOOTSTRAPPING
 //----------------------------------------------------------------------------------
-    
+
     logq = logp + 10; //< suppose the input ciphertext of bootstrapping has logq = logp + 10
     logn = 3; //< larger logn will make bootstrapping tech much slower
     long logT = 4; //< this means that we use Taylor approximation in [-1/T,1/T] with double angle fomula

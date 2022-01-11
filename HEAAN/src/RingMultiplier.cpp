@@ -14,6 +14,8 @@
 #include <cstdlib>
 #include <iterator>
 
+namespace heaan {
+
 RingMultiplier::RingMultiplier() {
 
 	uint64_t primetest = (1ULL << pbnd) + 1;
@@ -561,4 +563,4 @@ uint64_t RingMultiplier::findMthRootOfUnity(uint64_t M, uint64_t mod) {
     }
 }
 
-
+}  // namespace heaan

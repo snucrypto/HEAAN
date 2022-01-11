@@ -14,6 +14,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 class Plaintext {
 public:
 
@@ -28,5 +30,7 @@ public:
 
 	virtual ~Plaintext();
 };
+
+}  // namespace heaan
 
 #endif

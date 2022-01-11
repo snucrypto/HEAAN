@@ -18,6 +18,7 @@
 #include "EvaluatorUtils.h"
 #include "BootContext.h"
 
+namespace heaan {
 
 Ring::Ring() {
 
@@ -648,3 +649,5 @@ void Ring::sampleUniform2(ZZ* res, long bits) {
 		res[i] = RandomBits_ZZ(bits);
 	}
 }
+
+}  // namespace heaan

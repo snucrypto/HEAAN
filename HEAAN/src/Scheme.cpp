@@ -11,6 +11,8 @@
 #include "StringUtils.h"
 #include "SerializationUtils.h"
 
+namespace heaan {
+
 Scheme::Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized) : ring(ring), isSerialized(isSerialized) {
 	addEncKey(secretKey);
 	addMultKey(secretKey);
@@ -1276,3 +1278,5 @@ void Scheme::bootstrapAndEqual(Ciphertext& cipher, long logq, long logQ, long lo
 
 	cipher.logp = logp;
 }
+
+}  // namespace heaan

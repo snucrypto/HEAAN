@@ -15,6 +15,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 class SecretKey {
 public:
 
@@ -23,5 +25,7 @@ public:
 	SecretKey(Ring& ring);
 
 };
+
+}  // namespace heaan
 
 #endif

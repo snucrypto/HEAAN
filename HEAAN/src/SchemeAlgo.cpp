@@ -7,6 +7,10 @@
 */
 #include "SchemeAlgo.h"
 
+using namespace std;
+using namespace NTL;
+
+namespace heaan {
 
 void SchemeAlgo::powerOf2(Ciphertext& res, Ciphertext& cipher, long logp, long logDegree) {
 	res.copy(cipher);
@@ -137,3 +141,5 @@ void SchemeAlgo::functionLazy(Ciphertext& res, Ciphertext& cipher, string& funcN
 	}
 	delete[] cpows;
 }
+
+}  // namespace heaan

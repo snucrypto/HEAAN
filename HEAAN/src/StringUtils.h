@@ -15,6 +15,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 class StringUtils {
 public:
 
@@ -55,5 +57,7 @@ public:
 	static void compare(complex<double> val1, complex<double>* vals2, long size, string prefix);
 
 };
+
+}  // namespace heaan
 
 #endif

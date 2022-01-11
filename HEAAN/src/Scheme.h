@@ -23,6 +23,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 static long ENCRYPTION = 0;
 static long MULTIPLICATION  = 1;
 static long CONJUGATION = 2;
@@ -251,5 +253,7 @@ public:
 
 	void bootstrapAndEqual(Ciphertext& cipher, long logq, long logQ, long logT, long logI = 4);
 };
+
+}  // namespace heaan
 
 #endif

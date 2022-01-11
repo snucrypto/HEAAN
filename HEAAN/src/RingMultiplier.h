@@ -16,6 +16,8 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
+
 class RingMultiplier {
 public:
 
@@ -86,5 +88,7 @@ public:
 	uint64_t findMthRootOfUnity(uint64_t M, uint64_t p);
 
 };
+
+}  // namespace heaan
 
 #endif /* RINGMULTIPLIER_H_ */
