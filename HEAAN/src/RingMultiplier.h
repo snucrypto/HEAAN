@@ -13,9 +13,6 @@
 #include <NTL/ZZ.h>
 #include "Params.h"
 
-using namespace std;
-using namespace NTL;
-
 namespace heaan {
 
 class RingMultiplier {
@@ -28,11 +25,11 @@ public:
 	uint64_t** scaledRootInvPows = new uint64_t*[nprimes];
 	uint64_t* scaledNInv = new uint64_t[nprimes];
 	_ntl_general_rem_one_struct* red_ss_array[nprimes];
-	mulmod_precon_t* coeffpinv_array[nprimes];
+    NTL::mulmod_precon_t* coeffpinv_array[nprimes];
 
-	ZZ* pProd = new ZZ[nprimes];
-	ZZ* pProdh = new ZZ[nprimes];
-	ZZ** pHat = new ZZ*[nprimes];
+    NTL::ZZ* pProd = new NTL::ZZ[nprimes];
+    NTL::ZZ* pProdh = new NTL::ZZ[nprimes];
+    NTL::ZZ** pHat = new NTL::ZZ*[nprimes];
 	uint64_t** pHatInvModp = new uint64_t*[nprimes];
 
 	RingMultiplier();
@@ -42,27 +39,27 @@ public:
 	void NTT(uint64_t* a, long index);
 	void INTT(uint64_t* a, long index);
 
-	void CRT(uint64_t* rx, ZZ* x, const long np);
+	void CRT(uint64_t* rx, NTL::ZZ* x, const long np);
 
 	void addNTTAndEqual(uint64_t* ra, uint64_t* rb, const long np);
 
-	void reconstruct(ZZ* x, uint64_t* rx, long np, const ZZ& QQ);
+	void reconstruct(NTL::ZZ* x, uint64_t* rx, long np, const NTL::ZZ& QQ);
 
-	void mult(ZZ* x, ZZ* a, ZZ* b, long np, const ZZ& QQ);
+	void mult(NTL::ZZ* x, NTL::ZZ* a, NTL::ZZ* b, long np, const NTL::ZZ& QQ);
 
-	void multNTT(ZZ* x, ZZ* a, uint64_t* rb, long np, const ZZ& QQ);
+	void multNTT(NTL::ZZ* x, NTL::ZZ* a, uint64_t* rb, long np, const NTL::ZZ& QQ);
 
-	void multDNTT(ZZ* x, uint64_t* ra, uint64_t* rb, long np, const ZZ& QQ);
+	void multDNTT(NTL::ZZ* x, uint64_t* ra, uint64_t* rb, long np, const NTL::ZZ& QQ);
 
-	void multAndEqual(ZZ* a, ZZ* b, long np, const ZZ& QQ);
+	void multAndEqual(NTL::ZZ* a, NTL::ZZ* b, long np, const NTL::ZZ& QQ);
 
-	void multNTTAndEqual(ZZ* a, uint64_t* rb, long np, const ZZ& QQ);
+	void multNTTAndEqual(NTL::ZZ* a, uint64_t* rb, long np, const NTL::ZZ& QQ);
 
-	void square(ZZ* x, ZZ* a, long np, const ZZ& QQ);
+	void square(NTL::ZZ* x, NTL::ZZ* a, long np, const NTL::ZZ& QQ);
 
-	void squareNTT(ZZ* x, uint64_t* ra, long np, const ZZ& QQ);
+	void squareNTT(NTL::ZZ* x, uint64_t* ra, long np, const NTL::ZZ& QQ);
 
-	void squareAndEqual(ZZ* a, long np, const ZZ& QQ);
+	void squareAndEqual(NTL::ZZ* a, long np, const NTL::ZZ& QQ);
 
 	void mulMod(uint64_t& r, uint64_t a, uint64_t b, uint64_t p);
 
@@ -81,7 +78,7 @@ public:
 
 	uint32_t bitReverse(uint32_t x);
 
-	void findPrimeFactors(vector<uint64_t> &s, uint64_t number);
+	void findPrimeFactors(std::vector<uint64_t> &s, uint64_t number);
 
 	uint64_t findPrimitiveRoot(uint64_t m);
 

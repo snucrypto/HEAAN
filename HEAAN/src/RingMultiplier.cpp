@@ -14,6 +14,9 @@
 #include <cstdlib>
 #include <iterator>
 
+using namespace std;
+using namespace NTL;
+
 namespace heaan {
 
 RingMultiplier::RingMultiplier() {

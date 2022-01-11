@@ -8,8 +8,13 @@
 #include "Scheme.h"
 
 #include "NTL/BasicThreadPool.h"
+#include <string>
+
 #include "StringUtils.h"
 #include "SerializationUtils.h"
+
+using namespace std;
+using namespace NTL;
 
 namespace heaan {
 

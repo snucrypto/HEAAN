@@ -7,7 +7,7 @@
 */
 #include "TestScheme.h"
 
-using namespace std;
+using namespace heaan;
 
 int main() {
 

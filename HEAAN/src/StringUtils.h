@@ -11,9 +11,7 @@
 #include <NTL/ZZ.h>
 
 #include <complex>
-
-using namespace std;
-using namespace NTL;
+#include <string>
 
 namespace heaan {
 
@@ -30,9 +28,9 @@ public:
 
 	static void showVec(double* vals, long size);
 
-	static void showVec(complex<double>* vals, long size);
+	static void showVec(std::complex<double>* vals, long size);
 
-	static void showVec(ZZ* vals, long size);
+	static void showVec(NTL::ZZ* vals, long size);
 
 
 	//----------------------------------------------------------------------------------
@@ -40,21 +38,21 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	static void compare(double val1, double val2, string prefix);
+	static void compare(double val1, double val2, std::string prefix);
 
-	static void compare(complex<double> val1, complex<double> val2, string prefix);
+	static void compare(std::complex<double> val1, std::complex<double> val2, std::string prefix);
 
-	static void compare(double* vals1, double* vals2, long size, string prefix);
+	static void compare(double* vals1, double* vals2, long size, std::string prefix);
 
-	static void compare(complex<double>* vals1, complex<double>* vals2, long size, string prefix);
+	static void compare(std::complex<double>* vals1, std::complex<double>* vals2, long size, std::string prefix);
 
-	static void compare(double* vals1, double val2, long size, string prefix);
+	static void compare(double* vals1, double val2, long size, std::string prefix);
 
-	static void compare(complex<double>* vals1, complex<double> val2, long size, string prefix);
+	static void compare(std::complex<double>* vals1, std::complex<double> val2, long size, std::string prefix);
 
-	static void compare(double val1, double* vals2, long size, string prefix);
+	static void compare(double val1, double* vals2, long size, std::string prefix);
 
-	static void compare(complex<double> val1, complex<double>* vals2, long size, string prefix);
+	static void compare(std::complex<double> val1, std::complex<double>* vals2, long size, std::string prefix);
 
 };
 

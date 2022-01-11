@@ -9,7 +9,6 @@
 #define HEAAN_PARAMS_H_
 
 #include <NTL/ZZ.h>
-using namespace NTL;
 
 namespace heaan {
 
@@ -30,8 +29,8 @@ static const long nprimes = (2 + logN + 4 * logQ + pbnd - 1) / pbnd;
 static const long Nnprimes = (nprimes << logN);
 static const long cbnd = (logQQ + NTL_ZZ_NBITS - 1) / NTL_ZZ_NBITS;
 static const long bignum = 0xfffffff;
-static const ZZ Q = power2_ZZ(logQ);
-static const ZZ QQ = power2_ZZ(logQQ);
+static const NTL::ZZ Q = NTL::power2_ZZ(logQ);
+static const NTL::ZZ QQ = NTL::power2_ZZ(logQQ);
 
 }  // namespace heaan
 

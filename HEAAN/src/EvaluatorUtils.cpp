@@ -11,6 +11,8 @@
 #include <complex>
 #include <cstdlib>
 
+using namespace std;
+using namespace NTL;
 
 namespace heaan {
 

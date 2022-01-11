@@ -10,8 +10,6 @@
 
 #include <NTL/ZZ.h>
 
-using namespace NTL;
-
 namespace heaan {
 
 class BootContext {

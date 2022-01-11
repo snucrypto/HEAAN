@@ -15,21 +15,18 @@
 #include "BootContext.h"
 #include "RingMultiplier.h"
 
-using namespace std;
-using namespace NTL;
-
 namespace heaan {
 
-static RR Pi = ComputePi_RR();
+static NTL::RR Pi = NTL::ComputePi_RR();
 
 class Ring {
 
 public:
 
-	ZZ* qpows;
+    NTL::ZZ* qpows;
 	long* rotGroup;
-	complex<double>* ksiPows;
-	map<long, BootContext*> bootContextMap;
+    std::complex<double>* ksiPows;
+    std::map<long, BootContext*> bootContextMap;
 	RingMultiplier multiplier;
 
 	Ring();
@@ -40,19 +37,19 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void arrayBitReverse(complex<double>* vals, long size);
+	void arrayBitReverse(std::complex<double>* vals, long size);
 
-	void EMB(complex<double>* vals, long size);
+	void EMB(std::complex<double>* vals, long size);
 
-	void EMBInvLazy(complex<double>* vals, long size);
+	void EMBInvLazy(std::complex<double>* vals, long size);
 
-	void EMBInv(complex<double>* vals, long size);
+	void EMBInv(std::complex<double>* vals, long size);
 
-	void encode(ZZ* mx, double* vals, long slots, long logp);
+	void encode(NTL::ZZ* mx, double* vals, long slots, long logp);
 
-	void encode(ZZ* mx, complex<double>* vals, long slots, long logp);
+	void encode(NTL::ZZ* mx, std::complex<double>* vals, long slots, long logp);
 
-	void decode(ZZ* mx, complex<double>* vals, long slots, long logp, long logq);
+	void decode(NTL::ZZ* mx, std::complex<double>* vals, long slots, long logp, long logq);
 
 
 	//----------------------------------------------------------------------------------
@@ -67,27 +64,27 @@ public:
 	//   MULTIPLICATION
 	//----------------------------------------------------------------------------------
 
-	long maxBits(const ZZ* f, long n);
+	long maxBits(const NTL::ZZ* f, long n);
 
-	void CRT(uint64_t* rx, ZZ* x, const long np);
+	void CRT(uint64_t* rx, NTL::ZZ* x, const long np);
 
 	void addNTTAndEqual(uint64_t* ra, uint64_t* rb, const long np);
 
-	void mult(ZZ* x, ZZ* a, ZZ* b, long np, const ZZ& q);
+	void mult(NTL::ZZ* x, NTL::ZZ* a, NTL::ZZ* b, long np, const NTL::ZZ& q);
 
-	void multNTT(ZZ* x, ZZ* a, uint64_t* rb, long np, const ZZ& q);
+	void multNTT(NTL::ZZ* x, NTL::ZZ* a, uint64_t* rb, long np, const NTL::ZZ& q);
 
-	void multDNTT(ZZ* x, uint64_t* a, uint64_t* rb, long np, const ZZ& q);
+	void multDNTT(NTL::ZZ* x, uint64_t* a, uint64_t* rb, long np, const NTL::ZZ& q);
 
-	void multAndEqual(ZZ* a, ZZ* b, long np, const ZZ& q);
+	void multAndEqual(NTL::ZZ* a, NTL::ZZ* b, long np, const NTL::ZZ& q);
 
-	void multNTTAndEqual(ZZ* a, uint64_t* rb, long np, const ZZ& q);
+	void multNTTAndEqual(NTL::ZZ* a, uint64_t* rb, long np, const NTL::ZZ& q);
 
-	void square(ZZ* x, ZZ* a, long np, const ZZ& q);
+	void square(NTL::ZZ* x, NTL::ZZ* a, long np, const NTL::ZZ& q);
 
-	void squareNTT(ZZ* x, uint64_t* ra, long np, const ZZ& q);
+	void squareNTT(NTL::ZZ* x, uint64_t* ra, long np, const NTL::ZZ& q);
 
-	void squareAndEqual(ZZ* a, long np, const ZZ& q);
+	void squareAndEqual(NTL::ZZ* a, long np, const NTL::ZZ& q);
 
 
 	//----------------------------------------------------------------------------------
@@ -95,41 +92,41 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void mod(ZZ* res, ZZ* p, const ZZ& QQ);
+	void mod(NTL::ZZ* res, NTL::ZZ* p, const NTL::ZZ& QQ);
 
-	void modAndEqual(ZZ* p, const ZZ& QQ);
+	void modAndEqual(NTL::ZZ* p, const NTL::ZZ& QQ);
 
-	void negate(ZZ* res, ZZ* p);
+	void negate(NTL::ZZ* res, NTL::ZZ* p);
 
-	void negateAndEqual(ZZ* p);
+	void negateAndEqual(NTL::ZZ* p);
 
-	void add(ZZ* res, ZZ* p1, ZZ* p2, const ZZ& QQ);
+	void add(NTL::ZZ* res, NTL::ZZ* p1, NTL::ZZ* p2, const NTL::ZZ& QQ);
 
-	void addAndEqual(ZZ* p1, ZZ* p2, const ZZ& QQ);
+	void addAndEqual(NTL::ZZ* p1, NTL::ZZ* p2, const NTL::ZZ& QQ);
 
-	void sub(ZZ* res, ZZ* p1, ZZ* p2, const ZZ& QQ);
+	void sub(NTL::ZZ* res, NTL::ZZ* p1, NTL::ZZ* p2, const NTL::ZZ& QQ);
 
-	void subAndEqual(ZZ* p1, ZZ* p2, const ZZ& QQ);
+	void subAndEqual(NTL::ZZ* p1, NTL::ZZ* p2, const NTL::ZZ& QQ);
 
-	void subAndEqual2(ZZ* p1, ZZ* p2, const ZZ& QQ);
+	void subAndEqual2(NTL::ZZ* p1, NTL::ZZ* p2, const NTL::ZZ& QQ);
 
-	void multByMonomial(ZZ* res, ZZ* p, long mDeg);
+	void multByMonomial(NTL::ZZ* res, NTL::ZZ* p, long mDeg);
 
-	void multByMonomialAndEqual(ZZ* p, long mDeg);
+	void multByMonomialAndEqual(NTL::ZZ* p, long mDeg);
 
-	void multByConst(ZZ* res, ZZ* p, ZZ& cnst, const ZZ& QQ);
+	void multByConst(NTL::ZZ* res, NTL::ZZ* p, NTL::ZZ& cnst, const NTL::ZZ& QQ);
 
-	void multByConstAndEqual(ZZ* p, ZZ& cnst, const ZZ& QQ);
+	void multByConstAndEqual(NTL::ZZ* p, NTL::ZZ& cnst, const NTL::ZZ& QQ);
 
-	void leftShift(ZZ* res, ZZ* p, const long bits, const ZZ& QQ);
+	void leftShift(NTL::ZZ* res, NTL::ZZ* p, const long bits, const NTL::ZZ& QQ);
 
-	void leftShiftAndEqual(ZZ* p, const long bits, const ZZ& QQ);
+	void leftShiftAndEqual(NTL::ZZ* p, const long bits, const NTL::ZZ& QQ);
 
-	void doubleAndEqual(ZZ* p, const ZZ& QQ);
+	void doubleAndEqual(NTL::ZZ* p, const NTL::ZZ& QQ);
 
-	void rightShift(ZZ* res, ZZ* p, long bits);
+	void rightShift(NTL::ZZ* res, NTL::ZZ* p, long bits);
 
-	void rightShiftAndEqual(ZZ* p, long bits);
+	void rightShiftAndEqual(NTL::ZZ* p, long bits);
 
 
 	//----------------------------------------------------------------------------------
@@ -137,9 +134,9 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void leftRotate(ZZ* res, ZZ* p, long r);
+	void leftRotate(NTL::ZZ* res, NTL::ZZ* p, long r);
 
-	void conjugate(ZZ* res, ZZ* p);
+	void conjugate(NTL::ZZ* res, NTL::ZZ* p);
 
 
 	//----------------------------------------------------------------------------------
@@ -147,19 +144,19 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void subFromGaussAndEqual(ZZ* res, const ZZ& q);
-	
-	void subFromGaussAndEqual(ZZ* res, const ZZ& q, double _sigma);
+	void subFromGaussAndEqual(NTL::ZZ* res, const NTL::ZZ& q);
 
-	void addGaussAndEqual(ZZ* res, const ZZ& q);
-	
-	void addGaussAndEqual(ZZ* res, const ZZ& q, double _sigma);
+	void subFromGaussAndEqual(NTL::ZZ* res, const NTL::ZZ& q, double _sigma);
 
-	void sampleHWT(ZZ* res);
+	void addGaussAndEqual(NTL::ZZ* res, const NTL::ZZ& q);
 
-	void sampleZO(ZZ* res);
+	void addGaussAndEqual(NTL::ZZ* res, const NTL::ZZ& q, double _sigma);
 
-	void sampleUniform2(ZZ* res, long bits);
+	void sampleHWT(NTL::ZZ* res);
+
+	void sampleZO(NTL::ZZ* res);
+
+	void sampleUniform2(NTL::ZZ* res, long bits);
 
 
 	//----------------------------------------------------------------------------------
@@ -167,11 +164,11 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void DFT(complex<double>* vals, long n);
+	void DFT(std::complex<double>* vals, long n);
 
-	void IDFTLazy(complex<double>* vals, long n);
+	void IDFTLazy(std::complex<double>* vals, long n);
 
-	void IDFT(complex<double>* vals, long n);
+	void IDFT(std::complex<double>* vals, long n);
 
 };
 

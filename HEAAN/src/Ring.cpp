@@ -18,6 +18,9 @@
 #include "EvaluatorUtils.h"
 #include "BootContext.h"
 
+using namespace std;
+using namespace NTL;
+
 namespace heaan {
 
 Ring::Ring() {

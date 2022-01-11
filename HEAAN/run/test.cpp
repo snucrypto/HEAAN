@@ -8,6 +8,9 @@
 
 #include "../src/HEAAN.h"
 
+#include <string>
+
+using namespace std;
 using namespace heaan;
 
 /**
