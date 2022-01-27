@@ -7,6 +7,10 @@
 */
 #include "SecretKey.h"
 
+namespace heaan {
+
 SecretKey::SecretKey(Ring& ring) {
 	ring.sampleHWT(sx);
 }
+
+}  // namespace heaan

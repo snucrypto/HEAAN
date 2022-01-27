@@ -8,8 +8,15 @@
 #include "Scheme.h"
 
 #include "NTL/BasicThreadPool.h"
+#include <string>
+
 #include "StringUtils.h"
 #include "SerializationUtils.h"
+
+using namespace std;
+using namespace NTL;
+
+namespace heaan {
 
 Scheme::Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized) : ring(ring), isSerialized(isSerialized) {
 	addEncKey(secretKey);
@@ -18,9 +25,9 @@ Scheme::Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized) : ring(ring)
 
 Scheme::~Scheme() {
   for (auto const& t : keyMap)
-    delete t.second;
+	delete t.second;
   for (auto const& t : leftRotKeyMap)
-    delete t.second;
+	delete t.second;
 }
 
 void Scheme::addEncKey(SecretKey& secretKey) {
@@ -1276,3 +1283,5 @@ void Scheme::bootstrapAndEqual(Ciphertext& cipher, long logq, long logQ, long lo
 
 	cipher.logp = logp;
 }
+
+}  // namespace heaan

@@ -11,7 +11,7 @@
 #include <NTL/ZZ.h>
 #include "Params.h"
 
-using namespace NTL;
+namespace heaan {
 
 class Key {
 public:
@@ -23,5 +23,7 @@ public:
 
 	virtual ~Key();
 };
+
+}  // namespace heaan
 
 #endif

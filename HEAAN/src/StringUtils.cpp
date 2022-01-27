@@ -7,6 +7,9 @@
 */
 #include "StringUtils.h"
 
+using namespace std;
+
+namespace heaan {
 
 //----------------------------------------------------------------------------------
 //   SHOW ARRAY
@@ -40,7 +43,7 @@ void StringUtils::showVec(complex<double>* vals, long size) {
 	cout << "]" << endl;
 }
 
-void StringUtils::showVec(ZZ* vals, long size) {
+void StringUtils::showVec(NTL::ZZ* vals, long size) {
 	cout << "[";
 	cout << vals[0];
 	for (long i = 1; i < size; ++i) {
@@ -131,3 +134,5 @@ void StringUtils::compare(complex<double> val1, complex<double>* vals2, long siz
 		cout << "---------------------" << endl;
 	}
 }
+
+}  // namespace heaan

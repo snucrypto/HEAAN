@@ -12,6 +12,8 @@
 
 using namespace std;
 
+namespace heaan {
+
 TimeUtils::TimeUtils() {
 	timeElapsed = 0;
 }
@@ -30,3 +32,4 @@ void TimeUtils::stop(string msg) {
 	cout << "------------------" << endl;
 }
 
+}  // namespace heaan

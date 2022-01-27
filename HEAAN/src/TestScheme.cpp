@@ -23,6 +23,7 @@
 using namespace std;
 using namespace NTL;
 
+namespace heaan {
 
 //----------------------------------------------------------------------------------
 //   STANDARD TESTS
@@ -83,9 +84,9 @@ void TestScheme::testEncryptBySk(long logq, long logp, long logn) {
 
 void TestScheme::testDecryptForShare(long logq, long logp, long logn, long logErrorBound) {
 	cout << "!!! START TEST Decrypt for Share !!!" << endl;
-	
+
 	double sigma1 = 3.2 * sqrt(2);
-	
+
 	cout << "Note : encryption std is changed to sigma1 = " << sigma1 << endl;
 	srand(time(NULL));
 	SetNumThreads(8);
@@ -691,3 +692,5 @@ void TestScheme::testBootstrapSingleReal(long logq, long logp, long logT) {
 
 	cout << "!!! END TEST BOOTSRTAP SINGLE REAL !!!" << endl;
 }
+
+}  // namespace heaan

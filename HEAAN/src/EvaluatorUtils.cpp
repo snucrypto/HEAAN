@@ -11,6 +11,10 @@
 #include <complex>
 #include <cstdlib>
 
+using namespace std;
+using namespace NTL;
+
+namespace heaan {
 
 //----------------------------------------------------------------------------------
 //   RANDOM REAL AND COMPLEX NUMBERS
@@ -109,3 +113,5 @@ void EvaluatorUtils::rightRotateAndEqual(complex<double>* vals, const long n, co
 	rem = (n - rem) % n;
 	leftRotateAndEqual(vals, n, rem);
 }
+
+}  // namespace heaan

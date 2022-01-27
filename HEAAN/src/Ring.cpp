@@ -18,6 +18,10 @@
 #include "EvaluatorUtils.h"
 #include "BootContext.h"
 
+using namespace std;
+using namespace NTL;
+
+namespace heaan {
 
 Ring::Ring() {
 
@@ -317,7 +321,7 @@ long Ring::maxBits(const ZZ* f, long n) {
    m = 0;
 
    for (i = 0; i < n; i++) {
-      m = max(m, NumBits(f[i]));
+	  m = max(m, NumBits(f[i]));
    }
    return m;
 }
@@ -518,16 +522,16 @@ void Ring::doubleAndEqual(ZZ* p, const ZZ& mod) {
 void Ring::rightShift(ZZ* res, ZZ* p, long bits) {
 	ZZ tmp = to_ZZ(1) << (bits - 1);
 	for (long i = 0; i < N; ++i) {
-                if (p[i]>0) res[i] = (p[i] + tmp) >> bits;
-                else res[i] = (p[i] - tmp) >> bits;
+		        if (p[i]>0) res[i] = (p[i] + tmp) >> bits;
+		        else res[i] = (p[i] - tmp) >> bits;
 	}
 }
 
 void Ring::rightShiftAndEqual(ZZ* p, long bits) {
 	ZZ tmp = to_ZZ(1) << (bits - 1);
 	for (long i = 0; i < N; ++i) {
-                if (p[i]>0) p[i] += tmp;
-                else p[i] -= tmp;
+		        if (p[i]>0) p[i] += tmp;
+		        else p[i] -= tmp;
 		p[i] >>= bits;
 	}
 }
@@ -648,3 +652,5 @@ void Ring::sampleUniform2(ZZ* res, long bits) {
 		res[i] = RandomBits_ZZ(bits);
 	}
 }
+
+}  // namespace heaan

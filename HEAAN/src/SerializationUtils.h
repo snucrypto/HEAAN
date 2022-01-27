@@ -9,22 +9,24 @@
 #define HEAAN_SERIALIZATIONUTILS_H_
 
 #include <iostream>
+#include <string>
 
 #include "Ciphertext.h"
 #include "Params.h"
 #include "Key.h"
 
-using namespace std;
-using namespace NTL;
+namespace heaan {
 
 class SerializationUtils {
 public:
 
-	static void writeCiphertext(Ciphertext& ciphertext, string path);
-	static Ciphertext* readCiphertext(string path);
+	static void writeCiphertext(Ciphertext& ciphertext, std::string path);
+	static Ciphertext* readCiphertext(std::string path);
 
-	static void writeKey(Key* key, string path);
-	static Key* readKey(string path);
+	static void writeKey(Key* key, std::string path);
+	static Key* readKey(std::string path);
 };
+
+}  // namespace heaan
 
 #endif /* SERIALIZATIONUTILS_H_ */

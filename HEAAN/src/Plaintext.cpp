@@ -7,6 +7,8 @@
 */
 #include "Plaintext.h"
 
+namespace heaan {
+
 Plaintext::Plaintext(long logp, long logq, long n) : logp(logp), logq(logq), n(n) {
 
 }
@@ -14,3 +16,5 @@ Plaintext::Plaintext(long logp, long logq, long n) : logp(logp), logq(logq), n(n
 Plaintext::~Plaintext() {
 	delete[] mx;
 }
+
+}  // namespace heaan

@@ -7,6 +7,8 @@
 */
 #include "Key.h"
 
+namespace heaan {
+
 Key::Key() {
 }
 
@@ -14,3 +16,5 @@ Key::~Key() {
 	delete[] rax;
 	delete[] rbx;
 }
+
+}  // namespace heaan

@@ -11,13 +11,12 @@
 #include <NTL/ZZ.h>
 #include "Params.h"
 
-using namespace std;
-using namespace NTL;
+namespace heaan {
 
 class Plaintext {
 public:
 
-	ZZ* mx = new ZZ[N];
+	NTL::ZZ* mx = new NTL::ZZ[N];
 
 	long logp;
 	long logq;
@@ -28,5 +27,7 @@ public:
 
 	virtual ~Plaintext();
 };
+
+}  // namespace heaan
 
 #endif

@@ -11,6 +11,7 @@
 #include <NTL/RR.h>
 #include <NTL/ZZ.h>
 #include <complex>
+#include <string>
 
 #include "BootContext.h"
 #include "SecretKey.h"
@@ -20,8 +21,7 @@
 #include "EvaluatorUtils.h"
 #include "Ring.h"
 
-using namespace std;
-using namespace NTL;
+namespace heaan {
 
 static long ENCRYPTION = 0;
 static long MULTIPLICATION  = 1;
@@ -34,11 +34,11 @@ public:
 
 	bool isSerialized;
 
-	map<long, Key*> keyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
-	map<long, Key*> leftRotKeyMap; ///< contain left rotation keys, if generated
+	std::map<long, Key*> keyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
+	std::map<long, Key*> leftRotKeyMap; ///< contain left rotation keys, if generated
 
-	map<long, string> serKeyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
-	map<long, string> serLeftRotKeyMap; ///< contain left rotation keys, if generated
+	std::map<long, std::string> serKeyMap; ///< contain Encryption, Multiplication and Conjugation keys, if generated
+	std::map<long, std::string> serLeftRotKeyMap; ///< contain left rotation keys, if generated
 
 	Scheme(SecretKey& secretKey, Ring& ring, bool isSerialized = false);
 
@@ -71,17 +71,17 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	void encode(Plaintext& plain, complex<double>* vals, long n, long logp, long logq);
+	void encode(Plaintext& plain, std::complex<double>* vals, long n, long logp, long logq);
 
 	void encode(Plaintext& plain, double* vals, long n, long logp, long logq);
 
-	complex<double>* decode(Plaintext& plain);
+	std::complex<double>* decode(Plaintext& plain);
 
-	void encodeSingle(Plaintext& plain, complex<double> val, long logp, long logq);
+	void encodeSingle(Plaintext& plain, std::complex<double> val, long logp, long logq);
 
 	void encodeSingle(Plaintext& plain, double val, long logp, long logq);
 
-	complex<double> decodeSingle(Plaintext& plain);
+	std::complex<double> decodeSingle(Plaintext& plain);
 
 
 	//----------------------------------------------------------------------------------
@@ -93,25 +93,25 @@ public:
 
 	void decryptMsg(Plaintext& plain, SecretKey& secretKey, Ciphertext& cipher);
 
-	void encrypt(Ciphertext& cipher, complex<double>* vals, long n, long logp, long logq);
+	void encrypt(Ciphertext& cipher, std::complex<double>* vals, long n, long logp, long logq);
 
 	void encrypt(Ciphertext& cipher, double* vals, long n, long logp, long logq);
-	
-	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, complex<double>* vals, long n, long logp, long logq, double=3.2);
-	
+
+	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, std::complex<double>* vals, long n, long logp, long logq, double=3.2);
+
 	void encryptBySk(Ciphertext& cipher, SecretKey& secretKey, double* vals, long n, long logp, long logq, double=3.2);
 
 	void encryptZeros(Ciphertext& cipher, long n, long logp, long logq);
 
-	complex<double>* decrypt(SecretKey& secretKey, Ciphertext& cipher);
-	
-	complex<double>* decryptForShare(SecretKey& secretKey, Ciphertext& cipher, long=0);
+	std::complex<double>* decrypt(SecretKey& secretKey, Ciphertext& cipher);
 
-	void encryptSingle(Ciphertext& cipher, complex<double> val, long logp, long logq);
+	std::complex<double>* decryptForShare(SecretKey& secretKey, Ciphertext& cipher, long=0);
+
+	void encryptSingle(Ciphertext& cipher, std::complex<double> val, long logp, long logq);
 
 	void encryptSingle(Ciphertext& cipher, double val, long logp, long logq);
 
-	complex<double> decryptSingle(SecretKey& secretKey, Ciphertext& cipher);
+	std::complex<double> decryptSingle(SecretKey& secretKey, Ciphertext& cipher);
 
 
 	//----------------------------------------------------------------------------------
@@ -128,15 +128,15 @@ public:
 
 	void addConst(Ciphertext& res, Ciphertext& cipher, double cnst, long logp);
 
-	void addConst(Ciphertext& res, Ciphertext& cipher, RR& cnst, long logp);
+	void addConst(Ciphertext& res, Ciphertext& cipher, NTL::RR& cnst, long logp);
 
-	void addConst(Ciphertext& res, Ciphertext& cipher, complex<double> cnst, long logp);
+	void addConst(Ciphertext& res, Ciphertext& cipher, std::complex<double> cnst, long logp);
 
 	void addConstAndEqual(Ciphertext& cipher, double cnst, long logp);
 
-	void addConstAndEqual(Ciphertext& cipher, RR& cnst, long logp);
+	void addConstAndEqual(Ciphertext& cipher, NTL::RR& cnst, long logp);
 
-	void addConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp);
+	void addConstAndEqual(Ciphertext& cipher, std::complex<double> cnst, long logp);
 
 	void sub(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2);
 
@@ -162,23 +162,23 @@ public:
 
 	void multByConst(Ciphertext& res, Ciphertext& cipher, double cnst, long logp);
 
-	void multByConst(Ciphertext& res, Ciphertext& cipher, complex<double> cnst, long logp);
+	void multByConst(Ciphertext& res, Ciphertext& cipher, std::complex<double> cnst, long logp);
 
-	void multByConstVec(Ciphertext& res, Ciphertext& cipher, complex<double>* cnstVec, long logp);
+	void multByConstVec(Ciphertext& res, Ciphertext& cipher, std::complex<double>* cnstVec, long logp);
 
-	void multByConstVecAndEqual(Ciphertext& cipher, complex<double>* cnstVec, long logp);
+	void multByConstVecAndEqual(Ciphertext& cipher, std::complex<double>* cnstVec, long logp);
 
 	void multByConstAndEqual(Ciphertext& cipher, double cnst, long logp);
 
-	void multByConstAndEqual(Ciphertext& cipher, RR& cnst, long logp);
+	void multByConstAndEqual(Ciphertext& cipher, NTL::RR& cnst, long logp);
 
-	void multByConstAndEqual(Ciphertext& cipher, complex<double> cnst, long logp);
+	void multByConstAndEqual(Ciphertext& cipher, std::complex<double> cnst, long logp);
 
-	void multByPoly(Ciphertext& res, Ciphertext& cipher, ZZ* poly, long logp);
+	void multByPoly(Ciphertext& res, Ciphertext& cipher, NTL::ZZ* poly, long logp);
 
 	void multByPolyNTT(Ciphertext& res, Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp);
 
-	void multByPolyAndEqual(Ciphertext& cipher, ZZ* poly, long logp);
+	void multByPolyAndEqual(Ciphertext& cipher, NTL::ZZ* poly, long logp);
 
 	void multByPolyNTTAndEqual(Ciphertext& cipher, uint64_t* rpoly, long bnd, long logp);
 
@@ -251,5 +251,7 @@ public:
 
 	void bootstrapAndEqual(Ciphertext& cipher, long logq, long logQ, long logT, long logI = 4);
 };
+
+}  // namespace heaan
 
 #endif

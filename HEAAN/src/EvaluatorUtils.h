@@ -12,8 +12,7 @@
 #include <NTL/ZZ.h>
 #include <complex>
 
-using namespace std;
-using namespace NTL;
+namespace heaan {
 
 class EvaluatorUtils {
 public:
@@ -26,26 +25,26 @@ public:
 
 	static double randomReal(double bound = 1.0);
 
-	static complex<double> randomComplex(double bound = 1.0);
+	static std::complex<double> randomComplex(double bound = 1.0);
 
-	static complex<double> randomCircle(double anglebound = 1.0);
+	static std::complex<double> randomCircle(double anglebound = 1.0);
 
 	static double* randomRealArray(long size, double bound = 1.0);
 
-	static complex<double>* randomComplexArray(long size, double bound = 1.0);
+	static std::complex<double>* randomComplexArray(long size, double bound = 1.0);
 
-	static complex<double>* randomCircleArray(long size, double bound = 1.0);
+	static std::complex<double>* randomCircleArray(long size, double bound = 1.0);
 
 
 	//----------------------------------------------------------------------------------
 	//   DOUBLE & RR <-> ZZ
 	//----------------------------------------------------------------------------------
 
-	static double scaleDownToReal(const ZZ& x, const long logp);
+	static double scaleDownToReal(const NTL::ZZ& x, const long logp);
 
-	static ZZ scaleUpToZZ(const double x, const long logp);
+	static NTL::ZZ scaleUpToZZ(const double x, const long logp);
 
-	static ZZ scaleUpToZZ(const RR& x, const long logp);
+	static NTL::ZZ scaleUpToZZ(const NTL::RR& x, const long logp);
 
 
 	//----------------------------------------------------------------------------------
@@ -53,10 +52,12 @@ public:
 	//----------------------------------------------------------------------------------
 
 
-	static void leftRotateAndEqual(complex<double>* vals, const long n, const long r);
+	static void leftRotateAndEqual(std::complex<double>* vals, const long n, const long r);
 
-	static void rightRotateAndEqual(complex<double>* vals, const long n, const long r);
+	static void rightRotateAndEqual(std::complex<double>* vals, const long n, const long r);
 
 };
+
+}  // namespace heaan
 
 #endif

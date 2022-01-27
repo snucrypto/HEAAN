@@ -13,14 +13,13 @@
 #include <fstream>
 #include "Params.h"
 
-using namespace std;
-using namespace NTL;
+namespace heaan {
 
 class Ciphertext {
 public:
 
-	ZZ* ax = new ZZ[N];
-	ZZ* bx = new ZZ[N];
+	NTL::ZZ* ax = new NTL::ZZ[N];
+	NTL::ZZ* bx = new NTL::ZZ[N];
 
 	long logp;
 	long logq;
@@ -38,7 +37,9 @@ public:
 	void free();
 
 	virtual ~Ciphertext();
-	
+
 };
+
+}  // namespace heaan
 
 #endif

@@ -14,6 +14,11 @@
 #include <cstdlib>
 #include <iterator>
 
+using namespace std;
+using namespace NTL;
+
+namespace heaan {
+
 RingMultiplier::RingMultiplier() {
 
 	uint64_t primetest = (1ULL << pbnd) + 1;
@@ -89,7 +94,7 @@ bool RingMultiplier::primeTest(uint64_t p) {
 		uint64_t mod = powMod(temp1,temp2,p);
 		while (temp2 != p - 1 && mod != 1 && mod != p - 1) {
 			mulMod(mod, mod, mod, p);
-		    temp2 *= 2;
+			temp2 *= 2;
 		}
 		if (mod != p - 1 && temp2 % 2 == 0) return false;
 	}
@@ -549,16 +554,16 @@ uint64_t RingMultiplier::findPrimitiveRoot(uint64_t modulus) {
 }
 
 uint64_t RingMultiplier::findMthRootOfUnity(uint64_t M, uint64_t mod) {
-    uint64_t res;
-    res = findPrimitiveRoot(mod);
-    if((mod - 1) % M == 0) {
-        uint64_t factor = (mod - 1) / M;
-        res = powMod(res, factor, mod);
-        return res;
-    }
-    else {
-        return -1;
-    }
+	uint64_t res;
+	res = findPrimitiveRoot(mod);
+	if((mod - 1) % M == 0) {
+		uint64_t factor = (mod - 1) / M;
+		res = powMod(res, factor, mod);
+		return res;
+	}
+	else {
+		return -1;
+	}
 }
 
-
+}  // namespace heaan

@@ -10,7 +10,7 @@
 
 #include <NTL/ZZ.h>
 
-using namespace NTL;
+namespace heaan {
 
 class BootContext {
 public:
@@ -31,5 +31,7 @@ public:
 			long* bndvec = NULL, long* bndvecInv = NULL, long bnd1 = 0, long bnd2 = 0, long logp = 0);
 
 };
+
+}  // namespace heaan
 
 #endif
