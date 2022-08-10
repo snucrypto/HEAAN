@@ -26,7 +26,7 @@ This library is written by c++ and using NTL library (http://www.shoup.net/ntl/)
 ### 1. Build a static library/Running test functions
 You can make a static library by typing "make all" in the /lib directory. After successful compilation you can find a static library libHEAAN.a in the /lib directory.
 
-After you build libHEAAN.a, you can run a test program in the /run directory. In run.cpp, you need uncomment tests you need and type "make" in the /run directory. This command will run exe file "HEAAN".
+After you build libHEAAN.a, you can run a test program in the /run directory. In test.cpp, you need uncomment tests you need and type "make" in the /run directory. This command will generate executable file "HEAAN".
 
 We checked the program was working well on Ubuntu 16.04.2 LTS. You need to install NTL (with GMP), pThread, libraries.
 
