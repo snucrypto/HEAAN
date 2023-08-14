@@ -4,6 +4,14 @@ This library supports approximate operations between rational numbers.
 The approximate error depends on some parameters and almost same with floating point operation errors.
 The scheme in this library is on the paper "Homomorphic Encryption for Arithmetic of Approximate Numbers" (https://eprint.iacr.org/2016/421.pdf).
 
+## Notice: This Repository is No Longer Maintained
+
+Please note that this repository is no longer actively maintained. Issues and pull requests may not receive responses, and updates will not be provided.
+
+For those seeking alternatives and more up-to-date libraries, we recommend checking out the library currently managed by [CryptoLab Inc.](https://www.cryptolab.co.kr) under the name "HEaaN." You can find more information and resources on their official website at [HEaaN.it](https://heaan.it).
+
+Thank you for your understanding.
+
 ## Notice
 In "Params.h", 'pbnd' value is 59.0 by default.
 If you are using NTL with "NTL_ENABLE_AVX_FFT=on", This option reduces that small-prime size bound from 60 bits to 50 bits (see https://www.shoup.net/ntl/doc/tour-changes.html).
